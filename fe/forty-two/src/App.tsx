@@ -10,6 +10,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <SignIn />,
   },
+  {
+    path: "/signin",
+    element: <SignIn />,
+  },
 ]);
 
 function App() {
