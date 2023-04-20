@@ -1,5 +1,9 @@
 package com.fourtytwo.config;
 
+import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.exception.CustomAccessDeniedHandler;
+import com.fourtytwo.exception.CustomAuthenticationEntryPoint;
+import com.fourtytwo.filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +17,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
@@ -22,7 +33,13 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/**").permitAll();
+                .antMatchers("/api/v1/account/**").permitAll()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
