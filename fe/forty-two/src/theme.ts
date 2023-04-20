@@ -1,65 +1,114 @@
-const text = {};
+const text = {
+  header1:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 96px; line-height: 139px;",
+  header2:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 60px; line-height: 87px;",
+  header3:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 48px; line-height: 70px;",
+  header4:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 34px; line-height: 49px; letter-spacing: 0.0025em;",
+  header5:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 24px; line-height: 35px;",
+  header6:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 20px; line-height: 29px;",
+  subtitle1:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 500; font-size: 16px; line-height: 23px; letter-spacing: 0.0015em;",
+  subtitle2:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: 0.001em;",
+  body1:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 400; font-size: 16px; line-height: 23px; letter-spacing: 0.001em;",
+  body2:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 400; font-size: 14px; line-height: 20px; letter-spacing: 0.005em;",
+  button:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 14px; line-height: 20px; letter-spacing: 0.0125em; text-transform: uppercase;",
+  caption:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 17px; letter-spacing: 0.004em;",
+  overline:
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 10px; line-height: 14px; letter-spacing: 0.015em; text-transform: uppercase;",
+};
+
 const lightColor = {
   background: {
-    primary: "",
-    secondary: "",
+    primary: "#FAFAFA",
+    secondary: "#FFFFFF",
   },
-  brand: { blue: "", red: "", yellow: "" },
+  brand: {
+    blue: "#3644FC",
+    red: "#FF375B",
+    yellow: "#FBFF32",
+  },
   monotone: {
-    lightTranslucent: "",
-    light: "",
-    lightGray: "",
-    gray: "",
-    darkGray: "",
-    dark: "",
-    darkTranslucent: "",
+    lightTranslucent: "rgba(255, 255, 255, 0.5)",
+    light: "#FFFFFF",
+    lightGray: "#EFEFEF",
+    gray: "#A8A8A8",
+    darkGray: "#6E6E6E",
+    dark: "#151515",
+    darkTranslucent: "rgba(21, 21, 21, 0.35)",
   },
   card: {
-    red: "",
-    orange: "",
-    yellow: "",
-    green: "",
-    sky: "",
-    blue: "",
-    purple: "",
-    pink: "",
+    red: "#FB4C4C",
+    orange: "#FB9F4C",
+    yellow: "#FBF94C",
+    green: "#C8FBCF",
+    sky: "#C8EFFB",
+    blue: "#C8D9FB",
+    purple: "#E8C8FB",
+    pink: "#FB4C8E",
   },
   text: {
-    primary: "",
-    secondary: "",
+    primary: "#151515",
+    secondary: "#A8A8A8",
+    red: "#FF0000",
+    orange: "#FFA300",
+    yellow: "#FFF500",
+    green: "#00FF75",
+    sky: "#00C2FF",
+    blue: "#0057FF",
+    purple: "#9E00FF",
+    pink: "#FF00A8",
   },
 };
+
 const darkColor = {
   background: {
-    primary: "",
-    secondary: "",
+    primary: "#22232E",
+    secondary: "#404151",
   },
-  brand: { blue: "", red: "", yellow: "" },
+  brand: {
+    blue: "#3644FC",
+    red: "#FF375B",
+    yellow: "#FBFF32",
+  },
   monotone: {
-    lightTranslucent: "",
-    light: "",
-    lightGray: "",
-    gray: "",
-    darkGray: "",
-    dark: "",
-    darkTranslucent: "",
+    lightTranslucent: "rgba(255, 255, 255, 0.5)",
+    light: "#FFFFFF",
+    lightGray: "#EFEFEF",
+    gray: "#A8A8A8",
+    darkGray: "#6E6E6E",
+    dark: "#151515",
+    darkTranslucent: "rgba(21, 21, 21, 0.35)",
   },
   card: {
-    red: "",
-    orange: "",
-    yellow: "",
-    green: "",
-    sky: "",
-    blue: "",
-    purple: "",
-    pink: "",
+    red: "#4E1C25",
+    orange: "#4E3D25",
+    yellow: "#4E4D25",
+    green: "#1B4F3C",
+    sky: "#1B4364",
+    blue: "#1B2D58",
+    purple: "#3B1C58",
+    pink: "#4E1C47",
   },
   text: {
-    primary: "",
-    secondary: "",
+    primary: "#FFFFFF",
+    secondary: "#A8A8A8",
   },
 };
-const shadow = {};
+
+const shadow = {
+  cardShadow: "box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.08);",
+  innerShadow: "box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.04);",
+};
 
 export const lightStyles = {
   text: text,
@@ -72,23 +121,3 @@ export const darkStyles = {
   color: darkColor,
   shadow: shadow,
 };
-
-// MONOTONE_LIGHT: "rgb(255, 255, 255)",
-// MONOTONE_LIGHT_GRAY: "rgb(239, 239, 239)",
-// MONOTONE_GRAY: "rgb(168, 168, 168)",
-// MONOTONE_DARK: "rgb(110, 110, 110)",
-// MONOTONE_LIGHT_TRANSLUCENT: "rgba(255, 255, 255, 0.5)",
-// BACKGROUND_LIGHT_PRIMARY: "rgb(250, 250, 250)",
-// BACKGROUND_DARK_PRIMARY: "rgb(34, 35, 46)",
-// TEXT_LIGHT: "rgb(21, 21, 21)",
-// PRIMARY_BLUE: "rgb(54, 68, 252)",
-// PRIMARY_RED: "rgb(255, 55, 91)",
-// PRIMARY_YELLOW: "rgb(251, 255, 50)",
-// PERSONAL_RED: "rgba(255, 0, 0, 0.2)",
-// PERSONAL_ORANGE: "rgba(255, 163, 0, 0.2)",
-// PERSONAL_YELLOW: "rgba(255, 245, 0, 0.2)",
-// PERSONAL_GREEN: "rgba(0, 255, 117, 0.2)",
-// PERSONAL_SKY: "rgba(0, 194, 255, 0.2)",
-// PERSONAL_BLUE: "rgba(0, 87, 255, 0.2)",
-// PERSONAL_PURPLE: "rgba(158, 0, 255, 0.2)",
-// PERSONAL_PINK: "rgba(255, 0, 168, 0.2)",

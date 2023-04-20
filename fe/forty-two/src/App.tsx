@@ -1,9 +1,14 @@
-import SignIn from "./pages/SignIn";
+import "./reset.css";
+import { useState } from "react";
+import { GlobalStyle } from "./style";
+import { ThemeProvider } from "styled-components";
+import { lightStyles, darkStyles } from "./theme";
+import "./assets/fonts/pretendard/pretendard.css";
+import "./assets/fonts/pretendard/pretendard-subset.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { lightStyles, darkStyles } from "./theme";
-import { useState } from "react";
-import { ThemeProvider } from "styled-components";
+import { SignIn, SignUp } from "./pages/index";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +19,10 @@ const router = createBrowserRouter([
     path: "/signin",
     element: <SignIn />,
   },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
 ]);
 
 function App() {
@@ -21,7 +30,10 @@ function App() {
 
   return (
     <ThemeProvider theme={themeMode}>
-      <RouterProvider router={router} />
+      <GlobalStyle />
+      <GoogleOAuthProvider clientId="630522923660-vjvl4kc0rh8eni5erbd9qb3a7tidshph.apps.googleusercontent.com">
+        <RouterProvider router={router} />
+      </GoogleOAuthProvider>
     </ThemeProvider>
   );
 }
