@@ -3,11 +3,16 @@ import styled from "styled-components";
 
 type commonBtnProps = {
   children: string;
+  onClick(e: React.MouseEvent): void;
   btnType: "primary" | "secondary" | "disable";
 };
 
-function CommonBtn({ children, btnType }: commonBtnProps) {
-  return <StyledCommonBtn btnType={btnType}>{children}</StyledCommonBtn>;
+function CommonBtn({ children, onClick, btnType }: commonBtnProps) {
+  return (
+    <StyledCommonBtn onClick={onClick} btnType={btnType}>
+      {children}
+    </StyledCommonBtn>
+  );
 }
 
 export default CommonBtn;

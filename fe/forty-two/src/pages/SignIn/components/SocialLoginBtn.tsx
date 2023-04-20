@@ -62,5 +62,6 @@ const StyledSocialLoginBtn = styled.button<{
     flex-grow: 1;
     margin-left: 8px;
     ${({ theme }) => theme.text.button}
+    color: ${({ textColor }) => textColor};
   }
 `;

@@ -1,15 +1,31 @@
 import styled from "styled-components";
-import { LogoBg, NicknamePicker } from "../../components/index";
-import React from "react";
-import SignUpCard from "./components/SignUpCard";
+import { LogoBg } from "../../components/index";
+import React, { useEffect, useState } from "react";
+import { SignUpCard, NicknamePicker, EmojiSelector } from "./components/index";
 
 function SignUp() {
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const signUpContent = {
+    1: {
+      title: "마음에 드는 닉네임을 고르세요",
+      content: <NicknamePicker onClick={(e) => setStep(2)} />,
+    },
+    2: {
+      title: "프로필 이모지를 고르세요",
+      content: <EmojiSelector onClick={(e) => setStep(3)} />,
+    },
+    3: {
+      title: "환영합니다!",
+      content: <NicknamePicker onClick={(e) => setStep(1)} />,
+    },
+  };
+
   return (
     <StyledSignUp>
       <SignUpCard
-        step={1}
-        title={"닉네임을 골라주세요"}
-        content={<NicknamePicker />}
+        step={step}
+        title={signUpContent[step].title}
+        content={signUpContent[step].content}
       ></SignUpCard>
       <LogoBg isBlue={false}></LogoBg>
     </StyledSignUp>

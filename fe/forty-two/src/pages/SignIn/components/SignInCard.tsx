@@ -4,6 +4,7 @@ import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
+import React from "react";
 
 function SignInCard() {
   const loginWithGoogle = useGoogleLogin({
@@ -39,7 +40,7 @@ function SignInCard() {
   );
 }
 
-export default SignInCard;
+export default React.memo(SignInCard);
 
 const StyledSignInCard = styled.div`
   width: 100vw;

@@ -26,7 +26,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [themeMode, setThemeMode] = useState(lightStyles);
+  const [themeMode, setThemeMode] = useState(darkStyles);
 
   return (
     <ThemeProvider theme={themeMode}>

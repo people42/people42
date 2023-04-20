@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { Card } from "../../../components/index";
-import ProgressBar from "./ProgressBar";
-import { ReactElement } from "react";
+import { Card } from "../../../../components/index";
+import React, { ReactElement } from "react";
+import { ProgressBar } from "../index";
 
 interface signUpCardProps {
   step: 1 | 2 | 3;
@@ -9,15 +9,15 @@ interface signUpCardProps {
   content: ReactElement;
 }
 
-function SignUpCard(props: signUpCardProps) {
+function SignUpCard({ step, title, content }: signUpCardProps) {
   return (
     <StyledSignUpCard>
       <section>
         <Card isShadowInner={false}>
           <div className="card-box">
-            <ProgressBar step={1} />
-            <h1>{props.title}</h1>
-            {props.content}
+            <ProgressBar step={step} />
+            <h1>{title}</h1>
+            {content}
           </div>
         </Card>
       </section>

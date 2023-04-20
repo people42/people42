@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import CommonBtn from "../CommonBtn/CommonBtn";
-import Card from "../Card/Card";
+import { Card, CommonBtn } from "../../../../components/index";
 import RandomNicknameCard from "./RandomNicknameCard";
 
-type nicknamePickerProps = {};
+type nicknamePickerProps = {
+  onClick(e: React.MouseEvent): void;
+};
 
-function NicknamePicker() {
+function NicknamePicker({ onClick }: nicknamePickerProps) {
   return (
     <StyledNicknamePicker>
       <div>
@@ -17,7 +18,9 @@ function NicknamePicker() {
         <p>다시 고를래요</p>
         <button>리트</button>
       </div>
-      <CommonBtn btnType="primary">결정했어요</CommonBtn>
+      <CommonBtn onClick={onClick} btnType="primary">
+        결정했어요
+      </CommonBtn>
     </StyledNicknamePicker>
   );
 }

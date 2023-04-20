@@ -84,8 +84,9 @@ export const GlobalStyle = createGlobalStyle<any>`
   audio,
   video {
     font-family: 'Pretendard';
+    color: ${({ theme }) => theme.color.text.primary};
   }
   html {
-    background-color: ${({ theme }) => theme.color.background.primary};;
+    background-color: ${({ theme }) => theme.color.background.primary};
   }
 `;

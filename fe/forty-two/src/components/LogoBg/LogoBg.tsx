@@ -5,11 +5,11 @@ import logoBgDark from "../../assets/images/background/signUpBgDark.png";
 
 type logoBgProps = { isBlue: boolean };
 
-function logoBg({ isBlue }: logoBgProps) {
+function LogoBg({ isBlue }: logoBgProps) {
   return <StyledLogoBg isBlue={isBlue} />;
 }
 
-export default logoBg;
+export default LogoBg;
 
 const StyledLogoBg = styled.div<logoBgProps>`
   z-index: -99;
@@ -18,6 +18,6 @@ const StyledLogoBg = styled.div<logoBgProps>`
   left: 0px;
   width: 100vw;
   height: 100vh;
-  background: center url(${({ isBlue }) => (isBlue ? logoBgBlue : logoBgLight)});
+  background: center url(${(props) => (props.isBlue ? logoBgBlue : logoBgDark)});
   background-size: cover;
 `;
