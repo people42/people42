@@ -1,5 +1,6 @@
 package com.fourtytwo;
 
+import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.controller.FeedController;
 import com.fourtytwo.entity.Brush;
 import com.fourtytwo.entity.Message;
@@ -47,9 +48,13 @@ public class FeedControllerTest {
     @Autowired
     private FeedService feedService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     private static User savedUser1;
     private static User savedUser2;
     private static User savedUser3;
+    private static String accessToken;
 
     @BeforeEach
     void beforeAll() {
@@ -143,11 +148,13 @@ public class FeedControllerTest {
                 .build();
         Brush savedBrush3 = brushRepository.save(brush3);
 
+        accessToken = jwtTokenProvider.createToken(savedUser1.getId(), savedUser1.getRoleList());
+
     }
 
     @Test
     void 최근피드조회() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/recent/" + savedUser1.getId()))
+        mockMvc.perform(get(BASE_URL + "/recent").header("ACCESS-TOKEN", accessToken))
                 .andExpect(status().isOk());
     }
 

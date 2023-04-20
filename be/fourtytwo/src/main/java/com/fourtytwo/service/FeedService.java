@@ -1,5 +1,6 @@
 package com.fourtytwo.service;
 
+import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.feed.RecentFeedResDto;
 import com.fourtytwo.dto.message.MessageResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
@@ -23,12 +24,15 @@ public class FeedService {
     private final BrushRepository brushRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public List<RecentFeedResDto> findRecentBrush(Long userIdx) {
+    public List<RecentFeedResDto> findRecentBrush(String accessToken) {
+        Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
         if (userRepository.findById(userIdx).isEmpty()) {
             System.out.println("유저가 존재하지 않습니다.");
             return null;
         }
+
         List<Brush> recentBrushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         List<RecentFeedResDto> recentFeedResDtos = new ArrayList<>();
         Place currentPlace = Place.builder().id(-1L).build();
