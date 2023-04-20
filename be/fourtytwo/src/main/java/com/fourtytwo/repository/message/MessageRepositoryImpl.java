@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MessageRepositoryImpl implements MessageRepositoryCustom {
@@ -34,13 +35,19 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                                 .selectFrom(message)
                                 .join(brush)
                                 .on(message.eq(brush.message1))
-                                .where(brush.eq(targetBrush).and(brush.user1.id.ne(userIdx)))
+                                .where(brush.eq(targetBrush)
+                                        .and(brush.user1.id.ne(userIdx))
+                                        .and(message.isActive.eq(true))
+                                        .and(brush.user1.isActive.eq(true)))
                         ).or(message.eq(
                                 JPAExpressions
                                         .selectFrom(message)
                                         .join(brush)
                                         .on(message.eq(brush.message2))
-                                        .where(brush.eq(targetBrush).and(brush.user2.id.ne(userIdx)))
+                                        .where(brush.eq(targetBrush)
+                                                .and(brush.user2.id.ne(userIdx))
+                                                .and(message.isActive.eq(true))
+                                                .and(brush.user2.isActive.eq(true)))
                                 )
                         )
                 )

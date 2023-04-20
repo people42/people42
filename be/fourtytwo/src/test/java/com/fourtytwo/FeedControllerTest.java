@@ -55,6 +55,9 @@ public class FeedControllerTest {
     private static User savedUser2;
     private static User savedUser3;
     private static String accessToken;
+    private static Place savedPlace1;
+    private static Brush savedBrush1;
+    private static Brush savedBrush3;
 
     @BeforeEach
     void beforeAll() {
@@ -92,18 +95,21 @@ public class FeedControllerTest {
         Message message1 = Message.builder()
                 .user(savedUser1)
                 .content("user1이 쓴 메시지")
+                .isActive(true)
                 .build();
         Message savedMessage1 = messageRepository.save(message1);
 
         Message message2 = Message.builder()
                 .user(savedUser2)
                 .content("user2이 쓴 메시지")
+                .isActive(true)
                 .build();
         Message savedMessage2 = messageRepository.save(message2);
 
         Message message3 = Message.builder()
                 .user(savedUser3)
                 .content("user3이 쓴 메시지")
+                .isActive(true)
                 .build();
         Message savedMessage3 = messageRepository.save(message3);
 
@@ -112,7 +118,7 @@ public class FeedControllerTest {
                 .latitude(39.12345)
                 .longitude(164.12345)
                 .build();
-        Place savedPlace1 = placeRepository.save(place1);
+        savedPlace1 = placeRepository.save(place1);
 
         Place place2 = Place.builder()
                 .name("장소2")
@@ -128,7 +134,7 @@ public class FeedControllerTest {
                 .message2(savedMessage2)
                 .place(savedPlace1)
                 .build();
-        Brush savedBrush1 = brushRepository.save(brush1);
+        savedBrush1 = brushRepository.save(brush1);
 
         Brush brush2 = Brush.builder()
                 .user1(savedUser1)
@@ -146,7 +152,7 @@ public class FeedControllerTest {
                 .message2(savedMessage3)
                 .place(savedPlace2)
                 .build();
-        Brush savedBrush3 = brushRepository.save(brush3);
+        savedBrush3 = brushRepository.save(brush3);
 
         accessToken = jwtTokenProvider.createToken(savedUser1.getId(), savedUser1.getRoleList());
 
@@ -155,6 +161,13 @@ public class FeedControllerTest {
     @Test
     void 최근피드조회() throws Exception {
         mockMvc.perform(get(BASE_URL + "/recent").header("ACCESS-TOKEN", accessToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 장소피드조회() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/place/" + savedBrush3.getPlace().getId() + "/" + savedBrush3.getCreatedAt())
+                        .header("ACCESS-TOKEN", accessToken))
                 .andExpect(status().isOk());
     }
 

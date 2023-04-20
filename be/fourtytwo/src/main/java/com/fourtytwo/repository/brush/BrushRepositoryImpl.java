@@ -30,7 +30,10 @@ public class BrushRepositoryImpl implements BrushRepositoryCustom {
 
         return queryFactory
                 .selectFrom(brush)
-                .where(brush.createdAt.after(now.minusDays(1L)).and(brush.user1.id.eq(userIdx).or(brush.user2.id.eq(userIdx))))
+                .where(brush.createdAt.after(now.minusDays(1L))
+                        .and(brush.user1.id.eq(userIdx).or(brush.user2.id.eq(userIdx)))
+                        .and(brush.user1.isActive.eq(true))
+                        .and(brush.user2.isActive.eq(true)))
                 .orderBy(brush.createdAt.desc())
                 .fetch();
     }

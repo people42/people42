@@ -6,6 +6,7 @@ import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MessageRepositoryCustom {
 
