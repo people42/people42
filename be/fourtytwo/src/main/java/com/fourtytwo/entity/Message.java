@@ -24,4 +24,5 @@ public class Message extends BaseEntity{
     private User user;
 
     private String content;
+    private Boolean isActive;
 }
