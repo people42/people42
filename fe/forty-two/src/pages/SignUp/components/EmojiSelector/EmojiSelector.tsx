@@ -1,8 +1,11 @@
 import "swiper/css";
 import styled from "styled-components";
 import { CommonBtn } from "../../../../components";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { useEffect, useState } from "react";
+import { SwiperEvents } from "swiper/types";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
 
@@ -31,33 +34,59 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
     "face-blowing-a-kiss",
     "face-exhaling",
   ];
-  const staticEmojiList: any[] = emojiList.map((name) => {
+  const staticEmojiSlideList: any[] = emojiList.map((name) => {
     return (
-      <SwiperSlide>
-        <img
-          className="staticEmoji"
-          src={`src/assets/images/emoji/${name}.png`}
-          alt={"emoji"}
-        ></img>
+      <SwiperSlide key={name} id={name}>
+        <StaticEmojiIcon name={name}></StaticEmojiIcon>
       </SwiperSlide>
     );
   });
+  let swiper: any;
+  let swiperMethod: any;
+  useEffect(() => {
+    swiper = document.querySelector(".swiper");
+    swiperMethod = swiper.swiper;
+  }, []);
+
+  const [activeEmojiIndex, setActiveEmojiIndex] = useState(0);
+  const [activeEmojiName, setActiveEmojiName] = useState("");
+  const handleSlideChange = (swiper: any) => {
+    setActiveEmojiIndex(swiper.activeIndex);
+  };
+
+  useEffect(() => {
+    setActiveEmojiName(document.querySelector(".swiper-slide-active")!.id);
+  }, [activeEmojiIndex]);
 
   return (
     <StyledEmojiSelector>
       <div>
+        <div>
+          <button
+            onClick={() => {
+              swiperMethod.slidePrev();
+              handleSlideChange();
+            }}
+          ></button>
+          <SelectedEmojiIcon name={activeEmojiName}></SelectedEmojiIcon>
+          <button
+            onClick={() => {
+              swiperMethod.slideNext();
+              handleSlideChange();
+            }}
+          ></button>
+        </div>
         <Swiper
-          slidesPerView={5}
-          spaceBetween={30}
+          onSlideChange={handleSlideChange}
+          allowSlideNext={true}
+          allowSlidePrev={true}
+          slidesPerView={7}
           loop={true}
           centeredSlides={true}
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination]}
           className="emojiSwiper"
+          grabCursor={true}
         >
-          {staticEmojiList}
+          {staticEmojiSlideList}
         </Swiper>
       </div>
       <CommonBtn onClick={onClick} btnType="primary">
@@ -79,8 +108,40 @@ const StyledEmojiSelector = styled.div`
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    & > div > img {
-      scale: 0.9;
-    }
   }
+  .swiper {
+    padding-block: 16px;
+    height: 48px;
+  }
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    height: 48px;
+    transition: 0.5s all;
+  }
+  .swiper-slide-active {
+    transform: scale(1.7);
+  }
+  .swiper-slide-prev {
+    transform: scale(1.2);
+  }
+  .swiper-slide-next {
+    transform: scale(1.2);
+  }
+`;
+
+const StaticEmojiIcon = styled.div<{ name: string }>`
+  width: 36px;
+  height: 36px;
+  background-image: url(${({ name }) =>
+    `"src/assets/images/emoji/${name}.png"`});
+  background-size: 100%;
+`;
+
+const SelectedEmojiIcon = styled.div<{ name: string }>`
+  width: 120px;
+  height: 120px;
+  background-image: url(${({ name }) =>
+    `"src/assets/images/emoji/${name}.png"`});
+  background-size: 100%;
 `;
