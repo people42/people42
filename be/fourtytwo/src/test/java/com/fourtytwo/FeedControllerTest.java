@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 
-@SpringBootTest
+//@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 public class FeedControllerTest {
