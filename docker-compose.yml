@@ -1,6 +1,6 @@
 version: "3"
 services:
-  be42:
+  be:
     build: ./be/fourtytwo
-  fe42:
+  fe:
     build: ./fe/forty-two
