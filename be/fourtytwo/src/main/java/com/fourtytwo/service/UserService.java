@@ -8,12 +8,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fourtytwo.auth.JwtTokenProvider;
-import com.fourtytwo.dto.user.AppleOAuthResponseDto;
-import com.fourtytwo.dto.user.GoogleOAuthResponseDto;
-import com.fourtytwo.dto.user.LoginResponseDto;
-import com.fourtytwo.dto.user.SignupRequestDto;
+import com.fourtytwo.dto.user.*;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.user.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -26,17 +25,38 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import javax.persistence.EntityNotFoundException;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import java.util.HashSet;
+import java.util.Random;
 
 @Service
-@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final InputStream is = UserService.class.getResourceAsStream("/word_set.json");
+    private final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+    // Gson 라이브러리로 JSON 파싱
+    private final Gson gson = new Gson();
+    private final JsonObject json = gson.fromJson(reader, JsonObject.class);
+
+    // 필요한 데이터 추출
+    private final String[] nouns = gson.fromJson(json.get("nouns"), String[].class);
+    private final String[] adjectives = gson.fromJson(json.get("adjectives"), String[].class);
+
+    private HashSet<String> nicknames = new HashSet<>();
+
+    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
 
     public LoginResponseDto googleLogin(String o_auth_token) {
 
@@ -163,6 +183,21 @@ public class UserService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+    }
+
+    public NicknameResDto createNickname() {
+        while (true) {
+            Random random = new Random();
+            String adjective = adjectives[random.nextInt(adjectives.length)];
+            String noun = nouns[random.nextInt(nouns.length)];
+            String nickname = adjective + " " + noun;
+            if (!nicknames.contains(nickname)){
+                NicknameResDto nicknameResDto = new NicknameResDto(nickname);
+                nicknames.add(nickname);
+                return nicknameResDto;
+            }
+        }
+
     }
 
     public void deleteUser(Long user_idx) {
