@@ -23,6 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -166,7 +168,8 @@ public class FeedControllerTest {
 
     @Test
     void 장소피드조회() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/place/" + savedBrush3.getPlace().getId() + "/" + savedBrush3.getCreatedAt())
+        mockMvc.perform(get(BASE_URL + "/place?placeIdx=" + savedBrush3.getPlace().getId()
+                        + "&time=" + savedBrush3.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) + "&page=0&size=2")
                         .header("ACCESS-TOKEN", accessToken))
                 .andExpect(status().isOk());
     }

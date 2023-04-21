@@ -4,6 +4,7 @@ import com.fourtytwo.dto.feed.PlaceFeedResDto;
 import com.fourtytwo.dto.feed.RecentFeedResDto;
 import com.fourtytwo.service.FeedService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +25,13 @@ public class FeedController {
         return ApiResponse.ok(recentFeedResDtos);
     }
 
-    @GetMapping("/place/{placeIdx}/{time}")
+    @GetMapping("/place")
     public ResponseEntity<ApiResponse<PlaceFeedResDto>> getPlaceFeeds(@RequestHeader("ACCESS-TOKEN") String accessToken,
-                                                                             @PathVariable Long placeIdx,
-                                                                             @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime time) {
-        PlaceFeedResDto placeFeedResDto = feedService.findPlaceFeeds(accessToken, placeIdx, time);
+                                                                      @RequestParam Long placeIdx,
+                                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime time,
+                                                                      @RequestParam Integer page,
+                                                                      @RequestParam Integer size) {
+        PlaceFeedResDto placeFeedResDto = feedService.findPlaceFeeds(accessToken, placeIdx, time, page, size);
         return ApiResponse.ok(placeFeedResDto);
     }
 

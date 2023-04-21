@@ -14,10 +14,12 @@ import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,20 +85,24 @@ public class FeedService {
         return recentFeedResDtos;
     }
 
-    public PlaceFeedResDto findPlaceFeeds(String accessToken, Long placeIdx, LocalDateTime time) {
+    public PlaceFeedResDto findPlaceFeeds(String accessToken, Long placeIdx, LocalDateTime time, Integer page, Integer size) {
         Long userIdx = checkUserByAccessToken(accessToken);
 
         List<MessageResDto> messageResDtos = new ArrayList<>();
         // 24시간 이내 스침 조회
         List<Brush> brushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         boolean flag = false;
+        int cnt = 0;
         for (Brush brush : brushList) {
-            if (brush.getPlace().getId().equals(placeIdx) && brush.getCreatedAt().equals(time)) {
+            // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
+            if (brush.getPlace().getId().equals(placeIdx)
+                    && brush.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")).equals(time.toString())) {
                 flag = true;
             }
 
             if (flag) {
-                if (!brush.getPlace().getId().equals(placeIdx)) {
+                // 요청한 장소를 벗어나거나 요청받은 페이징 범위를 벗어나면 break
+                if (!brush.getPlace().getId().equals(placeIdx) || cnt == (page + 1) * size) {
                     break;
                 }
 
@@ -106,19 +112,26 @@ public class FeedService {
                     continue;
                 }
 
-                // 상대 유저와 몇 번 스쳤는지 조회
-                Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
-                MessageResDto messageResDto = MessageResDto.builder()
-                        .messageIdx(message.getId())
-                        .content(message.getContent())
-                        .userIdx(message.getUser().getId())
-                        .nickname(message.getUser().getNickname())
-                        .emoji(message.getUser().getNickname())
-                        .color(message.getUser().getColor())
-                        .brushCnt(count)
-                        .build();
-                messageResDtos.add(messageResDto);
+                cnt++;
+                if (cnt > page * size) {
+                    // 상대 유저와 몇 번 스쳤는지 조회
+                    Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
+                    MessageResDto messageResDto = MessageResDto.builder()
+                            .messageIdx(message.getId())
+                            .content(message.getContent())
+                            .userIdx(message.getUser().getId())
+                            .nickname(message.getUser().getNickname())
+                            .emoji(message.getUser().getNickname())
+                            .color(message.getUser().getColor())
+                            .brushCnt(count)
+                            .build();
+                    messageResDtos.add(messageResDto);
+                }
             }
+        }
+        
+        if (!flag) {
+            throw new EntityNotFoundException("존재하지 않는 요청입니다.");
         }
 
         // 장소 조회
@@ -140,6 +153,7 @@ public class FeedService {
                 .build();
     }
 
+    // 액세스 토큰 확인 및 유저 인덱스 반환
     public Long checkUserByAccessToken(String accessToken) {
         Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
         Optional<User> user = userRepository.findById(userIdx);
