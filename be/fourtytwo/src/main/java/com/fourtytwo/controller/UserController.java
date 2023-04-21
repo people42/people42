@@ -2,14 +2,12 @@ package com.fourtytwo.controller;
 
 import com.fourtytwo.dto.user.LoginRequestDto;
 import com.fourtytwo.dto.user.LoginResponseDto;
+import com.fourtytwo.dto.user.NicknameResDto;
 import com.fourtytwo.dto.user.SignupRequestDto;
 import com.fourtytwo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -34,6 +32,12 @@ public class UserController {
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponseDto = userService.appleLogin(loginRequestDto.getO_auth_token());
         return ApiResponse.ok(loginResponseDto);
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<ApiResponse<NicknameResDto>> createNickname() {
+        NicknameResDto nicknameResDto = userService.createNickname();
+        return ApiResponse.ok(nicknameResDto);
     }
 
     @PostMapping("/signup/google")
