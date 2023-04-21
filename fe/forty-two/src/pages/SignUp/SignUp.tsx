@@ -1,7 +1,12 @@
 import styled from "styled-components";
 import { LogoBg } from "../../components/index";
 import React, { useEffect, useState } from "react";
-import { SignUpCard, NicknamePicker, EmojiSelector } from "./components/index";
+import {
+  SignUpCard,
+  NicknamePicker,
+  EmojiSelector,
+  ConformUserSetting,
+} from "./components/index";
 
 function SignUp() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -16,7 +21,7 @@ function SignUp() {
     },
     3: {
       title: "환영합니다!",
-      content: <NicknamePicker onClick={(e) => setStep(1)} />,
+      content: <ConformUserSetting onClick={(e) => setStep(1)} />,
     },
   };
 
