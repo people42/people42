@@ -1,7 +1,9 @@
 package com.fourtytwo;
 
 import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
+import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,46 +12,101 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//@Transactional
+// @SpringBootTest
+// @AutoConfigureMockMvc
+// @Transactional
 public class AccountControllerTest {
 
-//    @Autowired
-//    MockMvc mockMvc;
-//
-//    private static final String BASE_URL = "/api/v1/account";
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private JwtTokenProvider jwtTokenProvider;
-//
-//    @BeforeEach
-//    void beforeEach() {
-//    }
-//
-//    @Test
-//    void 회원탈퇴() throws Exception {
-//        User user = User.builder()
-//                .roles("ROLE_USER")
-//                .isActive(true)
-//                .build();
-//        userRepository.save(user);
-//        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
-//
-//        // 회원탈퇴
-//        mockMvc.perform(put(BASE_URL + "/withdrawal").header("ACCESS-TOKEN", accessToken))
-//                .andExpect(status().isOk());
-//
-//        // 이미 탈퇴한 회원에 또 요청한 경우
-//        mockMvc.perform(put(BASE_URL + "/withdrawal").header("ACCESS-TOKEN", accessToken))
-//                .andExpect(status().isNotFound());
-//    }
+//     @Autowired
+//     MockMvc mockMvc;
+
+//     private static final String BASE_URL = "/api/v1/account";
+
+//     @Autowired
+//     private UserRepository userRepository;
+
+//     @Autowired
+//     private MessageRepository messageRepository;
+
+//     @Autowired
+//     private JwtTokenProvider jwtTokenProvider;
+
+//     @BeforeEach
+//     void beforeEach() {
+//     }
+
+//     @Test
+//     void 회원탈퇴() throws Exception {
+//         User user = User.builder()
+//                 .roles("ROLE_USER")
+//                 .isActive(true)
+//                 .build();
+//         userRepository.save(user);
+//         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
+
+//         // 회원탈퇴
+//         mockMvc.perform(put(BASE_URL + "/withdrawal").header("ACCESS-TOKEN", accessToken))
+//                 .andExpect(status().isOk());
+
+//         // 이미 탈퇴한 회원에 또 요청한 경우
+//         mockMvc.perform(put(BASE_URL + "/withdrawal").header("ACCESS-TOKEN", accessToken))
+//                 .andExpect(status().isNotFound());
+//     }
+
+//     @Test
+//     void 내정보조회() throws Exception {
+//         User user = User.builder()
+//                 .roles("ROLE_USER")
+//                 .isActive(true)
+//                 .emoji("이모지")
+//                 .build();
+//         User savedUser = userRepository.save(user);
+//         String accessToken = jwtTokenProvider.createToken(savedUser.getId(), user.getRoleList());
+
+//         Message message1 = Message.builder()
+//                 .content("오랜된 메시지")
+//                 .isActive(true)
+//                 .user(savedUser)
+//                 .build();
+//         messageRepository.save(message1);
+
+//         Thread.sleep(1000);
+
+//         Message message2 = Message.builder()
+//                 .content("최근 메시지")
+//                 .isActive(true)
+//                 .user(savedUser)
+//                 .build();
+//         messageRepository.save(message2);
+
+//         // 가장 최근 메시지가 조회되는지 확인
+//         mockMvc.perform(get(BASE_URL + "/myinfo").header("ACCESS-TOKEN", accessToken))
+//                 .andExpect(status().isOk())
+//                 .andExpect(jsonPath("$.data.message").value("최근 메시지"))
+//                 .andExpect(jsonPath("$.data.emoji").value("이모지"));
+
+//         User user2 = User.builder()
+//                 .roles("ROLE_USER")
+//                 .isActive(true)
+//                 .emoji("이모지")
+//                 .build();
+//         User savedUser2 = userRepository.save(user2);
+//         String accessToken2 = jwtTokenProvider.createToken(savedUser2.getId(), user.getRoleList());
+
+//         // 메시지가 없는 유저 조회
+//         mockMvc.perform(get(BASE_URL + "/myinfo").header("ACCESS-TOKEN", accessToken2))
+//                 .andExpect(status().isOk())
+//                 .andExpect(jsonPath("$.data.message").value(nullValue()))
+//                 .andExpect(jsonPath("$.data.emoji").value("이모지"));
+
+
+//     }
 
 }

@@ -20,11 +20,11 @@ import java.util.Set;
 public class CustomExceptionHandler {
 
     // 기본적인 예외 처리
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
-        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 400, null);
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
+//        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 400, null);
+//        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+//    }
 
     // @Valid에서 유효성 검사에 실패한 경우
     @ExceptionHandler(MethodArgumentNotValidException.class)

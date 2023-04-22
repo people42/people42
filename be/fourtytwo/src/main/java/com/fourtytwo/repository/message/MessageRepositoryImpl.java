@@ -83,4 +83,15 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public String findFirstContentByUserOrderByCreatedAtDesc(User user) {
+        return queryFactory
+                .select(message.content)
+                .from(message)
+                .where(message.user.eq(user))
+                .orderBy(message.createdAt.desc())
+                .limit(1)
+                .fetchOne();
+    }
 }
