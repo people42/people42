@@ -1,5 +1,5 @@
-import "./assets/fonts/pretendard/pretendard-subset.css";
-import "./assets/fonts/pretendard/pretendard.css";
+import "../assets/fonts/pretendard/pretendard-subset.css";
+import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
@@ -85,9 +85,9 @@ export const GlobalStyle = createGlobalStyle<any>`
   video {
     font-family: 'Pretendard';
     color: ${({ theme }) => theme.color.text.primary};
+    box-sizing: border-box;
   }
-  html {
-    transition: all 0.3s;
+  body {
     background-color: ${({ theme }) => theme.color.background.primary};
   }
 `;

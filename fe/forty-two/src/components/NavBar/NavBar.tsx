@@ -1,12 +1,7 @@
 import IconButton from "../Button/IconButton";
 import ThemeButton from "./ThemeButton";
 import { ReactElement } from "react";
-import {
-  TbSunFilled,
-  TbMoonFilled,
-  TbBellFilled,
-  TbSettingsFilled,
-} from "react-icons/tb";
+import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
 import styled from "styled-components";
 
 type navBarProps = {};
@@ -19,10 +14,10 @@ function NavBar() {
         <div className="nav-icons">
           <ThemeButton></ThemeButton>
           <IconButton>
-            <TbBellFilled size={24} />
+            <TbBellFilled size={24} aria-label={"알림"} />
           </IconButton>
           <IconButton>
-            <TbSettingsFilled size={24} />
+            <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconButton>
         </div>
       </div>

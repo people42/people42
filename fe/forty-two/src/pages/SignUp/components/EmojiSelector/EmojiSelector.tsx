@@ -38,7 +38,11 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
   const staticEmojiSlideList: any[] = emojiList.map((name) => {
     return (
       <SwiperSlide key={name} id={name}>
-        <StaticEmojiIcon name={name}></StaticEmojiIcon>
+        <StaticEmojiIcon
+          style={{
+            backgroundImage: `url("src/assets/images/emoji/static/${name}.png")`,
+          }}
+        ></StaticEmojiIcon>
       </SwiperSlide>
     );
   });
@@ -72,7 +76,11 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
             color="#A8A8A8"
           ></TbArrowBigLeftFilled>
           <div>
-            <SelectedEmojiIcon name={activeEmojiName}></SelectedEmojiIcon>
+            <SelectedEmojiIcon
+              style={{
+                backgroundImage: `url("src/assets/images/emoji/animate/${activeEmojiName}.gif")`,
+              }}
+            ></SelectedEmojiIcon>
           </div>
           <TbArrowBigRightFilled
             onClick={(e) => {
@@ -108,6 +116,17 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
 export default EmojiSelector;
 
 const StyledEmojiSelector = styled.div`
+  @keyframes floatingUp {
+    from {
+      filter: opacity(0);
+      transform: translateY(100%);
+    }
+    to {
+      filter: opacity(1);
+      transform: translateY(0px);
+    }
+  }
+
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -125,7 +144,7 @@ const StyledEmojiSelector = styled.div`
   }
   .swiper {
     padding-block: 16px;
-    height: 36px;
+    height: 64px;
   }
   .swiper-slide {
     display: flex;
@@ -155,7 +174,7 @@ const StyledEmojiSelector = styled.div`
       cursor: pointer;
       &:hover {
         scale: 1.1;
-        filter: brightness(1.5);
+        filter: brightness(1.2);
       }
       &:active {
         scale: 0.9;
@@ -164,11 +183,9 @@ const StyledEmojiSelector = styled.div`
   }
 `;
 
-const StaticEmojiIcon = styled.div<{ name: string }>`
+const StaticEmojiIcon = styled.div`
   width: 24px;
   height: 24px;
-  background-image: url(${({ name }) =>
-    `"src/assets/images/emoji/${name}.png"`});
   background-size: 100%;
   transition: all 0.3s;
   &:hover {
@@ -176,10 +193,9 @@ const StaticEmojiIcon = styled.div<{ name: string }>`
   }
 `;
 
-const SelectedEmojiIcon = styled.div<{ name: string }>`
+const SelectedEmojiIcon = styled.div`
+  animation: floatingUp 0.3s;
   width: 120px;
   height: 120px;
-  background-image: url(${({ name }) =>
-    `"src/assets/images/emoji/${name}.png"`});
   background-size: 100%;
 `;

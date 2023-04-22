@@ -4,9 +4,10 @@ import Home from "./pages/Home/Home";
 import { SignIn, SignUp } from "./pages/index";
 import { themeState } from "./recoil/theme/atoms";
 import "./reset.css";
-import { GlobalStyle } from "./style";
+import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
@@ -28,6 +29,27 @@ const router = createBrowserRouter([
 
 function App() {
   const [isDark, setIsDark] = useRecoilState(themeState);
+
+  useEffect(() => {
+    const isSystemDark: MediaQueryList = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
+
+    const handleSystemDarkChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        setIsDark(true);
+      } else {
+        setIsDark(false);
+      }
+      localStorage.setItem("isDark", e.matches.toString());
+    };
+
+    isSystemDark.addEventListener("change", handleSystemDarkChange);
+
+    return () => {
+      isSystemDark.removeEventListener("change", handleSystemDarkChange);
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>

@@ -11,13 +11,19 @@ function LogoBg({ isBlue }: logoBgProps) {
 
 export default LogoBg;
 
-const StyledLogoBg = styled.div<logoBgProps>`
+const StyledLogoBg = styled.div<{ isBlue: boolean }>`
   z-index: -99;
   position: fixed;
   top: 0px;
   left: 0px;
   width: 100vw;
   height: 100vh;
-  background: center url(${(props) => (props.isBlue ? logoBgBlue : logoBgDark)});
+  background: center
+    url(${(props) =>
+      props.isBlue
+        ? logoBgBlue
+        : props.theme.isDark
+        ? logoBgDark
+        : logoBgLight});
   background-size: cover;
 `;

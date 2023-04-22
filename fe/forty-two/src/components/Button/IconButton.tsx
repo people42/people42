@@ -1,10 +1,10 @@
 import { ReactElement } from "react";
 import styled from "styled-components";
 
-type iconButtonProps = { children: ReactElement };
+type iconButtonProps = { onClick(): void; children: ReactElement };
 
-function IconButton({ children }: iconButtonProps) {
-  return <StyledIconButton>{children}</StyledIconButton>;
+function IconButton({ onClick, children }: iconButtonProps) {
+  return <StyledIconButton onClick={onClick}>{children}</StyledIconButton>;
 }
 
 export default IconButton;
