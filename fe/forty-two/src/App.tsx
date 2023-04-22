@@ -1,19 +1,20 @@
-import "./reset.css";
-import { useState } from "react";
-import { GlobalStyle } from "./style";
-import { ThemeProvider } from "styled-components";
-import { lightStyles, darkStyles } from "./theme";
-import "./assets/fonts/pretendard/pretendard.css";
 import "./assets/fonts/pretendard/pretendard-subset.css";
+import "./assets/fonts/pretendard/pretendard.css";
+import Home from "./pages/Home/Home";
+import { SignIn, SignUp } from "./pages/index";
+import { themeState } from "./recoil/theme/atoms";
+import "./reset.css";
+import { GlobalStyle } from "./style";
+import { lightStyles, darkStyles } from "./styles/theme";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-import { SignIn, SignUp } from "./pages/index";
+import { useRecoilState } from "recoil";
+import { ThemeProvider } from "styled-components";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <SignIn />,
+    element: <Home />,
   },
   {
     path: "/signin",
@@ -26,10 +27,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [themeMode, setThemeMode] = useState(darkStyles);
+  const [isDark, setIsDark] = useRecoilState(themeState);
 
   return (
-    <ThemeProvider theme={themeMode}>
+    <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
       <GlobalStyle />
       <GoogleOAuthProvider clientId="630522923660-vjvl4kc0rh8eni5erbd9qb3a7tidshph.apps.googleusercontent.com">
         <RouterProvider router={router} />

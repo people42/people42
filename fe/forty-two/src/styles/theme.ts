@@ -28,7 +28,6 @@ const text = {
 };
 
 const lightColor = {
-  themeMode: "light",
   background: {
     primary: "#FAFAFA",
     secondary: "#FFFFFF",
@@ -72,7 +71,6 @@ const lightColor = {
 };
 
 const darkColor = {
-  themeMode: "dark",
   background: {
     primary: "#22232E",
     secondary: "#404151",
@@ -113,12 +111,14 @@ const shadow = {
 };
 
 export const lightStyles = {
+  isDark: false,
   text: text,
   color: lightColor,
   shadow: shadow,
 };
 
 export const darkStyles = {
+  isDark: true,
   text: text,
   color: darkColor,
   shadow: shadow,

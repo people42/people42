@@ -1,6 +1,6 @@
-import styled from "styled-components";
 import { Card, CommonBtn } from "../../../../components/index";
 import RandomNicknameCard from "./RandomNicknameCard";
+import styled from "styled-components";
 
 type nicknamePickerProps = {
   onClick(e: React.MouseEvent): void;

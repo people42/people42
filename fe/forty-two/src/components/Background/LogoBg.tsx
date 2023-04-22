@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import logoBgBlue from "../../assets/images/background/signUpBgBlue.png";
-import logoBgLight from "../../assets/images/background/signUpBgLight.png";
 import logoBgDark from "../../assets/images/background/signUpBgDark.png";
+import logoBgLight from "../../assets/images/background/signUpBgLight.png";
+import styled from "styled-components";
 
 type logoBgProps = { isBlue: boolean };
 

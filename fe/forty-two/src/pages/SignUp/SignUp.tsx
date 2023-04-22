@@ -1,12 +1,12 @@
-import styled from "styled-components";
 import { LogoBg } from "../../components/index";
-import React, { useEffect, useState } from "react";
 import {
   SignUpCard,
   NicknamePicker,
   EmojiSelector,
   ConformUserSetting,
 } from "./components/index";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 function SignUp() {
   const [step, setStep] = useState<1 | 2 | 3>(1);

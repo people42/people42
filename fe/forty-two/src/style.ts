@@ -1,6 +1,6 @@
-import { createGlobalStyle } from "styled-components";
-import "./assets/fonts/pretendard/pretendard.css";
 import "./assets/fonts/pretendard/pretendard-subset.css";
+import "./assets/fonts/pretendard/pretendard.css";
+import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
   body,
@@ -87,6 +87,7 @@ export const GlobalStyle = createGlobalStyle<any>`
     color: ${({ theme }) => theme.color.text.primary};
   }
   html {
+    transition: all 0.3s;
     background-color: ${({ theme }) => theme.color.background.primary};
   }
 `;

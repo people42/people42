@@ -1,10 +1,11 @@
-import "swiper/css";
-import styled from "styled-components";
 import { CommonBtn } from "../../../../components";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import "swiper/css/pagination";
+import { MouseEventHandler, useEffect, useState } from "react";
+import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";
+import styled from "styled-components";
+import "swiper/css";
 import "swiper/css/navigation";
-import { useEffect, useState } from "react";
+import "swiper/css/pagination";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import { SwiperEvents } from "swiper/types";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
@@ -41,11 +42,11 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
       </SwiperSlide>
     );
   });
-  let swiper: any;
-  let swiperMethod: any;
+  let swiperElement: any;
+  const [swiperMethod, setSwiperMethod] = useState<any>();
   useEffect(() => {
-    swiper = document.querySelector(".swiper");
-    swiperMethod = swiper.swiper;
+    swiperElement = document.querySelector(".swiper");
+    setSwiperMethod(swiperElement.swiper);
   }, []);
 
   const [activeEmojiIndex, setActiveEmojiIndex] = useState(0);
@@ -61,33 +62,41 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
   return (
     <StyledEmojiSelector>
       <div>
-        <div>
-          <button
-            onClick={() => {
-              swiperMethod.slidePrev();
-              handleSlideChange();
+        <div className="selected-emoji">
+          <TbArrowBigLeftFilled
+            onClick={(e) => {
+              swiperMethod?.slidePrev();
+              setActiveEmojiIndex(activeEmojiIndex - 1);
             }}
-          ></button>
-          <SelectedEmojiIcon name={activeEmojiName}></SelectedEmojiIcon>
-          <button
-            onClick={() => {
-              swiperMethod.slideNext();
-              handleSlideChange();
+            size={36}
+            color="#A8A8A8"
+          ></TbArrowBigLeftFilled>
+          <div>
+            <SelectedEmojiIcon name={activeEmojiName}></SelectedEmojiIcon>
+          </div>
+          <TbArrowBigRightFilled
+            onClick={(e) => {
+              swiperMethod?.slideNext();
+              setActiveEmojiIndex(activeEmojiIndex + 1);
             }}
-          ></button>
+            size={36}
+            color="#A8A8A8"
+          ></TbArrowBigRightFilled>
         </div>
-        <Swiper
-          onSlideChange={handleSlideChange}
-          allowSlideNext={true}
-          allowSlidePrev={true}
-          slidesPerView={7}
-          loop={true}
-          centeredSlides={true}
-          className="emojiSwiper"
-          grabCursor={true}
-        >
-          {staticEmojiSlideList}
-        </Swiper>
+        <div>
+          <Swiper
+            onSlideChange={handleSlideChange}
+            allowSlideNext={true}
+            allowSlidePrev={true}
+            slidesPerView={9}
+            loop={true}
+            centeredSlides={true}
+            className="emojiSwiper"
+            grabCursor={true}
+          >
+            {staticEmojiSlideList}
+          </Swiper>
+        </div>
       </div>
       <CommonBtn onClick={onClick} btnType="primary">
         결정했어요
@@ -108,15 +117,19 @@ const StyledEmojiSelector = styled.div`
     flex-grow: 1;
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    & > div:first-child {
+      flex-grow: 1;
+    }
   }
   .swiper {
     padding-block: 16px;
-    height: 48px;
+    height: 36px;
   }
   .swiper-slide {
     display: flex;
     justify-content: center;
-    height: 48px;
     transition: 0.5s all;
   }
   .swiper-slide-active {
@@ -128,14 +141,39 @@ const StyledEmojiSelector = styled.div`
   .swiper-slide-next {
     transform: scale(1.2);
   }
+  .selected-emoji {
+    display: flex;
+    align-items: center;
+    & > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+    & > svg {
+      transition: all 0.1s;
+      cursor: pointer;
+      &:hover {
+        scale: 1.1;
+        filter: brightness(1.5);
+      }
+      &:active {
+        scale: 0.9;
+      }
+    }
+  }
 `;
 
 const StaticEmojiIcon = styled.div<{ name: string }>`
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   background-image: url(${({ name }) =>
     `"src/assets/images/emoji/${name}.png"`});
   background-size: 100%;
+  transition: all 0.3s;
+  &:hover {
+    scale: 1.3;
+  }
 `;
 
 const SelectedEmojiIcon = styled.div<{ name: string }>`
