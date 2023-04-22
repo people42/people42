@@ -200,12 +200,15 @@ public class UserService {
 
     }
 
-    public void deleteUser(Long user_idx) {
-        User foundUser = userRepository.findByIdAndIsActiveTrue(user_idx);
-        if (foundUser == null) {
+    public void deleteUser(String accessToken) {
+        User user = jwtTokenProvider.getUser(accessToken);
+        if (user == null) {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
         }
-        foundUser.setIsActive(false);
-        userRepository.save(foundUser);
+        if (!user.getIsActive()) {
+            throw new EntityNotFoundException("이미 삭제된 유저입니다.");
+        }
+        user.setIsActive(false);
+        userRepository.save(user);
     }
 }

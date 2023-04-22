@@ -65,10 +65,10 @@ public class JwtTokenProvider {
         return longUserIdx;
     }
 
-//    public User getUser(String token) {
-//        Long userIdx = getUserIdx(token);
-//        return userRepository.findByIdAndIsActiveTrue(userIdx);
-//    }
+    public User getUser(String token) {
+        Long userIdx = getUserIdx(token);
+        return userRepository.findByIdAndIsActiveTrue(userIdx);
+    }
 
     public String resolveToken(HttpServletRequest request) {
         return request.getHeader("ACCESS-TOKEN");
