@@ -222,11 +222,8 @@ public class UserService {
 
     public User checkUser(String accessToken) {
         User user = jwtTokenProvider.getUser(accessToken);
-        if (user == null) {
+        if (user == null || !user.getIsActive()) {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
-        }
-        if (!user.getIsActive()) {
-            throw new EntityNotFoundException("이미 삭제된 유저입니다.");
         }
         return user;
     }
