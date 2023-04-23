@@ -1,5 +1,4 @@
 import { HomeMyMessage } from "..";
-import { MyMessageCard } from "../../../../components";
 import HomeTimeline from "../HomeTimeline/HomeTimeline";
 import styled from "styled-components";
 
@@ -15,6 +14,8 @@ function HomeMain() {
 export default HomeMain;
 
 const StyledHomeMain = styled.main`
+  width: 100%;
+  max-width: 1024px;
   display: flex;
   flex-grow: 1;
 `;

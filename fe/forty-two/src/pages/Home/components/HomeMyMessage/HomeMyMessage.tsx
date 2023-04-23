@@ -1,40 +1,21 @@
-import { MyMessageCard, MyMessageListCard } from "../../../../components";
+import { MyMessageCard } from "../../../../components";
 import { ReactElement } from "react";
 import styled from "styled-components";
 
-type myMessageListProps = {};
+type homeMyMessageProps = {};
 
-function MyMessageList({}: myMessageListProps) {
+function HomeMyMessage({}: homeMyMessageProps) {
   return (
-    <StyledMyMessageList>
+    <StyledHomeMyMessage>
       <MyMessageCard></MyMessageCard>
-      {/* <header>지난 나의 메시지 목록</header>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard>
-      <MyMessageListCard></MyMessageListCard> */}
-    </StyledMyMessageList>
+    </StyledHomeMyMessage>
   );
 }
 
-export default MyMessageList;
+export default HomeMyMessage;
 
-const StyledMyMessageList = styled.div`
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  & > div {
-  }
+const StyledHomeMyMessage = styled.section`
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;

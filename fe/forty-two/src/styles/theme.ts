@@ -29,7 +29,7 @@ const text = {
 
 const lightColor = {
   background: {
-    primary: "#FAFAFA",
+    primary: "#F5F5F5",
     secondary: "#FFFFFF",
   },
   brand: {
@@ -48,17 +48,17 @@ const lightColor = {
   },
   card: {
     red: "#FB4C4C",
-    orange: "#FB9F4C",
-    yellow: "#FBF94C",
-    green: "#C8FBCF",
-    sky: "#C8EFFB",
-    blue: "#C8D9FB",
-    purple: "#E8C8FB",
-    pink: "#FB4C8E",
+    orange: "#F59626",
+    yellow: "#FFF500",
+    green: "#00C637",
+    sky: "#0EC1CC",
+    blue: "#167BD8",
+    purple: "#A344DE",
+    pink: "#DE44A0",
   },
   text: {
     primary: "#151515",
-    secondary: "#A8A8A8",
+    secondary: "rgba(21, 21, 21, 0.35)",
     red: "#FF0000",
     orange: "#FFA300",
     yellow: "#FFF500",
@@ -66,7 +66,7 @@ const lightColor = {
     sky: "#00C2FF",
     blue: "#0057FF",
     purple: "#9E00FF",
-    pink: "#FF00A8",
+    pink: "#DE44A0",
   },
 };
 
@@ -101,7 +101,7 @@ const darkColor = {
   },
   text: {
     primary: "#FFFFFF",
-    secondary: "#A8A8A8",
+    secondary: "rgba(255, 255, 255, 0.5)",
   },
 };
 
