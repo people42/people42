@@ -153,6 +153,8 @@ public class FeedService {
                 .build();
     }
 
+//    public PlaceFeedResDto
+
     // 액세스 토큰 확인 및 유저 인덱스 반환
     public Long checkUserByAccessToken(String accessToken) {
         Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
