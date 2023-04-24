@@ -16,7 +16,7 @@ const StyledCard = styled.div<{ isShadowInner: boolean }>`
     props.isShadowInner
       ? props.theme.color.background.primary
       : props.theme.color.background.secondary};
-  border-radius: 32px;
+  border-radius: 24px;
   ${(props) =>
     props.isShadowInner
       ? props.theme.shadow.innerShadow

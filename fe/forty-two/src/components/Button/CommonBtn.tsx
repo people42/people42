@@ -30,8 +30,13 @@ const StyledCommonBtn = styled.button<{ btnType: string }>`
   padding-inline: 16px;
   ${({ theme }) => theme.text.button}
   cursor: pointer;
+  transition: all 0.1s;
+  &:hover {
+    filter: brightness(0.96);
+  }
+
   &:active {
-    filter: brightness(0.95);
+    filter: brightness(0.92);
     scale: 0.99;
   }
 `;

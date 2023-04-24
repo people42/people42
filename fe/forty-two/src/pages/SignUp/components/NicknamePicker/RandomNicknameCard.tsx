@@ -1,5 +1,5 @@
-import styled from "styled-components";
 import { Card } from "../../../../components/index";
+import styled from "styled-components";
 
 type randomNicknameCardProps = {};
 
