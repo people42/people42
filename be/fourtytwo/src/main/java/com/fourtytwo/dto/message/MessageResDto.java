@@ -12,7 +12,7 @@ public class MessageResDto {
     private Long userIdx;
     private String nickname;
     private String emoji;
-    private Integer color;
+    private String color;
     private Long brushCnt;
 
 }

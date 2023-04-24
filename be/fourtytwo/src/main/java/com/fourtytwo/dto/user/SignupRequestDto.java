@@ -13,6 +13,8 @@ import javax.validation.constraints.Size;
 @Data
 public class SignupRequestDto {
 
+    // color: string
+
     @NotBlank(message = "닉네임이 비어있습니다.")
     private String nickname;
 

@@ -16,4 +16,5 @@ public interface MessageRepositoryCustom {
 
     String findFirstContentByUserOrderByCreatedAtDesc(User user);
 
+    Long findTodayCountByUser(User user);
 }

@@ -214,9 +214,11 @@ public class UserService {
         User user = this.checkUser(accessToken);
         String emoji = userRepository.findEmojiById(user.getId());
         String message = messageRepository.findFirstContentByUserOrderByCreatedAtDesc(user);
+        Long messageCnt = messageRepository.findTodayCountByUser(user);
         return MyInfoResDto.builder()
                 .emoji(emoji)
                 .message(message)
+                .messageCnt(messageCnt)
                 .build();
     }
 
