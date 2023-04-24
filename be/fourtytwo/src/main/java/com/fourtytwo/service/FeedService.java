@@ -1,9 +1,12 @@
 package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.dto.brush.BrushResDto;
 import com.fourtytwo.dto.feed.PlaceFeedResDto;
 import com.fourtytwo.dto.feed.RecentFeedResDto;
+import com.fourtytwo.dto.feed.UserFeedResDto;
 import com.fourtytwo.dto.message.MessageResDto;
+import com.fourtytwo.dto.place.PlaceResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.Brush;
 import com.fourtytwo.entity.Message;
@@ -20,9 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -153,7 +154,32 @@ public class FeedService {
                 .build();
     }
 
-//    public PlaceFeedResDto
+    public UserFeedResDto findUserFeeds(String accessToken, Long targetUserIdx) {
+        Long userIdx = checkUserByAccessToken(accessToken);
+        List<PlaceResDto> placeResDtos = new ArrayList<>();
+        HashMap<Place, Integer> placeMap = new HashMap<>();
+
+        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(userIdx, targetUserIdx);
+
+        for (Brush brush : brushList) {
+            if (placeMap.containsKey(brush.getPlace())) {
+                placeMap.put(brush.getPlace(), placeMap.get(brush.getPlace())+1);
+            } else {
+                placeMap.put(brush.getPlace(), 1);
+            }
+        }
+        placeMap.forEach((place, cnt) -> {
+            PlaceResDto placeResDto = PlaceResDto.builder().placeIdx(place.getId()).placeName(place.getName())
+                    .placeLongitude(place.getLongitude()).placeLatitude(place.getLatitude()).brushCnt(cnt).build();
+            placeResDtos.add(placeResDto);
+        });
+        return UserFeedResDto.builder()
+                .placeResDtos(placeResDtos)
+                .brushCnt(brushList.size())
+                .userIdx(targetUserIdx)
+                .nickname(userRepository.findByIdAndIsActiveTrue(targetUserIdx).getNickname())
+                .build();
+    }
 
     // 액세스 토큰 확인 및 유저 인덱스 반환
     public Long checkUserByAccessToken(String accessToken) {
