@@ -1,6 +1,5 @@
 package com.fourtytwo.repository.message;
 
-import com.fourtytwo.dto.message.MessageResDto;
 import com.fourtytwo.entity.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -55,35 +54,35 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 .fetchOne();
     }
 
-    @Override
-    public List<MessageResDto> findRecentFeedList(User user) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return queryFactory
-                .select(Projections.fields(MessageResDto.class,
-                                message.id, message.content, message.user.id,
-                                message.user.nickname, message.user.emoji, message.user.color))
-                .from(message)
-                .where(message.in(
-                        JPAExpressions
-                                .select(brush.message1)
-                                .from(brush)
-                                .where(brush.createdAt.after(now.minusDays(1L))
-                                        .and(brush.user2.eq(user)))
-                        )
-                        .or(message.in(
-                                JPAExpressions
-                                        .select(brush.message2)
-                                        .from(brush)
-                                        .where(brush.createdAt.after(now.minusDays(1L))
-                                                .and(brush.user1.eq(user))
-                                        )
-                                )
-                        )
-                )
-                .fetch();
-    }
+//    @Override
+//    public List<MessageResDto> findRecentFeedList(User user) {
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        return queryFactory
+//                .select(Projections.fields(MessageResDto.class,
+//                                message.id, message.content, message.user.id,
+//                                message.user.nickname, message.user.emoji, message.user.color))
+//                .from(message)
+//                .where(message.in(
+//                        JPAExpressions
+//                                .select(brush.message1)
+//                                .from(brush)
+//                                .where(brush.createdAt.after(now.minusDays(1L))
+//                                        .and(brush.user2.eq(user)))
+//                        )
+//                        .or(message.in(
+//                                JPAExpressions
+//                                        .select(brush.message2)
+//                                        .from(brush)
+//                                        .where(brush.createdAt.after(now.minusDays(1L))
+//                                                .and(brush.user1.eq(user))
+//                                        )
+//                                )
+//                        )
+//                )
+//                .fetch();
+//    }
 
     @Override
     public String findFirstContentByUserOrderByCreatedAtDesc(User user) {
