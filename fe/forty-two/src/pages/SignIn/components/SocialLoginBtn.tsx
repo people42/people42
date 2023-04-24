@@ -53,8 +53,13 @@ const StyledSocialLoginBtn = styled.button<{
   border-radius: 8px;
   box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
   cursor: pointer;
+  transition: all 0.1s;
+  &:hover {
+    filter: brightness(0.96);
+  }
+
   &:active {
-    filter: brightness(0.95);
+    filter: brightness(0.92);
     scale: 0.99;
   }
 

@@ -1,14 +1,23 @@
-import styled from "styled-components";
 import { CommonBtn } from "../../../../components";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 type conformUserSettingProps = { onClick(e: React.MouseEvent): void };
 
 function ConformUserSetting({ onClick }: conformUserSettingProps) {
   return (
     <StyledConformUserSetting>
-      <div>asdf</div>
-      <CommonBtn onClick={onClick} btnType="primary">
-        확인
+      <div>
+        <div>아이콘</div>
+        <p>닉네임</p>
+      </div>
+      <Link to={"/"}>
+        <CommonBtn onClick={() => {}} btnType="primary">
+          이 프로필로 시작하기
+        </CommonBtn>
+      </Link>
+      <CommonBtn onClick={onClick} btnType="secondary">
+        다시 선택할래요
       </CommonBtn>
     </StyledConformUserSetting>
   );

@@ -1,8 +1,12 @@
-import "swiper/css";
-import styled from "styled-components";
 import { CommonBtn } from "../../../../components";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper";
+import { MouseEventHandler, useEffect, useState } from "react";
+import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";
+import styled from "styled-components";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import { SwiperEvents } from "swiper/types";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
 
@@ -31,34 +35,76 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
     "face-blowing-a-kiss",
     "face-exhaling",
   ];
-  const staticEmojiList: any[] = emojiList.map((name) => {
+  const staticEmojiSlideList: any[] = emojiList.map((name) => {
     return (
-      <SwiperSlide>
-        <img
-          className="staticEmoji"
-          src={`src/assets/images/emoji/${name}.png`}
-          alt={"emoji"}
-        ></img>
+      <SwiperSlide key={name} id={name}>
+        <StaticEmojiIcon
+          style={{
+            backgroundImage: `url("src/assets/images/emoji/static/${name}.png")`,
+          }}
+        ></StaticEmojiIcon>
       </SwiperSlide>
     );
   });
+  let swiperElement: any;
+  const [swiperMethod, setSwiperMethod] = useState<any>();
+  useEffect(() => {
+    swiperElement = document.querySelector(".swiper");
+    setSwiperMethod(swiperElement.swiper);
+  }, []);
+
+  const [activeEmojiIndex, setActiveEmojiIndex] = useState(0);
+  const [activeEmojiName, setActiveEmojiName] = useState("");
+  const handleSlideChange = (swiper: any) => {
+    setActiveEmojiIndex(swiper.activeIndex);
+  };
+
+  useEffect(() => {
+    setActiveEmojiName(document.querySelector(".swiper-slide-active")!.id);
+  }, [activeEmojiIndex]);
 
   return (
     <StyledEmojiSelector>
       <div>
-        <Swiper
-          slidesPerView={5}
-          spaceBetween={30}
-          loop={true}
-          centeredSlides={true}
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination]}
-          className="emojiSwiper"
-        >
-          {staticEmojiList}
-        </Swiper>
+        <div className="selected-emoji">
+          <TbArrowBigLeftFilled
+            onClick={(e) => {
+              swiperMethod?.slidePrev();
+              setActiveEmojiIndex(activeEmojiIndex - 1);
+            }}
+            size={36}
+            color="#A8A8A8"
+          ></TbArrowBigLeftFilled>
+          <div>
+            <SelectedEmojiIcon
+              style={{
+                backgroundImage: `url("src/assets/images/emoji/animate/${activeEmojiName}.gif")`,
+              }}
+            ></SelectedEmojiIcon>
+          </div>
+          <TbArrowBigRightFilled
+            onClick={(e) => {
+              swiperMethod?.slideNext();
+              setActiveEmojiIndex(activeEmojiIndex + 1);
+            }}
+            size={36}
+            color="#A8A8A8"
+          ></TbArrowBigRightFilled>
+        </div>
+        <div>
+          <Swiper
+            onSlideChange={handleSlideChange}
+            allowSlideNext={true}
+            allowSlidePrev={true}
+            slidesPerView={9}
+            loop={true}
+            centeredSlides={true}
+            className="emojiSwiper"
+            grabCursor={true}
+          >
+            {staticEmojiSlideList}
+          </Swiper>
+        </div>
       </div>
       <CommonBtn onClick={onClick} btnType="primary">
         결정했어요
@@ -70,6 +116,17 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
 export default EmojiSelector;
 
 const StyledEmojiSelector = styled.div`
+  @keyframes floatingUp {
+    from {
+      filter: opacity(0);
+      transform: translateY(100%);
+    }
+    to {
+      filter: opacity(1);
+      transform: translateY(0px);
+    }
+  }
+
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -79,8 +136,66 @@ const StyledEmojiSelector = styled.div`
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    & > div > img {
-      scale: 0.9;
+    display: flex;
+    flex-direction: column;
+    & > div:first-child {
+      flex-grow: 1;
     }
   }
+  .swiper {
+    padding-block: 16px;
+    height: 64px;
+  }
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    transition: 0.5s all;
+  }
+  .swiper-slide-active {
+    transform: scale(1.7);
+  }
+  .swiper-slide-prev {
+    transform: scale(1.2);
+  }
+  .swiper-slide-next {
+    transform: scale(1.2);
+  }
+  .selected-emoji {
+    display: flex;
+    align-items: center;
+    & > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+    & > svg {
+      transition: all 0.1s;
+      cursor: pointer;
+      &:hover {
+        scale: 1.1;
+        filter: brightness(1.2);
+      }
+      &:active {
+        scale: 0.9;
+      }
+    }
+  }
+`;
+
+const StaticEmojiIcon = styled.div`
+  width: 24px;
+  height: 24px;
+  background-size: 100%;
+  transition: all 0.3s;
+  &:hover {
+    scale: 1.3;
+  }
+`;
+
+const SelectedEmojiIcon = styled.div`
+  animation: floatingUp 0.3s;
+  width: 120px;
+  height: 120px;
+  background-size: 100%;
 `;

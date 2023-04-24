@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import { Card } from "../../../../components/index";
-import React, { ReactElement } from "react";
 import { ProgressBar } from "../index";
+import React, { ReactElement } from "react";
+import styled from "styled-components";
 
 interface signUpCardProps {
   step: 1 | 2 | 3;

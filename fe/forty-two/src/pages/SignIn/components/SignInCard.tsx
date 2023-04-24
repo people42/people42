@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import appleLogo from "../../../assets/images/logo/apple.png";
+import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
-import appleLogo from "../../../assets/images/logo/apple.png";
-import googleLogo from "../../../assets/images/logo/google.png";
 import React from "react";
+import styled from "styled-components";
 
 function SignInCard() {
   const loginWithGoogle = useGoogleLogin({
