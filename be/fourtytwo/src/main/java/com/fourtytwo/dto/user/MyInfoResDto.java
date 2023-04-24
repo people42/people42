@@ -8,5 +8,6 @@ public class MyInfoResDto {
 
     private String emoji;
     private String message;
+    private Long messageCnt;
 
 }
