@@ -2,10 +2,112 @@ import { MessageCard } from "../../../../components";
 import HomeTimelineGroup from "./HomeTimelineGroup";
 import styled from "styled-components";
 
+const dataList = [
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "red",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지asf1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "orange",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "red",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지asf1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "orange",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "red",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+  {
+    recentMessageInfo: {
+      messageIdx: 102,
+      content: "user3이 남긴 메시지asf1",
+      userIdx: 102,
+      nickname: "user3",
+      emoji: "confused",
+      color: "orange",
+      brushCnt: 1,
+    },
+    placeWithTimeInfo: {
+      placeIdx: 62,
+      placeName: "장소2",
+      time: "오늘 14시쯤",
+    },
+  },
+];
+
 function HomeTimeline() {
   return (
     <StyledHomeTimeline>
-      <HomeTimelineGroup></HomeTimelineGroup>
+      {dataList.map((data: any) => (
+        <HomeTimelineGroup props={data}></HomeTimelineGroup>
+      ))}
+      <div className="timeline-bar"></div>
     </StyledHomeTimeline>
   );
 }
@@ -13,5 +115,16 @@ function HomeTimeline() {
 export default HomeTimeline;
 
 const StyledHomeTimeline = styled.section`
-  width: 400px;
+  flex-shrink: 0;
+  width: 360px;
+  position: relative;
+
+  .timeline-bar {
+    position: absolute;
+    top: 0px;
+    left: 126px;
+    width: 4px;
+    height: 100%;
+    background-color: ${({ theme }) => theme.color.brand.blue};
+  }
 `;

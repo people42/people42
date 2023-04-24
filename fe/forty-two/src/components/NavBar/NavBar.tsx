@@ -1,6 +1,5 @@
 import IconButton from "../Button/IconButton";
 import ThemeButton from "./ThemeButton";
-import { ReactElement } from "react";
 import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
 import styled from "styled-components";
 
@@ -13,10 +12,10 @@ function NavBar() {
         <div className="logo">logo</div>
         <div className="nav-icons">
           <ThemeButton></ThemeButton>
-          <IconButton>
+          <IconButton onClick={() => {}}>
             <TbBellFilled size={24} aria-label={"알림"} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => {}}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconButton>
         </div>
@@ -31,7 +30,7 @@ const StyledNavBar = styled.nav`
   width: 100vw;
   display: flex;
   justify-content: center;
-  padding: 24px;
+  padding: 16px 24px 0px 24px;
   box-sizing: border-box;
   & svg {
     color: ${({ theme }) => theme.color.monotone.gray};

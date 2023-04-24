@@ -2,29 +2,19 @@ import Card from "./Card";
 import styled from "styled-components";
 
 type messageCardProps = {
-  color:
-    | "red"
-    | "orange"
-    | "yellow"
-    | "green"
-    | "sky"
-    | "blue"
-    | "purple"
-    | "pink";
+  props: feed["recent"]["recentMessageInfo"];
 };
 
-function MessageCard({ color }: messageCardProps) {
+function MessageCard({ props }: messageCardProps) {
   return (
-    <StyledMessageCard color={color}>
+    <StyledMessageCard color={props.color}>
       <div className="emoji"></div>
       <div className="reaction"></div>
       <div className="message">
         <Card isShadowInner={false}>
           <>
-            <p className="message-nickname">다른사람닉네임</p>
-            <p className="message-content">
-              동해물과 백두산이 마르고 닳도asdfasdf록
-            </p>
+            <p className="message-nickname">{props.nickname}</p>
+            <p className="message-content">{props.content}</p>
           </>
         </Card>
       </div>
@@ -34,7 +24,9 @@ function MessageCard({ color }: messageCardProps) {
 
 export default MessageCard;
 
-const StyledMessageCard = styled.div<messageCardProps>`
+const StyledMessageCard = styled.div<{
+  color: colorType;
+}>`
   max-width: 280px;
   position: relative;
   cursor: pointer;
@@ -68,7 +60,7 @@ const StyledMessageCard = styled.div<messageCardProps>`
   .message {
     padding-top: 18px;
     & > div {
-      padding: 24px 24px 24px 24px;
+      padding: 24px 16px 16px 16px;
       background-color: ${(props) =>
         props.theme.color.card[props.color] + "a0"};
       filter: drop-shadow(
@@ -96,7 +88,7 @@ const StyledMessageCard = styled.div<messageCardProps>`
       margin-bottom: 4px;
     }
     &-content {
-      ${({ theme }) => theme.text.body}
+      ${({ theme }) => theme.text.body2}
       color: ${({ theme }) => theme.color.text.primary};
     }
   }
