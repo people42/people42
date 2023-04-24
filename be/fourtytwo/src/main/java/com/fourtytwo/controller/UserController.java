@@ -1,9 +1,6 @@
 package com.fourtytwo.controller;
 
-import com.fourtytwo.dto.user.LoginRequestDto;
-import com.fourtytwo.dto.user.LoginResponseDto;
-import com.fourtytwo.dto.user.NicknameResDto;
-import com.fourtytwo.dto.user.SignupRequestDto;
+import com.fourtytwo.dto.user.*;
 import com.fourtytwo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,5 +47,11 @@ public class UserController {
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "apple");
         return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/token")
+    public ResponseEntity<ApiResponse<AccessTokenResDto>> getAccessToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
+        AccessTokenResDto accessTokenResDto = userService.getAccessToken(refreshToken);
+        return ApiResponse.ok(accessTokenResDto);
     }
 }
