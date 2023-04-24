@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,11 +21,11 @@ import java.util.Set;
 public class CustomExceptionHandler {
 
     // 기본적인 예외 처리
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
-        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 400, null);
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException e) {
+//        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 400, null);
+//        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+//    }
 
     // @Valid에서 유효성 검사에 실패한 경우
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -43,6 +44,12 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ApiResponse<?>> handleMissingRequestHeaderException(MissingRequestHeaderException e) {
         ApiResponse<?> apiResponse = new ApiResponse<Object>("헤더에 '" + e.getHeaderName() + "'을 넣어주세요", 400, null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        ApiResponse<?> apiResponse = new ApiResponse<Object>("데이터 형식이 잘못되었습니다.", 400, null);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
