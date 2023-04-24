@@ -1,4 +1,4 @@
-type colorType =
+type TColorType =
   | "red"
   | "orange"
   | "yellow"

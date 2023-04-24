@@ -116,17 +116,6 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
 export default EmojiSelector;
 
 const StyledEmojiSelector = styled.div`
-  @keyframes floatingUp {
-    from {
-      filter: opacity(0);
-      transform: translateY(100%);
-    }
-    to {
-      filter: opacity(1);
-      transform: translateY(0px);
-    }
-  }
-
   height: 100%;
   display: flex;
   flex-direction: column;

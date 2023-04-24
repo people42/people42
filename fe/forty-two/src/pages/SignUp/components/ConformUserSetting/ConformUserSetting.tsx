@@ -8,8 +8,12 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
   return (
     <StyledConformUserSetting>
       <div>
-        <div>아이콘</div>
-        <p>닉네임</p>
+        <SelectedEmojiIcon
+          style={{
+            backgroundImage: `url("src/assets/images/emoji/animate/ghost.gif")`,
+          }}
+        ></SelectedEmojiIcon>
+        <p>형용사한 명사</p>
       </div>
       <Link to={"/"}>
         <CommonBtn onClick={() => {}} btnType="primary">
@@ -39,5 +43,17 @@ const StyledConformUserSetting = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    & > p {
+      ${({ theme }) => theme.text.header6}
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
   }
+`;
+
+const SelectedEmojiIcon = styled.div`
+  animation: floatingUp 0.3s;
+  width: 120px;
+  height: 120px;
+  background-size: 100%;
 `;

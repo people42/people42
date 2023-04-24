@@ -27,7 +27,7 @@ function NavBar() {
 export default NavBar;
 
 const StyledNavBar = styled.nav`
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   padding: 16px 24px 0px 24px;
