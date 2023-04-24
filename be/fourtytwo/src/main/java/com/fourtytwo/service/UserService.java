@@ -9,7 +9,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.user.*;
+import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
+import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -38,6 +40,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MessageRepository messageRepository;
 
     private final InputStream is = UserService.class.getResourceAsStream("/word_set.json");
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -52,9 +55,10 @@ public class UserService {
 
     private HashSet<String> nicknames = new HashSet<>();
 
-    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, MessageRepository messageRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.messageRepository = messageRepository;
     }
 
 
@@ -200,12 +204,27 @@ public class UserService {
 
     }
 
-    public void deleteUser(Long user_idx) {
-        User foundUser = userRepository.findByIdAndIsActiveTrue(user_idx);
-        if (foundUser == null) {
+    public void deleteUser(String accessToken) {
+        User user = this.checkUser(accessToken);
+        user.setIsActive(false);
+        userRepository.save(user);
+    }
+
+    public MyInfoResDto getMyInfo(String accessToken) {
+        User user = this.checkUser(accessToken);
+        String emoji = userRepository.findEmojiById(user.getId());
+        String message = messageRepository.findFirstContentByUserOrderByCreatedAtDesc(user);
+        return MyInfoResDto.builder()
+                .emoji(emoji)
+                .message(message)
+                .build();
+    }
+
+    public User checkUser(String accessToken) {
+        User user = jwtTokenProvider.getUser(accessToken);
+        if (user == null || !user.getIsActive()) {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
         }
-        foundUser.setIsActive(false);
-        userRepository.save(foundUser);
+        return user;
     }
 }
