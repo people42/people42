@@ -1,8 +1,10 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.report.ReportReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
 import com.fourtytwo.service.MessageService;
+import com.fourtytwo.service.ReportService;
 import com.fourtytwo.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ AccountController {
 
     private final UserService userService;
     private final MessageService messageService;
+    private final ReportService reportService;
 
     @PutMapping("/withdrawal")
     public ResponseEntity<ApiResponse<Object>> deleteUser(@RequestHeader("ACCESS-TOKEN") String accessToken) {
@@ -41,5 +44,13 @@ AccountController {
         return ApiResponse.ok(null);
     }
 
+    @PostMapping("/report")
+    public ResponseEntity<ApiResponse<Object>> reportUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                         @Valid @RequestBody ReportReqDto reportReqDto) {
+
+        reportService.reportUser(accessToken, reportReqDto);
+        return ApiResponse.ok(null);
+
+    }
 
 }
