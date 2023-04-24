@@ -25,7 +25,7 @@ function SignInCard() {
               platform: "google",
               email: res.data.data.email,
               nickname: null,
-              o_auth_token: null,
+              o_auth_token: tokenRes.access_token,
               color: null,
               emoji: null,
             });

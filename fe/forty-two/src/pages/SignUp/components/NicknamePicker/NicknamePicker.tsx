@@ -11,29 +11,39 @@ type nicknamePickerProps = {
 };
 
 function NicknamePicker({ onClick }: nicknamePickerProps) {
-  const [signUpUser, setSignUpUser] =
-    useRecoilState<TSignUpUser>(signUpUserState);
+  const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
+
+  const setSignUpUserNickname = (nickname: string) => {
+    const newSignUpUser = Object.assign({}, signUpUser);
+    newSignUpUser.nickname = nickname;
+    setSignUpUser(newSignUpUser);
+  };
 
   const [userNickname, setUserNickname] = useState<{
     aword: string | null;
     nword: string | null;
   }>({ aword: null, nword: null });
 
+  useEffect(() => {
+    getNewNickname();
+  }, []);
+
   const getNewNickname = () => {
-    if (!randomWordAnimation) {
-      setRandomWordAnimation(true);
-      setTimeout(() => {
-        setUserNickname({ aword: "안멋진", nword: "사자" });
-        setRandomWordAnimation(false);
-      }, 50);
-    }
+    setUserNickname({ aword: "null", nword: "null" });
   };
 
   useEffect(() => {
-    setUserNickname({ aword: "멋진", nword: "호랑이" });
-  }, []);
-
-  useEffect(() => {
+    setSignUpUserNickname(
+      userNickname.aword && userNickname.nword
+        ? userNickname.aword + userNickname.nword
+        : ""
+    );
+    if (!randomWordAnimation) {
+      setRandomWordAnimation(true);
+      setTimeout(() => {
+        setRandomWordAnimation(false);
+      }, 50);
+    }
     if (userNickname.aword && userNickname.nword) {
       setRandomWordAList([
         "멍멍 짖는",

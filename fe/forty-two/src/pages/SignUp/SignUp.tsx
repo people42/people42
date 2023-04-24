@@ -1,5 +1,4 @@
 import { LogoBg } from "../../components/index";
-import { signUpUserState } from "../../recoil/auth/atoms";
 import {
   SignUpCard,
   NicknamePicker,
@@ -7,13 +6,10 @@ import {
   ConformUserSetting,
 } from "./components/index";
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function SignUp() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const signUpUser = useRecoilValue<TSignUpUser>(signUpUserState);
 
   const signUpContent = {
     1: {

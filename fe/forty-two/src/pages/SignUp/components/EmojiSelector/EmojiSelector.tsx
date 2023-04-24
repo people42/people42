@@ -1,12 +1,13 @@
 import { CommonBtn } from "../../../../components";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { signUpUserState } from "../../../../recoil/auth/atoms";
+import { useEffect, useState } from "react";
 import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import { SwiperEvents } from "swiper/types";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
 
@@ -35,6 +36,15 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
     "face-blowing-a-kiss",
     "face-exhaling",
   ];
+
+  const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
+
+  const setSignUpUserEmoji = (emoji: string) => {
+    const newSignUpUser = Object.assign({}, signUpUser);
+    newSignUpUser.emoji = emoji;
+    setSignUpUser(newSignUpUser);
+  };
+
   const staticEmojiSlideList: any[] = emojiList.map((name) => {
     return (
       <SwiperSlide key={name} id={name}>
@@ -54,13 +64,13 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
   }, []);
 
   const [activeEmojiIndex, setActiveEmojiIndex] = useState(0);
-  const [activeEmojiName, setActiveEmojiName] = useState("");
+
   const handleSlideChange = (swiper: any) => {
     setActiveEmojiIndex(swiper.activeIndex);
   };
 
   useEffect(() => {
-    setActiveEmojiName(document.querySelector(".swiper-slide-active")!.id);
+    setSignUpUserEmoji(document.querySelector(".swiper-slide-active")!.id);
   }, [activeEmojiIndex]);
 
   return (
@@ -78,7 +88,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
           <div>
             <SelectedEmojiIcon
               style={{
-                backgroundImage: `url("src/assets/images/emoji/animate/${activeEmojiName}.gif")`,
+                backgroundImage: `url("src/assets/images/emoji/animate/${signUpUser.emoji}.gif")`,
               }}
             ></SelectedEmojiIcon>
           </div>

@@ -1,19 +1,23 @@
 import { CommonBtn } from "../../../../components";
+import { signUpUserState } from "../../../../recoil/auth/atoms";
 import { Link } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type conformUserSettingProps = { onClick(e: React.MouseEvent): void };
 
 function ConformUserSetting({ onClick }: conformUserSettingProps) {
+  const signUpUser = useRecoilValue(signUpUserState);
+
   return (
     <StyledConformUserSetting>
       <div>
         <SelectedEmojiIcon
           style={{
-            backgroundImage: `url("src/assets/images/emoji/animate/ghost.gif")`,
+            backgroundImage: `url("src/assets/images/emoji/animate/${signUpUser.emoji}.gif")`,
           }}
         ></SelectedEmojiIcon>
-        <p>형용사한 명사</p>
+        <p>{signUpUser.nickname}</p>
       </div>
       <Link to={"/"}>
         <CommonBtn onClick={() => {}} btnType="primary">
