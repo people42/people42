@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!--  배경 : 파란점+말풍선  -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/dot"/>
+        <TextView
+            android:id="@+id/feed_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/message_height"
+            android:layout_marginVertical="20dp"
+            android:layout_marginLeft="@dimen/message_margin_horizontal"
+            android:text="content"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/message_padding_horizontal"
+            android:background="@drawable/round_box"
+            android:backgroundTint="@color/yellow"/>
+    </LinearLayout>
+    <!--  한 층 위 : 이모지+리액션  -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/message_height"
+        android:layout_marginLeft="@dimen/feed_margin_horizontal"
+        android:paddingHorizontal="@dimen/reaction_padding_right">
+        <ImageView
+            android:id="@+id/message_emoji"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true"
+            android:elevation="5dp"
+            />
+        <ImageView
+            android:id="@+id/message_reation"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/round"
+            android:elevation="3dp"
+            android:padding="4dp"
+            android:src="@drawable/heart"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="3dp"
+            />
+    </RelativeLayout>
+
+</FrameLayout>
