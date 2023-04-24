@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -89,9 +90,18 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
         return queryFactory
                 .select(message.content)
                 .from(message)
-                .where(message.user.eq(user))
+                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
                 .orderBy(message.createdAt.desc())
                 .limit(1)
+                .fetchOne();
+    }
+
+    @Override
+    public Long findTodayCountByUser(User user) {
+        return queryFactory
+                .select(message.count())
+                .from(message)
+                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
                 .fetchOne();
     }
 }
