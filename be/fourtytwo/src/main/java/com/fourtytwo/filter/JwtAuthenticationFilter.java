@@ -1,6 +1,7 @@
 package com.fourtytwo.filter;
 
 import com.fourtytwo.auth.JwtTokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (ExpiredJwtException e) {
+            throw new AuthenticationServiceException("토큰이 만료되었습니다.");
         } catch (JwtException e) {
             throw new AuthenticationServiceException("토큰 인증에 실패하였습니다.");
         }
