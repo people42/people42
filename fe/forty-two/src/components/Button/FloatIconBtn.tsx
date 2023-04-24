@@ -13,7 +13,7 @@ function FloatIconBtn({ onClick, children }: floatIconBtnProps) {
 export default FloatIconBtn;
 
 const StyledFloatIconBtn = styled.button`
-  background-color: ${({ theme }) => theme.color.brand.red};
+  background-color: ${({ theme }) => theme.color.background.secondary};
   width: 24px;
   height: 24px;
   border-radius: 12px;
@@ -21,8 +21,10 @@ const StyledFloatIconBtn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 4px;
+  ${({ theme }) => theme.shadow.cardShadow}
   & svg {
-    color: ${({ theme }) => theme.color.monotone.light};
+    color: ${({ theme }) => theme.color.text.primary};
   }
 
   transition: all 0.1s;

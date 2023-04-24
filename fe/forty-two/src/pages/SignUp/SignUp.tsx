@@ -1,15 +1,20 @@
 import { LogoBg } from "../../components/index";
+import { signUpUserState } from "../../recoil/auth/atoms";
 import {
   SignUpCard,
   NicknamePicker,
   EmojiSelector,
   ConformUserSetting,
 } from "./components/index";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function SignUp() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const signUpUser = useRecoilValue<TSignUpUser>(signUpUserState);
+
   const signUpContent = {
     1: {
       title: "마음에 드는 닉네임을 고르세요",

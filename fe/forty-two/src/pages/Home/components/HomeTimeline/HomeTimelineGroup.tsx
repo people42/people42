@@ -2,7 +2,7 @@ import { MessageCard } from "../../../../components";
 import styled from "styled-components";
 
 interface homeTimeLineGroupProps {
-  props: feed["recent"];
+  props: TFeed["recent"];
 }
 
 function HomeTimelineGroup({ props }: homeTimeLineGroupProps) {

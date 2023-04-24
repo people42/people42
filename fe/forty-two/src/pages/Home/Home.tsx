@@ -15,7 +15,7 @@ function Home() {
 export default React.memo(Home);
 
 const StyledHome = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
