@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="main_blue">#3644FC</color>
+    <color name="line_blue">#007AFF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="offwhite">#00FFFFFF</color>
+    <!-- 라이트 모드 -->
+    <!-- 투명도 60% == 99 / 완전 투명 0% == 00 -->
+    <color name="red">#99FB4C4C</color>
+    <color name="orange">#99F59626</color>
+    <color name="yellow">#99FFF500</color>
+    <color name="green">#9900C637</color>
+    <color name="sky">#990EC1CC</color>
+    <color name="blue">#99167BD8</color>
+    <color name="purple">#99A344DE</color>
+    <color name="pink">#99DE44A0</color>
+    <!-- 다크 모드 -->
+    <color name="dark_red">#4E1C25</color>
+    <color name="dark_orange">#4E3D25</color>
+    <color name="dark_yellow">#4E4D25</color>
+    <color name="dark_green">#1B4F3C</color>
+    <color name="dark_sky">#1B4364</color>
+    <color name="dark_blue">#1B2D58</color>
+    <color name="dark_purple">#3B1C58</color>
+    <color name="dark_pink">#4E1C47</color>
+</resources>

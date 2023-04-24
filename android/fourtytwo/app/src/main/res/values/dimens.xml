@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="message_height">128dp</dimen>
+    <dimen name="opinion_height">87dp</dimen>
+    <dimen name="reaction_height">64dp</dimen>
+
+
+    <dimen name="message_margin_horizontal">24dp</dimen>
+    <dimen name="message_padding_horizontal">20dp</dimen>
+    <dimen name="opinion_margin_top">34dp</dimen>
+    <dimen name="reaction_padding_right">15dp</dimen>
+    <dimen name="feed_margin_horizontal">39dp</dimen>
+
+    <dimen name="box_radius">32dp</dimen>
+</resources>
