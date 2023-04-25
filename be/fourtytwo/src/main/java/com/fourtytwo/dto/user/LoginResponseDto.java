@@ -12,6 +12,8 @@ public class LoginResponseDto {
     private Long user_idx;
     private String email;
     private String nickname;
+    private String emoji;
+    private String color;
     private String accessToken;
     private String refreshToken;
 }

@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -57,17 +58,18 @@ public class UserService {
     private final String[] nouns = gson.fromJson(json.get("nouns"), String[].class);
     private final String[] adjectives = gson.fromJson(json.get("adjectives"), String[].class);
 
-    private HashSet<String> nicknames = new HashSet<>();
     private final RedisTemplate<String, String> redisTemplate;
+    private final List<String> colors;
 
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
                        MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
-                       RedisTemplate<String, String> redisTemplate) {
+                       RedisTemplate<String, String> redisTemplate, List<String> colors) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.messageRepository = messageRepository;
         this.refreshTokenProvider = refreshTokenProvider;
         this.redisTemplate = redisTemplate;
+        this.colors = new ArrayList<>(Arrays.asList("red", "orange", "yellow", "green", "sky", "blue", "purple", "pink"));
     }
 
 
@@ -82,12 +84,12 @@ public class UserService {
         String userEmail = "google" + "_" + googleOAuthResponse.getEmail();
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
-            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null);
+            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null, null, null);
         }
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken, refreshToken);
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken);
     }
 
     public LoginResponseDto appleLogin(String idToken) {
@@ -103,16 +105,19 @@ public class UserService {
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
             // 회원가입 처리가 필요한 경우
-            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null);
+            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null, null, null);
         }
 
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken, refreshToken);
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken);
     }
 
     public LoginResponseDto signup(SignupRequestDto signupRequestDto, String socialType) {
+
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        Set<String> nicknames = setOperations.members("nicknames");
 
         if (socialType.equals("google")) {
             ResponseEntity<?> response = this.checkGoogleToken(signupRequestDto.getO_auth_token());
@@ -138,17 +143,25 @@ public class UserService {
                 foundUser.setIsActive(true);
                 foundUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
                 foundUser.setNickname(signupRequestDto.getNickname());
+                setOperations.add("nicknames", signupRequestDto.getNickname());
+                foundUser.setEmoji(signupRequestDto.getEmoji());
+                Random random = new Random();
+                foundUser.setColor(colors.get(random.nextInt()));
                 User savedUser = userRepository.save(foundUser);
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
-                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken, refreshToken);
+                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken);
             }
         }
 
         User newUser = new User();
         newUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
         newUser.setNickname(signupRequestDto.getNickname());
+        setOperations.add("nicknames", signupRequestDto.getNickname());
+        newUser.setEmoji(signupRequestDto.getEmoji());
+        Random random = new Random();
+        newUser.setColor(colors.get(random.nextInt()));
         if (newUser.getNickname().equals("admin")) {
             newUser.setRoles("ROLE_ADMIN");
         } else {
@@ -159,7 +172,7 @@ public class UserService {
         String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
-        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken, refreshToken);
+        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken);
     }
 
     public ResponseEntity<?> checkGoogleToken(String access_token) {
@@ -207,14 +220,17 @@ public class UserService {
     }
 
     public NicknameResDto createNickname() {
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        Set<String> nicknames = setOperations.members("nicknames");
         while (true) {
             Random random = new Random();
             String adjective = adjectives[random.nextInt(adjectives.length)];
             String noun = nouns[random.nextInt(nouns.length)];
             String nickname = adjective + " " + noun;
-            if (!nicknames.contains(nickname)){
-                NicknameResDto nicknameResDto = new NicknameResDto(nickname);
-                nicknames.add(nickname);
+            NicknameResDto nicknameResDto = new NicknameResDto(nickname);
+            if (nicknames == null) {
+                return nicknameResDto;
+            } else if (!nicknames.contains(nickname)) {
                 return nicknameResDto;
             }
         }
