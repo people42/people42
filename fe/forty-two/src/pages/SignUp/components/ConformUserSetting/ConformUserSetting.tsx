@@ -1,9 +1,10 @@
 import { postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
-import { signUpUserState } from "../../../../recoil/auth/atoms";
+import { signUpUserState } from "../../../../recoil/user/atoms";
+import { userLoginState } from "../../../../recoil/user/selectors";
 import _ from "lodash";
 import { useNavigate } from "react-router";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type conformUserSettingProps = { onClick(e: React.MouseEvent): void };
@@ -12,6 +13,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
   const signUpUser = useRecoilValue(signUpUserState);
 
   const navigate = useNavigate();
+  const userLogin = useSetRecoilState(userLoginState);
 
   const alertSignUpError = (status?: number) => {
     switch (status) {
@@ -31,10 +33,8 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
   };
 
   const signUp = () => {
-    console.log(signUpUser);
     switch (signUpUser.platform) {
       case "google":
-        console.log(signUpUser);
         signUpUser.email &&
         signUpUser.nickname &&
         signUpUser.o_auth_token &&
@@ -46,7 +46,13 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
               emoji: signUpUser.emoji,
             })
               .then((res) => {
-                console.log(res);
+                userLogin(res.data.data);
+                localStorage.setItem("isLogin", "true");
+                sessionStorage.setItem(
+                  "refreshToken",
+                  res.data.data.refreshToken
+                );
+                navigate("/");
               })
               .catch((e) => {
                 console.log(e);

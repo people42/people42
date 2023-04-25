@@ -2,25 +2,25 @@ import { postCheckGoogle } from "../../../api/auth";
 import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
-import { signUpUserState } from "../../../recoil/auth/atoms";
-import { userLoginState } from "../../../recoil/auth/selectors";
+import { signUpUserState } from "../../../recoil/user/atoms";
+import { userLoginState } from "../../../recoil/user/selectors";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React from "react";
 import { useNavigate } from "react-router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function SignInCard() {
   const setSignUpUser = useSetRecoilState<TSignUpUser>(signUpUserState);
-  let navigate = useNavigate();
-  const [user, setUser] = useRecoilState(userLoginState);
+
+  const navigate = useNavigate();
+  const userLogin = useSetRecoilState(userLoginState);
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenRes) => {
       postCheckGoogle({ o_auth_token: tokenRes.access_token })
         .then((res) => {
-          console.log(res);
           if (res.data.data.accessToken == null) {
             setSignUpUser({
               platform: "google",
@@ -31,7 +31,9 @@ function SignInCard() {
             });
             navigate("/signup");
           } else {
-            setUser(res.data.data);
+            userLogin(res.data.data);
+            localStorage.setItem("isLogin", "true");
+            sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
             navigate("/");
           }
         })
@@ -42,8 +44,23 @@ function SignInCard() {
     },
   });
   const loginWithApple = (e: React.MouseEvent) => {
-    console.log("loginWithApple");
+    const config = {
+      client_id: "APPLE_LOGIN_CLIENT_ID", // This is the service ID we created.
+      redirect_uri: "APPLE_LOGIN_REDIRECT_URL", // As registered along with our service ID
+      response_type: "code id_token",
+      state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
+      scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
+      response_mode: "form_post",
+      m: 11,
+      v: "1.5.4",
+    };
+    const queryString = Object.entries(config)
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join("&");
+
+    location.href = `https://appleid.apple.com/auth/authorize?${queryString}`;
   };
+
   return (
     <StyledSignInCard>
       <section>

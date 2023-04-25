@@ -1,6 +1,6 @@
 import { getNickname } from "../../../../api/auth";
 import { CommonBtn, FloatIconBtn } from "../../../../components/index";
-import { signUpUserState } from "../../../../recoil/auth/atoms";
+import { signUpUserState } from "../../../../recoil/user/atoms";
 import RandomNicknameCard from "./RandomNicknameCard";
 import _ from "lodash";
 import { useEffect, useState } from "react";

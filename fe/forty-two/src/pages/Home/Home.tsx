@@ -1,7 +1,7 @@
-import { MyMessageCard, MyMessageListCard, NavBar } from "../../components";
-import { userLoginState } from "../../recoil/auth/selectors";
+import { NavBar } from "../../components";
+import { userLoginState } from "../../recoil/user/selectors";
 import { HomeMain } from "./components";
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";

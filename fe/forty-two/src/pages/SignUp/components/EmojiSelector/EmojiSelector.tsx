@@ -1,6 +1,6 @@
 import { emojiNameList } from "../../../../assets/images/emoji/static";
 import { CommonBtn } from "../../../../components";
-import { signUpUserState } from "../../../../recoil/auth/atoms";
+import { signUpUserState } from "../../../../recoil/user/atoms";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";

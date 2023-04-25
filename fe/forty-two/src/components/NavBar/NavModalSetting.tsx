@@ -1,17 +1,48 @@
 import { postWithdrawal } from "../../api";
-import { userLoginState } from "../../recoil/auth/selectors";
+import { userLogoutState } from "../../recoil/user/selectors";
+import { useNavigate } from "react-router";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 type navModalSettingProps = {};
 
 function NavModalSetting({}: navModalSettingProps) {
-  const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
+  const navigate = useNavigate();
+  const [user, userLogout] = useRecoilState(userLogoutState);
   return (
     <StyledNavModalSetting>
       <li
         onClick={() => {
-          postWithdrawal().then(() => setUser(null));
+          navigate("/policy");
+        }}
+      >
+        이용약관 및 개인정보처리방침
+      </li>
+      <li
+        onClick={() => {
+          userLogout(user);
+          localStorage.removeItem("isLogin");
+          sessionStorage.removeItem("refreshToken");
+          alert("안전하게 로그아웃 되었습니다.");
+          navigate("/signin");
+        }}
+      >
+        로그아웃
+      </li>
+      <li
+        onClick={() => {
+          if (user?.accessToken) {
+            postWithdrawal(user?.accessToken)
+              .then((res) => {
+                localStorage.removeItem("isLogin");
+                sessionStorage.removeItem("refreshToken");
+                alert("정상적으로 탈퇴 되었습니다.");
+                navigate("/signin");
+              })
+              .catch((e) => {
+                alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+              });
+          }
         }}
       >
         회원탈퇴

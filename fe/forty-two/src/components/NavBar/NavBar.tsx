@@ -3,6 +3,7 @@ import NavModal from "./NavModal";
 import ThemeButton from "./ThemeButton";
 import { useState } from "react";
 import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 type navBarProps = {};
@@ -16,10 +17,14 @@ function NavBar() {
     setIsNotificationModalOn(false);
   };
 
+  const navigate = useNavigate();
+
   return (
     <StyledNavBar>
       <div>
-        <div className="logo">logo</div>
+        <div className="logo" onClick={() => navigate("/")}>
+          logo
+        </div>
         <div className="nav-icons">
           {isSettingModalOn ? (
             <>
