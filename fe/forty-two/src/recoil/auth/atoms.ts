@@ -10,13 +10,3 @@ export const signUpUserState = atom<TSignUpUser>({
     emoji: null,
   },
 });
-
-export const userState = atom<TUser>({
-  key: "userState",
-  default: {
-    user_idx: null,
-    email: null,
-    nickname: null,
-    accessToken: null,
-  },
-});

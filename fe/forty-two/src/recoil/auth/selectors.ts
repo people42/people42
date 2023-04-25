@@ -1,10 +1,20 @@
-import { signUpUserState } from "./atoms";
-import { selector } from "recoil";
+import { userState } from "../account/atom";
+import { DefaultValue, selector } from "recoil";
 
-// export const userLoginState = selector<TSignUpUser["nickname"]>({
-//   key: "signUpUserNicknameState",
-//   get: ({ get }) => {
-//     const signUpUser = get(signUpUserState);
-//     return signUpUser.nickname;
-//   },
-// });
+export const userLoginState = selector<TUser | null>({
+  key: "userLoginState",
+  get: ({ get }) => {
+    const user = get(userState);
+    return user;
+  },
+  set: ({ set }, userData) => {
+    let refreshToken;
+    if (userData instanceof DefaultValue) {
+      sessionStorage.clear();
+    } else {
+      refreshToken = userData?.refreshToken;
+    }
+    refreshToken ? sessionStorage.setItem("refreshToken", refreshToken) : null;
+    set(userState, userData);
+  },
+});

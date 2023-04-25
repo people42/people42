@@ -3,16 +3,18 @@ import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
 import { signUpUserState } from "../../../recoil/auth/atoms";
+import { userLoginState } from "../../../recoil/auth/selectors";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React from "react";
 import { useNavigate } from "react-router";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function SignInCard() {
   const setSignUpUser = useSetRecoilState<TSignUpUser>(signUpUserState);
   let navigate = useNavigate();
+  const [user, setUser] = useRecoilState(userLoginState);
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenRes) => {
@@ -20,7 +22,6 @@ function SignInCard() {
         .then((res) => {
           console.log(res);
           if (res.data.data.accessToken == null) {
-            console.log("회원가입 필요");
             setSignUpUser({
               platform: "google",
               email: res.data.data.email,
@@ -30,7 +31,7 @@ function SignInCard() {
             });
             navigate("/signup");
           } else {
-            console.log("이미 가입된 회원입니다.");
+            setUser(res.data.data);
             navigate("/");
           }
         })

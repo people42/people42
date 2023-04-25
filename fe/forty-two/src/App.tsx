@@ -1,7 +1,9 @@
+import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import Home from "./pages/Home/Home";
 import { SignIn, SignUp } from "./pages/index";
+import { userState } from "./recoil/account/atom";
 import { themeState } from "./recoil/theme/atoms";
 import "./reset.css";
 import { GlobalStyle } from "./styles/globalStyle";
@@ -9,7 +11,7 @@ import { lightStyles, darkStyles } from "./styles/theme";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
 const router = createBrowserRouter([
@@ -49,6 +51,15 @@ function App() {
     return () => {
       isSystemDark.removeEventListener("change", handleSystemDarkChange);
     };
+  }, []);
+
+  const setUserRefresh = useSetRecoilState(userState);
+  useEffect(() => {
+    getAccessToken()
+      .then((res) => {
+        setUserRefresh(res.data.data);
+      })
+      .catch((e) => console.log(e));
   }, []);
 
   return (

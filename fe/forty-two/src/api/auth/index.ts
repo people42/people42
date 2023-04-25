@@ -15,8 +15,23 @@ export async function postSignupGoogle(body: TAuth["signup"]["google"]) {
 }
 
 /**
- * [GET] "auth/nickname" Google 회원가입
+ * [GET] "auth/nickname" 랜덤 닉네임 생성
  */
 export async function getNickname() {
   return instance.get("auth/nickname");
+}
+
+/**
+ * [POST] "auth/token" access token 갱신
+ */
+export async function getAccessToken(refreshToken: string) {
+  return instance.post(
+    "auth/token",
+    {},
+    {
+      headers: {
+        "REFRESH-TOKEN": refreshToken,
+      },
+    }
+  );
 }
