@@ -1,131 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <!-- 맨 밑 배경 radar -->
-        <ImageView
-            android:id="@+id/radar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/radar"
-            android:layout_gravity="center"/>
+        <include layout="@layout/layout_radar"/>
         <!-- 위 층 내 생각 -->
-        <FrameLayout
-            android:id="@+id/my_opinion_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/message_margin_horizontal">
-            <!-- 말풍선 -->
-            <TextView
-                android:id="@+id/my_opinion_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/opinion_height"
-                android:background="@drawable/round_box"
-                android:layout_marginTop="@dimen/opinion_margin_top"
-                android:text="content"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="@dimen/message_padding_horizontal"/>
-
-            <!-- 이모지 + 공감 -->
-            <RelativeLayout
-                android:id="@+id/reaction_box"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/reaction_height"
-                android:paddingHorizontal="@dimen/reaction_padding_right"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:id="@+id/my_opinion_emoji"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_alignParentStart="true"
-                    android:elevation="5dp"
-                    />
-                <ImageView
-                    android:id="@+id/reation_first"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:background="@drawable/round"
-                    android:layout_toStartOf="@id/reation_second"
-                    android:elevation="5dp"
-                    android:padding="4dp"
-                    android:src="@drawable/heart"
-                    android:layout_alignParentBottom="true"/>
-                <ImageView
-                    android:id="@+id/reation_second"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:background="@drawable/round"
-                    android:layout_toStartOf="@id/reation_third"
-                    android:elevation="5dp"
-                    android:padding="4dp"
-                    android:src="@drawable/tear"
-                    android:layout_alignParentBottom="true"/>
-                <ImageView
-                    android:id="@+id/reation_third"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:background="@drawable/round"
-                    android:layout_toStartOf="@id/reation_fourth"
-                    android:elevation="5dp"
-                    android:padding="4dp"
-                    android:src="@drawable/thumbsup"
-                    android:layout_alignParentBottom="true"/>
-                <ImageView
-                    android:id="@+id/reation_fourth"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:background="@drawable/round"
-                    android:layout_alignParentEnd="true"
-                    android:elevation="5dp"
-                    android:padding="4dp"
-                    android:src="@drawable/fire"
-                    android:layout_alignParentBottom="true"/>
-            </RelativeLayout>
-        </FrameLayout>
-
-
+        <include layout="@layout/layout_opinion"/>
     </FrameLayout>
 
-    <!-- Bottom sheet -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:padding="10dp"
-        app:cardBackgroundColor="@color/white"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="170dp"
-        app:cardCornerRadius="36dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/message_margin_horizontal">
-            <View
-                android:layout_marginLeft="5dp"
-                android:background="@color/line_blue"
-                android:layout_width="6dp"
-                android:layout_height="match_parent"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/feed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/recyclerview_feed">
-            </androidx.recyclerview.widget.RecyclerView>
-
-        </FrameLayout>
-
-    </androidx.cardview.widget.CardView>
+    <!--  피드  -->
+    <include layout="@layout/layout_feed"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

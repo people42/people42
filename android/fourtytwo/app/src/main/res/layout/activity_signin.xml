@@ -20,45 +20,73 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <TextView
         android:id="@+id/signupOrSignin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:src="@drawable/signin_signup"
+        android:text="로그인 또는 회원가입"
+        android:gravity="center"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoIcon" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/loginGoogle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="51dp"
-        android:layout_marginTop="23dp"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="@+id/signupOrSignin"
-        app:layout_constraintTop_toBottomOf="@+id/signupOrSignin" />
+        app:layout_constraintTop_toBottomOf="@+id/signupOrSignin"
+        android:layout_marginHorizontal="@dimen/feed_margin_horizontal"
+        android:layout_marginVertical="@dimen/message_padding_horizontal"
+        android:background="@drawable/signinborder"
+        android:elevation="5dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/google48dp"
+            android:scaleType="centerInside"
+            android:layout_margin="@dimen/reaction_padding_right"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Sign in with Google"
+            android:textSize="@dimen/login_text_size"
+            android:layout_marginVertical="@dimen/reaction_padding_right"
+            android:gravity="center_vertical"/>
+    </LinearLayout>
 
-    <!--    <ImageView-->
-    <!--        android:id="@+id/loginGoogle"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="16dp"-->
-    <!--        android:src="@drawable/login_google"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.505"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/signupOrSignin" />-->
-
-    <ImageView
+    <LinearLayout
         android:id="@+id/loginApple"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="4dp"
-        android:src="@drawable/login_apple"
-        app:layout_constraintStart_toStartOf="@+id/sign_in_button"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@id/loginGoogle"
+        app:layout_constraintTop_toBottomOf="@id/loginGoogle"
+        android:layout_marginHorizontal="@dimen/feed_margin_horizontal"
+        android:layout_marginVertical="@dimen/message_padding_horizontal"
+        android:background="@drawable/signinborder"
+        android:backgroundTint="@color/black"
+        android:elevation="5dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/apple48dp"
+            android:scaleType="centerInside"
+            android:layout_margin="@dimen/reaction_padding_right"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Sign in with Google"
+            android:textSize="@dimen/login_text_size"
+            android:textColor="@color/white"
+            android:layout_marginVertical="@dimen/reaction_padding_right"
+            android:gravity="center_vertical"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
