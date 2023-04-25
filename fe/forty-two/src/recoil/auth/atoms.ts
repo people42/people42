@@ -7,7 +7,6 @@ export const signUpUserState = atom<TSignUpUser>({
     email: null,
     nickname: null,
     o_auth_token: null,
-    color: null,
     emoji: null,
   },
 });

@@ -1,6 +1,8 @@
+import { getNickname } from "../../../../api/auth";
 import { CommonBtn, FloatIconBtn } from "../../../../components/index";
 import { signUpUserState } from "../../../../recoil/auth/atoms";
 import RandomNicknameCard from "./RandomNicknameCard";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { TbReload } from "react-icons/tb";
 import { useRecoilState } from "recoil";
@@ -9,6 +11,43 @@ import styled from "styled-components";
 type nicknamePickerProps = {
   onClick(e: React.MouseEvent): void;
 };
+
+const aWordList: string[] = [
+  "아름다운",
+  "작은",
+  "큰",
+  "빠른",
+  "느린",
+  "높은",
+  "낮은",
+  "좋은",
+  "나쁜",
+  "맛있는",
+  "신선한",
+  "오래",
+];
+const nWordList: string[] = [
+  "호랑이",
+  "사자",
+  "곰",
+  "양",
+  "말",
+  "돼지",
+  "고양이",
+  "강아지",
+  "코끼리",
+  "기린",
+  "상어",
+  "고래",
+  "원숭이",
+  "쥐",
+  "물고기",
+  "독수리",
+  "참새",
+  "장미",
+  "백합",
+  "튤립",
+];
 
 function NicknamePicker({ onClick }: nicknamePickerProps) {
   const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
@@ -28,44 +67,53 @@ function NicknamePicker({ onClick }: nicknamePickerProps) {
     getNewNickname();
   }, []);
 
-  const getNewNickname = () => {
-    setUserNickname({ aword: "null", nword: "null" });
+  const getNewNickname = async () => {
+    getNickname()
+      .then((res) => {
+        console.log();
+        if (!randomWordAnimation) {
+          setRandomWordAnimation(true);
+          const splitNickname = res.data.data.nickname.split(" ");
+          setTimeout(() => {
+            setUserNickname({
+              aword: splitNickname[0],
+              nword: splitNickname[1],
+            });
+            setRandomWordAnimation(false);
+          }, 100);
+        }
+      })
+      .catch((e) => console.log(e));
   };
 
   useEffect(() => {
     setSignUpUserNickname(
       userNickname.aword && userNickname.nword
-        ? userNickname.aword + userNickname.nword
+        ? userNickname.aword + " " + userNickname.nword
         : ""
     );
-    if (!randomWordAnimation) {
-      setRandomWordAnimation(true);
-      setTimeout(() => {
-        setRandomWordAnimation(false);
-      }, 50);
-    }
     if (userNickname.aword && userNickname.nword) {
       setRandomWordAList([
-        "멍멍 짖는",
-        "야옹 우는",
-        "멍멍 짖는",
-        "야옹 우는",
+        "",
+        "",
+        "",
+        "",
         userNickname.aword,
-        "야옹 우는",
-        "멍멍 짖는",
-        "야옹 우는",
-        "멍멍 짖는",
+        _.sample(aWordList)!,
+        _.sample(aWordList)!,
+        _.sample(aWordList)!,
+        "",
       ]);
       setRandomWordNList([
-        "고양이",
-        "강아지",
-        "고양이",
-        "강아지",
+        "",
+        "",
+        "",
+        "",
         userNickname.nword,
-        "강아지",
-        "고양이",
-        "강아지",
-        "고양이",
+        _.sample(nWordList)!,
+        _.sample(nWordList)!,
+        _.sample(nWordList)!,
+        "",
       ]);
     }
   }, [userNickname]);

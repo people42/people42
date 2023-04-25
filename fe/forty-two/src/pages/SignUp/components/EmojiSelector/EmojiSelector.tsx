@@ -1,5 +1,7 @@
+import { emojiNameList } from "../../../../assets/images/emoji/static";
 import { CommonBtn } from "../../../../components";
 import { signUpUserState } from "../../../../recoil/auth/atoms";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";
 import { useRecoilState } from "recoil";
@@ -10,33 +12,9 @@ import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
+const emojiList: string[] = _.sampleSize(emojiNameList, 22);
 
 function EmojiSelector({ onClick }: emojiSelectorProps) {
-  let emojiList: string[] = [
-    "alien",
-    "angry-face",
-    "anguished-face",
-    "anxious-face-with-sweat",
-    "beaming-face-with-smiling-eyes",
-    "cat-with-tears-of-joy",
-    "cat-with-wry-smile",
-    "clown-face",
-    "cold-face",
-    "confounded-face",
-    "confused-face",
-    "cowboy-hat-face",
-    "crying-cat",
-    "crying-face",
-    "disappointed-face",
-    "disguised-face",
-    "dizzy-face",
-    "downcast-face-with-sweat",
-    "drooling-face",
-    "exploding-head",
-    "face-blowing-a-kiss",
-    "face-exhaling",
-  ];
-
   const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
 
   const setSignUpUserEmoji = (emoji: string) => {
