@@ -5,7 +5,9 @@ import com.fourtytwo.dto.brush.BrushResDto;
 import com.fourtytwo.dto.feed.PlaceFeedResDto;
 import com.fourtytwo.dto.feed.RecentFeedResDto;
 import com.fourtytwo.dto.feed.UserFeedResDto;
+import com.fourtytwo.dto.feed.UserPlaceFeedResDto;
 import com.fourtytwo.dto.message.MessageResDto;
+import com.fourtytwo.dto.message.UserMessageResDto;
 import com.fourtytwo.dto.place.PlaceResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.*;
@@ -181,6 +183,36 @@ public class FeedService {
                 .brushCnt(brushList.size())
                 .userIdx(targetUserIdx)
                 .nickname(userRepository.findByIdAndIsActiveTrue(targetUserIdx).getNickname())
+                .build();
+    }
+
+    public UserPlaceFeedResDto findUserPlaceFeeds(String accessToken, Long targetIdx, Long placeIdx) {
+        Long userIdx = checkUserByAccessToken(accessToken);
+        Place place = placeRepository.findPlaceById(placeIdx);
+        List<UserMessageResDto> messages = new ArrayList<>();
+        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceId(userIdx, targetIdx, placeIdx);
+        for (Brush brush : brushes) {
+            UserMessageResDto message = new UserMessageResDto();
+            if (userIdx < targetIdx) {
+                message.setMessageIdx(brush.getMessage2().getId());
+                message.setContent(brush.getMessage2().getContent());
+                message.setTime(brush.getCreatedAt());
+                if (expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx).isPresent()) {
+                    message.setEmotion(expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx).get().getEmotion());
+                }
+            } else {
+                message.setMessageIdx(brush.getMessage1().getId());
+                message.setContent(brush.getMessage1().getContent());
+                message.setTime(brush.getCreatedAt());
+                if (expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx).isPresent()) {
+                    message.setEmotion(expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx).get().getEmotion());
+                }
+            }
+            messages.add(message);
+        }
+        return UserPlaceFeedResDto.builder()
+                .messagesInfo(messages)
+                .brushCnt(brushes.size())
                 .build();
     }
 

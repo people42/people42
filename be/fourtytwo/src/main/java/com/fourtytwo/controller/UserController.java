@@ -50,8 +50,8 @@ public class UserController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<ApiResponse<AccessTokenResDto>> getAccessToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
-        AccessTokenResDto accessTokenResDto = userService.getAccessToken(refreshToken);
-        return ApiResponse.ok(accessTokenResDto);
+    public ResponseEntity<ApiResponse<LoginResponseDto>> getAccessToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
+        LoginResponseDto loginResponseDto = userService.getAccessToken(refreshToken);
+        return ApiResponse.ok(loginResponseDto);
     }
 }
