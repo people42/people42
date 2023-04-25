@@ -7,8 +7,11 @@ type TSignUpUser = {
 };
 
 type TUser = {
-  user_idx: number | null;
-  email: string | null;
-  nickname: string | null;
-  accessToken: string | null;
+  user_idx: number;
+  email: string;
+  nickname: string;
+  emoji: string;
+  color: string;
+  accessToken: string;
+  refreshToken: string;
 };
