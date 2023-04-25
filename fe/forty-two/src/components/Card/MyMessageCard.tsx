@@ -1,6 +1,4 @@
-import { userLoginState } from "../../recoil/auth/selectors";
 import Card from "./Card";
-import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type myMessageCardProps = {};
