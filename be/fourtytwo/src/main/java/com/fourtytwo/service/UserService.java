@@ -79,7 +79,7 @@ public class UserService {
         }
         GoogleOAuthResponseDto googleOAuthResponse = (GoogleOAuthResponseDto) response.getBody();
 
-        String userEmail = googleOAuthResponse.getEmail();
+        String userEmail = "google" + "_" + googleOAuthResponse.getEmail();
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
             return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null);
@@ -99,7 +99,7 @@ public class UserService {
         }
         AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
 
-        String userEmail = appleOAuthResponse.getEmail();
+        String userEmail = "apple" + "_" + appleOAuthResponse.getEmail();
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
             // 회원가입 처리가 필요한 경우
