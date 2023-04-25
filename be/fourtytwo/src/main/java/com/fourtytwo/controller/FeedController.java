@@ -2,6 +2,7 @@ package com.fourtytwo.controller;
 
 import com.fourtytwo.dto.feed.PlaceFeedResDto;
 import com.fourtytwo.dto.feed.RecentFeedResDto;
+import com.fourtytwo.dto.feed.UserFeedResDto;
 import com.fourtytwo.service.FeedService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,13 @@ public class FeedController {
                                                                       @RequestParam Integer size) {
         PlaceFeedResDto placeFeedResDto = feedService.findPlaceFeeds(accessToken, placeIdx, time, page, size);
         return ApiResponse.ok(placeFeedResDto);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<UserFeedResDto>> getUserFeeds(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                                    @RequestParam Long userIdx) {
+        UserFeedResDto userFeedResDto = feedService.findUserFeeds(accessToken, userIdx);
+        return ApiResponse.ok(userFeedResDto);
     }
 
 }
