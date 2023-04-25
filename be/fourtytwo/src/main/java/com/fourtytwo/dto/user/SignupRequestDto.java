@@ -22,9 +22,6 @@ public class SignupRequestDto {
     @NotBlank(message = "토큰이 비어있습니다.")
     private String o_auth_token;
 
-    @NotBlank(message = "color가 비어있습니다.")
-    private String color;
-
     @NotBlank(message = "이모지가 비어있습니다.")
     private String emoji;
 }
