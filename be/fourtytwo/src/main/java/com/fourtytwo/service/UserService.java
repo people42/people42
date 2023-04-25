@@ -160,7 +160,7 @@ public class UserService {
         setOperations.add("nicknames", signupRequestDto.getNickname());
         newUser.setEmoji(signupRequestDto.getEmoji());
         Random random = new Random();
-        newUser.setColor(colors.get(random.nextInt()));
+        newUser.setColor(colors.get(random.nextInt(colors.size())));
         if (newUser.getNickname().equals("admin")) {
             newUser.setRoles("ROLE_ADMIN");
         } else {
