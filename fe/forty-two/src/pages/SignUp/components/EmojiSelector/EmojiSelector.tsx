@@ -1,40 +1,28 @@
+import { emojiNameList } from "../../../../assets/images/emoji/static";
 import { CommonBtn } from "../../../../components";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { signUpUserState } from "../../../../recoil/auth/atoms";
+import _ from "lodash";
+import { useEffect, useState } from "react";
 import { TbArrowBigRightFilled, TbArrowBigLeftFilled } from "react-icons/tb";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import { SwiperEvents } from "swiper/types";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
+const emojiList: string[] = _.sampleSize(emojiNameList, 22);
 
 function EmojiSelector({ onClick }: emojiSelectorProps) {
-  let emojiList: string[] = [
-    "alien",
-    "angry-face",
-    "anguished-face",
-    "anxious-face-with-sweat",
-    "beaming-face-with-smiling-eyes",
-    "cat-with-tears-of-joy",
-    "cat-with-wry-smile",
-    "clown-face",
-    "cold-face",
-    "confounded-face",
-    "confused-face",
-    "cowboy-hat-face",
-    "crying-cat",
-    "crying-face",
-    "disappointed-face",
-    "disguised-face",
-    "dizzy-face",
-    "downcast-face-with-sweat",
-    "drooling-face",
-    "exploding-head",
-    "face-blowing-a-kiss",
-    "face-exhaling",
-  ];
+  const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
+
+  const setSignUpUserEmoji = (emoji: string) => {
+    const newSignUpUser = Object.assign({}, signUpUser);
+    newSignUpUser.emoji = emoji;
+    setSignUpUser(newSignUpUser);
+  };
+
   const staticEmojiSlideList: any[] = emojiList.map((name) => {
     return (
       <SwiperSlide key={name} id={name}>
@@ -54,13 +42,13 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
   }, []);
 
   const [activeEmojiIndex, setActiveEmojiIndex] = useState(0);
-  const [activeEmojiName, setActiveEmojiName] = useState("");
+
   const handleSlideChange = (swiper: any) => {
     setActiveEmojiIndex(swiper.activeIndex);
   };
 
   useEffect(() => {
-    setActiveEmojiName(document.querySelector(".swiper-slide-active")!.id);
+    setSignUpUserEmoji(document.querySelector(".swiper-slide-active")!.id);
   }, [activeEmojiIndex]);
 
   return (
@@ -78,7 +66,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
           <div>
             <SelectedEmojiIcon
               style={{
-                backgroundImage: `url("src/assets/images/emoji/animate/${activeEmojiName}.gif")`,
+                backgroundImage: `url("src/assets/images/emoji/animate/${signUpUser.emoji}.gif")`,
               }}
             ></SelectedEmojiIcon>
           </div>
@@ -116,17 +104,6 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
 export default EmojiSelector;
 
 const StyledEmojiSelector = styled.div`
-  @keyframes floatingUp {
-    from {
-      filter: opacity(0);
-      transform: translateY(100%);
-    }
-    to {
-      filter: opacity(1);
-      transform: translateY(0px);
-    }
-  }
-
   height: 100%;
   display: flex;
   flex-direction: column;

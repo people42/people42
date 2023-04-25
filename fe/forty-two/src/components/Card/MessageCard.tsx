@@ -1,15 +1,16 @@
+import { ReactionBtn } from "..";
 import Card from "./Card";
 import styled from "styled-components";
 
 type messageCardProps = {
-  props: feed["recent"]["recentMessageInfo"];
+  props: TFeed["recent"]["recentMessageInfo"];
 };
 
 function MessageCard({ props }: messageCardProps) {
   return (
     <StyledMessageCard color={props.color}>
       <div className="emoji"></div>
-      <div className="reaction"></div>
+      <ReactionBtn></ReactionBtn>
       <div className="message">
         <Card isShadowInner={false}>
           <>
@@ -25,8 +26,9 @@ function MessageCard({ props }: messageCardProps) {
 export default MessageCard;
 
 const StyledMessageCard = styled.div<{
-  color: colorType;
+  color: TColorType;
 }>`
+  animation: floatingRight 0.7s;
   max-width: 280px;
   position: relative;
   cursor: pointer;
@@ -40,23 +42,13 @@ const StyledMessageCard = styled.div<{
   .emoji {
     z-index: 3;
     position: absolute;
-    margin-left: 24px;
+    margin-left: 16px;
     width: 36px;
     height: 36px;
     background-image: url("src/assets/images/emoji/animate/hugging-face.gif");
     background-size: 100%;
   }
-  .reaction {
-    z-index: 3;
-    position: absolute;
-    bottom: -8px;
-    right: 0px;
-    margin-right: 16px;
-    width: 24px;
-    height: 24px;
-    background-image: url("src/assets/images/emoji/reaction/heart.png");
-    background-size: 100%;
-  }
+
   .message {
     padding-top: 18px;
     & > div {

@@ -5,11 +5,12 @@ import {
   EmojiSelector,
   ConformUserSetting,
 } from "./components/index";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 function SignUp() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
   const signUpContent = {
     1: {
       title: "마음에 드는 닉네임을 고르세요",

@@ -1,4 +1,4 @@
-type feed = {
+type TFeed = {
   recent: {
     recentMessageInfo: {
       messageIdx: number;
@@ -6,13 +6,30 @@ type feed = {
       userIdx: number;
       nickname: string;
       emoji: string;
-      color: colorType;
+      color: TColorType;
       brushCnt: number;
     };
     placeWithTimeInfo: {
       placeIdx: number;
       placeName: string;
       time: string;
+    };
+  };
+};
+
+type TAuth = {
+  check: {
+    google: {
+      o_auth_token: string;
+    };
+    apple: {};
+  };
+  signup: {
+    google: {
+      email: string;
+      nickname: string;
+      o_auth_token: string;
+      emoji: string;
     };
   };
 };

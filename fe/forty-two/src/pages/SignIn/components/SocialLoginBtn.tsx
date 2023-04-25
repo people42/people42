@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 type SocialLoginBtnProps = {
@@ -16,12 +15,9 @@ function SocialLoginBtn({
   label,
   onClick,
 }: SocialLoginBtnProps) {
-  let navigate = useNavigate();
-
   return (
     <StyledSocialLoginBtn
-      // onClick={onClick}
-      onClick={() => navigate("/signup")}
+      onClick={onClick}
       bgColor={bgColor}
       textColor={textColor}
     >

@@ -1,14 +1,44 @@
+import { postCheckGoogle } from "../../../api/auth";
 import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
+import { signUpUserState } from "../../../recoil/auth/atoms";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React from "react";
+import { useNavigate } from "react-router";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function SignInCard() {
+  const setSignUpUser = useSetRecoilState<TSignUpUser>(signUpUserState);
+  let navigate = useNavigate();
+
   const loginWithGoogle = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onSuccess: (tokenRes) => {
+      postCheckGoogle({ o_auth_token: tokenRes.access_token })
+        .then((res) => {
+          console.log(res);
+          if (res.data.data.accessToken == null) {
+            console.log("회원가입 필요");
+            setSignUpUser({
+              platform: "google",
+              email: res.data.data.email,
+              nickname: null,
+              o_auth_token: tokenRes.access_token,
+              emoji: null,
+            });
+            navigate("/signup");
+          } else {
+            console.log("이미 가입된 회원입니다.");
+            navigate("/");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          alert("로그인 오류가 발생했습니다. 다시 시도해주세요.");
+        });
+    },
   });
   const loginWithApple = (e: React.MouseEvent) => {
     console.log("loginWithApple");

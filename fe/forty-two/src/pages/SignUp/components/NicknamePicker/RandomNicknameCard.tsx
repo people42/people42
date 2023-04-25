@@ -1,13 +1,22 @@
 import { Card } from "../../../../components/index";
+import { useState } from "react";
 import styled from "styled-components";
 
 type randomNicknameCardProps = {};
 
-function RandomNicknameCard() {
+function RandomNicknameCard(props: {
+  nickname: string;
+  randomWordList: string[];
+  randomWordAnimation: boolean;
+}) {
   return (
-    <StyledRandomNicknameCard>
+    <StyledRandomNicknameCard randomWordAnimation={props.randomWordAnimation}>
       <Card isShadowInner={true}>
-        <p>강아지</p>
+        <div key={props.nickname}>
+          {props.randomWordList.map((word, idx) => (
+            <p key={`random-word-${idx}`}>{word}</p>
+          ))}
+        </div>
       </Card>
     </StyledRandomNicknameCard>
   );
@@ -15,26 +24,32 @@ function RandomNicknameCard() {
 
 export default RandomNicknameCard;
 
-const StyledRandomNicknameCard = styled.div`
-  @keyframes wordIn {
-    0% {
-      transform: translateY(-20px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-
+const StyledRandomNicknameCard = styled.div<{ randomWordAnimation: boolean }>`
   width: 100%;
-  height: 52px;
+  height: 64px;
   margin-inline: 4px;
   & > div {
     display: flex;
     justify-content: center;
     align-items: center;
-    & > p {
-      ${({ theme }) => theme.text.subtitle2}
-      animation: wordIn 0.3s ease-out
+    border-radius: 16px;
+    & > div {
+      width: 80%;
+      clip-path: inset(46.5% 0% 46.5% 0%);
+      overflow: hidden;
+      & > p {
+        ${({ randomWordAnimation }) =>
+          randomWordAnimation
+            ? "animation: randomWordOut 0.5s liner;"
+            : "animation: randomWordIn 1s cubic-bezier(0.385, 1.050, 0.705, 0.995);"}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 64px;
+        margin-block: 32px;
+        ${({ theme }) => theme.text.header6};
+      }
     }
   }
 `;

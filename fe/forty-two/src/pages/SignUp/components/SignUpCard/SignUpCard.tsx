@@ -52,5 +52,6 @@ const StyledSignUpCard = styled.div`
     ${({ theme }) => theme.text.header5};
     text-align: center;
     margin-bottom: 16px;
+    animation: floatingUp 0.3s;
   }
 `;
