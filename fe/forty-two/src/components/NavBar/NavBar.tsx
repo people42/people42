@@ -1,21 +1,51 @@
 import IconButton from "../Button/IconButton";
+import NavModal from "./NavModal";
 import ThemeButton from "./ThemeButton";
+import { useState } from "react";
 import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
 import styled from "styled-components";
 
 type navBarProps = {};
 
 function NavBar() {
+  const [isSettingModalOn, setIsSettingModalOn] = useState(false);
+  const [isNotificationModalOn, setIsNotificationModalOn] = useState(false);
+
+  const closeModal = () => {
+    setIsSettingModalOn(false);
+    setIsNotificationModalOn(false);
+  };
+
   return (
     <StyledNavBar>
       <div>
         <div className="logo">logo</div>
         <div className="nav-icons">
+          {isSettingModalOn ? (
+            <>
+              <NavModal type="setting" closeModal={closeModal}></NavModal>
+              <div
+                onClick={() => closeModal()}
+                className="modal-background"
+              ></div>
+            </>
+          ) : null}
+          {isNotificationModalOn ? (
+            <>
+              <NavModal type="notification" closeModal={closeModal}></NavModal>
+              <div
+                onClick={() => closeModal()}
+                className="modal-background"
+              ></div>
+            </>
+          ) : null}
           <ThemeButton></ThemeButton>
-          <IconButton onClick={() => {}}>
+          <IconButton
+            onClick={() => setIsNotificationModalOn(!isNotificationModalOn)}
+          >
             <TbBellFilled size={24} aria-label={"알림"} />
           </IconButton>
-          <IconButton onClick={() => {}}>
+          <IconButton onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconButton>
         </div>
@@ -46,5 +76,17 @@ const StyledNavBar = styled.nav`
 
   .nav-icons {
     display: flex;
+    position: relative;
+  }
+
+  .modal-background {
+    animation: fadeIn 0.5s;
+    z-index: 4;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: #00000027;
+    width: 100vw;
+    height: 100vh;
   }
 `;

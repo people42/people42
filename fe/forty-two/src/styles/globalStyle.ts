@@ -3,6 +3,33 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes fadeIn {
+      from {
+        filter: opacity(0);
+      }
+      to {
+        filter: opacity(1);
+      }
+    }
+    @keyframes modalOn {
+      from {
+        filter: opacity(0);
+        transform: 
+        translate(50%, -50%) scale(0%, 0%);
+      }
+      to {
+        filter: opacity(1);
+        transform: translate(0%, 0%) scale(100%, 100%);
+      }
+    }
+    @keyframes randomWordOut {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(500%);
+      }
+    }
     @keyframes randomWordIn {
       from {
         transform: translateY(-500%);
@@ -23,6 +50,16 @@ export const GlobalStyle = createGlobalStyle<any>`
     from {
       filter: opacity(0);
       transform: translateY(100%);
+    }
+    to {
+      filter: opacity(1);
+      transform: translateY(0px);
+    }
+  }
+  @keyframes floatingDown {
+    from {
+      filter: opacity(0);
+      transform: translateY(-100%);
     }
     to {
       filter: opacity(1);

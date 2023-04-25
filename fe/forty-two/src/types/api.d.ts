@@ -29,7 +29,6 @@ type TAuth = {
       email: string;
       nickname: string;
       o_auth_token: string;
-      color: TColorType;
       emoji: string;
     };
   };
