@@ -117,7 +117,6 @@ public class UserService {
     public LoginResponseDto signup(SignupRequestDto signupRequestDto, String socialType) {
 
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        Set<String> nicknames = setOperations.members("nicknames");
 
         if (socialType.equals("google")) {
             ResponseEntity<?> response = this.checkGoogleToken(signupRequestDto.getO_auth_token());
@@ -146,7 +145,7 @@ public class UserService {
                 setOperations.add("nicknames", signupRequestDto.getNickname());
                 foundUser.setEmoji(signupRequestDto.getEmoji());
                 Random random = new Random();
-                foundUser.setColor(colors.get(random.nextInt()));
+                foundUser.setColor(colors.get(random.nextInt(colors.size())));
                 User savedUser = userRepository.save(foundUser);
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
