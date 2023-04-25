@@ -272,20 +272,30 @@ public class UserService {
         return user;
     }
 
-    public AccessTokenResDto getAccessToken(String refreshToken) {
+    public LoginResponseDto getAccessToken(String refreshToken) {
         if (redisTemplate.opsForHash().get("refresh", refreshToken) == null) {
             throw new EntityNotFoundException("존재하지 않는 토큰입니다.");
         }
         Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", refreshToken));
-        Optional<User> user = userRepository.findById(userIdx);
-        if (user.isEmpty()) {
+        User user = userRepository.findByIdAndIsActiveTrue(userIdx);
+        if (user == null) {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
         }
         if (!refreshTokenProvider.validateToken(refreshToken)) {
             throw new AuthenticationServiceException("토큰이 만료된 유저입니다.");
         }
+        refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+        redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
 
-        String accessToken = jwtTokenProvider.createToken(user.get().getId(), user.get().getRoleList());
-        return new AccessTokenResDto(accessToken);
+        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
+        return LoginResponseDto.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .color(user.getColor())
+                .user_idx(userIdx)
+                .nickname(user.getNickname())
+                .emoji(user.getEmoji())
+                .email(user.getEmail())
+                .build();
     }
 }
