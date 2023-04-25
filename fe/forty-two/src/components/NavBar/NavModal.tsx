@@ -1,4 +1,5 @@
 import Card from "../Card/Card";
+import NavModalSetting from "./NavModalSetting";
 import { TbBellFilled, TbSettingsFilled, TbX } from "react-icons/tb";
 import styled from "styled-components";
 
@@ -24,7 +25,9 @@ function NavModal({ closeModal, type }: navModalProps) {
               size={24}
             />
           </div>
-          <div className="modal-body">여기바디</div>
+          <div className="modal-body">
+            <NavModalSetting></NavModalSetting>
+          </div>
         </div>
       </Card>
     </StyledNavModal>

@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 
+export const isLoginState = atom<boolean>({
+  key: "isLoginState",
+  default: false,
+});
+
 export const signUpUserState = atom<TSignUpUser>({
   key: "signUpUserState",
   default: {
@@ -11,12 +16,7 @@ export const signUpUserState = atom<TSignUpUser>({
   },
 });
 
-export const userState = atom<TUser>({
+export const userState = atom<TUser | null>({
   key: "userState",
-  default: {
-    user_idx: null,
-    email: null,
-    nickname: null,
-    accessToken: null,
-  },
+  default: null,
 });

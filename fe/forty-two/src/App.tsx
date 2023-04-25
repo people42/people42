@@ -1,21 +1,29 @@
+import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import Home from "./pages/Home/Home";
-import { SignIn, SignUp } from "./pages/index";
+import { Policy, SignIn, SignUp } from "./pages/index";
 import { themeState } from "./recoil/theme/atoms";
+import { userState } from "./recoil/user/atoms";
 import "./reset.css";
 import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/policy",
+    element: <Policy />,
   },
   {
     path: "/signin",
@@ -51,10 +59,26 @@ function App() {
     };
   }, []);
 
+  const setUserRefresh = useSetRecoilState(userState);
+  useEffect(() => {
+    const isLogin: string | null = localStorage.getItem("isLogin") ?? null;
+    if (isLogin) {
+      getAccessToken()
+        .then((res) => {
+          setUserRefresh(res.data.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      sessionStorage.removeItem("refreshToken");
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
       <GlobalStyle />
-      <GoogleOAuthProvider clientId="630522923660-vjvl4kc0rh8eni5erbd9qb3a7tidshph.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <RouterProvider router={router} />
       </GoogleOAuthProvider>
     </ThemeProvider>
