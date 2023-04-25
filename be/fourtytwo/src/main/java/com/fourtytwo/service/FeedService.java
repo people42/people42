@@ -8,11 +8,9 @@ import com.fourtytwo.dto.feed.UserFeedResDto;
 import com.fourtytwo.dto.message.MessageResDto;
 import com.fourtytwo.dto.place.PlaceResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
-import com.fourtytwo.entity.Brush;
-import com.fourtytwo.entity.Message;
-import com.fourtytwo.entity.Place;
-import com.fourtytwo.entity.User;
+import com.fourtytwo.entity.*;
 import com.fourtytwo.repository.brush.BrushRepository;
+import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
@@ -34,6 +32,7 @@ public class FeedService {
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ExpressionRepository expressionRepository;
 
     public List<RecentFeedResDto> findRecentBrush(String accessToken) {
         Long userIdx = checkUserByAccessToken(accessToken);
@@ -56,6 +55,7 @@ public class FeedService {
 
                 // 상대 유저와 몇 번 스쳤는지 조회
                 Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
+                Optional<Expression> expression = expressionRepository.findByMessageAndUserId(message, userIdx);
                 MessageResDto messageResDto = MessageResDto
                         .builder()
                         .messageIdx(message.getId())
@@ -65,6 +65,7 @@ public class FeedService {
                         .emoji(message.getUser().getEmoji())
                         .color(message.getUser().getColor())
                         .brushCnt(count)
+                        .emotion(expression.map(Expression::getEmotion).orElse(null))
                         .build();
 
                 // 해당 장소와 시간 저장
@@ -117,6 +118,7 @@ public class FeedService {
                 if (cnt > page * size) {
                     // 상대 유저와 몇 번 스쳤는지 조회
                     Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
+                    Optional<Expression> expression = expressionRepository.findByMessageAndUserId(message, userIdx);
                     MessageResDto messageResDto = MessageResDto.builder()
                             .messageIdx(message.getId())
                             .content(message.getContent())
@@ -125,6 +127,7 @@ public class FeedService {
                             .emoji(message.getUser().getNickname())
                             .color(message.getUser().getColor())
                             .brushCnt(count)
+                            .emotion(expression.map(Expression::getEmotion).orElse(null))
                             .build();
                     messageResDtos.add(messageResDto);
                 }

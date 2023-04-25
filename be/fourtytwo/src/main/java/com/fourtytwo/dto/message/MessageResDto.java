@@ -14,5 +14,6 @@ public class MessageResDto {
     private String emoji;
     private String color;
     private Long brushCnt;
+    private String emotion;
 
 }

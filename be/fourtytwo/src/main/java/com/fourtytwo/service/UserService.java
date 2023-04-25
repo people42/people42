@@ -8,6 +8,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.auth.RefreshTokenProvider;
 import com.fourtytwo.dto.user.*;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
@@ -17,29 +18,32 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.Null;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenProvider refreshTokenProvider;
     private final MessageRepository messageRepository;
 
     private final InputStream is = UserService.class.getResourceAsStream("/word_set.json");
@@ -54,11 +58,16 @@ public class UserService {
     private final String[] adjectives = gson.fromJson(json.get("adjectives"), String[].class);
 
     private HashSet<String> nicknames = new HashSet<>();
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, MessageRepository messageRepository) {
+    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
+                       MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
+                       RedisTemplate<String, String> redisTemplate) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.messageRepository = messageRepository;
+        this.refreshTokenProvider = refreshTokenProvider;
+        this.redisTemplate = redisTemplate;
     }
 
 
@@ -73,10 +82,12 @@ public class UserService {
         String userEmail = googleOAuthResponse.getEmail();
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
-            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null);
+            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null);
         }
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken);
+        String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+        redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken, refreshToken);
     }
 
     public LoginResponseDto appleLogin(String idToken) {
@@ -92,11 +103,13 @@ public class UserService {
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
             // 회원가입 처리가 필요한 경우
-            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null);
+            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null);
         }
 
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken);
+        String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+        redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), accessToken, refreshToken);
     }
 
     public LoginResponseDto signup(SignupRequestDto signupRequestDto, String socialType) {
@@ -117,22 +130,24 @@ public class UserService {
             throw new DataIntegrityViolationException("이미 존재하는 닉네임입니다.");
         }
 
-        User foundUser = userRepository.findByEmail(signupRequestDto.getEmail());
+        User foundUser = userRepository.findByEmail(socialType + "_" + signupRequestDto.getEmail());
         if (foundUser != null) {
             if (foundUser.getIsActive()) {
                 throw new DataIntegrityViolationException("이미 존재하는 이메일입니다.");
             } else {
                 foundUser.setIsActive(true);
-                foundUser.setEmail(signupRequestDto.getEmail());
+                foundUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
                 foundUser.setNickname(signupRequestDto.getNickname());
                 User savedUser = userRepository.save(foundUser);
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
-                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken);
+                String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
+                redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
+                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken, refreshToken);
             }
         }
 
         User newUser = new User();
-        newUser.setEmail(signupRequestDto.getEmail());
+        newUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
         newUser.setNickname(signupRequestDto.getNickname());
         if (newUser.getNickname().equals("admin")) {
             newUser.setRoles("ROLE_ADMIN");
@@ -142,7 +157,9 @@ public class UserService {
         newUser.setIsActive(true);
         User savedUser = userRepository.save(newUser);
         String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
-        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken);
+        String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
+        redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
+        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), accessToken, refreshToken);
     }
 
     public ResponseEntity<?> checkGoogleToken(String access_token) {
@@ -201,13 +218,23 @@ public class UserService {
                 return nicknameResDto;
             }
         }
-
     }
 
     public void deleteUser(String accessToken) {
+        // maria db에서 탈퇴 처리
         User user = this.checkUser(accessToken);
         user.setIsActive(false);
         userRepository.save(user);
+
+        // refresh token 삭제
+        Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
+        for (Object key : keys) {
+            Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
+            if (Objects.equals(userIdx, user.getId())) {
+                redisTemplate.opsForHash().delete("refresh", key);
+                break;
+            }
+        }
     }
 
     public MyInfoResDto getMyInfo(String accessToken) {
@@ -228,5 +255,22 @@ public class UserService {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
         }
         return user;
+    }
+
+    public AccessTokenResDto getAccessToken(String refreshToken) {
+        if (redisTemplate.opsForHash().get("refresh", refreshToken) == null) {
+            throw new EntityNotFoundException("존재하지 않는 토큰입니다.");
+        }
+        Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", refreshToken));
+        Optional<User> user = userRepository.findById(userIdx);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        }
+        if (!refreshTokenProvider.validateToken(refreshToken)) {
+            throw new AuthenticationServiceException("토큰이 만료된 유저입니다.");
+        }
+
+        String accessToken = jwtTokenProvider.createToken(user.get().getId(), user.get().getRoleList());
+        return new AccessTokenResDto(accessToken);
     }
 }
