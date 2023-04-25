@@ -10,8 +10,9 @@
     <dimen name="opinion_margin_top">34dp</dimen>
     <dimen name="reaction_padding_right">16dp</dimen>
     <dimen name="feed_margin_horizontal">39dp</dimen>
+    <dimen name="signup_padding">26dp</dimen>
 
     <dimen name="box_radius">32dp</dimen>
-    <dimen name="login_text_size">20sp</dimen>
+    <dimen name="login_text_size">18sp</dimen>
 
 </resources>

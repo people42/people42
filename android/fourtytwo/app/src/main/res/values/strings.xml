@@ -6,4 +6,6 @@
     <string name="likes_tears">💧</string>
     <string name="likes_thumbsup">👍</string>
     <string name="likes_fire">🔥</string>
+    <string name="choose_nickname">닉네임을\n설정해주세요</string>
+    <string name="choose_emoji">프로필을\n선택해주세요</string>
 </resources>

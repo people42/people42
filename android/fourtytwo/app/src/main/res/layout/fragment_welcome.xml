@@ -15,10 +15,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="237dp"
             android:layout_marginBottom="36dp"
-            android:text="환영합니다."
+            android:text="환영합니다"
+            android:textColor="@color/black"
             android:textSize="40sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/imageView42"
+            app:layout_constraintBottom_toTopOf="@id/imageView42"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -26,34 +27,44 @@
         <ImageView
             android:id="@+id/imageView42"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="384dp"
             android:src="@drawable/logoicon_gray"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="48dp">
+        android:layout_marginTop="22dp"
+        android:padding="@dimen/signup_padding">
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@drawable/signuptab_true"
+            android:layout_marginHorizontal="5dp"
+            android:elevation="5dp"
             />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@drawable/signuptab_true"
             app:tint="@color/main_blue"
-            android:layout_marginHorizontal="10dp"/>
+            android:layout_marginHorizontal="5dp"
+            android:elevation="5dp"
+            />
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@drawable/signuptab_true"
-            app:tint="@color/main_blue"/>
+            android:layout_marginHorizontal="5dp"
+            app:tint="@color/main_blue"
+            android:elevation="5dp"
+            />
 
     </LinearLayout>
 
