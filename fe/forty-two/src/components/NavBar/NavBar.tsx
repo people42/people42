@@ -1,6 +1,6 @@
-import IconButton from "../Button/IconButton";
-import NavModal from "./NavModal";
-import ThemeButton from "./ThemeButton";
+import IconBtn from "../Button/IconBtn";
+import ThemeBtn from "../Button/ThemeBtn";
+import NavModal from "../Modal/NavModal";
 import { useState } from "react";
 import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
 import { useNavigate } from "react-router";
@@ -44,15 +44,15 @@ function NavBar() {
               ></div>
             </>
           ) : null}
-          <ThemeButton></ThemeButton>
-          <IconButton
+          <ThemeBtn></ThemeBtn>
+          <IconBtn
             onClick={() => setIsNotificationModalOn(!isNotificationModalOn)}
           >
             <TbBellFilled size={24} aria-label={"알림"} />
-          </IconButton>
-          <IconButton onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
+          </IconBtn>
+          <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
-          </IconButton>
+          </IconBtn>
         </div>
       </div>
     </StyledNavBar>

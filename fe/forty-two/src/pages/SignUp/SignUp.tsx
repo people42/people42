@@ -5,10 +5,19 @@ import {
   EmojiSelector,
   ConformUserSetting,
 } from "./components/index";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 function SignUp() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const isLogin: string | null = localStorage.getItem("isLogin") ?? null;
+    if (isLogin) {
+      navigate("/");
+    }
+  }, []);
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   const signUpContent = {
