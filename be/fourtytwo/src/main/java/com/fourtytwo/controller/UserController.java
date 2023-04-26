@@ -3,6 +3,7 @@ package com.fourtytwo.controller;
 import com.fourtytwo.dto.user.*;
 import com.fourtytwo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping("/check/apple")
+    @PostMapping(path = "/check/apple", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponseDto = userService.appleLogin(loginRequestDto.getO_auth_token());
         return ApiResponse.ok(loginResponseDto);
