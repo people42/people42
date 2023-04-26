@@ -3,11 +3,11 @@ import styled from "styled-components";
 
 type iconButtonProps = { onClick(): void; children: ReactElement };
 
-function IconButton({ onClick, children }: iconButtonProps) {
+function IconBtn({ onClick, children }: iconButtonProps) {
   return <StyledIconButton onClick={onClick}>{children}</StyledIconButton>;
 }
 
-export default IconButton;
+export default IconBtn;
 
 const StyledIconButton = styled.button`
   background: none;

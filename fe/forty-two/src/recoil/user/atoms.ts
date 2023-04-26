@@ -20,3 +20,8 @@ export const userState = atom<TUser | null>({
   key: "userState",
   default: null,
 });
+
+export const userLoadedState = atom<boolean>({
+  key: "userLoadedState",
+  default: false,
+});
