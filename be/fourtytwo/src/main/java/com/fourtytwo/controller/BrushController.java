@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/gps")
+@RequestMapping("/api/v1/background")
 @AllArgsConstructor
 public class BrushController {
     private GpsService gpsService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ApiResponse<Object>> renewGps(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                         @RequestBody GpsReqDto gps) {
         gpsService.renewGps(accessToken, gps);
