@@ -298,4 +298,15 @@ public class UserService {
                 .email(user.getEmail())
                 .build();
     }
+
+    public Long checkUserByAccessToken(String accessToken) {
+        Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+        Optional<User> user = userRepository.findById(userIdx);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("유저가 존재하지 않습니다.");
+        } else if (!user.get().getIsActive()) {
+            throw new EntityNotFoundException("삭제된 유저입니다.");
+        }
+        return userIdx;
+    }
 }
