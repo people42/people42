@@ -3,6 +3,59 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes circleIn30 {
+      from {
+        filter: opacity(0);
+        transform: scale(0);
+      }
+      to {
+        filter: opacity(0.3);
+        transform: scale(1);
+      }
+    }
+    @keyframes circleIn60 {
+      from {
+        filter: opacity(0);
+        transform: scale(0);
+      }
+      to {
+        filter: opacity(0.6);
+        transform: scale(1);
+      }
+    }
+    @keyframes circleSpread {
+      0% {
+        filter: opacity(0);
+        transform: scale(0);
+      }
+      50% {
+        filter: opacity(1);
+        transform: scale(0.5);
+      }
+      100% {
+        filter: opacity(0);
+        transform: scale(1);
+      }
+    }
+    @keyframes mapInDark {
+      from {
+        filter: opacity(0) invert(95%) sepia(60%) hue-rotate(180deg) saturate(100%) brightness(1.2);
+      }
+      to {
+        filter: opacity(1) invert(95%) sepia(60%) hue-rotate(180deg) saturate(100%) brightness(1.2);
+      }
+    }
+    @keyframes popIn {
+      0% {
+        transform: scale(0);
+      }
+      80% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
     @keyframes fadeIn {
       from {
         filter: opacity(0);
@@ -64,6 +117,16 @@ export const GlobalStyle = createGlobalStyle<any>`
     to {
       filter: opacity(1);
       transform: translateY(0px);
+    }
+  }
+  @keyframes floatingLeft {
+    from {
+      filter: opacity(0);
+      transform: translateX(10%);
+    }
+    to {
+      filter: opacity(1);
+      transform: translateX(0px);
     }
   }
   @keyframes floatingRight {

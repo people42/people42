@@ -15,6 +15,7 @@ export default HomeMain;
 
 const StyledHomeMain = styled.main`
   width: 100%;
+  height: 100%;
   max-width: 1024px;
   display: flex;
   flex-grow: 1;

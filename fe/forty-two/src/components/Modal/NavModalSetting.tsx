@@ -1,5 +1,6 @@
 import { postWithdrawal } from "../../api";
 import { userLogoutState } from "../../recoil/user/selectors";
+import NavModalSettingRow from "./NavModalSettingRow";
 import { useNavigate } from "react-router";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -9,16 +10,17 @@ type navModalSettingProps = {};
 function NavModalSetting({}: navModalSettingProps) {
   const navigate = useNavigate();
   const [user, userLogout] = useRecoilState(userLogoutState);
+
   return (
     <StyledNavModalSetting>
-      <li
+      <NavModalSettingRow
         onClick={() => {
           navigate("/policy");
         }}
       >
         이용약관 및 개인정보처리방침
-      </li>
-      <li
+      </NavModalSettingRow>
+      <NavModalSettingRow
         onClick={() => {
           userLogout(user);
           localStorage.removeItem("isLogin");
@@ -28,8 +30,8 @@ function NavModalSetting({}: navModalSettingProps) {
         }}
       >
         로그아웃
-      </li>
-      <li
+      </NavModalSettingRow>
+      <NavModalSettingRow
         onClick={() => {
           if (user?.accessToken) {
             postWithdrawal(user?.accessToken)
@@ -46,7 +48,7 @@ function NavModalSetting({}: navModalSettingProps) {
         }}
       >
         회원탈퇴
-      </li>
+      </NavModalSettingRow>
     </StyledNavModalSetting>
   );
 }

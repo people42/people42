@@ -6,7 +6,7 @@ import { signUpUserState } from "../../../recoil/user/atoms";
 import { userLoginState } from "../../../recoil/user/selectors";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -16,6 +16,16 @@ function SignInCard() {
 
   const navigate = useNavigate();
   const userLogin = useSetRecoilState(userLoginState);
+
+  useEffect(() => {
+    document.addEventListener("AppleIDSignInOnSuccess", (data) => {
+      console.log(data);
+    });
+    //Listen for authorization failures
+    document.addEventListener("AppleIDSignInOnFailure", (error) => {
+      console.log(error);
+    });
+  }, []);
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenRes) => {
@@ -46,7 +56,7 @@ function SignInCard() {
   const loginWithApple = (e: React.MouseEvent) => {
     const config = {
       client_id: "com.cider.fortytwo", // This is the service ID we created.
-      redirect_uri: "https://people42.com/signup", // As registered along with our service ID
+      redirect_uri: "https://people42.com/be42/api/v1/auth/signup/apple", // As registered along with our service ID
       response_type: "code id_token",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
       scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
@@ -58,7 +68,11 @@ function SignInCard() {
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
 
-    location.href = `https://appleid.apple.com/auth/authorize?${queryString}`;
+    window.open(
+      `https://appleid.apple.com/auth/authorize?${queryString}`,
+      "window_name",
+      "width=430, height=500, location=no, status=no, scrollbars=yes"
+    );
   };
 
   return (

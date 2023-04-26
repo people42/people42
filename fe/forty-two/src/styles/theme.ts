@@ -107,6 +107,7 @@ const darkColor = {
 
 const shadow = {
   cardShadow: "box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.08);",
+  iconShadow: "box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);",
   innerShadow: "box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.04);",
 };
 

@@ -62,6 +62,10 @@ function NavBar() {
 export default NavBar;
 
 const StyledNavBar = styled.nav`
+  position: sticky;
+  top: 0px;
+  z-index: 99;
+  background-color: ${({ theme }) => theme.color.background.primary + "60"};
   width: 100%;
   display: flex;
   justify-content: center;

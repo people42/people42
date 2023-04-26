@@ -17,3 +17,15 @@ export async function getMyInfo(accessToken: string) {
     "ACCESS-TOKEN": accessToken,
   }).get("account/myinfo");
 }
+
+/**
+ * [POST] "account/message" 내 메시지 등록
+ */
+export async function postMessage(
+  accessToken: string,
+  body: TAccount["message"]
+) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).post("account/message", body);
+}

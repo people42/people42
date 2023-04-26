@@ -4,13 +4,13 @@ function ProgressBar({ step }: { step: number }) {
   return (
     <StyledProgressBar step={step}>
       <div className="progress-first">
-        <p>1. 소셜로그인</p>
+        <p>1. 닉네임 설정</p>
       </div>
       <div className="progress-second">
-        <p>2. 닉네임 설정</p>
+        <p>2. 프로필 이모지</p>
       </div>
       <div className="progress-third">
-        <p>3. 프로필 설정</p>
+        <p>3. 최종 확인</p>
       </div>
     </StyledProgressBar>
   );
