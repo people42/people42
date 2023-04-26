@@ -1,3 +1,4 @@
+import Meta from "../../Meta";
 import { LogoBg } from "../../components/index";
 import SignInCard from "./components/SignInCard";
 import React, { useEffect } from "react";
@@ -15,6 +16,7 @@ function SignIn() {
 
   return (
     <StyledSignIn>
+      <Meta title={`42 | 로그인`}></Meta>
       <SignInCard></SignInCard>
       <LogoBg isBlue={true} />
     </StyledSignIn>

@@ -1,3 +1,4 @@
+import Meta from "./Meta";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
@@ -68,6 +69,7 @@ function App() {
     if (isLogin) {
       getAccessToken()
         .then((res) => {
+          console.log(res.data.data);
           setUserRefresh(res.data.data);
           setUserLoading(true);
         })
@@ -85,6 +87,13 @@ function App() {
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
       <GlobalStyle />
+      <Meta
+        title={"42"}
+        description={"너랑 나 사이"}
+        keywords={"SNS, 생각, 지도, 공유, 낭만, 익명"}
+        imgsrc={""}
+        url={"https://people42.com"}
+      ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <RouterProvider router={router} />
       </GoogleOAuthProvider>

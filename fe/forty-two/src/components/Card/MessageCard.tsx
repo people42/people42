@@ -4,11 +4,15 @@ import styled from "styled-components";
 
 type messageCardProps = {
   props: TFeed["recent"]["recentMessageInfo"];
+  idx: number;
 };
 
-function MessageCard({ props }: messageCardProps) {
+function MessageCard({ props, idx }: messageCardProps) {
   return (
-    <StyledMessageCard color={props.color}>
+    <StyledMessageCard
+      color={props.color}
+      style={{ animationDelay: `${0.1 * idx}s` }}
+    >
       <div className="emoji"></div>
       <ReactionBtn></ReactionBtn>
       <div className="message">
@@ -29,6 +33,7 @@ const StyledMessageCard = styled.div<{
   color: TColorType;
 }>`
   animation: floatingRight 0.7s;
+  animation-fill-mode: both;
   max-width: 280px;
   position: relative;
   cursor: pointer;

@@ -1,12 +1,16 @@
+import Meta from "../../Meta";
 import { LogoBg } from "../../components/index";
+import { signUpUserState } from "../../recoil/user/atoms";
 import {
   SignUpCard,
   NicknamePicker,
   EmojiSelector,
   ConformUserSetting,
 } from "./components/index";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 function SignUp() {
@@ -17,6 +21,26 @@ function SignUp() {
       navigate("/");
     }
   }, []);
+
+  const [titleEmoji, setTitleEmoji] = useState<string>();
+  const [titleNickname, setTitleNickname] = useState<string>();
+
+  const [signUpUser, setSignUpUser] =
+    useRecoilState<TSignUpUser>(signUpUserState);
+
+  useEffect(() => {
+    signUpUser.nickname ? setTitleNickname(signUpUser.nickname) : null;
+    axios
+      .get(
+        `https://emoji-api.com/emojis/${signUpUser?.emoji}?access_key=ec07ff80043b910ad20772b199f7bf256815e17a`
+      )
+      .then(function (res) {
+        setTitleEmoji(res.data[0].character);
+      })
+      .catch(function (e) {
+        console.log(e);
+      });
+  }, [signUpUser]);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -37,6 +61,11 @@ function SignUp() {
 
   return (
     <StyledSignUp>
+      <Meta
+        title={`42 | ${titleEmoji ?? ""} ${
+          titleNickname ?? "회원가입"
+        } (${step}/3)`}
+      ></Meta>
       <SignUpCard
         step={step}
         title={signUpContent[step].title}

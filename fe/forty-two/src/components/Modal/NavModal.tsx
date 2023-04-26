@@ -1,6 +1,8 @@
+import { userNicknameState } from "../../recoil/user/selectors";
 import Card from "../Card/Card";
 import NavModalSetting from "./NavModalSetting";
 import { TbBellFilled, TbSettingsFilled, TbX } from "react-icons/tb";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type navModalProps = {
@@ -9,6 +11,8 @@ type navModalProps = {
 };
 
 function NavModal({ closeModal, type }: navModalProps) {
+  const userNickname = useRecoilValue(userNicknameState);
+
   return (
     <StyledNavModal type={type}>
       <Card isShadowInner={false}>
@@ -17,7 +21,7 @@ function NavModal({ closeModal, type }: navModalProps) {
             <p className="modal-header-title">
               {type == "notification"
                 ? `${"ㅁㄴㅇ"}건의 새로운 알림`
-                : `${"낙네임ㄴ"}`}
+                : `${userNickname}`}
             </p>
             <TbX
               className="modal-header-close-icon"
@@ -26,7 +30,11 @@ function NavModal({ closeModal, type }: navModalProps) {
             />
           </div>
           <div className="modal-body">
-            <NavModalSetting></NavModalSetting>
+            {type == "notification" ? (
+              <NavModalSetting></NavModalSetting>
+            ) : (
+              <NavModalSetting></NavModalSetting>
+            )}
           </div>
         </div>
       </Card>
@@ -44,9 +52,8 @@ const StyledNavModal = styled.nav<{ type: string }>`
   right: ${({ type }) => (type == "notification" ? "52px" : "0px")};
 
   .modal {
-    padding: 8px;
+    padding: 16px;
     width: 300px;
-    height: 500px;
 
     &-header {
       width: 100%;
@@ -54,7 +61,7 @@ const StyledNavModal = styled.nav<{ type: string }>`
       align-items: center;
 
       &-title {
-        ${({ theme }) => theme.text.subtitle1}
+        ${({ theme }) => theme.text.header6}
         margin-inline: 8px;
         flex-grow: 1;
       }
@@ -68,7 +75,6 @@ const StyledNavModal = styled.nav<{ type: string }>`
       }
     }
     &-body {
-      margin: 8px;
       ${({ theme }) => theme.text.body2}
     }
   }

@@ -33,3 +33,9 @@ type TAuth = {
     };
   };
 };
+
+type TAccount = {
+  message: {
+    message: string;
+  };
+};
