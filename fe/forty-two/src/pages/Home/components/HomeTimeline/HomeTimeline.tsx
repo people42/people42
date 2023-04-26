@@ -139,6 +139,7 @@ function HomeTimeline() {
       {dataList.map((data: any, idx: number) => (
         <HomeTimelineGroup
           key={`timeline-${idx}`}
+          idx={idx}
           props={data}
         ></HomeTimelineGroup>
       ))}

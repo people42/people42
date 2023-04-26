@@ -9,7 +9,7 @@ export { default as MessageCard } from "./Card/MessageCard";
 export { default as MyMessageCard } from "./Card/MyMessageCard";
 export { default as MyMessageListCard } from "./Card/MyMessageListCard";
 export { default as Input } from "./Input/Input";
-export { default as GoogleMap } from "./Map/GoogleMap";
+export { default as NaverStaticMap } from "./Map/NaverStaticMap";
 export { default as NavModal } from "./Modal/NavModal";
 export { default as NavModalSetting } from "./Modal/NavModalSetting";
 export { default as NavBar } from "./NavBar/NavBar";

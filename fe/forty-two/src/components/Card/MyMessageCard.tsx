@@ -76,6 +76,7 @@ function MyMessageCard({}: myMessageCardProps) {
 export default MyMessageCard;
 
 const StyledMyMessageCard = styled.div`
+  animation: floatingDown 0.3s;
   position: sticky;
   top: 48px;
   width: 480px;

@@ -69,13 +69,13 @@ const StyledReactionButton = styled.button`
   background: none;
   transition: all 0.3s;
   padding: 4px;
+  ${({ theme }) => theme.shadow.iconShadow};
   background-color: ${({ theme }) => theme.color.background.secondary};
   &:hover {
     width: 140px;
     background-color: ${({ theme }) => theme.color.background.secondary};
   }
 
-  ${({ theme }) => theme.shadow.cardShadow};
   display: flex;
   justify-content: end;
   align-items: center;

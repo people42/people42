@@ -3,21 +3,28 @@ import styled from "styled-components";
 
 interface homeTimeLineGroupProps {
   props: TFeed["recent"];
+  idx: number;
 }
 
-function HomeTimelineGroup({ props }: homeTimeLineGroupProps) {
+function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
   return (
     <StyledHomeTimelineGroup>
       <div className="location">
-        <div className="location-info">
+        <div
+          className="location-info"
+          style={{ animationDelay: `${0.1 * idx}s` }}
+        >
           <p className="location-info-name">
             {props.placeWithTimeInfo.placeName}
           </p>
           <p className="location-info-time">{props.placeWithTimeInfo.time}</p>
         </div>
-        <div className="location-dot"></div>
+        <div
+          className="location-dot"
+          style={{ animationDelay: `${0.1 * idx}s` }}
+        ></div>
       </div>
-      <MessageCard props={props.recentMessageInfo}></MessageCard>
+      <MessageCard idx={idx} props={props.recentMessageInfo}></MessageCard>
     </StyledHomeTimelineGroup>
   );
 }
@@ -37,6 +44,8 @@ const StyledHomeTimelineGroup = styled.article`
     text-align: end;
 
     &-info {
+      animation: floatingLeft 0.7s;
+      animation-fill-mode: both;
       &-name {
         flex-shrink: 0;
         ${({ theme }) => theme.text.overline}
@@ -57,12 +66,16 @@ const StyledHomeTimelineGroup = styled.article`
     }
 
     &-dot {
+      animation: popIn 0.3s;
+      animation-fill-mode: both;
       flex-shrink: 0;
       margin: 8px;
       width: 16px;
       height: 16px;
+      border: white 2px solid;
       border-radius: 12px;
       background-color: ${({ theme }) => theme.color.brand.blue};
+      ${({ theme }) => theme.shadow.iconShadow};
     }
   }
 `;

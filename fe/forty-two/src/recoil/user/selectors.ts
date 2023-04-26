@@ -46,3 +46,11 @@ export const userNicknameState = selector<string>({
     return user?.nickname ?? "";
   },
 });
+
+export const signUpUserEmojiState = selector<string>({
+  key: "signUpUserEmojiState",
+  get: ({ get }) => {
+    const user = get(userState);
+    return user?.email ?? "";
+  },
+});
