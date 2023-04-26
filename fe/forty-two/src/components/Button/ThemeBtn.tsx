@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 type themeButtonProps = {};
 
-function ThemeButton({}: themeButtonProps) {
+function ThemeBtn({}: themeButtonProps) {
   const [isDark, setIsDark] = useRecoilState(themeState);
 
   return (
@@ -25,7 +25,7 @@ function ThemeButton({}: themeButtonProps) {
   );
 }
 
-export default ThemeButton;
+export default ThemeBtn;
 
 const StyledThemeButton = styled.button`
   background: none;

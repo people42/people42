@@ -1,18 +1,18 @@
 import { NavBar } from "../../components";
 import { userLoginState } from "../../recoil/user/selectors";
 import { HomeMain } from "./components";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 function Home() {
-  const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
+  const isLogin = localStorage.getItem("isLogin");
 
   return (
     <StyledHome>
       <NavBar></NavBar>
-      {user ? (
+      {isLogin ? (
         <HomeMain></HomeMain>
       ) : (
         <div>

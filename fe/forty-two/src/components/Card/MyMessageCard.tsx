@@ -1,21 +1,52 @@
+import { getMyInfo } from "../../api";
+import { userLoadedState } from "../../recoil/user/atoms";
+import { userAccessTokenState } from "../../recoil/user/selectors";
 import Card from "./Card";
+import { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type myMessageCardProps = {};
 
 function MyMessageCard({}: myMessageCardProps) {
+  const accessToken = useRecoilValue(userAccessTokenState);
+  const isLoaded = useRecoilValue<boolean>(userLoadedState);
+
+  const [myMessage, setMyMessage] = useState<TMyMessage>();
+  useEffect(() => {
+    getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
+  }, [isLoaded]);
+
   return (
     <StyledMyMessageCard>
-      <div className="my-emoji"></div>
+      {myMessage ? (
+        <div
+          className="my-emoji"
+          style={{
+            backgroundImage: `url(src/assets/images/emoji/animate/${myMessage?.emoji}.gif)`,
+          }}
+        ></div>
+      ) : null}
       <div className="my-message">
         <Card isShadowInner={false}>
-          <>
+          <div>
             <p className="my-message-info">지금 나의 생각</p>
-            <p className="my-message-content">
-              동해물과 백두산이 마르고 닳도asdfasd록동해물과 백두산이 마르고
-              닳도asdfasd록
-            </p>
-          </>
+            {myMessage ? (
+              myMessage?.message ? (
+                <p className="my-message-content">{myMessage?.message}</p>
+              ) : (
+                <p className="my-message-content">{"내 생각을 작성해주세요"}</p>
+              )
+            ) : (
+              <Skeleton
+                baseColor="#ffffff2c"
+                highlightColor="#ffffff44"
+                height={23}
+              ></Skeleton>
+            )}
+          </div>
         </Card>
       </div>
     </StyledMyMessageCard>
@@ -32,7 +63,7 @@ const StyledMyMessageCard = styled.div`
     margin-left: 40px;
     width: 64px;
     height: 64px;
-    background-image: url("src/assets/images/emoji/animate/ghost.gif");
+    animation: floatingUp 0.3s;
     background-size: 100%;
   }
   .my-message {
@@ -45,6 +76,7 @@ const StyledMyMessageCard = styled.div`
     &:active {
       scale: 0.98;
     }
+
     & > div {
       padding: 40px 24px 24px 24px;
       background-color: ${({ theme }) => theme.color.brand.blue};

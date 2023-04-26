@@ -45,8 +45,8 @@ function SignInCard() {
   });
   const loginWithApple = (e: React.MouseEvent) => {
     const config = {
-      client_id: "APPLE_LOGIN_CLIENT_ID", // This is the service ID we created.
-      redirect_uri: "APPLE_LOGIN_REDIRECT_URL", // As registered along with our service ID
+      client_id: "com.cider.fortytwo", // This is the service ID we created.
+      redirect_uri: "https://people42.com/signup", // As registered along with our service ID
       response_type: "code id_token",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
       scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.

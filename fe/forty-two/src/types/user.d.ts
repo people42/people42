@@ -15,3 +15,9 @@ type TUser = {
   accessToken: string;
   refreshToken: string;
 };
+
+type TMyMessage = {
+  emoji: string;
+  message: string | null;
+  messageCnt: number;
+};
