@@ -36,4 +36,5 @@ class NicknameFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
 }

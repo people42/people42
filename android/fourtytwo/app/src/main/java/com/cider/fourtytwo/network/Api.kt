@@ -11,7 +11,7 @@ import retrofit2.http.PUT
 interface Api {
     // 회원 체크 (구글)
     @POST("/api/v1/auth/check/google")
-    suspend fun getUserGoogle(@Body params: HashMap<String, String>) : UserInfo
+    fun getUserGoogle(@Body params: HashMap<String, String>) : UserInfo
     // 회원가입 (구글)
     @POST("/api/v1/auth/signup/google")
     suspend fun signUpGoogle(@Body params: SignupForm) : UserInfo
