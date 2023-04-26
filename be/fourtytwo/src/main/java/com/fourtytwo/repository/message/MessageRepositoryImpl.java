@@ -103,4 +103,13 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
                 .fetchOne();
     }
+
+    @Override
+    public Message findRecentByUserIdx(Long userIdx) {
+      return queryFactory
+              .selectFrom(message)
+              .where(message.user.id.eq(userIdx))
+              .orderBy(message.createdAt.desc())
+              .fetchFirst();
+    };
 }
