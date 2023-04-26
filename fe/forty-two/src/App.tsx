@@ -68,6 +68,7 @@ function App() {
     if (isLogin) {
       getAccessToken()
         .then((res) => {
+          console.log(res.data.data);
           setUserRefresh(res.data.data);
           setUserLoading(true);
         })

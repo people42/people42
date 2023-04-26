@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 function Home() {
   const isLogin = localStorage.getItem("isLogin");
+  const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
 
   return (
     <StyledHome>
@@ -27,7 +28,6 @@ export default React.memo(Home);
 
 const StyledHome = styled.div`
   width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;

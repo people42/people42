@@ -38,3 +38,11 @@ export const userAccessTokenState = selector<string>({
     return user?.accessToken ?? "";
   },
 });
+
+export const userNicknameState = selector<string>({
+  key: "userNicknameState",
+  get: ({ get }) => {
+    const user = get(userState);
+    return user?.nickname ?? "";
+  },
+});

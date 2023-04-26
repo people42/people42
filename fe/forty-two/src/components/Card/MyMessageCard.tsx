@@ -1,6 +1,7 @@
 import { getMyInfo } from "../../api";
 import { userLoadedState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
+import MyMessageCardInput from "../Input/MyMessageCardInput";
 import Card from "./Card";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -14,10 +15,20 @@ function MyMessageCard({}: myMessageCardProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const isLoaded = useRecoilValue<boolean>(userLoadedState);
 
+  const [myMessageInput, setMyMessageInput] = useState<boolean>(false);
+
   const [myMessage, setMyMessage] = useState<TMyMessage>();
   useEffect(() => {
-    getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
+    if (accessToken) {
+      getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
+    }
   }, [isLoaded]);
+
+  useEffect(() => {
+    if (accessToken) {
+      getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
+    }
+  }, [myMessageInput]);
 
   return (
     <StyledMyMessageCard>
@@ -29,11 +40,20 @@ function MyMessageCard({}: myMessageCardProps) {
           }}
         ></div>
       ) : null}
-      <div className="my-message">
+      <div
+        onClick={() => {
+          myMessageInput ? null : setMyMessageInput(true);
+        }}
+        className="my-message"
+      >
         <Card isShadowInner={false}>
           <div>
             <p className="my-message-info">지금 나의 생각</p>
-            {myMessage ? (
+            {myMessageInput ? (
+              <MyMessageCardInput
+                onClickCancel={() => setMyMessageInput(false)}
+              ></MyMessageCardInput>
+            ) : myMessage ? (
               myMessage?.message ? (
                 <p className="my-message-content">{myMessage?.message}</p>
               ) : (
@@ -56,6 +76,8 @@ function MyMessageCard({}: myMessageCardProps) {
 export default MyMessageCard;
 
 const StyledMyMessageCard = styled.div`
+  position: sticky;
+  top: 48px;
   width: 480px;
   .my-emoji {
     z-index: 3;
