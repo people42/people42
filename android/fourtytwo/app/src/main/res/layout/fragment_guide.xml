@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Signup.GuideFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/guide_background"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_marginTop="384dp"
+            android:src="@drawable/logoicon_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/guide_explain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="79dp"
+            android:layout_marginBottom="252dp"
+            android:gravity="center"
+            android:text="지금 나의 생각을 \n 작성해보세요"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/login_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteY="151dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guide_explain"
+            android:layout_marginTop="23dp"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/reaction_padding_right"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/round_box"
+                android:minHeight="106dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/guide_emoji"
+                    android:layout_width="@dimen/reaction_height"
+                    android:layout_height="@dimen/reaction_height"
+                    android:layout_marginStart="40dp"
+                    android:src="@drawable/robot"
+                    android:elevation="5dp"/>
+
+                <LinearLayout
+                    android:id="@+id/guide_opinion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="70dp"
+                    android:layout_marginHorizontal="35dp">
+
+                    <EditText
+                        android:id="@+id/guide_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_box"
+                        android:backgroundTint="@color/white"
+                        android:hint="지금 내 생각을 자유롭게 적어주세요"
+                        android:textColorHint="@color/text_shadow"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="15dp"
+                        android:textSize="15sp"
+                        android:elevation="5dp"/>
+
+                    <Button
+                        android:id="@+id/think_cloud_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:background="@drawable/think_cloud"
+                        android:text="@string/think_cloud"
+                        android:layout_marginStart="12dp"
+                        android:textSize="15sp"
+                        android:elevation="5dp"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/guide_notice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guide_explain"
+                    android:gravity="center"
+                    android:layout_below="@id/guide_opinion"
+                    android:layout_marginTop="50dp"
+                    android:textColor="@color/monotone_dark"/>
+                <TextView
+                    android:id="@+id/write_later"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/write_later"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_below="@id/guide_notice"
+                    android:layout_marginTop="200dp"
+                    android:textColor="@color/main_blue"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

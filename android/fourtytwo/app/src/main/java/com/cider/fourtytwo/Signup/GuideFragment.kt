@@ -3,16 +3,18 @@ package com.cider.fourtytwo.Signup
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.cider.fourtytwo.MainActivity
 import com.cider.fourtytwo.R
+import com.cider.fourtytwo.databinding.FragmentGuideBinding
 import com.cider.fourtytwo.databinding.FragmentWelcomeBinding
 
-class WelcomeFragment : Fragment() {
-    private var _binding : FragmentWelcomeBinding? = null
+class GuideFragment : Fragment() {
+    private var _binding : FragmentGuideBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,16 +25,15 @@ class WelcomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
+        _binding = FragmentGuideBinding.inflate(inflater, container, false)
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var handler = Handler()
-        handler.postDelayed({
+        binding.writeLater.setOnClickListener {
             Navigation.findNavController(view)
-                .navigate(R.id.action_welcomeFragment_to_guideFragment)
-        }, 1500)
+                .navigate(R.id.action_guideFragment_to_MainActivity)
+        }
     }
     override fun onDestroy() {
         super.onDestroy()
