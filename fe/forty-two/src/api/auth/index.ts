@@ -10,7 +10,7 @@ export async function postCheckGoogle(body: TAuth["check"]) {
 /**
  * [POST] "auth/signup/google" Google 회원가입
  */
-export async function postSignupGoogle(body: TAuth["signup"]) {
+export async function postSignupGoogle(body: TAuth["signup"]["google"]) {
   return instance().post("auth/signup/google", body);
 }
 
