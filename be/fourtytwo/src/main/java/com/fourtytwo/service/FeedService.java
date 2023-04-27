@@ -43,6 +43,7 @@ public class FeedService {
         List<Brush> recentBrushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         List<RecentFeedResDto> recentFeedResDtos = new ArrayList<>();
         Place currentPlace = Place.builder().id(-1L).build();
+        System.out.println(recentBrushList.size());
         for (Brush brush : recentBrushList) {
             // 새로운 장소인 경우
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
