@@ -40,6 +40,7 @@ public class GpsService {
     public void renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
         Place foundPlace = placeRepositoryImpl.findByGps(gps.getLatitude(), gps.getLongitude());
+        System.out.println("1 "+foundPlace);
         if (foundPlace == null) {
             List<Map<String, Object>> popularPlaces = getPopularPlaces(gps.getLatitude(), gps.getLongitude());
             Map<String, Object> targetPlace;
@@ -54,12 +55,15 @@ public class GpsService {
             newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
             foundPlace = placeRepository.save(newPlace);
         }
+        System.out.println("2 "+foundPlace);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
         gpsOperation.add("latitude", userIdx, gps.getLatitude());
         gpsOperation.add("longitude", userIdx, gps.getLongitude());
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
 
+        System.out.println("3 "+nearSet);
+        System.out.println("4 "+nearLongSet);
         if (!nearSet.isEmpty() && !nearLongSet.isEmpty()) {
             nearSet.retainAll(nearLongSet);
             if (!nearSet.isEmpty()) {
