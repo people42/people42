@@ -2,13 +2,13 @@ import { postCheckGoogle } from "../../../api/auth";
 import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
-import { signUpUserState } from "../../../recoil/user/atoms";
+import { isLoginState, signUpUserState } from "../../../recoil/user/atoms";
 import { userLoginState } from "../../../recoil/user/selectors";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function SignInCard() {
@@ -17,16 +17,7 @@ function SignInCard() {
   const navigate = useNavigate();
   const userLogin = useSetRecoilState(userLoginState);
 
-  useEffect(() => {
-    document.addEventListener("AppleIDSignInOnSuccess", (data) => {
-      console.log(data);
-    });
-    //Listen for authorization failures
-    document.addEventListener("AppleIDSignInOnFailure", (error) => {
-      console.log(error);
-    });
-  }, []);
-
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenRes) => {
       postCheckGoogle({ o_auth_token: tokenRes.access_token })
@@ -45,6 +36,7 @@ function SignInCard() {
             localStorage.setItem("isLogin", "true");
             sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
             navigate("/");
+            setIsLogin(true);
           }
         })
         .catch((e) => {
@@ -56,23 +48,49 @@ function SignInCard() {
   const loginWithApple = (e: React.MouseEvent) => {
     const config = {
       client_id: "com.cider.fortytwo", // This is the service ID we created.
-      redirect_uri: "https://people42.com/be42/api/v1/auth/signup/apple", // As registered along with our service ID
-      response_type: "code id_token",
+      redirect_uri: "https://people42.com/signin/apple", // As registered along with our service ID
+      response_type: "code",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
-      scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
-      response_mode: "form_post",
+      // scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
+      response_mode: "query",
       m: 11,
       v: "1.5.4",
     };
+
     const queryString = Object.entries(config)
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
 
-    window.open(
+    location.href = `https://appleid.apple.com/auth/authorize?${queryString}`;
+  };
+  const loginWithApplePop = (e: React.MouseEvent) => {
+    const config = {
+      client_id: "com.cider.fortytwo", // This is the service ID we created.
+      redirect_uri: "https://people42.com/signin/apple", // As registered along with our service ID
+      response_type: "code",
+      state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
+      // scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
+      response_mode: "query",
+      m: 11,
+      v: "1.5.4",
+    };
+
+    const queryString = Object.entries(config)
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join("&");
+
+    const newWindow = window.open(
       `https://appleid.apple.com/auth/authorize?${queryString}`,
-      "window_name",
-      "width=430, height=500, location=no, status=no, scrollbars=yes"
+      "_blank",
+      "width=800,height=600"
     );
+
+    newWindow?.addEventListener("message", (e) => {
+      console.log(11);
+      if (e.origin !== "http://people42.com") {
+        console.log(e);
+      }
+    });
   };
 
   return (
@@ -94,6 +112,13 @@ function SignInCard() {
               textColor={"#ffffff"}
               label={"애플로 계속하기"}
               onClick={loginWithApple}
+            ></SocialLoginBtn>
+            <SocialLoginBtn
+              logoImg={appleLogo}
+              bgColor={"#000000"}
+              textColor={"#ffffff"}
+              label={"애플로 팝 계속하기"}
+              onClick={loginWithApplePop}
             ></SocialLoginBtn>
           </div>
         </Card>

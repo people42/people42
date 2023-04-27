@@ -1,10 +1,10 @@
 import { postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
-import { signUpUserState } from "../../../../recoil/user/atoms";
+import { isLoginState, signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
 import _ from "lodash";
 import { useNavigate } from "react-router";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type conformUserSettingProps = { onClick(e: React.MouseEvent): void };
@@ -31,7 +31,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
         break;
     }
   };
-
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const signUp = () => {
     switch (signUpUser.platform) {
       case "google":
@@ -53,6 +53,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
                   res.data.data.refreshToken
                 );
                 navigate("/");
+                setIsLogin(true);
               })
               .catch((e) => {
                 console.log(e);
