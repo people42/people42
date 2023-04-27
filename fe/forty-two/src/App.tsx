@@ -2,9 +2,11 @@ import Meta from "./Meta";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
+import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Home from "./pages/Home/Home";
 import { Policy, SignIn, SignUp } from "./pages/index";
 import { themeState } from "./recoil/theme/atoms";
+import { isLoginState } from "./recoil/user/atoms";
 import { userLoadedState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
 import "./reset.css";
@@ -12,7 +14,11 @@ import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
@@ -26,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/policy",
     element: <Policy />,
+  },
+  {
+    path: "/signin/apple",
+    element: <AppleAccountCheck />,
   },
   {
     path: "/signin",
@@ -64,23 +74,27 @@ function App() {
   const setUserRefresh = useSetRecoilState(userState);
   const [user, userLogout] = useRecoilState(userLogoutState);
   const setUserLoading = useSetRecoilState(userLoadedState);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   useEffect(() => {
-    const isLogin: string | null = localStorage.getItem("isLogin") ?? null;
-    if (isLogin) {
+    const isLocalLogin: string | null = localStorage.getItem("isLogin") ?? null;
+    if (isLocalLogin) {
       getAccessToken()
         .then((res) => {
           console.log(res.data.data);
           setUserRefresh(res.data.data);
           setUserLoading(true);
+          setIsLogin(true);
         })
         .catch((e) => {
           userLogout(user);
           localStorage.removeItem("isLogin");
           sessionStorage.removeItem("refreshToken");
           alert("오류가 발생했습니다. 다시 로그인해주세요.");
+          setIsLogin(false);
         });
     } else {
       sessionStorage.removeItem("refreshToken");
+      setIsLogin(false);
     }
   }, []);
 
