@@ -37,7 +37,7 @@ function AppleAccountCheck({}: appleAccountCheckProps) {
           // } else {
           //   userLogin(res.data.data);
           //   localStorage.setItem("isLogin", "true");
-          //   sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
+          //   removeRefreshToken();
           //   navigate("/");
           //   setIsLogin(true);
           // }
