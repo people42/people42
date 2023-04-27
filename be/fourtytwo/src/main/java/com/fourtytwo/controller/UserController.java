@@ -40,10 +40,7 @@ public class UserController {
     @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
         LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
-        ApiResponse<LoginResponseDto> apiResponse = new ApiResponse<>("OK", 200, loginResponseDto);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://localhost:5174/signin/apple"));
-        return new ResponseEntity<>(apiResponse, headers, HttpStatus.FOUND);
+        return ApiResponse.ok(loginResponseDto);
     }
 
 
