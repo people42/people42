@@ -1,6 +1,5 @@
 import { postWithdrawal } from "../../api";
 import { userLogoutState } from "../../recoil/user/selectors";
-import { removeRefreshToken } from "../../utils/refreshToken";
 import NavModalSettingRow from "./NavModalSettingRow";
 import { useNavigate } from "react-router";
 import { useRecoilState } from "recoil";
@@ -25,7 +24,7 @@ function NavModalSetting({}: navModalSettingProps) {
         onClick={() => {
           userLogout(user);
           localStorage.removeItem("isLogin");
-          removeRefreshToken();
+          sessionStorage.removeItem("refreshToken");
           alert("안전하게 로그아웃 되었습니다.");
           navigate("/signin");
         }}
@@ -38,7 +37,7 @@ function NavModalSetting({}: navModalSettingProps) {
             postWithdrawal(user?.accessToken)
               .then((res) => {
                 localStorage.removeItem("isLogin");
-                removeRefreshToken();
+                sessionStorage.removeItem("refreshToken");
                 alert("정상적으로 탈퇴 되었습니다.");
                 navigate("/signin");
               })

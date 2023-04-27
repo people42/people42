@@ -12,7 +12,6 @@ import { userLogoutState } from "./recoil/user/selectors";
 import "./reset.css";
 import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
-import { removeRefreshToken } from "./utils/refreshToken";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import {
@@ -90,12 +89,12 @@ function App() {
         .catch((e) => {
           userLogout(user);
           localStorage.removeItem("isLogin");
-          removeRefreshToken();
+          sessionStorage.removeItem("refreshToken");
           alert("오류가 발생했습니다. 다시 로그인해주세요.");
           setIsLogin(false);
         });
     } else {
-      removeRefreshToken();
+      sessionStorage.removeItem("refreshToken");
       setIsLogin(false);
     }
   }, []);
