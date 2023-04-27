@@ -32,6 +32,12 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
+    @PostMapping("/check/apple/web")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody String requestBody) {
+        System.out.println("요청 : "+requestBody);
+        return ApiResponse.ok(null);
+    }
+
     @GetMapping("/nickname")
     public ResponseEntity<ApiResponse<NicknameResDto>> createNickname() {
         NicknameResDto nicknameResDto = userService.createNickname();
