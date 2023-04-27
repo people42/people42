@@ -86,44 +86,37 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <ImageView
+        <com.skydoves.elasticviews.ElasticImageView
             android:id="@+id/emoji_preview"
             android:layout_width="216dp"
             android:layout_height="216dp"
             android:layout_marginHorizontal="70dp"
-            android:background="@drawable/robot"
+            android:src="@drawable/robot"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="fitXY"
+            app:imageView_scale="0.9"
+            app:imageView_duration="700"
+            />
 
-        <LinearLayout
-            android:id="@+id/pick_nickname"
-            android:layout_width="0dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/red"
+            android:id="@+id/emoji_recycler"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="42dp"
             android:layout_marginVertical="35dp"
             android:layout_marginStart="41dp"
             android:layout_marginEnd="41dp"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/emoji_preview">
+            app:layout_constraintTop_toBottomOf="@id/emoji_preview"
+            tools:listitem="@layout/recyclerview_emoji"
+            />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/nicknameborder"
-                android:gravity="center"
-                android:text="이모지 리스트"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <Button
+        <com.skydoves.elasticviews.ElasticButton
             android:id="@+id/emoji_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,6 +127,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:backgroundTint="@color/main_blue"
+            app:button_duration="250"
+            app:button_scale="0.87"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

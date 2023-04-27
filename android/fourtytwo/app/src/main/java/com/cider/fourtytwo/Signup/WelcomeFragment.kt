@@ -6,16 +6,21 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import com.cider.fourtytwo.IntroViewModel
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {
     private var _binding : FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
+    private val viewModel : IntroViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        viewModel.setUpFirstFlag()
     }
 
     override fun onCreateView(

@@ -73,6 +73,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     // DateStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // 버튼 애니메이션
+    implementation "com.github.skydoves:elasticviews:2.1.0"
+    // 리사이클러뷰 애니메이션
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

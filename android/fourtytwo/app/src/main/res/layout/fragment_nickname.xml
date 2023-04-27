@@ -155,7 +155,7 @@
             android:background="@drawable/round"
             android:elevation="5dp"/>
 
-        <Button
+        <com.skydoves.elasticviews.ElasticButton
             android:id="@+id/nickname_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -166,6 +166,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:backgroundTint="@color/main_blue"
+            app:button_duration="250"
+            app:button_scale="0.87"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
