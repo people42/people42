@@ -1,4 +1,5 @@
 import { instance } from "..";
+import { getRefreshToken } from "../../utils/refreshToken";
 
 /**
  * [POST] "auth/check/google" Google 회원가입 여부 체크
@@ -15,7 +16,7 @@ export async function postSignupGoogle(body: TAuth["signup"]["google"]) {
 }
 
 /**
- * [POST] "auth/check/google" Google 회원가입 여부 체크
+ * [POST] "auth/check/apple/web" Apple 회원가입 여부 체크
  */
 export async function postCheckApple(body: TAuth["check"]) {
   return instance().post("auth/check/apple/web", body);
@@ -33,6 +34,6 @@ export async function getNickname() {
  */
 export async function getAccessToken() {
   return instance({
-    "REFRESH-TOKEN": sessionStorage.getItem("refreshToken") ?? "",
+    "REFRESH-TOKEN": getRefreshToken(),
   }).post("auth/token");
 }

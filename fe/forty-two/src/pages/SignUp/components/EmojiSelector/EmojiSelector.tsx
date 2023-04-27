@@ -1,4 +1,4 @@
-import { emojiNameList } from "../../../../assets/images/emoji/static";
+import { emojiNameList } from "../../../../assets/emojiList";
 import { CommonBtn } from "../../../../components";
 import { signUpUserState } from "../../../../recoil/user/atoms";
 import _ from "lodash";
@@ -28,7 +28,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
       <SwiperSlide key={name} id={name}>
         <StaticEmojiIcon
           style={{
-            backgroundImage: `url("src/assets/images/emoji/static/${name}.png")`,
+            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/static/${name}.png")`,
           }}
         ></StaticEmojiIcon>
       </SwiperSlide>
@@ -66,7 +66,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
           <div>
             <SelectedEmojiIcon
               style={{
-                backgroundImage: `url("src/assets/images/emoji/animate/${signUpUser.emoji}.gif")`,
+                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${signUpUser.emoji}.gif")`,
               }}
             ></SelectedEmojiIcon>
           </div>
