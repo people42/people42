@@ -5,6 +5,7 @@ import com.fourtytwo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,14 +27,14 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping(path = "/check/apple", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(path = "/check/apple")
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponseDto = userService.appleLogin(loginRequestDto.getO_auth_token());
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping("/check/apple/web")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody String requestBody) {
+    @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
         System.out.println("요청 : "+requestBody);
         return ApiResponse.ok(null);
     }
