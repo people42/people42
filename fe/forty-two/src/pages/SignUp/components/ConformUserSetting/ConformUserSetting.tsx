@@ -75,7 +75,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
       <div>
         <SelectedEmojiIcon
           style={{
-            backgroundImage: `url("src/assets/images/emoji/animate/${signUpUser.emoji}.gif")`,
+            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${signUpUser.emoji}.gif")`,
           }}
         ></SelectedEmojiIcon>
         <p>{signUpUser.nickname}</p>

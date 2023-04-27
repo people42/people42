@@ -36,7 +36,7 @@ function MyMessageCard({}: myMessageCardProps) {
         <div
           className="my-emoji"
           style={{
-            backgroundImage: `url(src/assets/images/emoji/animate/${myMessage?.emoji}.gif)`,
+            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myMessage?.emoji}.gif")`,
           }}
         ></div>
       ) : null}

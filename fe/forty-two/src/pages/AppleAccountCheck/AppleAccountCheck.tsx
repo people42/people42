@@ -21,6 +21,7 @@ function AppleAccountCheck({}: appleAccountCheckProps) {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) {
+      console.log("코드는 잘 있단다.", code);
       postCheckApple({ o_auth_token: code })
         .then((res) => {
           console.log(res);
