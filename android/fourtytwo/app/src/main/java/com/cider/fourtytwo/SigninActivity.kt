@@ -76,7 +76,7 @@ class SigninActivity : AppCompatActivity() {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account?.email.toString()
             val googletokenAuth = account?.idToken.toString()
-            
+
             // 회원이면 메인으로
 //            viewModel.getUser()
 //            if(email == "member"){
