@@ -50,7 +50,7 @@ const StyledMessageCard = styled.div<{
     margin-left: 16px;
     width: 36px;
     height: 36px;
-    background-image: url("src/assets/images/emoji/animate/hugging-face.gif");
+    background-image: url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/hugging-face.gif");
     background-size: 100%;
   }
 

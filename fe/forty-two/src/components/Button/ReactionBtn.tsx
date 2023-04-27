@@ -1,7 +1,3 @@
-import fire from "../../assets/images/emoji/reaction/fire.png";
-import heart from "../../assets/images/emoji/reaction/heart.png";
-import tear from "../../assets/images/emoji/reaction/tear.png";
-import thumbsUp from "../../assets/images/emoji/reaction/thumbsUp.png";
 import { useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import styled from "styled-components";
@@ -21,25 +17,25 @@ function reactionButton({}: reactionButtonProps) {
             <div
               className="reaction-icon"
               style={{
-                backgroundImage: `url("${heart}")`,
+                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/heart.png")`,
               }}
             ></div>
             <div
               className="reaction-icon"
               style={{
-                backgroundImage: `url("${tear}")`,
+                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/tear.png")`,
               }}
             ></div>
             <div
               className="reaction-icon"
               style={{
-                backgroundImage: `url("${fire}")`,
+                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/fire.png")`,
               }}
             ></div>
             <div
               className="reaction-icon"
               style={{
-                backgroundImage: `url("${thumbsUp}")`,
+                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/thumbsUp.png")`,
               }}
             ></div>
           </>

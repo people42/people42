@@ -4,6 +4,7 @@ import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
 import { isLoginState, signUpUserState } from "../../../recoil/user/atoms";
 import { userLoginState } from "../../../recoil/user/selectors";
+import { setRefreshToken } from "../../../utils/refreshToken";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React from "react";
@@ -34,7 +35,7 @@ function SignInCard() {
           } else {
             userLogin(res.data.data);
             localStorage.setItem("isLogin", "true");
-            sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
+            setRefreshToken(res.data.data.refreshToken);
             navigate("/");
             setIsLogin(true);
           }
