@@ -36,7 +36,8 @@ public class UserController {
     @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
         System.out.println("요청 : "+requestBody);
-        return ApiResponse.ok(null);
+        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
+        return ApiResponse.ok(loginResponseDto);
     }
 
     @GetMapping("/nickname")
