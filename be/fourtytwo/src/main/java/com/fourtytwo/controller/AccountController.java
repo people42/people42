@@ -1,5 +1,6 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
@@ -67,6 +68,13 @@ AccountController {
     @DeleteMapping("/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("ACCESS-TOKEN") String accessToken) {
         userService.logout(accessToken);
+        return ApiResponse.ok(null);
+    }
+
+    @PutMapping("/message")
+    public ResponseEntity<ApiResponse<Object>> deleteMessage(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                             @Valid @RequestBody MessageDeleteReqDto messageDeleteReqDto) {
+        messageService.deleteMessage(accessToken, messageDeleteReqDto);
         return ApiResponse.ok(null);
     }
 

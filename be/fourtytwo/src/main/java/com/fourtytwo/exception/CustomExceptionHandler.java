@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.Set;
 
 @RestControllerAdvice
@@ -67,6 +68,13 @@ public class CustomExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleExpiredJwtException(ExpiredJwtException e) {
         ApiResponse<?> apiResponse = new ApiResponse<Object>("토큰이 만료되었습니다.", 401, null);
         return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    // 인가 실패
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException e) {
+        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 403, null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
     }
 
     // 쿼리 날렸을 때 DB에서 찾지 못한 경우
