@@ -21,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,11 @@ public class GpsService {
     public void renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
         Place foundPlace = placeRepositoryImpl.findByGps(gps.getLatitude(), gps.getLongitude());
+
+        LocalDateTime current = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String formattedDateTime = current.format(formatter);
+
         System.out.println("1 "+foundPlace);
         if (foundPlace == null) {
             List<Map<String, Object>> popularPlaces = getPopularPlaces(gps.getLatitude(), gps.getLongitude());
