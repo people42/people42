@@ -49,14 +49,14 @@ public class FeedService {
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
                 currentPlace = brush.getPlace();
 
-                User opponent;
-                if (brush.getUser1().getId().equals(userIdx)) {
-                    opponent = brush.getUser2();
-                } else {
-                    opponent = brush.getUser1();
-                }
+//                User opponent;
+//                if (brush.getUser1().getId().equals(userIdx)) {
+//                    opponent = brush.getUser2();
+//                } else {
+//                    opponent = brush.getUser1();
+//                }
 
-                Message message = messageRepository.findByBrushAndUserIdx(brush, opponent.getId());
+                Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
                 System.out.println("222: " + message);
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {

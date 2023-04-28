@@ -127,6 +127,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                         .and(message.createdAt.between(startOfDay, endOfDay))
                         .and(message.isActive.eq(true)))
                 .groupBy(message.id)
+                .orderBy(message.createdAt.desc())
                 .fetch();
     }
 
