@@ -1,3 +1,4 @@
+import { postLocation } from "../../api";
 import { locationState } from "./atoms";
 import { selector } from "recoil";
 
@@ -7,7 +8,8 @@ export const userLocationUpdateState = selector<TLocation | null>({
     const location = get(locationState);
     return location;
   },
-  set: async ({ set }, newLocation) => {
+  set: ({ set }, newLocation) => {
+    console.log("new", newLocation);
     set(locationState, newLocation);
   },
 });

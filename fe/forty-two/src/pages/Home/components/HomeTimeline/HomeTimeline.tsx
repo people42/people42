@@ -1,6 +1,7 @@
 import { getAccessToken, getMyInfo, getRecentFeed } from "../../../../api";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
+import { setSessionRefreshToken } from "../../../../utils";
 import HomeTimelineGroup from "./HomeTimelineGroup";
 import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -9,7 +10,9 @@ import styled from "styled-components";
 function HomeTimeline() {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
-  const [recentFeedList, setRecentFeedList] = useState<TFeed["recent"][]>([null]);
+  const [recentFeedList, setRecentFeedList] = useState<TFeed["recent"][]>([
+    null,
+  ]);
 
   useEffect(() => {
     if (accessToken) {
@@ -21,7 +24,10 @@ function HomeTimeline() {
         })
         .catch((e) => {
           if (e.response.status == 401) {
-            getAccessToken().then((res) => setUserRefresh(res.data.data));
+            getAccessToken().then((res) => {
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+            });
           }
         });
     }

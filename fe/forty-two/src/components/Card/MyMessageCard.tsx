@@ -1,6 +1,7 @@
 import { getAccessToken, getMyInfo } from "../../api";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
+import { setSessionRefreshToken } from "../../utils";
 import MyMessageCardInput from "../Input/MyMessageCardInput";
 import Card from "./Card";
 import { useEffect, useState } from "react";
@@ -24,7 +25,10 @@ function MyMessageCard({}: myMessageCardProps) {
         .then((res) => setMyMessage(res.data.data))
         .catch((e) => {
           if (e.response.status == 401) {
-            getAccessToken().then((res) => setUserRefresh(res.data.data));
+            getAccessToken().then((res) => {
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+            });
           }
         });
     }

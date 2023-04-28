@@ -1,10 +1,10 @@
 import { instance } from "..";
 
 /**
- * [GET] "feed/recent" 최근 피드 조회
+ * [POST] "background" 위치 갱신 & 스침 생성
  */
 export async function postLocation(accessToken: string, body: TLocation) {
   return instance({
     "ACCESS-TOKEN": accessToken,
-  }).get("background");
+  }).post("background", body);
 }

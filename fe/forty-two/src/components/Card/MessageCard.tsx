@@ -13,7 +13,12 @@ function MessageCard({ props, idx }: messageCardProps) {
       color={props.recentMessageInfo.color}
       style={{ animationDelay: `${0.1 * idx}s` }}
     >
-      <div className="emoji"></div>
+      <div
+        className="emoji"
+        style={{
+          backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${props.recentMessageInfo.emoji}.gif")`,
+        }}
+      ></div>
       <ReactionBtn></ReactionBtn>
       <div className="message">
         <Card isShadowInner={false}>
@@ -38,7 +43,8 @@ const StyledMessageCard = styled.div<{
 }>`
   animation: floatingRight 0.7s;
   animation-fill-mode: both;
-  max-width: 280px;
+  max-width: 200px;
+  min-width: 150px;
   position: relative;
   cursor: pointer;
   transition: scale 0.3s;
@@ -54,7 +60,6 @@ const StyledMessageCard = styled.div<{
     margin-left: 16px;
     width: 36px;
     height: 36px;
-    background-image: url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/hugging-face.gif");
     background-size: 100%;
   }
 
