@@ -6,6 +6,7 @@ type TFeed = {
       userIdx: number;
       nickname: string;
       emoji: string;
+      emotion: TReaction;
       color: TColorType;
       brushCnt: number;
     };
@@ -15,6 +16,10 @@ type TFeed = {
       time: string;
     };
   } | null;
+  emotion: {
+    emotion: string;
+    messageIdx: number;
+  };
 };
 
 type TAuth = {

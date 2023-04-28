@@ -19,7 +19,7 @@ function MessageCard({ props, idx }: messageCardProps) {
           backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${props.recentMessageInfo.emoji}.gif")`,
         }}
       ></div>
-      <ReactionBtn></ReactionBtn>
+      <ReactionBtn props={props}></ReactionBtn>
       <div className="message">
         <Card isShadowInner={false}>
           <>

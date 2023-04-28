@@ -8,3 +8,15 @@ export async function getRecentFeed(accessToken: string) {
     "ACCESS-TOKEN": accessToken,
   }).get("feed/recent");
 }
+
+/**
+ * [POST] "feed/emotion" 피드 리액션 추가/삭제
+ */
+export async function postFeedEmotion(
+  accessToken: string,
+  body: TFeed["emotion"]
+) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).post("feed/emotion", body);
+}
