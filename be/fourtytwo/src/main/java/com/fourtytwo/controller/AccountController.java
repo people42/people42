@@ -1,5 +1,6 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
@@ -9,10 +10,13 @@ import com.fourtytwo.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -50,7 +54,14 @@ AccountController {
 
         reportService.reportUser(accessToken, reportReqDto);
         return ApiResponse.ok(null);
+    }
 
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<List<MyMessageHistoryResDto>>> getMyMessageHistory(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                                                         @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+
+        List<MyMessageHistoryResDto> myMessageHistoryResDtos = messageService.getMyMessageHistoryByDate(accessToken, date);
+        return ApiResponse.ok(myMessageHistoryResDtos);
     }
 
 }
