@@ -3,14 +3,14 @@ import Card from "./Card";
 import styled from "styled-components";
 
 type messageCardProps = {
-  props: TFeed["recent"]["recentMessageInfo"];
+  props: TFeed["recent"];
   idx: number;
 };
 
 function MessageCard({ props, idx }: messageCardProps) {
-  return (
+  return props ? (
     <StyledMessageCard
-      color={props.color}
+      color={props.recentMessageInfo.color}
       style={{ animationDelay: `${0.1 * idx}s` }}
     >
       <div className="emoji"></div>
@@ -18,12 +18,16 @@ function MessageCard({ props, idx }: messageCardProps) {
       <div className="message">
         <Card isShadowInner={false}>
           <>
-            <p className="message-nickname">{props.nickname}</p>
-            <p className="message-content">{props.content}</p>
+            <p className="message-nickname">
+              {props.recentMessageInfo.nickname}
+            </p>
+            <p className="message-content">{props.recentMessageInfo.content}</p>
           </>
         </Card>
       </div>
     </StyledMessageCard>
+  ) : (
+    <></>
   );
 }
 

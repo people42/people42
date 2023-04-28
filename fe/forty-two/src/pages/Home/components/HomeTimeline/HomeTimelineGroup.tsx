@@ -32,7 +32,7 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
         }
       </div>
       {props ? (
-        <MessageCard idx={idx} props={props.recentMessageInfo}></MessageCard>
+        <MessageCard idx={idx} props={props}></MessageCard>
       ) : (
         <div className="not-message">아직 메시지가 없습니다.</div>
       )}
