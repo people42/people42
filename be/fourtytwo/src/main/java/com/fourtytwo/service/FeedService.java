@@ -48,7 +48,13 @@ public class FeedService {
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
                 currentPlace = brush.getPlace();
 
-                Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
+                User opponent;
+                if (brush.getUser1().getId().equals(userIdx)) {
+                    opponent = brush.getUser2();
+                } else {
+                    opponent = brush.getUser1();
+                }
+                Message message = messageRepository.findByBrushAndUserIdx(brush, opponent.getId());
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {
                     currentPlace = Place.builder().id(-1L).build();
@@ -67,7 +73,7 @@ public class FeedService {
                         .emoji(message.getUser().getEmoji())
                         .color(message.getUser().getColor())
                         .brushCnt(count)
-                        .emotion(expression.map(Expression::getEmotion).orElse(null))
+                        .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                         .build();
 
                 // 해당 장소와 시간 저장
@@ -129,7 +135,7 @@ public class FeedService {
                             .emoji(message.getUser().getNickname())
                             .color(message.getUser().getColor())
                             .brushCnt(count)
-                            .emotion(expression.map(Expression::getEmotion).orElse(null))
+                            .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                             .build();
                     messageResDtos.add(messageResDto);
                 }
@@ -197,16 +203,14 @@ public class FeedService {
                 message.setMessageIdx(brush.getMessage2().getId());
                 message.setContent(brush.getMessage2().getContent());
                 message.setTime(brush.getCreatedAt());
-                if (expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx).isPresent()) {
-                    message.setEmotion(expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx).get().getEmotion());
-                }
+                Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx);
+                message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             } else {
                 message.setMessageIdx(brush.getMessage1().getId());
                 message.setContent(brush.getMessage1().getContent());
                 message.setTime(brush.getCreatedAt());
-                if (expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx).isPresent()) {
-                    message.setEmotion(expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx).get().getEmotion());
-                }
+                Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx);
+                message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             }
             messages.add(message);
         }

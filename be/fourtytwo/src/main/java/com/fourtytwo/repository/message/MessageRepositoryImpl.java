@@ -1,6 +1,7 @@
 package com.fourtytwo.repository.message;
 
 import com.fourtytwo.entity.*;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,6 +25,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     QMessage message = QMessage.message;
     QPlace place = QPlace.place;
     QBrush brush = QBrush.brush;
+    QExpression expression = QExpression.expression;
+    QEmotion emotion = QEmotion.emotion;
 
     // 유저 idx에 해당하는 유저가 스쳤을 때 상대 메시지 조회
     @Override
@@ -85,14 +88,13 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
 //    }
 
     @Override
-    public String findFirstContentByUserOrderByCreatedAtDesc(User user) {
-        return queryFactory
-                .select(message.content)
-                .from(message)
+    public Optional<Message> findFirstMessageByUserOrderByCreatedAtDesc(User user) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(message)
                 .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
                 .orderBy(message.createdAt.desc())
                 .limit(1)
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
@@ -112,4 +114,20 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
               .orderBy(message.createdAt.desc())
               .fetchFirst();
     };
+
+    @Override
+    public List<Message> findMessagesByUserAndCreatedAt(User user, LocalDate createdAt) {
+
+        LocalDateTime startOfDay = createdAt.atStartOfDay();
+        LocalDateTime endOfDay = createdAt.plusDays(1).atStartOfDay();
+
+        return queryFactory
+                .selectFrom(message)
+                .where(message.user.eq(user)
+                        .and(message.createdAt.between(startOfDay, endOfDay))
+                        .and(message.isActive.eq(true)))
+                .groupBy(message.id)
+                .fetch();
+    }
+
 }
