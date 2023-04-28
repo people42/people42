@@ -74,4 +74,16 @@ public class UserController {
         LoginResponseDto loginResponseDto = userService.getAccessToken(refreshToken);
         return ApiResponse.ok(loginResponseDto);
     }
+
+    @PostMapping("/check/android/google")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> androidGoogleLogin(@Valid @RequestBody AndroidGoogleRequestDto androidGoogleRequestDto) {
+        LoginResponseDto loginResponseDto = userService.androidGoogleLogin(androidGoogleRequestDto.getO_auth_token());
+        return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/signup/android/google")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> androidGoogleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "androidGoogle");
+        return ApiResponse.ok(loginResponseDto);
+    }
 }

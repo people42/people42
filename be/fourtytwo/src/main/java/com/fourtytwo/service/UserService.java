@@ -193,15 +193,27 @@ public class UserService {
 
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
 
-        if (socialType.equals("google")) {
-            ResponseEntity<?> response = this.checkGoogleToken(signupRequestDto.getO_auth_token());
-            if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+        switch (socialType) {
+            case "google": {
+                ResponseEntity<?> response = this.checkGoogleToken(signupRequestDto.getO_auth_token());
+                if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+                }
+                break;
             }
-        } else {
-            ResponseEntity<?> response = this.checkAppleToken(signupRequestDto.getO_auth_token());
-            if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+            case "apple": {
+                ResponseEntity<?> response = this.checkAppleToken(signupRequestDto.getO_auth_token());
+                if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+                }
+                break;
+            }
+            case "androidGoogle": {
+                ResponseEntity<?> response = this.checkAndroidGoogleIdToken(signupRequestDto.getO_auth_token());
+                if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+                }
+                break;
             }
         }
 
@@ -402,5 +414,59 @@ public class UserService {
             throw new EntityNotFoundException("삭제된 유저입니다.");
         }
         return userIdx;
+    }
+
+    public LoginResponseDto androidGoogleLogin(String idToken) {
+        ResponseEntity<?> response = this.checkAndroidGoogleIdToken(idToken);
+        AndroidGoogleResponseDto androidGoogleResponseDto = (AndroidGoogleResponseDto) response.getBody();
+
+        User user = userRepository.findByEmail("google_" + androidGoogleResponseDto.getEmail());
+        if (user == null) {
+            return LoginResponseDto.builder()
+                    .user_idx(null)
+                    .email(((AndroidGoogleResponseDto) response.getBody()).getEmail())
+                    .emoji(null)
+                    .color(null)
+                    .refreshToken(null)
+                    .nickname(null)
+                    .accessToken(null)
+                    .build();
+        }
+
+        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
+        String refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+        redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
+        return LoginResponseDto.builder()
+                .user_idx(user.getId())
+                .email(androidGoogleResponseDto.getEmail())
+                .nickname(user.getNickname())
+                .emoji(user.getEmoji())
+                .color(user.getColor())
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .build();
+    }
+
+
+
+    public ResponseEntity<?> checkAndroidGoogleIdToken(String idToken) {
+        String GOOGLE_USERINFO_REQUEST_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken;
+        try {
+            WebClient webClient = WebClient.builder()
+                    .baseUrl(GOOGLE_USERINFO_REQUEST_URL)
+                    .build();
+            AndroidGoogleResponseDto res = webClient.get()
+                    .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError, response -> {
+                        throw new AuthenticationServiceException("존재하지 않는 idToken입니다.");
+                    })
+                    .bodyToMono(AndroidGoogleResponseDto.class)
+                    .block();
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+        } catch (WebClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+        }
     }
 }
