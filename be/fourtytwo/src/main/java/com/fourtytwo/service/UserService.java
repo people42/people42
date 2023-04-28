@@ -142,7 +142,7 @@ public class UserService {
     public String generateClientSecret() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         // Load the auth key file.
-        InputStream inputStream = new FileInputStream(appleKeyPath);
+        InputStream inputStream = UserService.class.getClassLoader().getResourceAsStream(appleKeyPath);
         byte[] authKeyBytes = inputStream.readAllBytes();
         String authKey = new String(authKeyBytes, StandardCharsets.UTF_8);
 
