@@ -468,4 +468,18 @@ public class UserService {
             return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
         }
     }
+
+    public void logout(String accessToken) {
+        User user = this.checkUser(accessToken);
+
+        // refresh token 삭제
+        Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
+        for (Object key : keys) {
+            Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
+            if (Objects.equals(userIdx, user.getId())) {
+                redisTemplate.opsForHash().delete("refresh", key);
+                break;
+            }
+        }
+    }
 }
