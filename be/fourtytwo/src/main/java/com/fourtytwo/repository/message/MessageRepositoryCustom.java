@@ -14,7 +14,7 @@ public interface MessageRepositoryCustom {
 
 //    List<MessageResDto> findRecentFeedList(User user);
 
-    String findFirstContentByUserOrderByCreatedAtDesc(User user);
+    Optional<Message> findFirstMessageByUserOrderByCreatedAtDesc(User user);
 
     Long findTodayCountByUser(User user);
 
