@@ -94,9 +94,11 @@ public class FeedService {
                 recentFeedResDto.setRecentMessageInfo(messageResDto);
                 recentFeedResDto.setPlaceWithTimeInfo(placeWithTimeResDto);
                 recentFeedResDtos.add(recentFeedResDto);
+                System.out.println("dto에 잘 담기나?: " + recentFeedResDto);
             }
         }
 
+        System.out.println("프론트에 줄 마지막: " + recentFeedResDtos.size());
         return recentFeedResDtos;
     }
 
