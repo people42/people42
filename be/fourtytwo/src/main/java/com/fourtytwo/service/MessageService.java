@@ -3,11 +3,13 @@ package com.fourtytwo.service;
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
+import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.emotion.EmotionRepository;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
+import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class MessageService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ExpressionRepository expressionRepository;
     private final EmotionRepository emotionRepository;
+    private final UserRepository userRepository;
 
     public void createMessage(String accessToken, String message) {
         User user = this.checkUser(accessToken);
@@ -39,8 +42,10 @@ public class MessageService {
 
     public User checkUser(String accessToken) {
         User user = jwtTokenProvider.getUser(accessToken);
-        if (user == null || !user.getIsActive()) {
+        if (user == null) {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        } else if (!user.getIsActive()) {
+            throw new EntityNotFoundException("삭제된 유저입니다.");
         }
         return user;
     }
@@ -83,6 +88,12 @@ public class MessageService {
 
         message.get().setIsActive(false);
         messageRepository.save(message.get());
+    }
+
+    public void changeEmoji(String accessToken, ChangeEmojiReqDto changeEmojiReqDto) {
+        User user = this.checkUser(accessToken);
+        user.setEmoji(changeEmojiReqDto.getEmoji());
+        userRepository.save(user);
     }
 
 }
