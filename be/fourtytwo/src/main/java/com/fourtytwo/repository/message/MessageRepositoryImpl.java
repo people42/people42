@@ -121,9 +121,6 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
         LocalDateTime startOfDay = createdAt.atStartOfDay();
         LocalDateTime endOfDay = createdAt.plusDays(1).atStartOfDay();
 
-        System.out.println("내 히스토리 조회 날짜: " + startOfDay);
-        System.out.println("내 히스토리 조회 다음 날짜: " + endOfDay);
-
         return queryFactory
                 .selectFrom(message)
                 .where(message.user.eq(user)
