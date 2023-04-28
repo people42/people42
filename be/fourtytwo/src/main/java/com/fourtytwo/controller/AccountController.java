@@ -64,4 +64,10 @@ AccountController {
         return ApiResponse.ok(myMessageHistoryResDtos);
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("ACCESS-TOKEN") String accessToken) {
+        userService.logout(accessToken);
+        return ApiResponse.ok(null);
+    }
+
 }
