@@ -3,6 +3,7 @@ package com.fourtytwo.controller;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
+import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
 import com.fourtytwo.service.MessageService;
@@ -75,6 +76,13 @@ AccountController {
     public ResponseEntity<ApiResponse<Object>> deleteMessage(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                              @Valid @RequestBody MessageDeleteReqDto messageDeleteReqDto) {
         messageService.deleteMessage(accessToken, messageDeleteReqDto);
+        return ApiResponse.ok(null);
+    }
+
+    @PutMapping("/emoji")
+    public ResponseEntity<ApiResponse<Object>> changeEmoji(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                           @Valid @RequestBody ChangeEmojiReqDto changeEmojiReqDto) {
+        messageService.changeEmoji(accessToken, changeEmojiReqDto);
         return ApiResponse.ok(null);
     }
 
