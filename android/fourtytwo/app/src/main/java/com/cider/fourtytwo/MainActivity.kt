@@ -1,5 +1,6 @@
 package com.cider.fourtytwo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -138,7 +139,8 @@ class MainActivity : AppCompatActivity(){
                 true
             }
             R.id.action_settings -> {
-                Toast.makeText(applicationContext, "설정 준비 중..", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

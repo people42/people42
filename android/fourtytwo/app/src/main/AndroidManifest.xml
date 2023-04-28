@@ -18,18 +18,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Fourtytwo"
-        tools:targetApi="33">
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_settings" >
-
-        </activity>
-
+        tools:targetApi="33"
+        tools:replace="android:icon"
+        android:usesCleartextTraffic="true">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${map_key}" />
-
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_settings">
+        </activity>
         <activity
             android:name=".SigninActivity"
             android:exported="true"

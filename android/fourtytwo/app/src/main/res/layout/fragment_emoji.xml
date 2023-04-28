@@ -102,7 +102,6 @@
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:background="@color/red"
             android:id="@+id/emoji_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,22 +1,20 @@
 package com.cider.fourtytwo.Signup
 
-import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.cider.fourtytwo.App
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.databinding.FragmentEmojiBinding
-import com.cider.fourtytwo.feed.FeedAdapter
-import okhttp3.OkHttpClient
 
-class EmojiFragment : Fragment() {
+
+class EmojiFragment : Fragment(){
     private var _binding : FragmentEmojiBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,11 +29,7 @@ class EmojiFragment : Fragment() {
         _binding = FragmentEmojiBinding.inflate(inflater, container, false)
 
         val emojiBox = binding.emojiRecycler
-        val emojiItem = ArrayList<String>()
-        emojiItem.add("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/alien.gif")
-        emojiItem.add("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/cat-with-tears-of-joy.gif")
-        emojiItem.add("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/face-in-clouds.gif")
-        val emojiAdapter = EmojiAdapter(requireContext(), emojiItem)
+        val emojiAdapter = EmojiAdapter(requireContext())
         emojiBox.adapter = emojiAdapter
         emojiBox.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -51,8 +45,14 @@ class EmojiFragment : Fragment() {
         // 내 이모지
         val myEmojiView: ImageView = binding.emojiPreview
         Glide.with(this).load(R.raw.robot).into(myEmojiView)
-    }
 
+        val emojiAdapter = EmojiAdapter(requireContext())
+        emojiAdapter.setOnItemClickListener(object : EmojiAdapter.OnItemClickListener {
+            override fun onItemClicked(data: Resources?) {
+                Glide.with(requireActivity()).load(data).into(myEmojiView)
+            }
+        })
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
