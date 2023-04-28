@@ -143,8 +143,7 @@ public class UserService {
 
         // Load the auth key file.
         InputStream inputStream = UserService.class.getClassLoader().getResourceAsStream(appleKeyPath);
-        byte[] authKeyBytes = inputStream.readAllBytes();
-        String authKey = new String(authKeyBytes, StandardCharsets.UTF_8);
+        String authKey = new String(inputStream.readAllBytes(), StandardCharsets.ISO_8859_1);
 
         // Extract the private key from the auth key.
         authKey = authKey.replace("-----BEGIN PRIVATE KEY-----\n", "");
