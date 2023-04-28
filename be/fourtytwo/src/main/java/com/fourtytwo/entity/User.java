@@ -27,6 +27,7 @@ public class User extends BaseEntity{
     private Boolean isActive;
     private String emoji;
     private String color;
+    private String appleId;
 
     public List<String> getRoleList() {
         if (this.roles.length() > 0) {

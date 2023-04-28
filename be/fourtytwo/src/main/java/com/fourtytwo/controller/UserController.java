@@ -42,11 +42,8 @@ public class UserController {
 
     @PostMapping(path = "/check/apple/web")
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
-        System.out.println("애플코드"+appleCodeReqDto.getAppleCode());
         String idToken = userService.getAppleIdToken(appleCodeReqDto.getAppleCode());
-        System.out.println("id토큰"+idToken);
         LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
-        System.out.println(loginResponseDto);
         return ApiResponse.ok(loginResponseDto);
     }
 
