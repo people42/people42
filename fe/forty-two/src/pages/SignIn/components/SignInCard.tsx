@@ -3,8 +3,9 @@ import { postCheckGoogle } from "../../../api/auth";
 import appleLogo from "../../../assets/images/logo/apple.png";
 import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
-import { isLoginState, signUpUserState } from "../../../recoil/user/atoms";
+import { signUpUserState } from "../../../recoil/user/atoms";
 import { userLoginState } from "../../../recoil/user/selectors";
+import { setLocalIsLogin, setCookieRefreshToken } from "../../../utils";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React, { useEffect, useState } from "react";
@@ -18,7 +19,6 @@ function SignInCard() {
   const navigate = useNavigate();
   const userLogin = useSetRecoilState(userLoginState);
 
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const signInWithGoogle = useGoogleLogin({
     onSuccess: (tokenRes) => {
       postCheckGoogle({ o_auth_token: tokenRes.access_token })
@@ -34,10 +34,9 @@ function SignInCard() {
             navigate("/signup");
           } else {
             userLogin(res.data.data);
-            localStorage.setItem("isLogin", "true");
-            sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
+            setLocalIsLogin();
+            setCookieRefreshToken(res.data.data.refreshToken);
             navigate("/");
-            setIsLogin(true);
           }
         })
         .catch((e) => {
@@ -78,8 +77,8 @@ function SignInCard() {
       .join("&");
 
     window.open(
-      `http://localhost:5174/signin/apple?code=asdfasdf`,
-      // `https://appleid.apple.com/auth/authorize?${queryString}`,
+      // `http://localhost:5174/signin/apple?code=asdfasdf`,
+      `https://appleid.apple.com/auth/authorize?${queryString}`,
       "get apple auth code",
       "width=600,height=600"
     );
@@ -89,22 +88,22 @@ function SignInCard() {
     console.log("found code", code);
     postCheckApple({ o_auth_token: code }) // 415 원인은 애플때문에 받는 형식 바꿔서인듯
       .then((res) => {
-        // if (res.data.data.accessToken == null) {
-        //   setSignUpUser({
-        //     platform: "apple",
-        //     email: res.data.data.email,
-        //     nickname: null,
-        //     o_auth_token: "token",
-        //     emoji: null,
-        //   });
-        //   navigate("/signup");
-        // } else {
-        //   userLogin(res.data.data);
-        //   localStorage.setItem("isLogin", "true");
-        //   sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
-        //   navigate("/");
-        //   setIsLogin(true);
-        // }
+        console.log(res);
+        if (res.data.data.accessToken == null) {
+          setSignUpUser({
+            platform: "apple",
+            email: res.data.data.email,
+            nickname: null,
+            o_auth_token: "token",
+            emoji: null,
+          });
+          navigate("/signup");
+        } else {
+          userLogin(res.data.data);
+          setLocalIsLogin();
+          setCookieRefreshToken(res.data.data.refreshToken);
+          navigate("/");
+        }
       })
       .catch((e) => {
         console.log(e);

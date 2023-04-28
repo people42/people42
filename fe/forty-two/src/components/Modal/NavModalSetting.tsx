@@ -1,8 +1,10 @@
-import { postWithdrawal } from "../../api";
+import { getAccessToken, postWithdrawal } from "../../api";
+import { userState } from "../../recoil/user/atoms";
 import { userLogoutState } from "../../recoil/user/selectors";
+import { removeLocalIsLogin, removeCookieRefreshToken } from "../../utils";
 import NavModalSettingRow from "./NavModalSettingRow";
 import { useNavigate } from "react-router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type navModalSettingProps = {};
@@ -10,6 +12,7 @@ type navModalSettingProps = {};
 function NavModalSetting({}: navModalSettingProps) {
   const navigate = useNavigate();
   const [user, userLogout] = useRecoilState(userLogoutState);
+  const setUserRefresh = useSetRecoilState(userState);
 
   return (
     <StyledNavModalSetting>
@@ -23,8 +26,8 @@ function NavModalSetting({}: navModalSettingProps) {
       <NavModalSettingRow
         onClick={() => {
           userLogout(user);
-          localStorage.removeItem("isLogin");
-          sessionStorage.removeItem("refreshToken");
+          removeLocalIsLogin();
+          removeCookieRefreshToken();
           alert("안전하게 로그아웃 되었습니다.");
           navigate("/signin");
         }}
@@ -36,13 +39,28 @@ function NavModalSetting({}: navModalSettingProps) {
           if (user?.accessToken) {
             postWithdrawal(user?.accessToken)
               .then((res) => {
-                localStorage.removeItem("isLogin");
-                sessionStorage.removeItem("refreshToken");
+                removeLocalIsLogin();
+                removeCookieRefreshToken();
                 alert("정상적으로 탈퇴 되었습니다.");
                 navigate("/signin");
               })
               .catch((e) => {
-                alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+                if (e.response.status == 401) {
+                  getAccessToken()
+                    .then((res) =>
+                      postWithdrawal(res.data.data.accessToken).then((res) => {
+                        removeLocalIsLogin();
+                        removeCookieRefreshToken();
+                        alert("정상적으로 탈퇴 되었습니다.");
+                        navigate("/signin");
+                      })
+                    )
+                    .catch((e) => {
+                      alert(
+                        "회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요."
+                      );
+                    });
+                }
               });
           }
         }}

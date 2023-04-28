@@ -1,40 +1,31 @@
 import koreaMap from "../../assets/images/map/koreaMap.png";
-import { useEffect, useState } from "react";
+import { userLocationUpdateState } from "../../recoil/location/selectors";
+import { useEffect } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type naverStaticMapProps = { setIsMapLoad: Function };
 
 function NaverStaticMap({ setIsMapLoad }: naverStaticMapProps) {
   const NAVER_MAP_CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
-  const [myLocation, setMyLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setMyLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
-  }, []);
+  const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
 
   useEffect(() => {
-    if (myLocation) {
+    if (location) {
       setIsMapLoad(true);
     }
-  }, [myLocation]);
+  }, [location]);
 
   return (
     <StyledNaverStaticMap>
-      {myLocation ? (
+      {location ? (
         <img
           className="map-img"
-          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=1024&h=1024&center=${myLocation?.lng},${myLocation?.lat}&level=16&X-NCP-APIGW-API-KEY-ID=${NAVER_MAP_CLIENT_ID}`}
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=1024&h=1024&center=${location?.lng},${location?.lat}&level=16&X-NCP-APIGW-API-KEY-ID=${NAVER_MAP_CLIENT_ID}`}
         />
       ) : null}
       <div className="map-load">
-        {myLocation ? null : (
+        {location ? null : (
           <>
             <div className="map-load-circle"></div>
             <div>

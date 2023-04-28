@@ -1,142 +1,35 @@
-import { MessageCard } from "../../../../components";
+import { getAccessToken, getMyInfo, getRecentFeed } from "../../../../api";
+import { userState } from "../../../../recoil/user/atoms";
+import { userAccessTokenState } from "../../../../recoil/user/selectors";
 import HomeTimelineGroup from "./HomeTimelineGroup";
+import { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-const dataList = [
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "red",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지asf1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "orange",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "yellow",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지asf1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "green",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "sky",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지1메시지1 메시지1메시지1메시지1 메시지1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "blue",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지asf1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "purple",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-  {
-    recentMessageInfo: {
-      messageIdx: 102,
-      content: "user3이 남긴 메시지asf1",
-      userIdx: 102,
-      nickname: "user3",
-      emoji: "confused",
-      color: "pink",
-      brushCnt: 1,
-    },
-    placeWithTimeInfo: {
-      placeIdx: 62,
-      placeName: "장소2",
-      time: "오늘 14시쯤",
-    },
-  },
-];
-
 function HomeTimeline() {
+  const accessToken = useRecoilValue(userAccessTokenState);
+  const setUserRefresh = useSetRecoilState(userState);
+  const [recentFeedList, setRecentFeedList] = useState<TFeed["recent"][]>([null]);
+
+  useEffect(() => {
+    if (accessToken) {
+      getRecentFeed(accessToken)
+        .then((res) => {
+          if (res.data.data && res.data.data.length > 0) {
+            setRecentFeedList(res.data.data);
+          }
+        })
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => setUserRefresh(res.data.data));
+          }
+        });
+    }
+  }, [accessToken]);
+
   return (
     <StyledHomeTimeline>
-      {dataList.map((data: any, idx: number) => (
+      {recentFeedList.map((data: any, idx: number) => (
         <HomeTimelineGroup
           key={`timeline-${idx}`}
           idx={idx}

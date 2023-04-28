@@ -2,7 +2,10 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-export const setRefreshToken = (refreshToken: string) => {
+/**
+ * Set Refresh Token to Cookie
+ */
+export const setCookieRefreshToken = (refreshToken: string) => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -14,10 +17,16 @@ export const setRefreshToken = (refreshToken: string) => {
   });
 };
 
-export const getRefreshToken = () => {
+/**
+ * Get Refresh Token from Cookie
+ */
+export const getCookieRefreshToken = () => {
   return cookies.get("42_RT");
 };
 
-export const removeRefreshToken = () => {
+/**
+ * Remove Refresh Token in Cookie
+ */
+export const removeCookieRefreshToken = () => {
   return cookies.remove("42_RT");
 };

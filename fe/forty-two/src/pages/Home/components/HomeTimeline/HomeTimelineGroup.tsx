@@ -15,16 +15,27 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
           style={{ animationDelay: `${0.1 * idx}s` }}
         >
           <p className="location-info-name">
-            {props.placeWithTimeInfo.placeName}
+            {props ? props.placeWithTimeInfo.placeName : ""}
           </p>
-          <p className="location-info-time">{props.placeWithTimeInfo.time}</p>
+          <p className="location-info-time">
+            {props ? props.placeWithTimeInfo.time : ""}
+          </p>
         </div>
-        <div
-          className="location-dot"
-          style={{ animationDelay: `${0.1 * idx}s` }}
-        ></div>
+        {
+          <div
+            className="location-dot"
+            style={{
+              animationDelay: `${0.1 * idx}s`,
+              backgroundColor: `${props ? null : "gray"}`,
+            }}
+          ></div>
+        }
       </div>
-      <MessageCard idx={idx} props={props.recentMessageInfo}></MessageCard>
+      {props ? (
+        <MessageCard idx={idx} props={props.recentMessageInfo}></MessageCard>
+      ) : (
+        <div className="not-message">아직 메시지가 없습니다.</div>
+      )}
     </StyledHomeTimelineGroup>
   );
 }
@@ -77,5 +88,12 @@ const StyledHomeTimelineGroup = styled.article`
       background-color: ${({ theme }) => theme.color.brand.blue};
       ${({ theme }) => theme.shadow.iconShadow};
     }
+  }
+
+  .not-message {
+    color: ${({ theme }) => theme.color.text.secondary};
+    height: 64px;
+    display: flex;
+    align-items: center;
   }
 `;

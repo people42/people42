@@ -14,3 +14,5 @@ export const instance = (
 export * from "./auth";
 export * from "./account";
 export * from "./policy";
+export * from "./feed";
+export * from "./background";

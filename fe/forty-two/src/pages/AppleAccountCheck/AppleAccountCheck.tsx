@@ -1,6 +1,5 @@
 import { postCheckApple } from "../../api";
 import { signUpUserState } from "../../recoil/user/atoms";
-import { isLoginState } from "../../recoil/user/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -11,12 +10,6 @@ type appleAccountCheckProps = {};
 
 function AppleAccountCheck({}: appleAccountCheckProps) {
   const [searchParams, setSeratchParams] = useSearchParams();
-  const setSignUpUser = useSetRecoilState<TSignUpUser>(signUpUserState);
-
-  const navigate = useNavigate();
-  const userLogin = useSetRecoilState(userLoginState);
-
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
 
   useEffect(() => {
     const code = searchParams.get("code");
