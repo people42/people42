@@ -43,7 +43,7 @@ public class FeedService {
         List<Brush> recentBrushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         List<RecentFeedResDto> recentFeedResDtos = new ArrayList<>();
         Place currentPlace = Place.builder().id(-1L).build();
-        System.out.println(recentBrushList.size());
+        System.out.println("111: " + recentBrushList.size());
         for (Brush brush : recentBrushList) {
             // 새로운 장소인 경우
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
@@ -55,12 +55,16 @@ public class FeedService {
                 } else {
                     opponent = brush.getUser1();
                 }
+
                 Message message = messageRepository.findByBrushAndUserIdx(brush, opponent.getId());
+                System.out.println("222: " + message);
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {
                     currentPlace = Place.builder().id(-1L).build();
                     continue;
                 }
+
+                System.out.println("333: 넘어온 메시지: " + message);
 
                 // 상대 유저와 몇 번 스쳤는지 조회
                 Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
