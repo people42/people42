@@ -1,34 +1,34 @@
-import { getMyInfo } from "../../api";
-import { userLoadedState } from "../../recoil/user/atoms";
+import { getAccessToken, getMyInfo } from "../../api";
+import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
 import MyMessageCardInput from "../Input/MyMessageCardInput";
 import Card from "./Card";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type myMessageCardProps = {};
 
 function MyMessageCard({}: myMessageCardProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
-  const isLoaded = useRecoilValue<boolean>(userLoadedState);
+  const setUserRefresh = useSetRecoilState(userState);
 
   const [myMessageInput, setMyMessageInput] = useState<boolean>(false);
 
   const [myMessage, setMyMessage] = useState<TMyMessage>();
   useEffect(() => {
     if (accessToken) {
-      getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
+      getMyInfo(accessToken)
+        .then((res) => setMyMessage(res.data.data))
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => setUserRefresh(res.data.data));
+          }
+        });
     }
-  }, [isLoaded]);
-
-  useEffect(() => {
-    if (accessToken) {
-      getMyInfo(accessToken).then((res) => setMyMessage(res.data.data));
-    }
-  }, [myMessageInput]);
+  }, [accessToken, myMessageInput]);
 
   return (
     <StyledMyMessageCard>

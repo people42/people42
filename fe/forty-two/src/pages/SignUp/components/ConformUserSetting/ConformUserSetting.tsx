@@ -1,8 +1,8 @@
 import { postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
-import { isLoginState, signUpUserState } from "../../../../recoil/user/atoms";
+import { signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
-import { setRefreshToken } from "../../../../utils/refreshToken";
+import { setLocalIsLogin, setCookieRefreshToken } from "../../../../utils";
 import _ from "lodash";
 import { useNavigate } from "react-router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -32,7 +32,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
         break;
     }
   };
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const signUp = () => {
     switch (signUpUser.platform) {
       case "google":
@@ -48,10 +47,9 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
             })
               .then((res) => {
                 userLogin(res.data.data);
-                localStorage.setItem("isLogin", "true");
-                setRefreshToken(res.data.data.refreshToken);
+                setLocalIsLogin();
+                setCookieRefreshToken(res.data.data.refreshToken);
                 navigate("/");
-                setIsLogin(true);
               })
               .catch((e) => {
                 console.log(e);

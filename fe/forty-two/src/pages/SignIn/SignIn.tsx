@@ -1,5 +1,6 @@
 import Meta from "../../Meta";
 import { LogoBg } from "../../components/index";
+import { getLocalIsLogin } from "../../utils";
 import SignInCard from "./components/SignInCard";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -8,7 +9,7 @@ import styled from "styled-components";
 function SignIn() {
   const navigate = useNavigate();
   useEffect(() => {
-    const isLogin: string | null = localStorage.getItem("isLogin") ?? null;
+    const isLogin: boolean = getLocalIsLogin();
     if (isLogin) {
       navigate("/");
     }

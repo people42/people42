@@ -1,7 +1,7 @@
 import Meta from "../../Meta";
 import { NavBar } from "../../components";
-import { isLoginState } from "../../recoil/user/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
+import { getLocalIsLogin } from "../../utils";
 import { HomeMain } from "./components";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,6 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 function Home() {
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
   const [userEmoji, setUserEmoji] = useState<string>("");
 
@@ -26,14 +25,13 @@ function Home() {
         console.log(e);
       });
   }, [user]);
+  const isLogin = getLocalIsLogin();
 
   return (
     <StyledHome>
-      <Meta title={`${userEmoji}42`}></Meta>
+      <Meta title={`${userEmoji} ${user?.nickname}의 42 | Home`}></Meta>
       <NavBar></NavBar>
-      {isLogin == null ? (
-        <div>로딩중</div>
-      ) : isLogin == false ? (
+      {!isLogin ? (
         <div>
           로그인해주삼 <Link to={"/signin"}>하러가기</Link>
         </div>

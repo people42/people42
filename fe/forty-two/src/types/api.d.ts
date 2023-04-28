@@ -14,7 +14,7 @@ type TFeed = {
       placeName: string;
       time: string;
     };
-  };
+  } | null;
 };
 
 type TAuth = {
@@ -35,4 +35,9 @@ type TAccount = {
   message: {
     message: string;
   };
+};
+
+type TLocation = {
+  lat: string;
+  lng: string;
 };
