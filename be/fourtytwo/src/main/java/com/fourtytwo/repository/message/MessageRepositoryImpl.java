@@ -88,14 +88,13 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
 //    }
 
     @Override
-    public String findFirstContentByUserOrderByCreatedAtDesc(User user) {
-        return queryFactory
-                .select(message.content)
-                .from(message)
+    public Optional<Message> findFirstMessageByUserOrderByCreatedAtDesc(User user) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(message)
                 .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
                 .orderBy(message.createdAt.desc())
                 .limit(1)
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
@@ -130,4 +129,5 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 .groupBy(message.id)
                 .fetch();
     }
+
 }

@@ -2,14 +2,12 @@ package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
-import com.fourtytwo.entity.Emotion;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
-import com.fourtytwo.repository.EmotionRepository;
+import com.fourtytwo.repository.emotion.EmotionRepository;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import lombok.AllArgsConstructor;
-import org.aspectj.weaver.ast.Expr;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;

@@ -10,8 +10,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.auth.RefreshTokenProvider;
 import com.fourtytwo.dto.user.*;
+import com.fourtytwo.entity.Expression;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
+import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import com.google.gson.Gson;
@@ -46,6 +48,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
     private final MessageRepository messageRepository;
+    private final ExpressionRepository expressionRepository;
 
     private final InputStream is = UserService.class.getResourceAsStream("/word_set.json");
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -63,13 +66,15 @@ public class UserService {
 
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
                        MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
-                       RedisTemplate<String, String> redisTemplate, List<String> colors) {
+                       RedisTemplate<String, String> redisTemplate, List<String> colors,
+                       ExpressionRepository expressionRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.messageRepository = messageRepository;
         this.refreshTokenProvider = refreshTokenProvider;
         this.redisTemplate = redisTemplate;
         this.colors = new ArrayList<>(Arrays.asList("red", "orange", "yellow", "green", "sky", "blue", "purple", "pink"));
+        this.expressionRepository = expressionRepository;
     }
 
 
@@ -255,12 +260,31 @@ public class UserService {
     public MyInfoResDto getMyInfo(String accessToken) {
         User user = this.checkUser(accessToken);
         String emoji = userRepository.findEmojiById(user.getId());
-        String message = messageRepository.findFirstContentByUserOrderByCreatedAtDesc(user);
-        Long messageCnt = messageRepository.findTodayCountByUser(user);
+        Optional<Message> message = messageRepository.findFirstMessageByUserOrderByCreatedAtDesc(user);
+        if (message.isPresent()) {
+            Long messageCnt = messageRepository.findTodayCountByUser(user);
+            Long fire = expressionRepository.countByMessageAndEmotionName(message.get(), "fire");
+            Long tear = expressionRepository.countByMessageAndEmotionName(message.get(), "tear");
+            Long thumbsUp = expressionRepository.countByMessageAndEmotionName(message.get(), "thumbsUp");
+            Long heart = expressionRepository.countByMessageAndEmotionName(message.get(), "heart");
+            return MyInfoResDto.builder()
+                    .emoji(emoji)
+                    .message(message.get().getContent())
+                    .messageCnt(messageCnt)
+                    .fire(fire)
+                    .tear(tear)
+                    .thumbsUp(thumbsUp)
+                    .heart(heart)
+                    .build();
+        }
         return MyInfoResDto.builder()
                 .emoji(emoji)
-                .message(message)
-                .messageCnt(messageCnt)
+                .message(null)
+                .messageCnt(0L)
+                .fire(0L)
+                .tear(0L)
+                .thumbsUp(0L)
+                .heart(0L)
                 .build();
     }
 

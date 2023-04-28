@@ -1,4 +1,4 @@
-package com.fourtytwo.repository;
+package com.fourtytwo.repository.emotion;
 
 import com.fourtytwo.entity.Emotion;
 import org.springframework.data.jpa.repository.JpaRepository;
