@@ -15,6 +15,8 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
   const locationInfo = useRecoilValue<TLocationInfo | null>(locationInfoState);
   useEffect(() => {
     if (
+      locationInfo?.placeIdx &&
+      props?.placeWithTimeInfo.placeIdx &&
       locationInfo?.placeIdx == props?.placeWithTimeInfo.placeIdx &&
       idx == 0
     ) {
@@ -30,7 +32,7 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
           style={{ animationDelay: `${0.1 * idx}s` }}
         >
           <p className="location-info-name">
-            {props ? props.placeWithTimeInfo.placeName : ""}
+            {props ? `${props.placeWithTimeInfo.placeName} 근처` : ""}
           </p>
           <p className="location-info-time">
             {props

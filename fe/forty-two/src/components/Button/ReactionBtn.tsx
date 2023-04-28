@@ -1,11 +1,50 @@
-import { useState } from "react";
+import { getAccessToken, postFeedEmotion } from "../../api";
+import { userState } from "../../recoil/user/atoms";
+import { userAccessTokenState } from "../../recoil/user/selectors";
+import { setSessionRefreshToken } from "../../utils";
+import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-type reactionButtonProps = {};
+type reactionButtonProps = {
+  props: TFeed["recent"];
+};
 
-function reactionButton({}: reactionButtonProps) {
+function reactionButton({ props }: reactionButtonProps) {
   const [mouseUp, setMouseUp] = useState<boolean>(false);
+  const reactionList: TReaction[] = ["heart", "fire", "tear", "thumbsUp"];
+  const accessToken = useRecoilValue(userAccessTokenState);
+  const setUserRefresh = useSetRecoilState(userState);
+  const [emotion, setEmotion] = useState("delete");
+
+  useEffect(() => {
+    if (props?.recentMessageInfo.emotion) {
+      setEmotion(props?.recentMessageInfo.emotion);
+    }
+  }, []);
+
+  const onClickReaction = (emotion: TReaction) => {
+    if (props?.recentMessageInfo.messageIdx && accessToken)
+      postFeedEmotion(accessToken, {
+        emotion: emotion,
+        messageIdx: props?.recentMessageInfo.messageIdx,
+      })
+        .then((res) => setEmotion(emotion))
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => {
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+              postFeedEmotion(res.data.data.accessToken, {
+                emotion: emotion,
+                messageIdx: props?.recentMessageInfo.messageIdx,
+              }).then((res) => setEmotion(emotion));
+            });
+          }
+        });
+  };
+
   return (
     <StyledReactionButton
       onMouseOver={() => setMouseUp(true)}
@@ -14,37 +53,44 @@ function reactionButton({}: reactionButtonProps) {
       <div>
         {mouseUp ? (
           <>
-            <div
-              className="reaction-icon"
-              style={{
-                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/heart.png")`,
+            {reactionList.map((reaction) => (
+              <div
+                key={`reaction-icon-${reaction}`}
+                onClick={(e) => {
+                  onClickReaction(reaction);
+                }}
+                className="reaction-icon"
+                style={{
+                  backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/${reaction}.png")`,
+                }}
+              ></div>
+            ))}
+            <TbPlus
+              onClick={(e) => {
+                onClickReaction("delete");
               }}
-            ></div>
-            <div
-              className="reaction-icon"
-              style={{
-                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/tear.png")`,
-              }}
-            ></div>
-            <div
-              className="reaction-icon"
-              style={{
-                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/fire.png")`,
-              }}
-            ></div>
-            <div
-              className="reaction-icon"
-              style={{
-                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/thumbsUp.png")`,
-              }}
-            ></div>
+              className="reaction-icon-close"
+              size={24}
+              style={{ rotate: `${mouseUp ? "45deg" : "0deg"}` }}
+            />
           </>
-        ) : null}
-        <TbPlus
-          className="reaction-icon"
-          size={24}
-          style={{ rotate: `${mouseUp ? "45deg" : "0deg"}` }}
-        />
+        ) : emotion == "delete" ? (
+          <TbPlus
+            onClick={(e) => {
+              onClickReaction("delete");
+            }}
+            className="reaction-icon-close"
+            size={24}
+            style={{ rotate: `${mouseUp ? "45deg" : "0deg"}` }}
+          />
+        ) : (
+          <div
+            className="reaction-icon"
+            style={{
+              backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/${emotion}.png")`,
+            }}
+          ></div>
+        )}
       </div>
     </StyledReactionButton>
   );
@@ -56,7 +102,7 @@ const StyledReactionButton = styled.button`
   z-index: 3;
   position: absolute;
   bottom: -16px;
-  right: 0px;
+  right: -16px;
   margin-right: 8px;
   border: none;
   border-radius: 32px;
@@ -87,10 +133,22 @@ const StyledReactionButton = styled.button`
       background-size: cover;
       transition: all 0.3s;
       &:hover {
-        transform: scale(1.1);
+        transform: scale(1.4);
       }
       &:active {
         transform: scale(0.9);
+      }
+
+      &-close {
+        transition: all 0.3s;
+        cursor: pointer;
+        &:hover {
+          transform: scale(1.1);
+          color: red;
+        }
+        &:active {
+          transform: scale(0.9);
+        }
       }
     }
   }
