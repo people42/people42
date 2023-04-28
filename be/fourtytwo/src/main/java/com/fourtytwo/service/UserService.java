@@ -17,26 +17,35 @@ import com.fourtytwo.repository.user.UserRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import javax.management.openmbean.InvalidKeyException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.Null;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -58,18 +67,28 @@ public class UserService {
     private final String[] nouns = gson.fromJson(json.get("nouns"), String[].class);
     private final String[] adjectives = gson.fromJson(json.get("adjectives"), String[].class);
 
+    private final String appleTeamId;
+    private final String appleKeyId;
+    private final String appleClientId;
+    private final String appleKeyPath;
+
     private final RedisTemplate<String, String> redisTemplate;
     private final List<String> colors;
 
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
                        MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
-                       RedisTemplate<String, String> redisTemplate, List<String> colors) {
+                       RedisTemplate<String, String> redisTemplate, List<String> colors, String appleTeamId,
+                       String appleKeyId, String appleClientId, String appleKeyPath) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.messageRepository = messageRepository;
         this.refreshTokenProvider = refreshTokenProvider;
         this.redisTemplate = redisTemplate;
         this.colors = new ArrayList<>(Arrays.asList("red", "orange", "yellow", "green", "sky", "blue", "purple", "pink"));
+        this.appleTeamId = appleTeamId;
+        this.appleKeyId = appleKeyId;
+        this.appleClientId = appleClientId;
+        this.appleKeyPath = appleKeyPath;
     }
 
 
@@ -91,6 +110,56 @@ public class UserService {
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
         return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken);
     }
+
+    public String getAppleIdToken(String appleCode) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String appleClientSecret = generateClientSecret();
+
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("grant_type", "authorization_code");
+        map.add("code", appleCode);
+        map.add("redirect_uri", "https://people42.com/api/v1/auth/check/apple");
+        map.add("client_id", appleClientId);
+        map.add("client_secret", appleClientSecret);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
+
+        String responseBody = response.getBody();
+        JSONObject jsonObject = new JSONObject(responseBody);
+
+        return jsonObject.getString("id_token");
+    }
+
+    public String generateClientSecret() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException, InvalidKeyException {
+
+        // Load the auth key file.
+        InputStream inputStream = new FileInputStream(appleKeyPath);
+        byte[] authKeyBytes = inputStream.readAllBytes();
+        String authKey = new String(authKeyBytes, StandardCharsets.UTF_8);
+
+        // Extract the private key from the auth key.
+        authKey = authKey.replace("-----BEGIN PRIVATE KEY-----\n", "");
+        authKey = authKey.replace("-----END PRIVATE KEY-----", "");
+        authKey = authKey.replaceAll("\\s", "");
+        byte[] decodedAuthKey = Base64.getDecoder().decode(authKey);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedAuthKey);
+        ECPrivateKey privateKey = (ECPrivateKey) KeyFactory.getInstance("EC").generatePrivate(keySpec);
+
+        // Generate the client secret.
+        String token = JWT.create()
+                .withIssuer(appleTeamId)
+                .withAudience("https://appleid.apple.com")
+                .withSubject(appleClientId)
+                .withExpiresAt(Date.from(Instant.now().plusSeconds(3600)))
+                .withIssuedAt(Date.from(Instant.now()))
+                .sign(Algorithm.ECDSA256(privateKey));
+
+        return token;
+    }
+
 
     public LoginResponseDto appleLogin(String idToken) {
         // idToken 검증 및 유저 정보 추출
