@@ -133,6 +133,7 @@ public class UserService {
         ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
 
         String responseBody = response.getBody();
+        System.out.println("애플 응답"+responseBody);
         JSONObject jsonObject = new JSONObject(responseBody);
 
         return jsonObject.getString("id_token");

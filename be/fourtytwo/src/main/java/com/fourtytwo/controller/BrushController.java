@@ -1,6 +1,7 @@
 package com.fourtytwo.controller;
 
 import com.fourtytwo.dto.place.GpsReqDto;
+import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.service.GpsService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,8 @@ public class BrushController {
     private GpsService gpsService;
 
     @PostMapping("")
-    public ResponseEntity<ApiResponse<Object>> renewGps(@RequestHeader("ACCESS-TOKEN") String accessToken,
-                                                        @RequestBody GpsReqDto gps) {
-        gpsService.renewGps(accessToken, gps);
-        return ApiResponse.ok(null);
+    public ResponseEntity<ApiResponse<PlaceWithTimeResDto>> renewGps(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                                     @RequestBody GpsReqDto gps) {
+        return ApiResponse.ok(gpsService.renewGps(accessToken, gps));
     }
 }
