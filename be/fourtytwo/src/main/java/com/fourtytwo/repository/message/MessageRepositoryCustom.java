@@ -4,6 +4,7 @@ import com.fourtytwo.entity.Brush;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,6 @@ public interface MessageRepositoryCustom {
     Long findTodayCountByUser(User user);
 
     Message findRecentByUserIdx(Long userIdx);
+
+    List<Message> findMessagesByUserAndCreatedAt(User user, LocalDate createdAt);
 }

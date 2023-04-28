@@ -27,5 +27,7 @@ public class Expression extends BaseEntity{
     @JoinColumn(name = "message_idx")
     private Message message;
 
-    private String emotion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emotion_idx")
+    private Emotion emotion;
 }
