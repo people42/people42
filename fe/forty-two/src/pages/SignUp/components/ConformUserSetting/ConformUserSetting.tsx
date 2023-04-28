@@ -2,7 +2,7 @@ import { postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
 import { signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
-import { setLocalIsLogin, setCookieRefreshToken } from "../../../../utils";
+import { setLocalIsLogin, setSessionRefreshToken } from "../../../../utils";
 import _ from "lodash";
 import { useNavigate } from "react-router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -48,7 +48,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
               .then((res) => {
                 userLogin(res.data.data);
                 setLocalIsLogin();
-                setCookieRefreshToken(res.data.data.refreshToken);
+                setSessionRefreshToken(res.data.data.refreshToken);
                 navigate("/");
               })
               .catch((e) => {

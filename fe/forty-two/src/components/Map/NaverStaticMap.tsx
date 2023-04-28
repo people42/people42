@@ -21,7 +21,7 @@ function NaverStaticMap({ setIsMapLoad }: naverStaticMapProps) {
       {location ? (
         <img
           className="map-img"
-          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=1024&h=1024&center=${location?.lng},${location?.lat}&level=16&X-NCP-APIGW-API-KEY-ID=${NAVER_MAP_CLIENT_ID}`}
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=1024&h=1024&center=${location?.longitude},${location?.latitude}&level=16&X-NCP-APIGW-API-KEY-ID=${NAVER_MAP_CLIENT_ID}`}
         />
       ) : null}
       <div className="map-load">

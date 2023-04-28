@@ -39,6 +39,6 @@ type TAccount = {
 };
 
 type TLocation = {
-  lat: string;
-  lng: string;
+  latitude: string;
+  longitude: string;
 };
