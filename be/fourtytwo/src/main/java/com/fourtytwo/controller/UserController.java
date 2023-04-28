@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -37,9 +40,13 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
-        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
+    @PostMapping(path = "/check/apple/web")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+        System.out.println("애플코드"+appleCodeReqDto.getAppleCode());
+        String idToken = userService.getAppleIdToken(appleCodeReqDto.getAppleCode());
+        System.out.println("id토큰"+idToken);
+        LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
+        System.out.println(loginResponseDto);
         return ApiResponse.ok(loginResponseDto);
     }
 
