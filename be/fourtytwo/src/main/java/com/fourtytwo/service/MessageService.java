@@ -1,6 +1,7 @@
 package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
@@ -8,12 +9,14 @@ import com.fourtytwo.repository.emotion.EmotionRepository;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -65,6 +68,21 @@ public class MessageService {
         }
         System.out.println("내 히스토리 dtos 사이즈: " + myMessageHistoryResDtos.size());
         return myMessageHistoryResDtos;
+    }
+
+    public void deleteMessage(String accessToken, MessageDeleteReqDto messageDeleteReqDto) {
+        User user = this.checkUser(accessToken);
+        Optional<Message> message = messageRepository.findById(messageDeleteReqDto.getMessageIdx());
+        if (message.isEmpty()) {
+            throw new EntityNotFoundException("존재하지 않는 메시지입니다.");
+        } else if (!message.get().getIsActive()) {
+            throw new EntityNotFoundException("이미 삭제된 메시지입니다.");
+        } else if (!message.get().getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("요청한 유저의 메시지가 아닙니다.");
+        }
+
+        message.get().setIsActive(false);
+        messageRepository.save(message.get());
     }
 
 }
