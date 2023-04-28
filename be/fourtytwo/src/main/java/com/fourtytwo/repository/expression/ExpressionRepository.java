@@ -11,4 +11,6 @@ public interface ExpressionRepository extends JpaRepository<Expression, Long> {
 
     Optional<Expression> findByMessageAndUserId(Message message, Long userId);
 
+    Long countByMessageAndEmotionName(Message message, String emotionName);
+
 }
