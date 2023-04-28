@@ -1,9 +1,7 @@
 package com.fourtytwo.controller;
 
-import com.fourtytwo.dto.feed.PlaceFeedResDto;
-import com.fourtytwo.dto.feed.RecentFeedResDto;
-import com.fourtytwo.dto.feed.UserFeedResDto;
-import com.fourtytwo.dto.feed.UserPlaceFeedResDto;
+import com.fourtytwo.dto.feed.*;
+import com.fourtytwo.service.ExpressService;
 import com.fourtytwo.service.FeedService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +18,7 @@ import java.util.List;
 public class FeedController {
 
     private FeedService feedService;
+    private ExpressService expressService;
 
     @GetMapping("/recent")
     public ResponseEntity<ApiResponse<List<RecentFeedResDto>>> getRecentFeed(@RequestHeader("ACCESS-TOKEN") String accessToken) {
@@ -50,6 +49,13 @@ public class FeedController {
                                                                     @RequestParam Long placeIdx) {
         UserPlaceFeedResDto userPlaceFeedResDto = feedService.findUserPlaceFeeds(accessToken, userIdx, placeIdx);
         return ApiResponse.ok(userPlaceFeedResDto);
+    }
+
+    @PostMapping("/emotion")
+    public ResponseEntity<ApiResponse<Object>> express(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                       @RequestBody ExpressReqDto expressReqDto) {
+        expressService.express(accessToken, expressReqDto);
+        return ApiResponse.ok(null);
     }
 
 }
