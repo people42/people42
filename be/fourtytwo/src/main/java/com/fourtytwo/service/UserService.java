@@ -125,7 +125,7 @@ public class UserService {
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
-        map.add("redirect_uri", "https://people42.com/api/v1/auth/check/apple");
+        map.add("redirect_uri", "https://people42.com/signin/apple");
         map.add("client_id", appleClientId);
         map.add("client_secret", appleClientSecret);
 
@@ -144,7 +144,6 @@ public class UserService {
         // Load the auth key file.
         InputStream inputStream = UserService.class.getClassLoader().getResourceAsStream(appleKeyPath);
         String authKey = new String(inputStream.readAllBytes(), StandardCharsets.ISO_8859_1);
-        System.out.println(authKey);
 
         // Extract the private key from the auth key.
         authKey = authKey.replace("-----BEGIN PRIVATE KEY-----\n", "");
