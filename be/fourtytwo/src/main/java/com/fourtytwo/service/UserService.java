@@ -81,8 +81,7 @@ public class UserService {
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
                        MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
                        RedisTemplate<String, String> redisTemplate, List<String> colors, String appleTeamId,
-                       String appleKeyId, String appleClientId, String appleKeyPath) {
-                       RedisTemplate<String, String> redisTemplate, List<String> colors,
+                       String appleKeyId, String appleClientId, String appleKeyPath,
                        ExpressionRepository expressionRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
