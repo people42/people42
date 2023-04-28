@@ -1,6 +1,7 @@
 import Meta from "../../Meta";
 import { LogoBg } from "../../components/index";
 import { signUpUserState } from "../../recoil/user/atoms";
+import { getLocalIsLogin } from "../../utils";
 import {
   SignUpCard,
   NicknamePicker,
@@ -16,7 +17,7 @@ import styled from "styled-components";
 function SignUp() {
   const navigate = useNavigate();
   useEffect(() => {
-    const isLogin: string | null = localStorage.getItem("isLogin") ?? null;
+    const isLogin: boolean = getLocalIsLogin();
     if (isLogin) {
       navigate("/");
     }

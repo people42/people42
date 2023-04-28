@@ -1,4 +1,4 @@
-import { instance } from "..";
+import { getAccessToken, instance } from "..";
 
 /**
  * [PUT] "account/withdrawal" 회원탈퇴
