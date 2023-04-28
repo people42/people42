@@ -1,4 +1,8 @@
 import { MessageCard } from "../../../../components";
+import { locationInfoState } from "../../../../recoil/location/atoms";
+import { formatMessageDate } from "../../../../utils";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface homeTimeLineGroupProps {
@@ -7,8 +11,19 @@ interface homeTimeLineGroupProps {
 }
 
 function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
+  const [isActive, setIsActive] = useState(false);
+  const locationInfo = useRecoilValue<TLocationInfo | null>(locationInfoState);
+  useEffect(() => {
+    if (
+      locationInfo?.placeIdx == props?.placeWithTimeInfo.placeIdx &&
+      idx == 0
+    ) {
+      setIsActive(true);
+    }
+  }, [locationInfo]);
+
   return (
-    <StyledHomeTimelineGroup>
+    <StyledHomeTimelineGroup isActive={isActive}>
       <div className="location">
         <div
           className="location-info"
@@ -18,18 +33,29 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
             {props ? props.placeWithTimeInfo.placeName : ""}
           </p>
           <p className="location-info-time">
-            {props ? props.placeWithTimeInfo.time : ""}
+            {props
+              ? isActive
+                ? "방금 전"
+                : formatMessageDate(props.placeWithTimeInfo.time)
+              : ""}
           </p>
         </div>
-        {
+        {props ? (
           <div
             className="location-dot"
             style={{
               animationDelay: `${0.1 * idx}s`,
-              backgroundColor: `${props ? null : "gray"}`,
             }}
           ></div>
-        }
+        ) : (
+          <div
+            className="location-dot"
+            style={{
+              animationDelay: `${0.1 * idx}s`,
+              backgroundColor: "gray",
+            }}
+          ></div>
+        )}
       </div>
       {props ? (
         <MessageCard idx={idx} props={props}></MessageCard>
@@ -42,7 +68,7 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
 
 export default HomeTimelineGroup;
 
-const StyledHomeTimelineGroup = styled.article`
+const StyledHomeTimelineGroup = styled.article<{ isActive: boolean }>`
   display: flex;
   align-items: start;
   margin-left: 16px;
@@ -62,17 +88,21 @@ const StyledHomeTimelineGroup = styled.article`
         ${({ theme }) => theme.text.overline}
         width: 96px;
         flex-grow: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        word-wrap: break-word;
+        word-break: keep-all;
+        color: ${(props) =>
+          props.isActive
+            ? props.theme.color.text.primary
+            : props.theme.color.text.secondary};
       }
       &-time {
         width: 96px;
         flex-shrink: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        ${({ theme }) => theme.text.overline}
+        ${({ theme }) => theme.text.body2}
+        color: ${(props) =>
+          props.isActive
+            ? props.theme.color.text.primary
+            : props.theme.color.text.secondary};
       }
     }
 

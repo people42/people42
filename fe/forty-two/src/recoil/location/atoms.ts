@@ -4,3 +4,8 @@ export const locationState = atom<TLocation | null>({
   key: "locationState",
   default: null,
 });
+
+export const locationInfoState = atom<TLocationInfo | null>({
+  key: "locationInfoState",
+  default: null,
+});

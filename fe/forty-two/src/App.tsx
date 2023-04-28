@@ -1,10 +1,12 @@
 import Meta from "./Meta";
+import { postLocation } from "./api";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Home from "./pages/Home/Home";
 import { Policy, SignIn, SignUp } from "./pages/index";
+import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
 import { themeState } from "./recoil/theme/atoms";
 import { userState } from "./recoil/user/atoms";
@@ -15,9 +17,10 @@ import { lightStyles, darkStyles } from "./styles/theme";
 import {
   getLocalIsLogin,
   removeLocalIsLogin,
-  removeCookieRefreshToken,
+  removeSessionRefreshToken,
   setLocalIsLogin,
   getUserLocation,
+  setSessionRefreshToken,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
@@ -59,6 +62,21 @@ function App() {
   const [location, setLocation] = useRecoilState<TLocation | null>(
     userLocationUpdateState
   );
+  const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
+    locationInfoState
+  );
+  const setUserRefresh = useSetRecoilState(userState);
+  const [user, userLogout] = useRecoilState(userLogoutState);
+
+  const updateCurrentLocation = async () => {
+    getUserLocation().then((res: any) =>
+      setLocation({
+        latitude: res.coords.latitude,
+        longitude: res.coords.longitude,
+      })
+    );
+  };
+
   useEffect(() => {
     const isSystemDark: MediaQueryList = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -75,10 +93,29 @@ function App() {
 
     isSystemDark.addEventListener("change", handleSystemDarkChange);
 
-    getUserLocation();
+    const isLocalLogin: boolean = getLocalIsLogin();
+    if (isLocalLogin) {
+      getAccessToken()
+        .then((res) => {
+          setUserRefresh(res.data.data);
+          setSessionRefreshToken(res.data.data.refreshToken);
+          setLocalIsLogin();
+        })
+        .catch((e) => {
+          userLogout(user);
+          removeLocalIsLogin();
+          removeSessionRefreshToken();
+          alert("로그인 세선이 만료되었습니다. 다시 로그인해주세요.");
+        });
+    } else {
+      removeSessionRefreshToken();
+      removeLocalIsLogin();
+    }
+
+    updateCurrentLocation();
     const postLocationInterval = setInterval(() => {
-      console.log(111111111111111111111111);
-    }, 3000);
+      updateCurrentLocation();
+    }, 300000);
 
     return () => {
       isSystemDark.removeEventListener("change", handleSystemDarkChange);
@@ -86,27 +123,13 @@ function App() {
     };
   }, []);
 
-  const setUserRefresh = useSetRecoilState(userState);
-  const [user, userLogout] = useRecoilState(userLogoutState);
   useEffect(() => {
-    const isLocalLogin: boolean = getLocalIsLogin();
-    if (isLocalLogin) {
-      getAccessToken()
-        .then((res) => {
-          setUserRefresh(res.data.data);
-          setLocalIsLogin();
-        })
-        .catch((e) => {
-          userLogout(user);
-          removeLocalIsLogin();
-          removeCookieRefreshToken();
-          alert("오류가 발생했습니다. 다시 로그인해주세요.");
-        });
-    } else {
-      removeCookieRefreshToken();
-      removeLocalIsLogin();
+    if (location && user) {
+      postLocation(user?.accessToken, location).then((res) =>
+        setLocationInfo(res.data.data)
+      );
     }
-  }, []);
+  }, [location, user]);
 
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
