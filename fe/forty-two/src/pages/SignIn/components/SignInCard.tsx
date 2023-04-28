@@ -86,7 +86,7 @@ function SignInCard() {
 
   const signInWithApple = (code: string) => {
     console.log("found code", code);
-    postCheckApple({ o_auth_token: code }) // 415 원인은 애플때문에 받는 형식 바꿔서인듯
+    postCheckApple({ appleCode: code })
       .then((res) => {
         console.log(res);
         if (res.data.data.accessToken == null) {

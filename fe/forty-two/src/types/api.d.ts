@@ -19,7 +19,8 @@ type TFeed = {
 
 type TAuth = {
   check: {
-    o_auth_token: string;
+    google: { o_auth_token: string };
+    apple: { appleCode: string };
   };
   signup: {
     google: {
