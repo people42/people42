@@ -108,12 +108,12 @@ public class UserService {
         String userEmail = "google" + "_" + googleOAuthResponse.getEmail();
         User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
         if (foundUser == null) {
-            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null, null, null);
+            return new LoginResponseDto(null, googleOAuthResponse.getEmail(), null, null, null, null, null, null);
         }
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken);
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
 
     public String getAppleIdToken(String appleCode) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
@@ -176,21 +176,32 @@ public class UserService {
         AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
 
         String userEmail = "apple" + "_" + appleOAuthResponse.getEmail();
-        User foundUser = userRepository.findByEmailAndIsActiveTrue(userEmail);
+        User foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
         if (foundUser == null) {
             // 회원가입 처리가 필요한 경우
-            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null, null, null);
+            User newUser = User.builder()
+                    .email(userEmail)
+                    .appleId(appleOAuthResponse.getSub())
+                    .isActive(false)
+                    .build();
+            userRepository.save(newUser);
+            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null, null, null, idToken);
+        }
+        if (!foundUser.getIsActive()) {
+            String returnEmail = userEmail.split("apple_")[1];
+            return new LoginResponseDto(foundUser.getId(), returnEmail, null, null, null, null, null, idToken);
         }
 
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
-        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken);
+        return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
 
     public LoginResponseDto signup(SignupRequestDto signupRequestDto, String socialType) {
 
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        User foundUser = userRepository.findByEmail(socialType + "_" + signupRequestDto.getEmail());
 
         switch (socialType) {
             case "google": {
@@ -205,6 +216,8 @@ public class UserService {
                 if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                     throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
                 }
+                AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
+                foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
                 break;
             }
             case "androidGoogle": {
@@ -220,10 +233,9 @@ public class UserService {
             throw new DataIntegrityViolationException("이미 존재하는 닉네임입니다.");
         }
 
-        User foundUser = userRepository.findByEmail(socialType + "_" + signupRequestDto.getEmail());
         if (foundUser != null) {
             if (foundUser.getIsActive()) {
-                throw new DataIntegrityViolationException("이미 존재하는 이메일입니다.");
+                throw new DataIntegrityViolationException("이미 존재하는 사용자입니다.");
             } else {
                 foundUser.setIsActive(true);
                 foundUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
@@ -236,7 +248,7 @@ public class UserService {
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
-                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken);
+                return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken, null);
             }
         }
 
@@ -257,7 +269,7 @@ public class UserService {
         String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
         redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
-        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken);
+        return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken, null);
     }
 
     public ResponseEntity<?> checkGoogleToken(String access_token) {

@@ -18,4 +18,5 @@ public class LoginResponseDto {
     private String color;
     private String accessToken;
     private String refreshToken;
+    private String appleIdToken;
 }

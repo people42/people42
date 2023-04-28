@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     User findByIdAndIsActiveTrue(Long id);
 
+    User findByAppleId(String appleId);
+
 }
