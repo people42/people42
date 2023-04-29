@@ -125,9 +125,17 @@ function App() {
 
   useEffect(() => {
     if (location && user) {
-      postLocation(user?.accessToken, location).then((res) =>
-        setLocationInfo(res.data.data)
-      );
+      postLocation(user?.accessToken, location)
+        .then((res) => setLocationInfo(res.data.data))
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => {
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+              postLocation(res.data.data.accessToken, location);
+            });
+          }
+        });
     }
   }, [location, user]);
 

@@ -48,12 +48,7 @@ const StyledMessageCard = styled.div<{
   position: relative;
   cursor: pointer;
   transition: scale 0.3s;
-  &:hover {
-    scale: 1.02;
-  }
-  &:active {
-    scale: 0.98;
-  }
+
   .emoji {
     z-index: 3;
     position: absolute;
@@ -64,6 +59,13 @@ const StyledMessageCard = styled.div<{
   }
 
   .message {
+    transition: scale 0.3s;
+    &:hover {
+      scale: 1.02;
+    }
+    &:active {
+      scale: 0.98;
+    }
     padding-top: 18px;
     & > div {
       padding: 24px 16px 16px 16px;

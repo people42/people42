@@ -53,14 +53,17 @@ const StyledHomeTimeline = styled.section`
   flex-shrink: 0;
   width: 360px;
   position: relative;
+  padding-bottom: 40px;
+  height: calc(100vh - 56px);
+  overflow: scroll;
 
   .timeline-bar {
-    position: absolute;
-    top: 50px;
-    left: 126px;
+    position: fixed;
+    bottom: 0px;
+    margin-left: 126px;
     width: 4px;
     height: 100%;
     z-index: -3;
-    background-color: ${({ theme }) => theme.color.text.secondary};
+    background-color: ${({ theme }) => theme.color.text.primary + "30"};
   }
 `;

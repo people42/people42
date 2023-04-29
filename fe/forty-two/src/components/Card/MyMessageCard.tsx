@@ -80,21 +80,23 @@ function MyMessageCard({}: myMessageCardProps) {
 export default MyMessageCard;
 
 const StyledMyMessageCard = styled.div`
+  z-index: 2;
   animation: floatingDown 0.3s;
   position: sticky;
   top: 48px;
   width: 480px;
+  padding: 32px 0px 0px 0px;
   .my-emoji {
     z-index: 3;
     position: absolute;
-    margin-left: 40px;
+    margin-left: 24px;
+    margin-top: -36px;
     width: 64px;
     height: 64px;
     animation: floatingUp 0.3s;
     background-size: 100%;
   }
   .my-message {
-    padding: 32px 24px 24px 24px;
     cursor: pointer;
     transition: scale 0.3s;
     &:hover {

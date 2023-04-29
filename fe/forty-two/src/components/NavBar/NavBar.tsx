@@ -1,3 +1,4 @@
+import animatedLogo from "../../assets/images/logo/animatedLogo_w120.gif";
 import IconBtn from "../Button/IconBtn";
 import ThemeBtn from "../Button/ThemeBtn";
 import NavModal from "../Modal/NavModal";
@@ -23,7 +24,7 @@ function NavBar() {
     <StyledNavBar>
       <div>
         <div className="logo" onClick={() => navigate("/")}>
-          logo
+          <img src={animatedLogo} alt="42-logo" aria-label="home link button" />
         </div>
         <div className="nav-icons">
           {isSettingModalOn ? (
@@ -71,13 +72,28 @@ const StyledNavBar = styled.nav`
   justify-content: center;
   padding: 16px 24px 0px 24px;
   box-sizing: border-box;
+  .logo {
+    height: 40px;
+    & > img {
+      height: 100%;
+      filter: opacity(0.8);
+    }
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover {
+      transform: scale(1.1);
+    }
+    &:active {
+      transform: scale(0.98);
+    }
+  }
   & svg {
     color: ${({ theme }) => theme.color.monotone.gray};
     padding: 8px;
   }
   & > div {
     width: 100%;
-    height: 36px;
+    height: 40px;
     max-width: 1024px;
     display: flex;
     justify-content: space-between;
