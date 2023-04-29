@@ -11,6 +11,7 @@ public class MyMessageHistoryResDto {
 
     private String content;
     private LocalDateTime createdAt;
+    private Long messageIdx;
     private Long heart;
     private Long fire;
     private Long tear;
