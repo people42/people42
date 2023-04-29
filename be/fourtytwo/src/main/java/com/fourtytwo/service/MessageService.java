@@ -63,6 +63,7 @@ public class MessageService {
             MyMessageHistoryResDto myMessageHistoryResDto = MyMessageHistoryResDto.builder()
                     .content(message.getContent())
                     .createdAt(message.getCreatedAt())
+                    .messageIdx(message.getId())
                     .fire(fire)
                     .tear(tear)
                     .thumbsUp(thumbsUp)
