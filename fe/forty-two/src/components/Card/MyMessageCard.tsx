@@ -10,17 +10,21 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-type myMessageCardProps = {};
+type myMessageCardProps = {
+  isMessageEdit: boolean;
+  setIsMessageEdit: Function;
+};
 
-function MyMessageCard({}: myMessageCardProps) {
+function MyMessageCard({
+  isMessageEdit,
+  setIsMessageEdit,
+}: myMessageCardProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
 
-  const [myMessageInput, setMyMessageInput] = useState<boolean>(false);
-
   const [myMessage, setMyMessage] = useState<TMyMessage>();
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken && !isMessageEdit) {
       getMyInfo(accessToken)
         .then((res) => setMyMessage(res.data.data))
         .catch((e) => {
@@ -32,7 +36,7 @@ function MyMessageCard({}: myMessageCardProps) {
           }
         });
     }
-  }, [accessToken, myMessageInput]);
+  }, [accessToken, isMessageEdit]);
 
   return (
     <StyledMyMessageCard>
@@ -46,16 +50,16 @@ function MyMessageCard({}: myMessageCardProps) {
       ) : null}
       <div
         onClick={() => {
-          myMessageInput ? null : setMyMessageInput(true);
+          isMessageEdit ? null : setIsMessageEdit(true);
         }}
         className="my-message"
       >
         <Card isShadowInner={false}>
           <div>
             <p className="my-message-info">지금 나의 생각</p>
-            {myMessageInput ? (
+            {isMessageEdit ? (
               <MyMessageCardInput
-                onClickCancel={() => setMyMessageInput(false)}
+                onClickCancel={() => setIsMessageEdit(false)}
               ></MyMessageCardInput>
             ) : myMessage ? (
               myMessage?.message ? (
@@ -136,6 +140,8 @@ const StyledMyMessageCard = styled.div`
     &-content {
       ${({ theme }) => theme.text.subtitle1}
       color: ${({ theme }) => theme.color.monotone.light};
+      word-wrap: break-word;
+      word-break: keep-all;
     }
   }
 `;

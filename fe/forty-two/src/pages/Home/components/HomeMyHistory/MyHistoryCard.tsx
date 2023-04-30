@@ -1,20 +1,29 @@
+import { deleteMessage } from "../../../../api";
 import { Card, FloatIconBtn } from "../../../../components";
+import { formatMessageDate } from "../../../../utils";
 import { TbX } from "react-icons/tb";
 import styled from "styled-components";
 
-type myHistoryCardProps = {};
+type myHistoryCardProps = {
+  history: THistory;
+  onClickDelete(idx: number): void;
+};
 
-function MyHistoryCard({}: myHistoryCardProps) {
+function MyHistoryCard({ history, onClickDelete }: myHistoryCardProps) {
   return (
     <StyledMyHistoryCard>
-      <FloatIconBtn onClick={() => {}}>
+      <FloatIconBtn
+        onClick={() => {
+          onClickDelete(history.messageIdx);
+        }}
+      >
         <TbX />
       </FloatIconBtn>
       <Card isShadowInner={false}>
         <div className="history-card-box">
-          <p>내 이전기록</p>
+          <p>{history.content}</p>
           <p>장소</p>
-          <p>시간</p>
+          <p>{formatMessageDate(history.createdAt)}</p>
         </div>
       </Card>
     </StyledMyHistoryCard>
@@ -24,10 +33,12 @@ function MyHistoryCard({}: myHistoryCardProps) {
 export default MyHistoryCard;
 
 const StyledMyHistoryCard = styled.div`
+  animation: floatingDown 0.3s;
   width: 100%;
-  height: 100px;
   margin-block: 16px;
   position: relative;
+  word-wrap: break-word;
+  word-break: keep-all;
 
   & > Button {
     position: absolute;

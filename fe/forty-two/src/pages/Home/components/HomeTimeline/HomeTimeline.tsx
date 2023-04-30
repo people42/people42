@@ -15,7 +15,7 @@ function HomeTimeline() {
   ]);
 
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken && recentFeedList) {
       getRecentFeed(accessToken)
         .then((res) => {
           if (res.data.data && res.data.data.length > 0) {
@@ -31,7 +31,7 @@ function HomeTimeline() {
           }
         });
     }
-  }, [accessToken]);
+  }, [accessToken, recentFeedList]);
 
   return (
     <StyledHomeTimeline>

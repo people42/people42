@@ -1,17 +1,21 @@
 import { MyMessageCard } from "../../../../components";
 import HomeMap from "../HomeMap/HomeMap";
 import HomeMyHistory from "../HomeMyHistory/HomeMyHistory";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import styled from "styled-components";
 
 type homeMyMessageProps = {};
 
 function HomeMyMessage({}: homeMyMessageProps) {
+  const [isMessageEdit, setIsMessageEdit] = useState<boolean>(false);
+
   return (
     <StyledHomeMyMessage>
-      <MyMessageCard></MyMessageCard>
-      <HomeMyHistory></HomeMyHistory>
-      <HomeMap></HomeMap>
+      <MyMessageCard
+        isMessageEdit={isMessageEdit}
+        setIsMessageEdit={setIsMessageEdit}
+      ></MyMessageCard>
+      {isMessageEdit ? <HomeMyHistory></HomeMyHistory> : <HomeMap></HomeMap>}
     </StyledHomeMyMessage>
   );
 }
