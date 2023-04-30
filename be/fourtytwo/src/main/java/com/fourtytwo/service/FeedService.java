@@ -9,6 +9,7 @@ import com.fourtytwo.dto.feed.UserPlaceFeedResDto;
 import com.fourtytwo.dto.message.MessageResDto;
 import com.fourtytwo.dto.message.UserMessageResDto;
 import com.fourtytwo.dto.place.PlaceResDto;
+import com.fourtytwo.dto.place.PlaceWithTimeAndGpsResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.*;
 import com.fourtytwo.repository.brush.BrushRepository;
@@ -43,7 +44,6 @@ public class FeedService {
         List<Brush> recentBrushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         List<RecentFeedResDto> recentFeedResDtos = new ArrayList<>();
         Place currentPlace = Place.builder().id(-1L).build();
-        System.out.println("111: " + recentBrushList.size());
         for (Brush brush : recentBrushList) {
             // 새로운 장소인 경우
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
@@ -57,14 +57,11 @@ public class FeedService {
 //                }
 
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
-                System.out.println("222: " + message);
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {
                     currentPlace = Place.builder().id(-1L).build();
                     continue;
                 }
-
-                System.out.println("333: 넘어온 메시지: " + message);
 
                 // 상대 유저와 몇 번 스쳤는지 조회
                 Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
@@ -94,11 +91,9 @@ public class FeedService {
                 recentFeedResDto.setRecentMessageInfo(messageResDto);
                 recentFeedResDto.setPlaceWithTimeInfo(placeWithTimeResDto);
                 recentFeedResDtos.add(recentFeedResDto);
-                System.out.println("dto에 잘 담기나?: " + recentFeedResDto);
             }
         }
 
-        System.out.println("프론트에 줄 마지막: " + recentFeedResDtos.size());
         return recentFeedResDtos;
     }
 
@@ -150,17 +145,19 @@ public class FeedService {
         }
         
         if (!flag) {
-            throw new EntityNotFoundException("존재하지 않는 요청입니다.");
+            throw new EntityNotFoundException("해당 유저가 해당 장소나 시간에서 스친 데이터가 없습니다.");
         }
 
         // 장소 조회
         Optional<Place> place = placeRepository.findById(placeIdx);
-        PlaceWithTimeResDto placeWithTimeResDto;
+        PlaceWithTimeAndGpsResDto placeWithTimeAndGpsResDto;
         if (place.isPresent()) {
-            placeWithTimeResDto = PlaceWithTimeResDto.builder()
+            placeWithTimeAndGpsResDto = PlaceWithTimeAndGpsResDto.builder()
                     .placeIdx(placeIdx)
                     .placeName(place.get().getName())
                     .time(time)
+                    .placeLatitude(place.get().getLatitude())
+                    .placeLongitude(place.get().getLongitude())
                     .build();
         } else {
             throw new EntityNotFoundException("존재하지 않는 장소입니다.");
@@ -168,7 +165,7 @@ public class FeedService {
 
         return PlaceFeedResDto.builder()
                 .messagesInfo(messageResDtos)
-                .placeWithTimeInfo(placeWithTimeResDto)
+                .placeWithTimeAndGpsInfo(placeWithTimeAndGpsResDto)
                 .build();
     }
 
