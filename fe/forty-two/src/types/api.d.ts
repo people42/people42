@@ -20,6 +20,7 @@ type TFeed = {
     emotion: string;
     messageIdx: number;
   };
+  place: { placeIdx: number; time: string; page: number; size: number };
 };
 
 type TAuth = {

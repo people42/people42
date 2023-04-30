@@ -5,6 +5,7 @@ import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Home from "./pages/Home/Home";
+import Place from "./pages/Place/Place";
 import { Policy, SignIn, SignUp } from "./pages/index";
 import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/place",
+    element: <Place />,
   },
   {
     path: "/policy",
@@ -132,7 +137,9 @@ function App() {
             getAccessToken().then((res) => {
               setUserRefresh(res.data.data);
               setSessionRefreshToken(res.data.data.refreshToken);
-              postLocation(res.data.data.accessToken, location);
+              postLocation(res.data.data.accessToken, location).then((res) =>
+                setLocationInfo(res.data.data)
+              );
             });
           }
         });

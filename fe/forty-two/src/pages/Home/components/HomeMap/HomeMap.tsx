@@ -1,6 +1,10 @@
 import mapArrow from "../../../../assets/images/map/mapArrow.png";
 import { NaverStaticMap } from "../../../../components";
+import { locationInfoState } from "../../../../recoil/location/atoms";
+import { userLocationUpdateState } from "../../../../recoil/location/selectors";
+import HomeMapLocation from "./HomeMapLocation";
 import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type homeMapProps = {};
@@ -11,6 +15,7 @@ function HomeMap({}: homeMapProps) {
     x: number;
     y: number;
   }>();
+  const locationInfo = useRecoilValue<TLocationInfo | null>(locationInfoState);
   const [arrowStyle, setArrowAngleStyle] = useState<{
     angle: number;
     distance: number;
@@ -73,6 +78,7 @@ function HomeMap({}: homeMapProps) {
           </div>
         ) : null}
       </div>
+      <HomeMapLocation></HomeMapLocation>
       <NaverStaticMap setIsMapLoad={setIsMapLoad}></NaverStaticMap>
     </StyledHomeMap>
   );
@@ -100,6 +106,7 @@ const StyledHomeMap = styled.section`
       height: 40px;
     }
   }
+
   .map-mask {
     z-index: 3;
     position: absolute;

@@ -24,7 +24,7 @@ export async function getMyInfo(accessToken: string) {
 export async function getMyHistory(accessToken: string, date: string) {
   return instance({
     "ACCESS-TOKEN": accessToken,
-  }).get(`account/history?date=${date}`);
+  }).get(`account/history`, { params: { date: date } });
 }
 
 /**

@@ -58,6 +58,7 @@ function HomeMyHistory({}: homeMyHistoryProps) {
       {historyList.map((history, idx) => (
         <MyHistoryCard
           key={`history-${idx}`}
+          idx={idx}
           history={history}
           onClickDelete={deleteMyMessage}
         ></MyHistoryCard>
@@ -69,16 +70,16 @@ function HomeMyHistory({}: homeMyHistoryProps) {
 export default HomeMyHistory;
 
 const StyledHomeMyHistory = styled.article`
-  z-index: 1;
+  z-index: 2;
   margin-top: -24px;
   padding-block: 48px 36px;
+  padding-inline: 8px 8px;
   width: 480px;
   height: 100%;
-  padding-inline: 8px;
-
   overflow: scroll;
 
   .history-title {
     ${({ theme }) => theme.text.subtitle1}
+    color: ${({ theme }) => theme.color.text.secondary};
   }
 `;

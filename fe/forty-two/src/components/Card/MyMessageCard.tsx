@@ -39,7 +39,10 @@ function MyMessageCard({
   }, [accessToken, isMessageEdit]);
 
   return (
-    <StyledMyMessageCard>
+    <StyledMyMessageCard
+      count={myMessage?.messageCnt ?? 0}
+      isMessageEdit={isMessageEdit}
+    >
       {myMessage ? (
         <div
           className="my-emoji"
@@ -83,8 +86,11 @@ function MyMessageCard({
 
 export default MyMessageCard;
 
-const StyledMyMessageCard = styled.div`
-  z-index: 2;
+const StyledMyMessageCard = styled.div<{
+  count: number;
+  isMessageEdit: boolean;
+}>`
+  z-index: 3;
   animation: floatingDown 0.3s;
   position: sticky;
   top: 48px;
@@ -114,19 +120,29 @@ const StyledMyMessageCard = styled.div`
       padding: 40px 24px 24px 24px;
       background-color: ${({ theme }) => theme.color.brand.blue};
       box-sizing: border-box;
-      filter: drop-shadow(
-          4px 4px 0px ${(props) => props.theme.color.brand.blue + "50"}
-        )
-        drop-shadow(
-          8px 8px 0px ${(props) => props.theme.color.brand.blue + "50"}
-        );
+      filter: ${(props) =>
+        props.count > 0 && !props.isMessageEdit
+          ? props.count > 1
+            ? `drop-shadow(4px 4px 0px ${
+                props.theme.color.brand.blue + "50"
+              }) drop-shadow(8px 8px 0px ${
+                props.theme.color.brand.blue + "50"
+              })`
+            : `drop-shadow(4px 4px 0px ${props.theme.color.brand.blue + "50"})`
+          : "none"};
       &:hover {
-        filter: drop-shadow(
-            4px 8px 0px ${(props) => props.theme.color.brand.blue + "50"}
-          )
-          drop-shadow(
-            8px 16px 0px ${(props) => props.theme.color.brand.blue + "50"}
-          );
+        filter: ${(props) =>
+          props.count > 0 && !props.isMessageEdit
+            ? props.count > 1
+              ? `drop-shadow(4px 8px 0px ${
+                  props.theme.color.brand.blue + "50"
+                }) drop-shadow(8px 16px 0px ${
+                  props.theme.color.brand.blue + "50"
+                })`
+              : `drop-shadow(4px 8px 0px ${
+                  props.theme.color.brand.blue + "50"
+                })`
+            : "none"};
       }
       &:active {
         filter: none;
