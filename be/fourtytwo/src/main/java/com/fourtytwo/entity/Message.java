@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,4 +27,16 @@ public class Message extends BaseEntity{
 
     private String content;
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Expression> expressions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "message1", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Brush> brushes1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "message2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Brush> brushes2 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Report> reports = new ArrayList<>();
 }
