@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -79,11 +80,12 @@ public class FeedService {
                         .build();
 
                 // 해당 장소와 시간 저장
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 PlaceWithTimeResDto placeWithTimeResDto = PlaceWithTimeResDto
                         .builder()
                         .placeIdx(currentPlace.getId())
                         .placeName(currentPlace.getName())
-                        .time(brush.getCreatedAt())
+                        .time(brush.getCreatedAt().withNano(0))
                         .build();
 
                 // Dto 저장
