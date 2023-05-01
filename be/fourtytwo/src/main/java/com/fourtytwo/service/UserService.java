@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,7 +36,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import javax.inject.Qualifier;
 import javax.management.openmbean.InvalidKeyException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.Null;
@@ -75,6 +75,7 @@ public class UserService {
     private final String appleTeamId;
     private final String appleKeyId;
     private final String appleClientId;
+    private final String appleClientAppId;
     private final String appleKeyPath;
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -83,7 +84,7 @@ public class UserService {
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
                        MessageRepository messageRepository, RefreshTokenProvider refreshTokenProvider,
                        RedisTemplate<String, String> redisTemplate, List<String> colors, String appleTeamId,
-                       String appleKeyId, String appleClientId, String appleKeyPath,
+                       String appleKeyId, String appleClientId, String appleKeyPath, String appleClientAppId,
                        ExpressionRepository expressionRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -94,6 +95,7 @@ public class UserService {
         this.appleTeamId = appleTeamId;
         this.appleKeyId = appleKeyId;
         this.appleClientId = appleClientId;
+        this.appleClientAppId = appleClientAppId;
         this.appleKeyPath = appleKeyPath;
         this.expressionRepository = expressionRepository;
     }
@@ -118,17 +120,24 @@ public class UserService {
         return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
 
-    public String getAppleToken(String appleCode, String tokenType) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+    public String getAppleToken(String appleCode, String tokenType, String domainType) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        String appleClientSecret = generateClientSecret();
+        String clientId;
+        if (domainType == "web") {
+            clientId = appleClientId;
+        } else {
+            clientId = appleClientAppId;
+        }
+
+        String appleClientSecret = generateClientSecret(clientId);
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
         map.add("redirect_uri", "https://people42.com/signin/apple");
-        map.add("client_id", appleClientId);
+        map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
@@ -146,7 +155,7 @@ public class UserService {
 
     }
 
-    public String generateClientSecret() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public String generateClientSecret(String ClientId) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         // Load the auth key file.
         InputStream inputStream = UserService.class.getClassLoader().getResourceAsStream(appleKeyPath);
@@ -164,7 +173,7 @@ public class UserService {
         String token = JWT.create()
                 .withIssuer(appleTeamId)
                 .withAudience("https://appleid.apple.com")
-                .withSubject(appleClientId)
+                .withSubject(ClientId)
                 .withExpiresAt(Date.from(Instant.now().plusSeconds(3600)))
                 .withIssuedAt(Date.from(Instant.now()))
                 .sign(Algorithm.ECDSA256(privateKey));
@@ -381,10 +390,10 @@ public class UserService {
         }
     }
 
-    public void deleteAppleUser(String accessToken, String appleCode) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public void deleteAppleUser(String accessToken, String appleCode, String domainType) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 
         User user = checkUser(accessToken);
-        String appleAccessToken = getAppleToken(appleCode, "access");
+        String appleAccessToken = getAppleToken(appleCode, "access", domainType);
         // 사용자 정보 조회
         AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
 
