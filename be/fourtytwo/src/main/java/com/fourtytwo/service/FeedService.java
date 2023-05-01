@@ -12,6 +12,7 @@ import com.fourtytwo.dto.place.PlaceResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeAndGpsResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.*;
+import com.fourtytwo.repository.block.BlockRepository;
 import com.fourtytwo.repository.brush.BrushRepository;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
@@ -37,6 +38,7 @@ public class FeedService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ExpressionRepository expressionRepository;
+    private final BlockRepository blockRepository;
 
     public List<RecentFeedResDto> findRecentBrush(String accessToken) {
         Long userIdx = checkUserByAccessToken(accessToken);
@@ -60,6 +62,15 @@ public class FeedService {
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {
+                    currentPlace = Place.builder().id(-1L).build();
+                    continue;
+                }
+
+                // 차단된 유저의 메시지라면 넘기기
+                Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+                Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+                Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+                if (block.isPresent()) {
                     currentPlace = Place.builder().id(-1L).build();
                     continue;
                 }
@@ -106,6 +117,7 @@ public class FeedService {
         List<Brush> brushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         boolean flag = false;
         int cnt = 0;
+        System.out.println("조회된 스침들: " + brushList.size());
         for (Brush brush : brushList) {
             // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
             if (brush.getPlace().getId().equals(placeIdx)
@@ -125,6 +137,14 @@ public class FeedService {
                     continue;
                 }
 
+                // 차단된 유저의 메시지라면 넘기기
+                Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+                Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+                Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+                if (block.isPresent()) {
+                    continue;
+                }
+
                 cnt++;
                 if (cnt > page * size) {
                     // 상대 유저와 몇 번 스쳤는지 조회
@@ -135,7 +155,7 @@ public class FeedService {
                             .content(message.getContent())
                             .userIdx(message.getUser().getId())
                             .nickname(message.getUser().getNickname())
-                            .emoji(message.getUser().getNickname())
+                            .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
                             .brushCnt(count)
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
@@ -163,6 +183,8 @@ public class FeedService {
         } else {
             throw new EntityNotFoundException("존재하지 않는 장소입니다.");
         }
+
+        System.out.println("messageResDtos size: " + messageResDtos.size());
 
         return PlaceFeedResDto.builder()
                 .messagesInfo(messageResDtos)

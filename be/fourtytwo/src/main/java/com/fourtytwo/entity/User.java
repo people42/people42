@@ -35,4 +35,28 @@ public class User extends BaseEntity{
         }
         return new ArrayList<>();
     }
+
+    @OneToMany(mappedBy = "user1", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Brush> brushes1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Brush> brushes2 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Expression> expressions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Message> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user1", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Report> reports1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Report> reports2 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user1", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Block> blocks1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Block> blocks2 = new ArrayList<>();
 }

@@ -31,6 +31,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     // 유저 idx에 해당하는 유저가 스쳤을 때 상대 메시지 조회
     @Override
     public Message findByBrushAndUserIdx(Brush targetBrush, Long userIdx) {
+
         return queryFactory
                 .selectFrom(message)
                 .where(message.eq(
@@ -41,7 +42,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                                 .where(brush.eq(targetBrush)
                                         .and(brush.user1.id.ne(userIdx))
                                         .and(message.isActive.eq(true))
-                                        .and(brush.user1.isActive.eq(true)))
+                                        .and(brush.user1.isActive.eq(true))
+                                        .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
                         ).or(message.eq(
                                 JPAExpressions
                                         .selectFrom(message)
@@ -50,7 +52,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                                         .where(brush.eq(targetBrush)
                                                 .and(brush.user2.id.ne(userIdx))
                                                 .and(message.isActive.eq(true))
-                                                .and(brush.user2.isActive.eq(true)))
+                                                .and(brush.user2.isActive.eq(true))
+                                                .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
                                 )
                         )
                 )
