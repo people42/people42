@@ -139,6 +139,7 @@ public class UserService {
         map.add("redirect_uri", "https://people42.com/signin/apple");
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
+        map.add("scope", "email");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
@@ -252,14 +253,15 @@ public class UserService {
             throw new DataIntegrityViolationException("이미 존재하는 닉네임입니다.");
         }
 
+        if (socialType.equals("androidGoogle")) {
+            socialType = "google";
+        }
+
         if (foundUser != null) {
             if (foundUser.getIsActive()) {
                 throw new DataIntegrityViolationException("이미 존재하는 사용자입니다.");
             } else {
                 foundUser.setIsActive(true);
-                if (socialType.equals("androidGoogle")) {
-                    socialType = "google";
-                }
                 foundUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
                 foundUser.setNickname(signupRequestDto.getNickname());
                 setOperations.add("nicknames", signupRequestDto.getNickname());
