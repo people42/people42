@@ -155,7 +155,7 @@ public class FeedService {
                             .content(message.getContent())
                             .userIdx(message.getUser().getId())
                             .nickname(message.getUser().getNickname())
-                            .emoji(message.getUser().getNickname())
+                            .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
                             .brushCnt(count)
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
