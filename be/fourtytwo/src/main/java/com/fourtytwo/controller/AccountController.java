@@ -4,6 +4,7 @@ import com.fourtytwo.dto.block.BlockReqDto;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
+import com.fourtytwo.dto.user.AppleCodeReqDto;
 import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
@@ -19,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,9 +37,15 @@ AccountController {
     private final ReportService reportService;
     private final BlockService blockService;
 
-    @PutMapping("/withdrawal")
+    @DeleteMapping("/withdrawal")
     public ResponseEntity<ApiResponse<Object>> deleteUser(@RequestHeader("ACCESS-TOKEN") String accessToken) {
         userService.deleteUser(accessToken);
+        return ApiResponse.ok(null);
+    }
+    @DeleteMapping("/withdrawal/apple")
+    public ResponseEntity<ApiResponse<Object>> deleteAppleUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                               @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode());
         return ApiResponse.ok(null);
     }
 

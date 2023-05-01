@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -116,7 +117,7 @@ public class UserService {
         return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
 
-    public String getAppleIdToken(String appleCode) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+    public String getAppleToken(String appleCode, String tokenType) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -136,7 +137,12 @@ public class UserService {
         System.out.println("애플 응답"+responseBody);
         JSONObject jsonObject = new JSONObject(responseBody);
 
-        return jsonObject.getString("id_token");
+        if (tokenType.equals("id")) {
+            return jsonObject.getString("id_token");
+        } else {
+            return jsonObject.getString("access_token");
+        }
+
     }
 
     public String generateClientSecret() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException, InvalidKeyException {
@@ -336,8 +342,8 @@ public class UserService {
     public void deleteUser(String accessToken) {
         // maria db에서 탈퇴 처리
         User user = this.checkUser(accessToken);
-        user.setIsActive(false);
-        userRepository.save(user);
+
+        userRepository.delete(user);
 
         // refresh token 삭제
         Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
@@ -349,6 +355,62 @@ public class UserService {
             }
         }
     }
+
+    public AppleOAuthResponseDto getAppleUserInfo(String accessToken) throws IOException {
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        String userInfoUrl = "https://appleid.apple.com/auth/userinfo";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<AppleOAuthResponseDto> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, httpEntity, AppleOAuthResponseDto.class);
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new IllegalArgumentException("Apple User Info Error");
+        }
+    }
+
+    public void deleteAppleUser(String accessToken, String appleCode) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+
+        User user = checkUser(accessToken);
+        String appleAccessToken = getAppleToken(appleCode, "access");
+        // 사용자 정보 조회
+        AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
+
+        // 사용자 삭제 API 호출
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        String deleteUrl = "https://appleid.apple.com/auth/delete";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Void> response = restTemplate.exchange(deleteUrl + "/" + userInfo.getSub(), HttpMethod.DELETE, httpEntity, Void.class);
+            System.out.println(response.getBody());
+            userRepository.delete(user);
+
+            // refresh token 삭제
+            Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
+            for (Object key : keys) {
+                Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
+                if (Objects.equals(userIdx, user.getId())) {
+                    redisTemplate.opsForHash().delete("refresh", key);
+                    break;
+                }
+            }
+        } catch (HttpClientErrorException e) {
+            throw new IllegalArgumentException("Apple Delete User Error");
+        }
+
+
+    }
+
+
 
     public MyInfoResDto getMyInfo(String accessToken) {
         User user = this.checkUser(accessToken);
