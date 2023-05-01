@@ -32,9 +32,12 @@ public class BlockService {
             throw new DataIntegrityViolationException("요청한 유저와 같은 유저입니다.");
         }
 
+        User bigUser = user.getId() > blockedUser.get().getId() ? user : blockedUser.get();
+        User smallUser = user.getId() > blockedUser.get().getId() ? blockedUser.get() : user;
+
         Block block = Block.builder()
-                .user1(user)
-                .user2(blockedUser.get())
+                .user1(smallUser)
+                .user2(bigUser)
                 .build();
         blockRepository.save(block);
     }
