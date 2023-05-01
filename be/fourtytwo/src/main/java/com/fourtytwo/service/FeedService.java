@@ -12,6 +12,7 @@ import com.fourtytwo.dto.place.PlaceResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeAndGpsResDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.*;
+import com.fourtytwo.repository.block.BlockRepository;
 import com.fourtytwo.repository.brush.BrushRepository;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.message.MessageRepository;
@@ -37,6 +38,7 @@ public class FeedService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ExpressionRepository expressionRepository;
+    private final BlockRepository blockRepository;
 
     public List<RecentFeedResDto> findRecentBrush(String accessToken) {
         Long userIdx = checkUserByAccessToken(accessToken);
@@ -60,6 +62,15 @@ public class FeedService {
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
                 // 해당 장소에서 메시지가 없다면 넘기기
                 if (message == null) {
+                    currentPlace = Place.builder().id(-1L).build();
+                    continue;
+                }
+
+                // 차단된 유저의 메시지라면 넘기기
+                Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+                Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+                Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+                if (block.isPresent()) {
                     currentPlace = Place.builder().id(-1L).build();
                     continue;
                 }
@@ -123,6 +134,14 @@ public class FeedService {
                 // 해당 스침에서 메시지 조회
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
                 if (message == null) {
+                    continue;
+                }
+
+                // 차단된 유저의 메시지라면 넘기기
+                Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+                Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+                Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+                if (block.isPresent()) {
                     continue;
                 }
 
