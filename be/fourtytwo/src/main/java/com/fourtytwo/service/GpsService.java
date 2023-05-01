@@ -47,10 +47,13 @@ public class GpsService {
     private final RedisTemplate<Integer, String> timeBrushTemplate;
     private final RedisTemplate<String, String> brushTemplate;
     private final String kakaoRestApiKey;
+    private final String googleMapKey;
 
     public PlaceWithTimeResDto renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
         Place foundPlace = placeRepositoryImpl.findByGps(gps.getLatitude(), gps.getLongitude());
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {};
 
         LocalDateTime current = LocalDateTime.now();
         Integer mappedTime = toTotalMinutes(current);
@@ -61,14 +64,23 @@ public class GpsService {
             Map<String, Object> targetPlace;
             if (popularPlaces.isEmpty()) {
                 targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
+                Place newPlace = new Place();
+                newPlace.setName((String) targetPlace.get("place_name"));
+                newPlace.setLatitude(Double.parseDouble((String) targetPlace.get("y")));
+                newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
+                foundPlace = placeRepository.save(newPlace);
             } else {
-                targetPlace = getPopularPlaces(gps.getLatitude(), gps.getLongitude()).get(0);
+                targetPlace = popularPlaces.get(0);
+                String placeName = (String) targetPlace.get("name");
+                Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
+                Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
+
+                Place newPlace = new Place();
+                newPlace.setName(placeName);
+                newPlace.setLatitude(placeLat);
+                newPlace.setLongitude(placeLng);
+                foundPlace = placeRepository.save(newPlace);
             }
-            Place newPlace = new Place();
-            newPlace.setName((String) targetPlace.get("place_name"));
-            newPlace.setLatitude(Double.parseDouble((String) targetPlace.get("y")));
-            newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
-            foundPlace = placeRepository.save(newPlace);
         }
         System.out.println("2 "+foundPlace);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
@@ -128,52 +140,36 @@ public class GpsService {
 
     private List<Map<String, Object>> getPopularPlaces(double latitude, double longitude) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        List<String> categoryCodes = Arrays.asList("SC4", "SW8", "PO3", "AT4", "AD5", "CT1");
-        List<Map<String, Object>> popularPlaces = new ArrayList<>();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
+                .queryParam("location", latitude + "%2C" + longitude)
+                .queryParam("radius", 200)
+                .queryParam("language", "ko")
+                .queryParam("type", "point_of_interest")
+                .queryParam("key", googleMapKey);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        for (String categoryCode : categoryCodes) {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://dapi.kakao.com/v2/local/search/category.json")
-                    .queryParam("category_group_code", categoryCode)
-                    .queryParam("x", longitude)
-                    .queryParam("y", latitude)
-                    .queryParam("radius", 500)
-                    .queryParam("sort", "popularity");
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.build(true).toUri(),
+                HttpMethod.GET,
+                requestEntity,
+                String.class
+        );
 
-            HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {
+        };
 
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    builder.toUriString(),
-                    HttpMethod.GET,
-                    requestEntity,
-                    String.class
-            );
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {
-            };
-
-            Map<String, Object> responseMap;
-            try {
-                responseMap = objectMapper.readValue(responseEntity.getBody(), typeRef);
-            } catch (IOException e) {
-                throw new RuntimeException("Error parsing response", e);
-            }
-
-            TypeReference<List<Map<String, Object>>> listTypeRef = new TypeReference<>() {
-            };
-
-            List<Map<String, Object>> places = objectMapper.convertValue(responseMap.get("documents"), listTypeRef);
-            if (!places.isEmpty()) {
-                popularPlaces.add(places.get(0));
-                break;
-            }
+        Map<String, Object> responseMap;
+        try {
+            responseMap = objectMapper.readValue(responseEntity.getBody(), typeRef);
+        } catch (IOException e) {
+            throw new RuntimeException("Error parsing response", e);
         }
-        System.out.println(popularPlaces);
+        TypeReference<List<Map<String, Object>>> listTypeRef = new TypeReference<>() {};
 
-        return popularPlaces;
+        return objectMapper.convertValue(responseMap.get("results"), listTypeRef);
     }
 
     private Map<String, Object> getRoadAddress(double latitude, double longitude) {
