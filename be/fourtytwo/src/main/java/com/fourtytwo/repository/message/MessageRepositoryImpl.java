@@ -91,7 +91,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     public Optional<Message> findFirstMessageByUserOrderByCreatedAtDesc(User user) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(message)
-                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
+                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())).and(message.isActive.eq(true)))
                 .orderBy(message.createdAt.desc())
                 .limit(1)
                 .fetchOne());
