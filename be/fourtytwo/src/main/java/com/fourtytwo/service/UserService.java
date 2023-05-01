@@ -494,9 +494,4 @@ public class UserService {
             }
         }
     }
-
-    public void tmp(Long userIdx) {
-        Optional<User> user = userRepository.findById(userIdx);
-        userRepository.delete(user.get());
-    }
 }
