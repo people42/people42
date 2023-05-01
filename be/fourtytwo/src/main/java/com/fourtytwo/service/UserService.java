@@ -375,42 +375,53 @@ public class UserService {
         }
     }
 
-    public AppleOAuthResponseDto getAppleUserInfo(String accessToken) throws IOException {
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
-        String userInfoUrl = "https://appleid.apple.com/auth/userinfo";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(accessToken);
-        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
-
-        try {
-            ResponseEntity<AppleOAuthResponseDto> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, httpEntity, AppleOAuthResponseDto.class);
-            return response.getBody();
-        } catch (HttpClientErrorException e) {
-            throw new IllegalArgumentException("Apple User Info Error");
-        }
-    }
+//    public AppleOAuthResponseDto getAppleUserInfo(String accessToken) throws IOException {
+//        RestTemplate restTemplate = new RestTemplateBuilder().build();
+//        String userInfoUrl = "https://appleid.apple.com/auth/userinfo";
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setBearerAuth(accessToken);
+//        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+//
+//        try {
+//            ResponseEntity<AppleOAuthResponseDto> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, httpEntity, AppleOAuthResponseDto.class);
+//            return response.getBody();
+//        } catch (HttpClientErrorException e) {
+//            throw new IllegalArgumentException("Apple User Info Error");
+//        }
+//    }
 
     public void deleteAppleUser(String accessToken, String appleCode, String domainType) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 
         User user = checkUser(accessToken);
         String appleAccessToken = getAppleToken(appleCode, "access", domainType);
-        // 사용자 정보 조회
-        AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
+//        // 사용자 정보 조회
+//        AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
+        String clientId;
+        if (domainType == "web") {
+            clientId = appleClientId;
+        } else {
+            clientId = appleClientAppId;
+        }
 
         // 사용자 삭제 API 호출
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-        String deleteUrl = "https://appleid.apple.com/auth/delete";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(accessToken);
-        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+        String revokeUrl = "https://appleid.apple.com/auth/revoke";
 
         try {
-            ResponseEntity<Void> response = restTemplate.exchange(deleteUrl + "/" + userInfo.getSub(), HttpMethod.DELETE, httpEntity, Void.class);
-            System.out.println(response.getBody());
+            LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("client_id", clientId);
+            params.add("client_secret", generateClientSecret(clientId));
+            params.add("token", accessToken);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
+
+            restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
+
             userRepository.delete(user);
 
             // refresh token 삭제
