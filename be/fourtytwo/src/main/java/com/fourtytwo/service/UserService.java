@@ -10,7 +10,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.auth.RefreshTokenProvider;
 import com.fourtytwo.dto.user.*;
-import com.fourtytwo.entity.Expression;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.expression.ExpressionRepository;
@@ -18,16 +17,13 @@ import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import lombok.AllArgsConstructor;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -38,10 +34,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import javax.management.openmbean.InvalidKeyException;
 import javax.persistence.EntityNotFoundException;
-import javax.validation.constraints.Null;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -413,15 +406,15 @@ public class UserService {
             LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("client_id", clientId);
             params.add("client_secret", generateClientSecret(clientId));
-            params.add("token", accessToken);
+            params.add("token", appleAccessToken);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
-            restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
-
+            ResponseEntity<String> response = restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
+            System.out.println("애플응답 : "+ response.getBody());
             userRepository.delete(user);
 
             // refresh token 삭제
