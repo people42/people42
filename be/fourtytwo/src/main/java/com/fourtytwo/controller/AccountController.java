@@ -1,11 +1,13 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.block.BlockReqDto;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
 import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
+import com.fourtytwo.service.BlockService;
 import com.fourtytwo.service.MessageService;
 import com.fourtytwo.service.ReportService;
 import com.fourtytwo.service.UserService;
@@ -29,6 +31,7 @@ AccountController {
     private final UserService userService;
     private final MessageService messageService;
     private final ReportService reportService;
+    private final BlockService blockService;
 
     @PutMapping("/withdrawal")
     public ResponseEntity<ApiResponse<Object>> deleteUser(@RequestHeader("ACCESS-TOKEN") String accessToken) {
@@ -83,6 +86,13 @@ AccountController {
     public ResponseEntity<ApiResponse<Object>> changeEmoji(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                            @Valid @RequestBody ChangeEmojiReqDto changeEmojiReqDto) {
         messageService.changeEmoji(accessToken, changeEmojiReqDto);
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("/block")
+    public ResponseEntity<ApiResponse<Object>> makeBlock(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                           @Valid @RequestBody BlockReqDto blockReqDto) {
+        blockService.makeBlock(accessToken, blockReqDto);
         return ApiResponse.ok(null);
     }
 

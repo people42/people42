@@ -69,10 +69,8 @@ public class MessageService {
                     .thumbsUp(thumbsUp)
                     .heart(heart)
                     .build();
-            System.out.println("내 히스토리 dto: " + myMessageHistoryResDto);
             myMessageHistoryResDtos.add(myMessageHistoryResDto);
         }
-        System.out.println("내 히스토리 dtos 사이즈: " + myMessageHistoryResDtos.size());
         return myMessageHistoryResDtos;
     }
 
