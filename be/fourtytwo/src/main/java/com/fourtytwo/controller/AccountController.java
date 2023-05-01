@@ -45,7 +45,14 @@ AccountController {
     @DeleteMapping("/withdrawal/apple")
     public ResponseEntity<ApiResponse<Object>> deleteAppleUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                                @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode());
+        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "app");
+        return ApiResponse.ok(null);
+    }
+
+    @DeleteMapping("/withdrawal/apple/web")
+    public ResponseEntity<ApiResponse<Object>> deleteAppleWebUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                               @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "web");
         return ApiResponse.ok(null);
     }
 

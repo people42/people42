@@ -30,4 +30,12 @@ public class AppleConfig {
     public String appleKeyPath() {return appleKeyPath;}
 
 
+    @Value("${apple.client.app.id}")
+    private String appleClientAppId;
+    @Bean
+    public String appleClientAppId() { return appleClientAppId;}
+
+
+
+
 }
