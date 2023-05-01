@@ -19,6 +19,8 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@EnableScheduling
 public class GpsService {
 
     private final UserService userService;
@@ -109,8 +112,8 @@ public class GpsService {
             if (!nearSet.isEmpty()) {
                 for (Long targetIdx : nearSet) {
                     if (userIdx < targetIdx) {
-                        if (Boolean.TRUE.equals(brushOperation.isMember("brushes", userIdx.toString()+targetIdx.toString()+
-                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx)))) {
+                        if (Boolean.TRUE.equals(brushOperation.isMember("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
+                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent()))) {
                             continue;
                         }
                         Brush newBrush = Brush.builder()
@@ -121,10 +124,10 @@ public class GpsService {
                                 .place(foundPlace)
                                 .build();
                         brushRepository.save(newBrush);
-                        brushOperation.add("brushes", userIdx.toString()+targetIdx.toString()+
-                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
-                        timeBrushOperation.add(mappedTime+180, userIdx.toString()+targetIdx.toString()+
-                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
+                        brushOperation.add("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
+                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx)+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
+                        timeBrushOperation.add(mappedTime+180, userIdx.toString()+" "+targetIdx.toString()+" "+
+                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx)+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
                     }
                 }
             }
@@ -137,6 +140,32 @@ public class GpsService {
 
 
     }
+
+    @Scheduled(fixedRate = 20000)
+    public void deleteExpired() {
+        LocalDateTime current = LocalDateTime.now();
+        Integer mappedTime = toTotalMinutes(current);
+        ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
+        SetOperations<Integer, Long> expireSetOperation = timeUserTemplate.opsForSet();
+        ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
+        SetOperations<Integer, String> timeBrushOperation = timeBrushTemplate.opsForSet();
+        SetOperations<String, String> brushOperation = brushTemplate.opsForSet();
+
+        Set<Long> expiredUsers = expireSetOperation.members(mappedTime);
+        Set<String> expiredBrushes = timeBrushOperation.members(mappedTime);
+        for (Long userIdx : expiredUsers) {
+            gpsOperation.remove("latitude", userIdx);
+            gpsOperation.remove("longitude", userIdx);
+            userExpireOperation.getAndDelete(userIdx);
+        }
+        for (String brush : expiredBrushes) {
+            brushOperation.remove("brushes", brush);
+        }
+        expireSetOperation.remove(mappedTime);
+        timeBrushOperation.remove(mappedTime);
+
+    }
+
 
     private List<Map<String, Object>> getPopularPlaces(double latitude, double longitude) {
         HttpHeaders headers = new HttpHeaders();
