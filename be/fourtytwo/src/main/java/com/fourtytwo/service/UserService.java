@@ -181,6 +181,7 @@ public class UserService {
             throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
         }
         AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
+        System.out.println(appleOAuthResponse);
 
         String userEmail = "apple" + "_" + appleOAuthResponse.getEmail();
         User foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
@@ -235,6 +236,7 @@ public class UserService {
                 break;
             }
         }
+        System.out.println(foundUser.getEmail());
 
         if (userRepository.findByNickname(signupRequestDto.getNickname()) != null) {
             throw new DataIntegrityViolationException("이미 존재하는 닉네임입니다.");

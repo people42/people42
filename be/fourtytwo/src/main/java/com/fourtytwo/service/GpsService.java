@@ -125,9 +125,9 @@ public class GpsService {
                                 .build();
                         brushRepository.save(newBrush);
                         brushOperation.add("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx)+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
+                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
                         timeBrushOperation.add(mappedTime+180, userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx)+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
+                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
                     }
                 }
             }
