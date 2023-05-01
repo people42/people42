@@ -20,3 +20,25 @@ export async function postFeedEmotion(
     "ACCESS-TOKEN": accessToken,
   }).post("feed/emotion", body);
 }
+
+/**
+ * [GET] "feed/place" 장소별 피드 조회
+ */
+export async function getPlace(accessToken: string, params: TFeed["place"]) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).get("feed/place", {
+    params: params,
+  });
+}
+
+/**
+ * [GET] "feed/user" 사용자별 피드 조회
+ */
+export async function getUser(accessToken: string, params: TFeed["user"]) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).get("feed/user", {
+    params: params,
+  });
+}

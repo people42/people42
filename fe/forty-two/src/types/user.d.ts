@@ -21,3 +21,16 @@ type TMyMessage = {
   message: string | null;
   messageCnt: number;
 };
+
+type TUserDetail = {
+  brushCnt: number;
+  userIdx: number;
+  nickname: string;
+  placeResDtos: {
+    placeIdx: number;
+    placeName: string;
+    placeLatitude: number;
+    placeLongitude: number;
+    brushCnt: number;
+  }[];
+};

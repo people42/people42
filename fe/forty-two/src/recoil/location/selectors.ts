@@ -9,7 +9,6 @@ export const userLocationUpdateState = selector<TLocation | null>({
     return location;
   },
   set: ({ set }, newLocation) => {
-    console.log("new", newLocation);
     set(locationState, newLocation);
   },
 });

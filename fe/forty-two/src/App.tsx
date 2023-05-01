@@ -4,8 +4,7 @@ import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
-import Home from "./pages/Home/Home";
-import { Policy, SignIn, SignUp } from "./pages/index";
+import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
 import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
 import { themeState } from "./recoil/theme/atoms";
@@ -24,12 +23,9 @@ import {
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-} from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { NavermapsProvider } from "react-naver-maps";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -38,6 +34,14 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/place",
+    element: <Place />,
+  },
+  {
+    path: "/user/:user_id",
+    element: <User />,
   },
   {
     path: "/policy",
@@ -58,6 +62,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const NAVER_MAP_CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
   const [isDark, setIsDark] = useRecoilState(themeState);
   const [location, setLocation] = useRecoilState<TLocation | null>(
     userLocationUpdateState
@@ -125,9 +130,19 @@ function App() {
 
   useEffect(() => {
     if (location && user) {
-      postLocation(user?.accessToken, location).then((res) =>
-        setLocationInfo(res.data.data)
-      );
+      postLocation(user?.accessToken, location)
+        .then((res) => setLocationInfo(res.data.data))
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => {
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+              postLocation(res.data.data.accessToken, location).then((res) =>
+                setLocationInfo(res.data.data)
+              );
+            });
+          }
+        });
     }
   }, [location, user]);
 
@@ -142,7 +157,9 @@ function App() {
         url={"https://people42.com"}
       ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <RouterProvider router={router} />
+        <NavermapsProvider ncpClientId={NAVER_MAP_CLIENT_ID}>
+          <RouterProvider router={router} />
+        </NavermapsProvider>
       </GoogleOAuthProvider>
     </ThemeProvider>
   );

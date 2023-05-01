@@ -226,4 +226,5 @@ export const GlobalStyle = createGlobalStyle<any>`
   body {
     background-color: ${({ theme }) => theme.color.background.primary};
   }
+ 
 `;

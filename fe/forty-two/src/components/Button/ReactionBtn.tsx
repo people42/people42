@@ -99,10 +99,10 @@ function reactionButton({ props }: reactionButtonProps) {
 export default reactionButton;
 
 const StyledReactionButton = styled.button`
-  z-index: 3;
+  z-index: 5;
   position: absolute;
-  bottom: -16px;
-  right: -16px;
+  bottom: 0px;
+  right: -24px;
   margin-right: 8px;
   border: none;
   border-radius: 32px;
