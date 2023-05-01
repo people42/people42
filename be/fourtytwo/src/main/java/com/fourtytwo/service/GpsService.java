@@ -153,17 +153,20 @@ public class GpsService {
 
         Set<Long> expiredUsers = expireSetOperation.members(mappedTime);
         Set<String> expiredBrushes = timeBrushOperation.members(mappedTime);
-        for (Long userIdx : expiredUsers) {
-            gpsOperation.remove("latitude", userIdx);
-            gpsOperation.remove("longitude", userIdx);
-            userExpireOperation.getAndDelete(userIdx);
+        if (expiredUsers != null && !expiredUsers.isEmpty()) {
+            for (Long userIdx : expiredUsers) {
+                gpsOperation.remove("latitude", userIdx);
+                gpsOperation.remove("longitude", userIdx);
+                userExpireOperation.getAndDelete(userIdx);
+            }
         }
-        for (String brush : expiredBrushes) {
-            brushOperation.remove("brushes", brush);
+        if (expiredBrushes != null && !expiredBrushes.isEmpty()) {
+            for (String brush : expiredBrushes) {
+                brushOperation.remove("brushes", brush);
+            }
         }
-        expireSetOperation.remove(mappedTime);
-        timeBrushOperation.remove(mappedTime);
-
+        timeUserTemplate.delete(mappedTime);
+        timeBrushTemplate.delete(mappedTime);
     }
 
 
