@@ -15,6 +15,8 @@ import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +42,10 @@ public class GpsService {
     private final MessageRepositoryImpl messageRepositoryImpl;
     private final PlaceRepositoryImpl placeRepositoryImpl;
     private final RedisTemplate<String, Long> gpsTemplate;
+    private final RedisTemplate<Long, Integer> userTimeTemplate;
+    private final RedisTemplate<Integer, Long> timeUserTemplate;
+    private final RedisTemplate<Integer, String> timeBrushTemplate;
+    private final RedisTemplate<String, String> brushTemplate;
     private final String kakaoRestApiKey;
 
     public PlaceWithTimeResDto renewGps(String accessToken, GpsReqDto gps) {
@@ -45,8 +53,7 @@ public class GpsService {
         Place foundPlace = placeRepositoryImpl.findByGps(gps.getLatitude(), gps.getLongitude());
 
         LocalDateTime current = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String formattedDateTime = current.format(formatter);
+        Integer mappedTime = toTotalMinutes(current);
 
         System.out.println("1 "+foundPlace);
         if (foundPlace == null) {
@@ -65,8 +72,21 @@ public class GpsService {
         }
         System.out.println("2 "+foundPlace);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
+        SetOperations<Integer, Long> expireSetOperation = timeUserTemplate.opsForSet();
+        ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
+        SetOperations<Integer, String> timeBrushOperation = timeBrushTemplate.opsForSet();
+        SetOperations<String, String> brushOperation = brushTemplate.opsForSet();
         gpsOperation.add("latitude", userIdx, gps.getLatitude());
         gpsOperation.add("longitude", userIdx, gps.getLongitude());
+        if (userExpireOperation.get(userIdx) == null) {
+
+        } else {
+            Integer prevTime = userExpireOperation.get(userIdx);
+            expireSetOperation.remove(prevTime, userIdx);
+        }
+        userExpireOperation.set(userIdx, mappedTime + 10);
+        expireSetOperation.add(mappedTime+10, userIdx);
+
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
 
@@ -77,6 +97,10 @@ public class GpsService {
             if (!nearSet.isEmpty()) {
                 for (Long targetIdx : nearSet) {
                     if (userIdx < targetIdx) {
+                        if (Boolean.TRUE.equals(brushOperation.isMember("brushes", userIdx.toString()+targetIdx.toString()+
+                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx)))) {
+                            continue;
+                        }
                         Brush newBrush = Brush.builder()
                                 .user1(userRepository.findByIdAndIsActiveTrue(userIdx))
                                 .user2(userRepository.findByIdAndIsActiveTrue(targetIdx))
@@ -85,7 +109,10 @@ public class GpsService {
                                 .place(foundPlace)
                                 .build();
                         brushRepository.save(newBrush);
-
+                        brushOperation.add("brushes", userIdx.toString()+targetIdx.toString()+
+                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
+                        timeBrushOperation.add(mappedTime+180, userIdx.toString()+targetIdx.toString()+
+                                foundPlace+messageRepositoryImpl.findRecentByUserIdx(userIdx)+messageRepositoryImpl.findRecentByUserIdx(targetIdx));
                     }
                 }
             }
@@ -188,6 +215,12 @@ public class GpsService {
         } else {
             throw new RuntimeException("No road address found for given coordinates");
         }
+    }
+
+    public static int toTotalMinutes(LocalDateTime dateTime) {
+        long days = ChronoUnit.DAYS.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), dateTime);
+        long minutes = days * 24 * 60 + dateTime.getHour() * 60 + dateTime.getMinute();
+        return (int) minutes;
     }
 
 
