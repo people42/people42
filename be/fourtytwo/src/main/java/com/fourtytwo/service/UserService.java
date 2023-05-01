@@ -192,7 +192,7 @@ public class UserService {
                     .isActive(false)
                     .build();
             userRepository.save(newUser);
-            return new LoginResponseDto(null, appleOAuthResponse.getEmail(), null, null, null, null, null, idToken);
+            return new LoginResponseDto(newUser.getId(), appleOAuthResponse.getEmail(), null, null, null, null, null, idToken);
         }
         if (!foundUser.getIsActive()) {
             String returnEmail = userEmail.split("apple_")[1];
@@ -257,6 +257,7 @@ public class UserService {
                 foundUser.setEmoji(signupRequestDto.getEmoji());
                 Random random = new Random();
                 foundUser.setColor(colors.get(random.nextInt(colors.size())));
+                foundUser.setRoles("ROLE_USER");
                 User savedUser = userRepository.save(foundUser);
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
