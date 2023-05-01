@@ -80,7 +80,6 @@ public class FeedService {
                         .build();
 
                 // 해당 장소와 시간 저장
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 PlaceWithTimeResDto placeWithTimeResDto = PlaceWithTimeResDto
                         .builder()
                         .placeIdx(currentPlace.getId())
@@ -110,7 +109,7 @@ public class FeedService {
         for (Brush brush : brushList) {
             // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
             if (brush.getPlace().getId().equals(placeIdx)
-                    && brush.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")).equals(time.toString())) {
+                    && brush.getCreatedAt().withNano(0).equals(time)) {
                 flag = true;
             }
 
