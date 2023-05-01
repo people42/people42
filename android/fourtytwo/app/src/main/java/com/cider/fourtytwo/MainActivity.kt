@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(){
                         .title("여기")
                         .draggable(false)
                         .alpha(0.9f)
+
 //                        .icon(BitmapDescriptorFactory.defaultMarker(R.drawable.robot))
                 )
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker))

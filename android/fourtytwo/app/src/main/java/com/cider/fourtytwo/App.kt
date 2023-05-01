@@ -1,16 +1,37 @@
 package com.cider.fourtytwo
 
 import android.app.Application
-import android.content.Context
+import com.cider.fourtytwo.dataStore.UserDataStore
 
-class App :Application() {
-    init {
-        instance = this
-    }
+class App : Application() {
+
+        private lateinit var dataStore : UserDataStore
+
     companion object {
-        private var instance : App? = null
-        fun context() : Context {
-            return instance!!.applicationContext
-        }
+        private lateinit var App: App
+        fun getInstance() : App = App
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        App = this
+        dataStore = UserDataStore(this)
+    }
+
+    fun getDataStore() : UserDataStore = dataStore
 }
+//    init {
+//        instance = this
+//    }
+//
+//    companion object {
+//        private var instance: App? = null
+//        fun context(): Context {
+//            return instance!!.applicationContext
+//        }
+//    }
+//
+//    override fun onCreate() {
+//        super.onCreate()
+//    }
+//}

@@ -102,30 +102,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <TextSwitcher
                 android:id="@+id/nickname_adj"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
+                android:paddingTop="30dp"
                 android:layout_weight="1"
                 android:background="@drawable/nicknameborder"
                 android:gravity="center"
                 android:text="형용사"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:inAnimation="@anim/expandable_show"
+                android:outAnimation="@anim/expandable_hide"/>
 
-            <TextView
+            <TextSwitcher
                 android:id="@+id/nickname_noun"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
+                android:paddingTop="30dp"
                 android:layout_weight="1"
                 android:background="@drawable/nicknameborder"
                 android:gravity="center"
                 android:minHeight="120dp"
                 android:text="명사"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:inAnimation="@anim/expandable_show"
+                android:outAnimation="@anim/expandable_hide"/>
         </LinearLayout>
 
         <TextView
@@ -167,5 +173,6 @@
             app:button_duration="250"
             app:button_scale="0.87"
             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

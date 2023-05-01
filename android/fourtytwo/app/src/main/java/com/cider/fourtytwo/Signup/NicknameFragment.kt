@@ -1,15 +1,19 @@
 package com.cider.fourtytwo.Signup
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.Dimension
+import android.widget.TextSwitcher
+import android.widget.TextView
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.cider.fourtytwo.R
+import com.cider.fourtytwo.UserViewModel
 import com.cider.fourtytwo.databinding.FragmentNicknameBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.NicknameResponse
@@ -23,6 +27,8 @@ class NicknameFragment : Fragment() {
     private var _binding : FragmentNicknameBinding? = null
     private val binding get() = _binding!!
     val api = RetrofitInstance.getInstance().create(Api::class.java)
+    private val viewModel : UserViewModel by viewModels()
+    private var pickedNickname: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -36,6 +42,22 @@ class NicknameFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val ts_adj :TextSwitcher = binding.nicknameAdj
+        ts_adj.setFactory{
+            val txt = TextView(requireContext())
+            txt.gravity = Gravity.CENTER
+            txt.textSize = 25f
+            txt.marginTop
+            return@setFactory txt
+        }
+        val ts_noun :TextSwitcher = binding.nicknameNoun
+        ts_noun.setFactory{
+            val txt = TextView(requireContext())
+            txt.gravity = Gravity.CENTER
+            txt.textSize = 25f
+            return@setFactory txt
+        }
         getNickname()
 
         // 글자 이미지 터치 시 요청
@@ -48,25 +70,21 @@ class NicknameFragment : Fragment() {
         }
         // 완료 버튼 터치 시 다음 페이지로 이동
         binding.nicknameButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("myNickname", pickedNickname)
             Navigation.findNavController(view)
-                .navigate(R.id.action_nicknameFragment_to_emojiFragment)
+                .navigate(R.id.action_nicknameFragment_to_emojiFragment, bundle)
         }
     }
     fun getNickname() {
         var nicknameDivide : List<String>
         api.getNickname().enqueue(object : Callback<NicknameResponse> {
             override fun onResponse(call: Call<NicknameResponse>, response: Response<NicknameResponse>) {
-                Log.d("log",response.toString())
                 response.body()?.data?.let {
-                    val newNickname: String =  it.nickname
-                    nicknameDivide = newNickname.split(" ")
-                    binding.nicknameAdj.text = nicknameDivide[0]
-                    binding.nicknameNoun.text = nicknameDivide[1]
-                    if (nicknameDivide[0].length > 6 || nicknameDivide[1].length > 6)
-                    {
-                        binding.nicknameAdj.setTextSize(Dimension.SP, 20.0f)
-                        binding.nicknameNoun.setTextSize(Dimension.SP, 20.0f)
-                    }
+                    pickedNickname =  it.nickname
+                    nicknameDivide = pickedNickname!!.split(" ")
+                    binding.nicknameAdj.setText(nicknameDivide[0])
+                    binding.nicknameNoun.setText(nicknameDivide[1])
                 }
             }
             override fun onFailure(call: Call<NicknameResponse>, t: Throwable) {

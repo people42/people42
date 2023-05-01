@@ -123,40 +123,52 @@ class EmojiAdapter(private val context: Context) : RecyclerView.Adapter<EmojiAda
         "zany-face",
         "zipper-mouth-face")
 
+    var pickedEmoji = String()
+
     interface OnItemClickListener {
-        fun onItemClicked(data: Resources?)
+        // url string
+        fun onItemClicked(v:View, pickedEmoji: String, pos : Int)
     }
 
-    private var itemClickListener: OnItemClickListener? = null
+    private var onitemClickListener: OnItemClickListener? = null
     fun setOnItemClickListener(listener: OnItemClickListener) {
-        itemClickListener = listener
+        this.onitemClickListener = listener
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_emoji, parent, false)
 
         val viewHolder: EmojiAdapter.EmojiViewHolder = EmojiViewHolder(view)
 
-        view.setOnClickListener {
-            val position: Int = viewHolder.getAdapterPosition()
-            if (position != RecyclerView.NO_POSITION) {
-                var data = viewHolder.emojiView.resources
-                itemClickListener!!.onItemClicked(data)
-            }
-        }
 
         return EmojiViewHolder(view)
     }
     override fun onBindViewHolder(holder: EmojiViewHolder, position: Int) {
+        pickedEmoji = "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${emojiNameList[position]}.gif"
         // Glide를 사용하여 이모지 GIF 설정
         Glide.with(context)
-            .load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${emojiNameList[position]}.gif")
+            .load(pickedEmoji)
             .into(holder.emojiView)
+        holder.bind()
+
+//        holder.emojiView.setOnClickListener {
+//            onitemClickListener?.onItemClicked(pickedEmoji)
+//        }
     }
     override fun getItemCount(): Int {
         return emojiNameList.size
     }
     inner class EmojiViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val emojiView: ImageView = itemView.findViewById(R.id.emoji_select_button)
+        val pos = adapterPosition
+        fun bind() {
+            if(pos!= RecyclerView.NO_POSITION) {
+                emojiView.setOnClickListener {
+                    onitemClickListener?.onItemClicked(itemView, pickedEmoji, pos)
+                }
+            }
+        }
     }
+
 }

@@ -11,6 +11,9 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 
 class NetworkRepository {
-//    private val client = RetrofitInstance.getInstance().create(Api::class.java)
-//    fun getUser(params: HashMap<String, String>) = client.getUserGoogle(params)
+    private val client = RetrofitInstance.getInstance().create(Api::class.java)
+//    suspend fun getGoogleUser(params: HashMap<String, String>) = client.getGoogleUser(params)
+//    fun getGoogleUser(): Call<UserResponse> {
+//
+//    }
 }

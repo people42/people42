@@ -9,6 +9,10 @@
         android:id="@+id/nicknameFragment"
         android:name="com.cider.fourtytwo.Signup.NicknameFragment"
         android:label="NicknameFragment" >
+        <argument
+            android:name="myNickname"
+            app:argType="string"
+            android:defaultValue="0" />
         <action
             android:id="@+id/action_nicknameFragment_to_emojiFragment"
             app:destination="@id/emojiFragment" />
@@ -17,6 +21,10 @@
         android:id="@+id/emojiFragment"
         android:name="com.cider.fourtytwo.Signup.EmojiFragment"
         android:label="EmojiFragment" >
+        <argument
+            android:name="myNickname"
+            app:argType="string"
+            android:defaultValue="0" />
         <action
             android:id="@+id/action_emojiFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment" />
