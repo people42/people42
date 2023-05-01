@@ -106,6 +106,7 @@ public class FeedService {
         List<Brush> brushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
         boolean flag = false;
         int cnt = 0;
+        System.out.println("조회된 스침들: " + brushList.size());
         for (Brush brush : brushList) {
             // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
             if (brush.getPlace().getId().equals(placeIdx)
@@ -163,6 +164,8 @@ public class FeedService {
         } else {
             throw new EntityNotFoundException("존재하지 않는 장소입니다.");
         }
+
+        System.out.println("messageResDtos size: " + messageResDtos.size());
 
         return PlaceFeedResDto.builder()
                 .messagesInfo(messageResDtos)
