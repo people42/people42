@@ -11,6 +11,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="offwhite">#00FFFFFF</color>
+    <color name="think_cloud">#9BA2FE</color>
     <!-- 라이트 모드 -->
     <!-- 투명도 60% == 99 / 완전 투명 0% == 00 -->
     <color name="red">#99FB4C4C</color>
@@ -30,4 +31,8 @@
     <color name="dark_blue">#1B2D58</color>
     <color name="dark_purple">#3B1C58</color>
     <color name="dark_pink">#4E1C47</color>
+
+    <color name="text_shadow">#AEAEAE</color>
+    <color name="nickname_box">#FAFAFA</color>
+    <color name="monotone_dark">#6E6E6E</color>
 </resources>

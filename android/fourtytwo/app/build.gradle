@@ -2,7 +2,12 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id("androidx.navigation.safeargs.kotlin")
 }
+
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     namespace 'com.cider.fourtytwo'
@@ -14,6 +19,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        buildConfigField "String", "map_key", properties["map_key"]
+        buildConfigField "String", "web_client_id", properties["web_client_id"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,22 +41,45 @@ android {
     viewBinding{
         enabled=true
     }
-
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-auth:20.1.0' //google 로그인
+    implementation 'com.google.android.gms:play-services-auth:20.5.0' //google 로그인
     implementation 'androidx.viewpager2:viewpager2:1.0.0'             // 뷰페이저2
     implementation 'me.relex:circleindicator:2.1.6'                   // 뷰페이저 위치표시용 지시자
     implementation "androidx.recyclerview:recyclerview:1.1.0"         // 리사이클러뷰
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'            // retrofit2
-    implementation 'com.github.bumptech.glide:glide:4.11.0'           // glide gif재생
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.preference:preference:1.2.0'// glide gif재생
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글맵
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.maps.android:android-maps-utils:1.1.0' // 구글맵 마커 클러스터링
+    // navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    // retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // Coroutine
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    // DateStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // 버튼 애니메이션
+    implementation "com.github.skydoves:elasticviews:2.1.0"
+    // 리사이클러뷰 애니메이션
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+    // 열리는 리스트
+    implementation 'com.github.traex.expandablelayout:library:1.2.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

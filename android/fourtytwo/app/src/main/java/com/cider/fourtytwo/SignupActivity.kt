@@ -23,39 +23,7 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val tabs = binding.tabs
 
-        fragment1 = NicknameFragment()
-        fragment2 = EmojiFragment()
-        fragment3 = WelcomeFragment()
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, fragment1)
-            .commit()
-//        tabs.addTab(tabs.newTab().setIcon(R.drawable.tab3))
-
-        tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val position = tab.position
-                val selected: Fragment? = when (position) {
-                    0 -> fragment1
-                    1 -> fragment2
-                    2 -> fragment3
-                    else -> null
-                }
-                selected?.let {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, it)
-                        .commit()
-                    Log.i(TAG, "onTabSelected: completed")
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-
-        })
     }
 }
 

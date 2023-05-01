@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/expand_header"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="개인정보처리방침"
+        android:paddingVertical="13dp"
+        />
+</LinearLayout>
