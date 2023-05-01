@@ -247,6 +247,9 @@ public class UserService {
                 throw new DataIntegrityViolationException("이미 존재하는 사용자입니다.");
             } else {
                 foundUser.setIsActive(true);
+                if (socialType.equals("androidGoogle")) {
+                    socialType = "google";
+                }
                 foundUser.setEmail(socialType + "_" + signupRequestDto.getEmail());
                 foundUser.setNickname(signupRequestDto.getNickname());
                 setOperations.add("nicknames", signupRequestDto.getNickname());

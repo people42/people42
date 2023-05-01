@@ -39,3 +39,4 @@ out/
 ###properties###
 /src/main/resources/private.properties
 /src/main/resources/AuthKey_C2D3A82Y49.p8
+/src/main/resources/firebase_key.json
