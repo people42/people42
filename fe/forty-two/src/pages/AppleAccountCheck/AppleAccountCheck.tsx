@@ -29,4 +29,4 @@ function AppleAccountCheck({}: appleAccountCheckProps) {
 
 export default AppleAccountCheck;
 
-const StyledAppleAccountCheck = styled.nav``;
+const StyledAppleAccountCheck = styled.div``;

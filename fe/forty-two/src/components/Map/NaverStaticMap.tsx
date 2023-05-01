@@ -1,14 +1,16 @@
 import koreaMap from "../../assets/images/map/koreaMap.png";
 import { userLocationUpdateState } from "../../recoil/location/selectors";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
-type naverStaticMapProps = { setIsMapLoad: Function };
+type naverStaticMapProps = {
+  setIsMapLoad: Function;
+  location: TLocation | null;
+};
 
-function NaverStaticMap({ setIsMapLoad }: naverStaticMapProps) {
+function NaverStaticMap({ location, setIsMapLoad }: naverStaticMapProps) {
   const NAVER_MAP_CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
-  const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
 
   useEffect(() => {
     if (location) {
@@ -25,14 +27,14 @@ function NaverStaticMap({ setIsMapLoad }: naverStaticMapProps) {
         />
       ) : null}
       <div className="map-load">
-        {location ? null : (
+        {!location ? (
           <>
             <div className="map-load-circle"></div>
             <div>
-              <p>사용자 위치 찾는 중...</p>
+              <p>지도 로드중...</p>
             </div>
           </>
-        )}
+        ) : null}
         <img src={koreaMap}></img>
       </div>
     </StyledNaverStaticMap>
@@ -41,7 +43,7 @@ function NaverStaticMap({ setIsMapLoad }: naverStaticMapProps) {
 
 export default NaverStaticMap;
 
-const StyledNaverStaticMap = styled.nav`
+const StyledNaverStaticMap = styled.div`
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.color.background.secondary};

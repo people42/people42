@@ -1,9 +1,11 @@
-import { postMessage } from "../../api";
+import { getAccessToken, postMessage } from "../../api";
+import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
+import { setSessionRefreshToken } from "../../utils";
 import CommonBtn from "../Button/CommonBtn";
 import Input from "./Input";
-import { useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type inputProps = {
@@ -13,6 +15,25 @@ type inputProps = {
 function MyMessageCardInput({ onClickCancel }: inputProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const [myMessageInputData, setMyMessageInputData] = useState<string>("");
+  const setUserRefresh = useSetRecoilState(userState);
+  const onClickPostMessage = () => {
+    myMessageInputData == ""
+      ? alert("내용을 입력해주세요.")
+      : postMessage(accessToken, { message: myMessageInputData })
+          .then((res) => onClickCancel())
+          .catch((e) => {
+            if (e.response.status == 401) {
+              getAccessToken().then((res) => {
+                setUserRefresh(res.data.data);
+                setSessionRefreshToken(res.data.data.refreshToken);
+                postMessage(res.data.data.accessToken, {
+                  message: myMessageInputData,
+                });
+                onClickCancel();
+              });
+            }
+          });
+  };
 
   return (
     <StyledMyMessageCardInput>
@@ -21,11 +42,7 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
         onKeyUp={(e) => {
           switch (e.key) {
             case "Enter":
-              myMessageInputData == ""
-                ? alert("내용을 입력해주세요.")
-                : postMessage(accessToken, {
-                    message: myMessageInputData,
-                  }).then((res) => onClickCancel());
+              onClickPostMessage();
               break;
             case "Escape":
               onClickCancel();
@@ -36,21 +53,7 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
         placeholder={"지금 무슨 생각하세요?"}
       ></Input>
       <div>
-        <CommonBtn
-          btnType={"primary"}
-          onClick={() => {
-            myMessageInputData == ""
-              ? alert("내용을 입력해주세요.")
-              : postMessage(accessToken, { message: myMessageInputData })
-                  .then((res) => onClickCancel())
-                  .catch((e) => {
-                    console.log(e);
-                    alert("글 작성이 실패했습니다. 잠시 후 다시 시도해주세요.");
-                    onClickCancel();
-                    setMyMessageInputData("");
-                  });
-          }}
-        >
+        <CommonBtn btnType={"primary"} onClick={onClickPostMessage}>
           작성
         </CommonBtn>
         <CommonBtn

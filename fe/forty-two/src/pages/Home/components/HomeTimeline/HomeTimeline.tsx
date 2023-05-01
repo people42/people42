@@ -53,14 +53,29 @@ const StyledHomeTimeline = styled.section`
   flex-shrink: 0;
   width: 360px;
   position: relative;
+  padding-bottom: 40px;
+  height: calc(100vh - 56px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    background-color: none;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.color.text.primary + "10"};
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: none;
+  }
 
   .timeline-bar {
-    position: absolute;
-    top: 50px;
-    left: 126px;
+    position: fixed;
+    bottom: 0px;
+    margin-left: 126px;
     width: 4px;
     height: 100%;
     z-index: -3;
-    background-color: ${({ theme }) => theme.color.text.secondary};
+    background-color: ${({ theme }) => theme.color.text.primary + "30"};
   }
 `;

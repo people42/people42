@@ -5,9 +5,10 @@ import styled from "styled-components";
 type messageCardProps = {
   props: TFeed["recent"];
   idx: number;
+  onClick(): void;
 };
 
-function MessageCard({ props, idx }: messageCardProps) {
+function MessageCard({ props, idx, onClick }: messageCardProps) {
   return props ? (
     <StyledMessageCard
       color={props.recentMessageInfo.color}
@@ -21,13 +22,14 @@ function MessageCard({ props, idx }: messageCardProps) {
       ></div>
       <ReactionBtn props={props}></ReactionBtn>
       <div className="message">
-        <Card isShadowInner={false}>
-          <>
+        <Card isShadowInner={false} onClick={onClick}>
+          <div>
             <p className="message-nickname">
+              {props.recentMessageInfo.brushCnt}번 스친{" "}
               {props.recentMessageInfo.nickname}
             </p>
             <p className="message-content">{props.recentMessageInfo.content}</p>
-          </>
+          </div>
         </Card>
       </div>
     </StyledMessageCard>
@@ -46,14 +48,9 @@ const StyledMessageCard = styled.div<{
   max-width: 200px;
   min-width: 150px;
   position: relative;
-  cursor: pointer;
+
   transition: scale 0.3s;
-  &:hover {
-    scale: 1.02;
-  }
-  &:active {
-    scale: 0.98;
-  }
+
   .emoji {
     z-index: 3;
     position: absolute;
@@ -64,8 +61,16 @@ const StyledMessageCard = styled.div<{
   }
 
   .message {
+    transition: scale 0.3s;
+    &:hover {
+      scale: 1.02;
+    }
+    &:active {
+      scale: 0.98;
+    }
     padding-top: 18px;
     & > div {
+      cursor: pointer;
       padding: 24px 16px 16px 16px;
       background-color: ${(props) =>
         props.theme.color.card[props.color] + "a0"};

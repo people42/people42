@@ -10,17 +10,21 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-type myMessageCardProps = {};
+type myMessageCardProps = {
+  isMessageEdit: boolean;
+  setIsMessageEdit: Function;
+};
 
-function MyMessageCard({}: myMessageCardProps) {
+function MyMessageCard({
+  isMessageEdit,
+  setIsMessageEdit,
+}: myMessageCardProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
 
-  const [myMessageInput, setMyMessageInput] = useState<boolean>(false);
-
   const [myMessage, setMyMessage] = useState<TMyMessage>();
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken && !isMessageEdit) {
       getMyInfo(accessToken)
         .then((res) => setMyMessage(res.data.data))
         .catch((e) => {
@@ -32,10 +36,13 @@ function MyMessageCard({}: myMessageCardProps) {
           }
         });
     }
-  }, [accessToken, myMessageInput]);
+  }, [accessToken, isMessageEdit]);
 
   return (
-    <StyledMyMessageCard>
+    <StyledMyMessageCard
+      count={myMessage?.messageCnt ?? 0}
+      isMessageEdit={isMessageEdit}
+    >
       {myMessage ? (
         <div
           className="my-emoji"
@@ -46,16 +53,16 @@ function MyMessageCard({}: myMessageCardProps) {
       ) : null}
       <div
         onClick={() => {
-          myMessageInput ? null : setMyMessageInput(true);
+          isMessageEdit ? null : setIsMessageEdit(true);
         }}
         className="my-message"
       >
         <Card isShadowInner={false}>
           <div>
             <p className="my-message-info">지금 나의 생각</p>
-            {myMessageInput ? (
+            {isMessageEdit ? (
               <MyMessageCardInput
-                onClickCancel={() => setMyMessageInput(false)}
+                onClickCancel={() => setIsMessageEdit(false)}
               ></MyMessageCardInput>
             ) : myMessage ? (
               myMessage?.message ? (
@@ -79,22 +86,27 @@ function MyMessageCard({}: myMessageCardProps) {
 
 export default MyMessageCard;
 
-const StyledMyMessageCard = styled.div`
+const StyledMyMessageCard = styled.div<{
+  count: number;
+  isMessageEdit: boolean;
+}>`
+  z-index: 3;
   animation: floatingDown 0.3s;
   position: sticky;
   top: 48px;
   width: 480px;
+  padding: 32px 0px 0px 0px;
   .my-emoji {
     z-index: 3;
     position: absolute;
-    margin-left: 40px;
+    margin-left: 24px;
+    margin-top: -36px;
     width: 64px;
     height: 64px;
     animation: floatingUp 0.3s;
     background-size: 100%;
   }
   .my-message {
-    padding: 32px 24px 24px 24px;
     cursor: pointer;
     transition: scale 0.3s;
     &:hover {
@@ -108,19 +120,29 @@ const StyledMyMessageCard = styled.div`
       padding: 40px 24px 24px 24px;
       background-color: ${({ theme }) => theme.color.brand.blue};
       box-sizing: border-box;
-      filter: drop-shadow(
-          4px 4px 0px ${(props) => props.theme.color.brand.blue + "50"}
-        )
-        drop-shadow(
-          8px 8px 0px ${(props) => props.theme.color.brand.blue + "50"}
-        );
+      filter: ${(props) =>
+        props.count > 0 && !props.isMessageEdit
+          ? props.count > 1
+            ? `drop-shadow(4px 4px 0px ${
+                props.theme.color.brand.blue + "50"
+              }) drop-shadow(8px 8px 0px ${
+                props.theme.color.brand.blue + "50"
+              })`
+            : `drop-shadow(4px 4px 0px ${props.theme.color.brand.blue + "50"})`
+          : "none"};
       &:hover {
-        filter: drop-shadow(
-            4px 8px 0px ${(props) => props.theme.color.brand.blue + "50"}
-          )
-          drop-shadow(
-            8px 16px 0px ${(props) => props.theme.color.brand.blue + "50"}
-          );
+        filter: ${(props) =>
+          props.count > 0 && !props.isMessageEdit
+            ? props.count > 1
+              ? `drop-shadow(4px 8px 0px ${
+                  props.theme.color.brand.blue + "50"
+                }) drop-shadow(8px 16px 0px ${
+                  props.theme.color.brand.blue + "50"
+                })`
+              : `drop-shadow(4px 8px 0px ${
+                  props.theme.color.brand.blue + "50"
+                })`
+            : "none"};
       }
       &:active {
         filter: none;
@@ -134,6 +156,8 @@ const StyledMyMessageCard = styled.div`
     &-content {
       ${({ theme }) => theme.text.subtitle1}
       color: ${({ theme }) => theme.color.monotone.light};
+      word-wrap: break-word;
+      word-break: keep-all;
     }
   }
 `;

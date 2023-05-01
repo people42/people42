@@ -1,10 +1,18 @@
 import { ReactElement } from "react";
 import styled from "styled-components";
 
-type cardProps = { children: ReactElement; isShadowInner: boolean };
+type cardProps = {
+  children: ReactElement;
+  isShadowInner: boolean;
+  onClick?(): void;
+};
 
-function Card({ children, isShadowInner }: cardProps) {
-  return <StyledCard isShadowInner={isShadowInner}>{children}</StyledCard>;
+function Card({ children, isShadowInner, onClick }: cardProps) {
+  return (
+    <StyledCard isShadowInner={isShadowInner} onClick={onClick}>
+      {children}
+    </StyledCard>
+  );
 }
 
 export default Card;
