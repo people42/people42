@@ -64,10 +64,10 @@ function SignInCard() {
     const config = {
       client_id: "com.cider.fortytwo", // This is the service ID we created.
       redirect_uri: "https://people42.com/signin/apple", // As registered along with our service ID
-      response_type: "code",
+      response_type: "code id_token",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
-      // scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
-      response_mode: "query",
+      scope: "name email", // To tell apple we want the user name and emails fields in the response it sends us.
+      response_mode: "form_post",
       m: 11,
       v: "1.5.4",
     };
@@ -77,7 +77,6 @@ function SignInCard() {
       .join("&");
 
     window.open(
-      // `http://localhost:5174/signin/apple?code=asdfasdf`,
       `https://appleid.apple.com/auth/authorize?${queryString}`,
       "get apple auth code",
       "width=600,height=600"

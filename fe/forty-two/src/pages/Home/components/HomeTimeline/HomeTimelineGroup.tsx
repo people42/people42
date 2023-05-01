@@ -2,6 +2,7 @@ import { MessageCard } from "../../../../components";
 import { locationInfoState } from "../../../../recoil/location/atoms";
 import { formatMessageDate } from "../../../../utils";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
@@ -23,6 +24,18 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
       setIsActive(true);
     }
   }, [locationInfo]);
+
+  const navigate = useNavigate();
+  const onClickCard = () => {
+    navigate("place", {
+      state: {
+        placeIdx: props?.placeWithTimeInfo.placeIdx,
+        time: props?.placeWithTimeInfo.time,
+        page: 0,
+        size: 10,
+      },
+    });
+  };
 
   return (
     <StyledHomeTimelineGroup isActive={isActive}>
@@ -60,7 +73,13 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
         )}
       </div>
       {props ? (
-        <MessageCard idx={idx} props={props}></MessageCard>
+        <div>
+          <MessageCard
+            idx={idx}
+            props={props}
+            onClick={onClickCard}
+          ></MessageCard>
+        </div>
       ) : (
         <div className="not-message">아직 메시지가 없습니다.</div>
       )}

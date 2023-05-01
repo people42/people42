@@ -15,7 +15,7 @@ function HomeTimeline() {
   ]);
 
   useEffect(() => {
-    if (accessToken && recentFeedList) {
+    if (accessToken) {
       getRecentFeed(accessToken)
         .then((res) => {
           if (res.data.data && res.data.data.length > 0) {
@@ -31,7 +31,7 @@ function HomeTimeline() {
           }
         });
     }
-  }, [accessToken, recentFeedList]);
+  }, [accessToken]);
 
   return (
     <StyledHomeTimeline>
@@ -55,7 +55,19 @@ const StyledHomeTimeline = styled.section`
   position: relative;
   padding-bottom: 40px;
   height: calc(100vh - 56px);
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    background-color: none;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.color.text.primary + "10"};
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: none;
+  }
 
   .timeline-bar {
     position: fixed;

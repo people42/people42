@@ -44,7 +44,7 @@ function NavModal({ closeModal, type }: navModalProps) {
 
 export default NavModal;
 
-const StyledNavModal = styled.nav<{ type: string }>`
+const StyledNavModal = styled.div<{ type: string }>`
   animation: modalOn 0.1s;
   z-index: 10;
   position: absolute;

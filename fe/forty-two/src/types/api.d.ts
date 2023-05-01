@@ -21,6 +21,7 @@ type TFeed = {
     messageIdx: number;
   };
   place: { placeIdx: number; time: string; page: number; size: number };
+  user: { userIdx: number };
 };
 
 type TAuth = {
@@ -45,6 +46,6 @@ type TAccount = {
 };
 
 type TLocation = {
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
 };

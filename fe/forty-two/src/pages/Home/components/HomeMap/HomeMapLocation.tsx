@@ -32,8 +32,8 @@ const StyledHomeMapLocation = styled.section`
   align-items: center;
   z-index: 3;
   position: fixed;
-  bottom: 56px;
-  right: 56px;
+  bottom: 24px;
+  right: 24px;
   ${({ theme }) => theme.text.subtitle2};
   ${({ theme }) => theme.shadow.iconShadow};
   background-color: ${({ theme }) => theme.color.background.secondary};

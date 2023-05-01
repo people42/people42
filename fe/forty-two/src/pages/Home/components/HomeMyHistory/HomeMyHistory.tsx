@@ -76,7 +76,19 @@ const StyledHomeMyHistory = styled.article`
   padding-inline: 8px 8px;
   width: 480px;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    background-color: none;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.color.text.primary + "10"};
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: none;
+  }
 
   .history-title {
     ${({ theme }) => theme.text.subtitle1}

@@ -31,3 +31,14 @@ export async function getPlace(accessToken: string, params: TFeed["place"]) {
     params: params,
   });
 }
+
+/**
+ * [GET] "feed/user" 사용자별 피드 조회
+ */
+export async function getUser(accessToken: string, params: TFeed["user"]) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).get("feed/user", {
+    params: params,
+  });
+}

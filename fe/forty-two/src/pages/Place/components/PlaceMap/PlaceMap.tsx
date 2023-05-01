@@ -1,87 +1,41 @@
 import mapArrow from "../../../../assets/images/map/mapArrow.png";
 import { NaverStaticMap } from "../../../../components";
-import { userLocationUpdateState } from "../../../../recoil/location/selectors";
-import HomeMapLocation from "./HomeMapLocation";
+import { placeState } from "../../../../recoil/place/atoms";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 type homeMapProps = {};
 
 function HomeMap({}: homeMapProps) {
-  const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
-
   const [isMapLoad, setIsMapLoad] = useState<boolean>(false);
-  const [mousePosition, setMousePosition] = useState<{
-    x: number;
-    y: number;
-  }>();
-  const [arrowStyle, setArrowAngleStyle] = useState<{
-    angle: number;
-    distance: number;
-  }>({
-    angle: 0,
-    distance: 1,
-  });
-  useEffect(() => {
-    const mouseMove = (e: any) =>
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", mouseMove);
-    return window.addEventListener("mousemove", mouseMove);
-  }, []);
-
-  useEffect(() => {
-    let target = document.querySelector(".map-arrow-img");
-
-    if (target && mousePosition) {
-      const mx = mousePosition.x;
-      const my = mousePosition.y;
-      const ax = target.getBoundingClientRect().left + 20;
-      const ay = target.getBoundingClientRect().top + 20;
-
-      let angle = Math.atan2(ay - my, ax - mx) * (180 / Math.PI) - 90; // 두 점 사이의 각도 (라디안을 각도로 변환)
-
-      if (angle < 0) {
-        angle += 360; // 각도를 0도를 기준으로 360도 단위로 변환
-      }
-
-      let distance = 1.7 - Math.sqrt((ax - mx) ** 2 + (ay - my) ** 2) / 500;
-      if (distance < 1) {
-        distance = 1;
-      } else if (1.7 < distance) {
-        distance = 1.7;
-      }
-
-      setArrowAngleStyle({ angle: angle, distance: distance }); // 결과 출력
-    }
-  }, [mousePosition]);
+  const [placeData, setPlaceData] = useRecoilState(placeState);
   return (
     <StyledHomeMap>
       {isMapLoad ? (
-        <div className="map-arrow">
-          <img
-            className="map-arrow-img"
-            src={mapArrow}
-            style={{
-              transform: `rotate(${arrowStyle.angle}deg) scale(${arrowStyle.distance})`,
-            }}
-          ></img>
+        <div className="map-point">
+          <div className="map-point-circle"></div>
         </div>
       ) : null}
       <div className="map-mask">
         {isMapLoad ? (
           <div className="map-circle">
-            <div className="map-circle-rader"></div>
             <div className="map-circle-1"></div>
             <div className="map-circle-2"></div>
             <div className="map-circle-3"></div>
           </div>
         ) : null}
       </div>
-      <HomeMapLocation></HomeMapLocation>
       <NaverStaticMap
         setIsMapLoad={setIsMapLoad}
-        location={location}
+        location={
+          placeData
+            ? {
+                latitude: placeData.placeWithTimeAndGpsInfo.placeLatitude,
+                longitude: placeData.placeWithTimeAndGpsInfo.placeLongitude,
+              }
+            : null
+        }
       ></NaverStaticMap>
     </StyledHomeMap>
   );
@@ -95,7 +49,7 @@ const StyledHomeMap = styled.section`
   bottom: -100px;
   width: 100vh;
   height: 100vh;
-  .map-arrow {
+  .map-point {
     animation: popIn 0.3s;
     z-index: 10;
     position: absolute;
@@ -104,9 +58,13 @@ const StyledHomeMap = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
-    &-img {
-      width: 40px;
-      height: 40px;
+    &-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 20px;
+      background-color: ${({ theme }) => theme.color.monotone.gray};
+      border: 4px solid ${({ theme }) => theme.color.monotone.light};
+      ${({ theme }) => theme.shadow.iconShadow}
     }
   }
 
