@@ -102,7 +102,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
         return queryFactory
                 .select(message.count())
                 .from(message)
-                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay())))
+                .where(message.user.eq(user).and(message.createdAt.after(LocalDate.now().atStartOfDay()).and(message.isActive.eq(true))))
                 .fetchOne();
     }
 
