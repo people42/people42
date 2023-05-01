@@ -96,4 +96,9 @@ AccountController {
         return ApiResponse.ok(null);
     }
 
+    @DeleteMapping("/tmp")
+    public void tmp(@RequestHeader("ACCESS-TOKEN") Long userIdx) {
+        userService.tmp(userIdx);
+    }
+
 }
