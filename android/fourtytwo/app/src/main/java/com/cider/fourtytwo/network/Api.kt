@@ -3,13 +3,8 @@ package com.cider.fourtytwo.network
 import com.cider.fourtytwo.network.Model.*
 import kotlinx.coroutines.Job
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
+import retrofit2.http.*
 import retrofit2.http.Header
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
-import retrofit2.http.PUT
 
 interface Api {
     // 회원 체크 (구글)
@@ -27,19 +22,23 @@ interface Api {
     //access 토큰 갱신
     @POST("api/v1/auth/token")
     fun setAccessToken(@Header("REFRESH-TOKEN") refreshToken: String) : Call<UserResponse>
+    // 로그아웃
+    @DELETE("api/v1/account/logout")
+    fun signOut(@Header("ACCESS-TOKEN") accessToken: String) : Call<SignOutResponse>
+    // 내 메세지 조회
+    @GET
+        ("api/v1/account/myinfo")
+    fun getNowMessage(@Header("ACCESS-TOKEN") accessToken: String) : Call<NowMessageResponse>
 
     // 최근 피드 조회
     @GET
     ("api/v1/feed/recent")
     fun getRecentFeed(@Header("ACCESS-TOKEN") accessToken: String) : Call<RecentFeedResponse>
-    // 내 메세지 조회
-    @GET
-    ("api/v1/account/myinfo")
-    fun getNowMessage(@Header("ACCESS-TOKEN") accessToken: String) : Call<NowMessageData>
 
-    // 로그아웃
-    @DELETE("api/v1/account/logout")
-    fun signOut(@Header("ACCESS-TOKEN") accessToken: String) : Call<SignOutResponse>
+    // 내 상메 히스토리 조회
+    @GET
+    ("api/v1/account/history")
+    fun getHistory(@Header("ACCESS-TOKEN") accessToken: String, @Query("date") date : String) : Call<HistoryResponse>
 
     // 회원 탈퇴
     @DELETE("api/v1/account/withdrawal")

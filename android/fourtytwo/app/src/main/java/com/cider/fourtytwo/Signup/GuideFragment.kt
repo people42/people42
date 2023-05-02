@@ -20,7 +20,6 @@ import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.FragmentGuideBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
-import com.cider.fourtytwo.network.Model.SignupForm
 import com.cider.fourtytwo.network.Model.UserInfo
 import com.cider.fourtytwo.network.Model.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance

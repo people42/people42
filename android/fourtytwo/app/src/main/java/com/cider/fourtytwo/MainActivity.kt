@@ -4,13 +4,14 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +53,27 @@ class MainActivity : AppCompatActivity(){
         setContentView(R.layout.activity_main)
         userDataStore = UserDataStore(this)
 
+// 메세지 없을 때 메세지 보내기
+        val new_message_button = findViewById<Button>(R.id.main_think_cloud_button)
+        val new_message = findViewById<EditText>(R.id.main_guide_text)
+        new_message_button.setOnClickListener {
+            val content = new_message.text.toString()
+            if (content == " ") {
+                Toast.makeText(this, "당신의 스쳐가는 생각을 남겨주세요", Toast.LENGTH_SHORT).show()
+            }else{
+                lifecycleScope.launch {
+                    setMessage(userDataStore.get_access_token.first(), content)
+                    getNowMessage(userDataStore.get_access_token.first())
+                }
+                new_message.text.clear()
+            }
+        }
+        val myOpinion = findViewById<TextView>(R.id.my_opinion_text)
+        myOpinion.setOnClickListener {
+            val intent = Intent(this, MyMessagesActivity::class.java)
+            startActivity(intent)
+        }
+
 // 내 메세지, 피드 가져오기
         lifecycleScope.launch {
             val token = userDataStore.get_access_token.first()
@@ -61,22 +83,23 @@ class MainActivity : AppCompatActivity(){
             val myEmojiView = findViewById<ImageView>(R.id.my_opinion_emoji)
             setEmoji(myEmoji, myEmojiView)
         }
+
 // 피드
 //        피드가 있으면 R.id.cardLine visibility 보이게
         val feed = findViewById<RecyclerView>(R.id.feed)
         feedAdapter = FeedAdapter(this, feedList)
-//        feedAdapter.notifyDataSetChanged()
+        //feedAdapter.notifyDataSetChanged()
         feed.adapter = feedAdapter
         feed.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        // 지도
+// 지도
         val mapFragment = supportFragmentManager.findFragmentById(
             R.id.map_fragment
         ) as? SupportMapFragment
 
         mapFragment?.getMapAsync { googleMap ->
             googleMap.setOnMapLoadedCallback {
-//                val bounds = LatLngBounds.builder()
+                //val bounds = LatLngBounds.builder()
 
                 val marker = LatLng(37.568291,126.997780)
                 googleMap.addMarker(
@@ -85,49 +108,70 @@ class MainActivity : AppCompatActivity(){
                         .title("여기")
                         .draggable(false)
                         .alpha(0.9f)
-//                        .icon(BitmapDescriptorFactory.defaultMarker(R.drawable.robot))
+                        //.icon(BitmapDescriptorFactory.defaultMarker(R.drawable.robot))
                 )
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker))
-//                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
             }
-//            addMarkers(googleMap)
+            //addMarkers(googleMap)
         }
+    }
+    fun setMessage(Header: String, myMessage: String){
+        var params = HashMap<String, String>()
+        params.put("message", myMessage)
+        api.setMessage(Header, params).enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                Log.d("메세지 전송 2 응답", response.toString())
+                if (response.code() == 200) {
+                    Log.i(TAG, "메세지 전송 2 200: 잘 보내졌다네")
+                } else if (response.code() == 401){
+                    Log.i(TAG, "메세지 전송 2 401: 토큰 만료")
+                    // 토큰 다시 받기
+                    getToken(myMessage)
+                } else {
+                    Log.i(TAG, "메세지 전송 기타: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                // 실패
+                Log.d("메세지 전송 2 실패: ", t.message.toString())
+            }
+        })
     }
     fun setEmoji(myEmoji:String, myEmojiView:ImageView){
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
     }
     fun getNowMessage(header : String) {
-        var myEmoji : String? = null
-        api.getNowMessage(header).enqueue(object : Callback<NowMessageData> {
-            override fun onResponse(call: Call<NowMessageData>, response: Response<NowMessageData>) {
+        api.getNowMessage(header).enqueue(object : Callback<NowMessageResponse> {
+            override fun onResponse(call: Call<NowMessageResponse>, response: Response<NowMessageResponse>) {
                 Log.d("NowMessage 응답", response.toString())
                 if (response.code() == 200) {
                     Log.i(TAG, "NowMessage 응답 바디: ${response.body()}")
+                    Log.i(TAG, "NowMessage 응답 바디: ${response.body()?.data}")
                     // 메세지가 있으면
-                    if(response.body()?.messageCnt!! > 0) {
+                    if(response.body()?.data?.messageCnt!! > 0) {
+                        // 메세지 레이아웃 바꾸기
+                        findViewById<View>(R.id.layout_opinion).visibility = VISIBLE
+                        findViewById<View>(R.id.layout_edit_opinion).visibility = GONE
                         //그림자 생기기
-                        if (response.body()?.messageCnt!! > 1) {
-                            findViewById<ImageView>(R.id.my_opinion_text_shadow1).visibility =
-                                VISIBLE
-                            findViewById<ImageView>(R.id.my_opinion_text_shadow2).visibility =
-                                VISIBLE
+                        if (response.body()?.data?.messageCnt!! > 1) {
+                            findViewById<ImageView>(R.id.my_opinion_text_shadow1).visibility = VISIBLE
+                            findViewById<ImageView>(R.id.my_opinion_text_shadow2).visibility = VISIBLE
                         }
-                        // 메세지, 이모지
-                        findViewById<TextView>(R.id.my_opinion_text).text = response.body()?.message
-                        Log.d(TAG, "NowMessage 이모지 전 : ${response.body()!!.emoji}")
-                        myEmoji = response.body()!!.emoji
-                        Log.d(TAG, "NowMessage 이모지 후 : ${myEmoji}")
+                        // 메세지
+                        findViewById<TextView>(R.id.my_opinion_text).text = response.body()?.data!!.message
                     }
+
                     // 공감 크기 정하기
 
                 } else if (response.code() == 401){
                     Log.i(TAG, "NowMessage_onResponse 401: 토큰 만료")
-                    getToken()
+                    getToken(" ")
                 } else {
                     Log.i(TAG, "NowMessage_onResponse 기타 코드: ${response.code()}")
                 }
             }
-            override fun onFailure(call: Call<NowMessageData>, t: Throwable) {
+            override fun onFailure(call: Call<NowMessageResponse>, t: Throwable) {
                 Log.d("NowMessage_onFailure", t.message.toString())
             }
         })
@@ -143,7 +187,7 @@ class MainActivity : AppCompatActivity(){
                     Log.i(ContentValues.TAG, "gerRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){
                     Log.i(TAG, "gerRecentFeed_onResponse 401: 토큰 만료")
-                    getToken()
+                    getToken(" ")
                 } else {
                     Log.i(TAG, "gerRecentFeed_onResponse 코드: ${response.code()}")
                 }
@@ -162,7 +206,7 @@ class MainActivity : AppCompatActivity(){
         }
         return feedList
     }
-    fun getToken() {
+    fun getToken(type : String) {
         lifecycleScope.launch {
             val refreshToken = userDataStore.get_refresh_token.first()
             api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
@@ -173,7 +217,7 @@ class MainActivity : AppCompatActivity(){
                             Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
                             Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
                             response.body()?.data?.let {
-                                it1 -> saveUserInfo(it1)
+                                it1 -> saveUserInfo(it1, type)
                             }
                         } else {
                             Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
@@ -188,12 +232,16 @@ class MainActivity : AppCompatActivity(){
 
         }
     }
-    fun saveUserInfo(payload : UserInfo){
+    fun saveUserInfo(payload : UserInfo, type : String){
         lifecycleScope.launch {
             userDataStore.setUserData(payload)
             val token = userDataStore.get_access_token.first()
-            getRecentFeed(token)
-            getNowMessage(token)
+            if (type == " "){
+                getRecentFeed(token)
+                getNowMessage(token)
+            } else {
+                setMessage(token, type)
+            }
         }
         Log.d(TAG, "유저 정보 저장 완료: 444444444444444444444444444444444444")
     }
@@ -271,14 +319,14 @@ class MainActivity : AppCompatActivity(){
             else -> super.onOptionsItemSelected(item)
         }
     }
-//    var backPressedTime : Long = 0
-//    override fun onBackPressed() {
-//        //2.5초이내에 한 번 더 뒤로가기 클릭 시
-//        if (System.currentTimeMillis() - backPressedTime < 1500) {
-//            super.getOnBackPressedDispatcher()
-//            return
-//        }
-//        Toast.makeText(this, "한번 더 클릭 시 홈으로 이동됩니다.", Toast.LENGTH_SHORT).show()
-//        backPressedTime = System.currentTimeMillis()
-//    }
+    var backPressedTime : Long = 0
+    override fun onBackPressed() {
+        //2.5초이내에 한 번 더 뒤로가기 클릭 시
+        if (System.currentTimeMillis() - backPressedTime < 1500) {
+            super.getOnBackPressedDispatcher()
+            return
+        }
+        Toast.makeText(this, "한번 더 클릭 시 홈으로 이동됩니다.", Toast.LENGTH_SHORT).show()
+        backPressedTime = System.currentTimeMillis()
+    }
 }
