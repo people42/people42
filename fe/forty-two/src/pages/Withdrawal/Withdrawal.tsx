@@ -63,6 +63,7 @@ function Withdrawal({}: withdrawalProps) {
               )
               .catch((e) => {
                 alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+                navigate("/");
               });
           }
         });
@@ -84,6 +85,7 @@ function Withdrawal({}: withdrawalProps) {
         )
         .catch((e) => {
           alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+          navigate("/");
         });
     } else {
       getAppleSignInCode();
