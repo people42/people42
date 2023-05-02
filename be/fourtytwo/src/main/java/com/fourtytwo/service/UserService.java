@@ -129,8 +129,11 @@ public class UserService {
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
-//        map.add("redirect_uri", "https://people42.com/signin/apple");
-        map.add("redirect_uri", "https://people42.com/be42/api/v1/auth/check/apple/web");
+        if (domainType == "web") {
+            map.add("redirect_uri", "https://people42.com/be42/api/v1/auth/check/apple/web");
+        } else {
+            map.add("redirect_uri", "https://people42.com/signin/apple");
+        }
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
 
