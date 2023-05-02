@@ -52,7 +52,7 @@ AccountController {
     @DeleteMapping("/withdrawal/apple/web")
     public ResponseEntity<ApiResponse<Object>> deleteAppleWebUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                                @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "web");
+        userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "webDelete");
         return ApiResponse.ok(null);
     }
 
