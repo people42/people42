@@ -71,6 +71,7 @@ function Withdrawal({}: withdrawalProps) {
 
   const withdrawalApple = () => {
     const appleCode = searchParams.get("code");
+    console.log("asdfasdf", appleCode);
     if (appleCode) {
       if (accessToken) {
         postWithdrawalApple(accessToken, appleCode)
