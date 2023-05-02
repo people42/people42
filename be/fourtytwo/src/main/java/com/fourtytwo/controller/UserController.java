@@ -40,14 +40,28 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping(path = "/check/apple/web")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
-        System.out.println(appleCodeReqDto);
-        String idToken = userService.getAppleToken(appleCodeReqDto.getAppleCode(), "id", "web");
-        System.out.println(idToken);
-        LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
-        System.out.println(loginResponseDto);
-        return ApiResponse.ok(loginResponseDto);
+//    @PostMapping(path = "/check/apple/web")
+//    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+//        System.out.println(appleCodeReqDto);
+//        String idToken = userService.getAppleToken(appleCodeReqDto.getAppleCode(), "id", "web");
+//        System.out.println(idToken);
+//        LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
+//        System.out.println(loginResponseDto);
+//        return ApiResponse.ok(loginResponseDto);
+//    }
+
+    @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
+        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
+        HttpHeaders headers = new HttpHeaders();
+        if (loginResponseDto.getAccessToken() == null) {
+            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code").get(0)
+                    + "&is_signup=false"));
+        } else {
+            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code").get(0)
+                    + "&is_signup=true"));
+        }
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
 
@@ -66,6 +80,18 @@ public class UserController {
     @PostMapping("/signup/apple")
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "apple");
+        return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/signup/apple/web")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "webApple");
+        return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/apple_user_info")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(@Valid @RequestBody AppleCodeReqDto appleCodeReqDto) {
+        LoginResponseDto loginResponseDto = userService.getAppleUserInfo(appleCodeReqDto);
         return ApiResponse.ok(loginResponseDto);
     }
 

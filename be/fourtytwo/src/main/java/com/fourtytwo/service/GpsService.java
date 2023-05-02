@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourtytwo.dto.place.GpsReqDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
 import com.fourtytwo.entity.Brush;
+import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.Place;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.brush.BrushRepository;
-import com.fourtytwo.repository.message.MessageRepositoryImpl;
+import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
-import com.fourtytwo.repository.place.PlaceRepositoryImpl;
 import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +42,7 @@ public class GpsService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final BrushRepository brushRepository;
-    private final MessageRepositoryImpl messageRepositoryImpl;
-    private final PlaceRepositoryImpl placeRepositoryImpl;
+    private final MessageRepository messageRepository;
     private final RedisTemplate<String, Long> gpsTemplate;
     private final RedisTemplate<Long, Integer> userTimeTemplate;
     private final RedisTemplate<String, Long> timeUserTemplate;
@@ -54,7 +53,15 @@ public class GpsService {
 
     public PlaceWithTimeResDto renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
-        Place foundPlace = placeRepositoryImpl.findByGps(gps.getLatitude(), gps.getLongitude());
+        Optional<User> user = userRepository.findById(userIdx);
+        if (user.isEmpty() || !user.get().getIsActive()) {
+            return null;
+        }
+        Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
+        if (userMessage == null) {
+            return null;
+        }
+        Place foundPlace = placeRepository.findByGps(gps.getLatitude(), gps.getLongitude());
         ObjectMapper objectMapper = new ObjectMapper();
         TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {};
 
@@ -112,22 +119,30 @@ public class GpsService {
             if (!nearSet.isEmpty()) {
                 for (Long targetIdx : nearSet) {
                     if (userIdx < targetIdx) {
+                        Optional<User> oppositeUser = userRepository.findById(targetIdx);
+                        if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
+                            continue;
+                        }
+                        Message oppositeUserMessage = messageRepository.findRecentByUserIdx(targetIdx);
+                        if (oppositeUserMessage == null) {
+                            continue;
+                        }
                         if (Boolean.TRUE.equals(brushOperation.isMember("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent()))) {
+                                foundPlace.getName()+" "+userMessage.getContent()+" "+oppositeUserMessage.getContent()))) {
                             continue;
                         }
                         Brush newBrush = Brush.builder()
-                                .user1(userRepository.findByIdAndIsActiveTrue(userIdx))
-                                .user2(userRepository.findByIdAndIsActiveTrue(targetIdx))
-                                .message1(messageRepositoryImpl.findRecentByUserIdx(userIdx))
-                                .message2(messageRepositoryImpl.findRecentByUserIdx(targetIdx))
+                                .user1(user.get())
+                                .user2(oppositeUser.get())
+                                .message1(userMessage)
+                                .message2(oppositeUserMessage)
                                 .place(foundPlace)
                                 .build();
                         brushRepository.save(newBrush);
                         brushOperation.add("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
+                                foundPlace.getName()+" "+userMessage.getContent()+" "+oppositeUserMessage.getContent());
                         timeBrushOperation.add("brush"+(mappedTime+180), userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
+                                foundPlace.getName()+" "+userMessage.getContent()+" "+oppositeUserMessage.getContent());
                     }
                 }
             }

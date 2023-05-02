@@ -129,10 +129,13 @@ public class UserService {
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
-        map.add("redirect_uri", "https://people42.com/signin/apple");
+        if (domainType == "web") {
+            map.add("redirect_uri", "https://people42.com/be42/api/v1/auth/check/apple/web");
+        } else {
+            map.add("redirect_uri", "https://people42.com/signin/apple");
+        }
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
-        map.add("scope", "email");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
@@ -237,6 +240,24 @@ public class UserService {
                 }
                 break;
             }
+            case "webApple": {
+                try {
+                    String appleIdToken = this.getAppleToken(signupRequestDto.getO_auth_token(), "id", "web");
+                    ResponseEntity<?> response = this.checkAppleToken(appleIdToken);
+                    if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                        throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+                    }
+                    AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
+                    foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
+                    break;
+                } catch (InvalidKeySpecException e) {
+
+                } catch (IOException e) {
+
+                } catch (NoSuchAlgorithmException e) {
+
+                }
+            }
         }
         if (foundUser != null && foundUser.getEmail() != null) {
             System.out.println(foundUser.getEmail());
@@ -248,6 +269,9 @@ public class UserService {
 
         if (socialType.equals("androidGoogle")) {
             socialType = "google";
+        } else if (socialType.equals("webApple")) {
+            socialType = "apple";
+            signupRequestDto.setEmail(foundUser.getEmail().split("apple_")[1]);
         }
 
         if (foundUser != null) {
@@ -579,4 +603,36 @@ public class UserService {
             }
         }
     }
+
+    public LoginResponseDto getAppleUserInfo(AppleCodeReqDto appleCodeReqDto) {
+        try {
+            String appleIdToken = this.getAppleToken(appleCodeReqDto.getAppleCode(), "id", "web");
+            ResponseEntity<?> response = this.checkAppleToken(appleIdToken);
+            if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
+            }
+            AppleOAuthResponseDto appleOAuthResponse = (AppleOAuthResponseDto) response.getBody();
+            User foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
+            String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+            String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+            redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
+            return LoginResponseDto.builder()
+                    .user_idx(foundUser.getId())
+                    .nickname(foundUser.getNickname())
+                    .email(foundUser.getEmail())
+                    .emoji(foundUser.getEmoji())
+                    .color(foundUser.getColor())
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } catch (InvalidKeySpecException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+
+    }
+
 }
