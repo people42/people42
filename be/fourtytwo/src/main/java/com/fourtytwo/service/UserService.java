@@ -132,7 +132,6 @@ public class UserService {
         map.add("redirect_uri", "https://people42.com/signin/apple");
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
-        map.add("scope", "email");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
