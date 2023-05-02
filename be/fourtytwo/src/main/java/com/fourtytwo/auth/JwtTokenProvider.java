@@ -65,7 +65,7 @@ public class JwtTokenProvider {
         try {
             String userIdx = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
             return Long.parseLong(userIdx);
-        } catch (Exception e) {
+        } catch (SignatureException e) {
             throw new AuthenticationServiceException("토큰이 유효하지 않습니다.");
         }
     }
@@ -84,7 +84,7 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            throw new AuthenticationServiceException("토큰이 유효하지 않습니다.");
+            return false;
         }
     }
 }
