@@ -16,10 +16,17 @@ export async function postSignupGoogle(body: TAuth["signup"]["google"]) {
 }
 
 /**
- * [POST] "auth/check/apple/web" Apple 회원가입 여부 체크
+ * [POST] "auth/signup/google" Google 회원가입
  */
-export async function postCheckApple(body: TAuth["check"]["apple"]) {
-  return instance().post("auth/check/apple/web", body);
+export async function postSignupApple(body: TAuth["signup"]["google"]) {
+  return instance().post("auth/signup/apple/web", body);
+}
+
+/**
+ * [POST] "auth/apple_user_info" Apple 유저 정보 조회
+ */
+export async function postAppleUserInfo(body: TAuth["check"]["apple"]) {
+  return instance().post("auth/apple_user_info", body);
 }
 
 /**

@@ -1,11 +1,11 @@
-import { postSignupGoogle } from "../../../../api/auth";
+import { postSignupApple, postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
 import { signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
-import { setLocalIsLogin, setSessionRefreshToken } from "../../../../utils";
+import { setSessionRefreshToken } from "../../../../utils";
 import _ from "lodash";
 import { useNavigate } from "react-router";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type conformUserSettingProps = { onClick(e: React.MouseEvent): void };
@@ -47,7 +47,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
             })
               .then((res) => {
                 userLogin(res.data.data);
-                setLocalIsLogin();
                 setSessionRefreshToken(res.data.data.refreshToken);
                 navigate("/");
               })
@@ -58,7 +57,23 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
           : alertSignUpError();
         break;
       case "apple":
-        console.log("apple login 시도");
+        signUpUser.nickname && signUpUser.o_auth_token && signUpUser.emoji
+          ? postSignupApple({
+              email: "null",
+              nickname: signUpUser.nickname,
+              o_auth_token: signUpUser.o_auth_token,
+              emoji: signUpUser.emoji,
+            })
+              .then((res) => {
+                userLogin(res.data.data);
+                setSessionRefreshToken(res.data.data.refreshToken);
+                navigate("/");
+              })
+              .catch((e) => {
+                console.log(e);
+                alertSignUpError(e.response.data.status);
+              })
+          : alertSignUpError();
         break;
       default:
         alertSignUpError();

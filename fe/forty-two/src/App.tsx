@@ -4,6 +4,8 @@ import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
+import Logout from "./pages/Logout/Logout";
+import Withdrawal from "./pages/Withdrawal/Withdrawal";
 import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
 import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
@@ -15,9 +17,6 @@ import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
 import {
   getLocalIsLogin,
-  removeLocalIsLogin,
-  removeSessionRefreshToken,
-  setLocalIsLogin,
   getUserLocation,
   setSessionRefreshToken,
 } from "./utils";
@@ -58,6 +57,14 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  {
+    path: "/logout",
+    element: <Logout />,
+  },
+  {
+    path: "/withdrawal/:platform",
+    element: <Withdrawal />,
   },
 ]);
 
@@ -104,17 +111,10 @@ function App() {
         .then((res) => {
           setUserRefresh(res.data.data);
           setSessionRefreshToken(res.data.data.refreshToken);
-          setLocalIsLogin();
         })
         .catch((e) => {
           userLogout(user);
-          removeLocalIsLogin();
-          removeSessionRefreshToken();
-          alert("로그인 세선이 만료되었습니다. 다시 로그인해주세요.");
         });
-    } else {
-      removeSessionRefreshToken();
-      removeLocalIsLogin();
     }
 
     updateCurrentLocation();

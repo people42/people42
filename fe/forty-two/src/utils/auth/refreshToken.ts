@@ -11,10 +11,3 @@ export const setSessionRefreshToken = (refreshToken: string) => {
 export const getSessionRefreshToken = () => {
   return sessionStorage.getItem("42_RT");
 };
-
-/**
- * Remove Refresh Token in Session
- */
-export const removeSessionRefreshToken = () => {
-  return sessionStorage.removeItem("42_RT");
-};

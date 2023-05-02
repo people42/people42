@@ -24,6 +24,7 @@ type TMyMessage = {
 
 type TUserDetail = {
   brushCnt: number;
+  emoji: string;
   userIdx: number;
   nickname: string;
   placeResDtos: {
