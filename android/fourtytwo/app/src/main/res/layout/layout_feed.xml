@@ -19,11 +19,19 @@
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/message_margin_horizontal"
         android:paddingTop="9dp">
+        <TextView
+            android:id="@+id/noFeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="아직 낭만이 없어요"
+            android:gravity="center"/>
         <View
-            android:layout_marginLeft="5dp"
+            android:id="@+id/cardLine"
+            android:layout_marginLeft="7dp"
             android:background="@color/line_blue"
-            android:layout_width="6dp"
+            android:layout_width="3dp"
             android:layout_height="match_parent"
+            android:visibility="gone"
             />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feed"

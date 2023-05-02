@@ -4,15 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/settings_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/settings_toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="65dp"-->
+<!--        android:background="?attr/colorPrimary"-->
+<!--        android:minHeight="?attr/actionBarSize"-->
+<!--        android:theme="?attr/actionBarTheme"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:id="@+id/privacy_policy"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="개인정보처리방침"
+                android:text="개인정보처리방침 및 이용약관"
                 android:paddingVertical="13dp"
                 />
             <TextView
@@ -41,23 +41,23 @@
                 android:text="@string/terms"
                 android:visibility="gone"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/text_shadow"/>
-            <TextView
-                android:id="@+id/termsConditions"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="이용약관"
-                android:paddingVertical="13dp"
-                />
-            <TextView
-                android:id="@+id/termsConditionsWebview"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:text="@string/terms"
-                android:visibility="gone"/>
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="@color/text_shadow"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/termsConditions"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:text="이용약관"-->
+<!--                android:paddingVertical="13dp"-->
+<!--                />-->
+<!--            <TextView-->
+<!--                android:id="@+id/termsConditionsWebview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="400dp"-->
+<!--                android:text="@string/terms"-->
+<!--                android:visibility="gone"/>-->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
