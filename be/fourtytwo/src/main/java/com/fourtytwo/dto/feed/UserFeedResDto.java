@@ -15,6 +15,7 @@ public class UserFeedResDto {
     private Integer brushCnt;
     private Long userIdx;
     private String nickname;
+    private String emoji;
 
     private List<PlaceResDto> placeResDtos;
 }

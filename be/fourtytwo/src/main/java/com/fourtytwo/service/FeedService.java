@@ -217,11 +217,16 @@ public class FeedService {
                     .placeLongitude(place.getLongitude()).placeLatitude(place.getLatitude()).brushCnt(cnt).build();
             placeResDtos.add(placeResDto);
         });
+        User user = userRepository.findByIdAndIsActiveTrue(targetUserIdx);
+        if (user == null) {
+            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        }
         return UserFeedResDto.builder()
                 .placeResDtos(placeResDtos)
                 .brushCnt(brushList.size())
                 .userIdx(targetUserIdx)
-                .nickname(userRepository.findByIdAndIsActiveTrue(targetUserIdx).getNickname())
+                .nickname(user.getNickname())
+                .emoji(user.getEmoji())
                 .build();
     }
 
