@@ -152,6 +152,7 @@
 		360D52DC29FC1FF400F67940 /* EmojiSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */; };
 		360D52DE29FC38D900F67940 /* DragToDeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52DD29FC38D900F67940 /* DragToDeleteView.swift */; };
 		360D52E129FD20C200F67940 /* animatedLogo_w120.gif in Resources */ = {isa = PBXBuildFile; fileRef = 360D52E029FD20C200F67940 /* animatedLogo_w120.gif */; };
+		362552E52A01681D00A2CD4A /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362552E42A01681D00A2CD4A /* CustomTextField.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -341,6 +342,7 @@
 		360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSwapView.swift; sourceTree = "<group>"; };
 		360D52DD29FC38D900F67940 /* DragToDeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragToDeleteView.swift; sourceTree = "<group>"; };
 		360D52E029FD20C200F67940 /* animatedLogo_w120.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animatedLogo_w120.gif; sourceTree = "<group>"; };
+		362552E42A01681D00A2CD4A /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -637,6 +639,7 @@
 			children = (
 				360D52DD29FC38D900F67940 /* DragToDeleteView.swift */,
 				36680D2C29F67695001EFD52 /* MyMassageHistory.swift */,
+				362552E42A01681D00A2CD4A /* CustomTextField.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -1074,6 +1077,7 @@
 				360D52D429FA4A0D00F67940 /* CustomBottomSheet.swift in Sources */,
 				360D52AB29F76CD200F67940 /* AuthState.swift in Sources */,
 				3606DE2629F12F300025F0FC /* GifUIkit.swift in Sources */,
+				362552E52A01681D00A2CD4A /* CustomTextField.swift in Sources */,
 				36A2E3D229EE69180003F906 /* SplashView.swift in Sources */,
 				360D52B729F81C9B00F67940 /* LocationService.swift in Sources */,
 				36680D3329F6CB96001EFD52 /* TimelineView.swift in Sources */,

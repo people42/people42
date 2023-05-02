@@ -105,6 +105,7 @@ class APIManager {
                 } else {
                     let decoder = JSONDecoder()
                     if let data = data, let decodedData = try? decoder.decode(T.self, from: data) {
+                        print("API 요청 성공")
                         completion(.success(decodedData))
                     } else {
                         completion(.failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)))

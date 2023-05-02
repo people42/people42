@@ -131,8 +131,9 @@ struct MyMessageCard: View {
                 Button(action: {
                     // 메시지 전송 버튼을 눌렀을 때의 동작
                     viewModel.send()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         onSend()
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)  // 키보드 닫힘
                     }
                 }) {
                     Image(systemName: "cloud.fill")

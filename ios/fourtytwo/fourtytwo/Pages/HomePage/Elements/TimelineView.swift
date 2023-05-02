@@ -69,54 +69,115 @@ struct TimelineView: View {
     @EnvironmentObject var reactionState: ReactionState
     
     @Environment(\.scenePhase) private var scenePhase
+    
+    @State private var refreshing: Bool = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                if viewModel.messageInfoList.count < 1 {
-                    Spacer()
-                    HStack {
+        if #available(iOS 15.0, *) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if viewModel.messageInfoList.count < 1 {
                         Spacer()
-                        Text("아직 인연이 없어요")
-                        Spacer()
-                    }
-                    Spacer()
-                } else {
-                    ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
-                        HStack(alignment: .center, spacing: 8) {
-                            ZStack(alignment: .center) {
-                                if index < viewModel.messageInfoList.count - 1 {
-                                    DashedLine()
-                                }
-                                TimelinePoint()
-                            }
-                            .frame(width: 16)
-                            // 누르면 PlaceView로 이동
-                            MessageCard(messageInfo: viewModel.messageInfoList[index])
-                                .onTapGesture {
-                                    placeViewState.selectedPlaceID = viewModel.messageInfoList[index].placeIdx
-                                    placeViewState.navigateToPlaceView = true
-                                    placeViewState.placeDate = viewModel.messageInfoList[index].hour
-                                 }
+                        HStack {
+                            Spacer()
+                            Text("아직 인연이 없어요")
+                            Spacer()
                         }
-                        .padding(.bottom, 16)
+                        Spacer()
+                    } else {
+                        ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
+                            HStack(alignment: .center, spacing: 8) {
+                                ZStack(alignment: .center) {
+                                    if index < viewModel.messageInfoList.count - 1 {
+                                        DashedLine()
+                                    }
+                                    TimelinePoint()
+                                }
+                                .frame(width: 16)
+                                // 누르면 PlaceView로 이동
+                                MessageCard(messageInfo: viewModel.messageInfoList[index])
+                                    .onTapGesture {
+                                        placeViewState.selectedPlaceID = viewModel.messageInfoList[index].placeIdx
+                                        placeViewState.navigateToPlaceView = true
+                                        placeViewState.placeDate = viewModel.messageInfoList[index].hour
+                                     }
+                            }
+                            .padding(.bottom, 16)
+                        }
+                    }
+                }
+                .padding()
+                .padding(.top, 16)
+            }
+            .refreshable {
+                withAnimation {
+                    refreshing = true
+                    viewModel.fetchRecentFeed()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        refreshing = false
                     }
                 }
             }
-            .padding()
-            .padding(.top, 16)
-        }
-        .onAppear {
-            viewModel.fetchRecentFeed()
-        }
-        .onChange(of: scenePhase) { newScenePhase in
-            if newScenePhase == .active {
-                // foreground로 전환될 때 데이터를 새로 고칩니다.
+            .onAppear {
                 viewModel.fetchRecentFeed()
             }
-        }
-        .onChange(of: reactionState.reaction) { newValue in
-            viewModel.fetchRecentFeed()
+            .onChange(of: scenePhase) { newScenePhase in
+                if newScenePhase == .active {
+                    // foreground로 전환될 때 데이터를 새로 고칩니다.
+                    viewModel.fetchRecentFeed()
+                }
+            }
+            .onChange(of: reactionState.reaction) { newValue in
+                viewModel.fetchRecentFeed()
+            }
+        } else {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if viewModel.messageInfoList.count < 1 {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("아직 인연이 없어요")
+                            Spacer()
+                        }
+                        Spacer()
+                    } else {
+                        ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
+                            HStack(alignment: .center, spacing: 8) {
+                                ZStack(alignment: .center) {
+                                    if index < viewModel.messageInfoList.count - 1 {
+                                        DashedLine()
+                                    }
+                                    TimelinePoint()
+                                }
+                                .frame(width: 16)
+                                // 누르면 PlaceView로 이동
+                                MessageCard(messageInfo: viewModel.messageInfoList[index])
+                                    .onTapGesture {
+                                        placeViewState.selectedPlaceID = viewModel.messageInfoList[index].placeIdx
+                                        placeViewState.navigateToPlaceView = true
+                                        placeViewState.placeDate = viewModel.messageInfoList[index].hour
+                                     }
+                            }
+                            .padding(.bottom, 16)
+                        }
+                    }
+                }
+                .padding()
+                .padding(.top, 16)
+            }
+            .onAppear {
+                viewModel.fetchRecentFeed()
+            }
+            .onChange(of: scenePhase) { newScenePhase in
+                if newScenePhase == .active {
+                    // foreground로 전환될 때 데이터를 새로 고칩니다.
+                    viewModel.fetchRecentFeed()
+                }
+            }
+            .onChange(of: reactionState.reaction) { newValue in
+                viewModel.fetchRecentFeed()
+            }
         }
     }
 }
