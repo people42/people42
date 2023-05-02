@@ -419,7 +419,7 @@ public class UserService {
 //        // 사용자 정보 조회
 //        AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
         String clientId;
-        if (domainType == "web") {
+        if (domainType == "web" || domainType == "webDelete") {
             clientId = appleClientId;
         } else {
             clientId = appleClientAppId;
