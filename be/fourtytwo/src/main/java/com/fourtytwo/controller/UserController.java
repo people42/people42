@@ -52,16 +52,16 @@ public class UserController {
 
     @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
-        System.out.println("requestBody.toString(): " + requestBody.toString());
-        System.out.println("requestBody.get('id_token'): " + requestBody.get("id_token"));
-        System.out.println("requestBody.get('code'): " + requestBody.get("code"));
-//        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
-//        ApiResponse<LoginResponseDto> apiResponse = new ApiResponse<>("OK", 200, loginResponseDto);
+        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")));
-
+        if (loginResponseDto.getAccessToken() == null) {
+            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")
+                    + "is_signup=false"));
+        } else {
+            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")
+                    + "is_signup=true"));
+        }
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
-
     }
 
 
@@ -80,6 +80,18 @@ public class UserController {
     @PostMapping("/signup/apple")
     public ResponseEntity<ApiResponse<LoginResponseDto>> appleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "apple");
+        return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/signup/apple/web")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "webApple");
+        return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/apple_user_info")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(@Valid @RequestBody AppleCodeReqDto appleCodeReqDto) {
+        LoginResponseDto loginResponseDto = userService.getAppleUserInfo(appleCodeReqDto);
         return ApiResponse.ok(loginResponseDto);
     }
 
