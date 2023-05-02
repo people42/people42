@@ -40,14 +40,28 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping(path = "/check/apple/web")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
-        System.out.println(appleCodeReqDto);
-        String idToken = userService.getAppleToken(appleCodeReqDto.getAppleCode(), "id", "web");
-        System.out.println(idToken);
-        LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
-        System.out.println(loginResponseDto);
-        return ApiResponse.ok(loginResponseDto);
+//    @PostMapping(path = "/check/apple/web")
+//    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody AppleCodeReqDto appleCodeReqDto) throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+//        System.out.println(appleCodeReqDto);
+//        String idToken = userService.getAppleToken(appleCodeReqDto.getAppleCode(), "id", "web");
+//        System.out.println(idToken);
+//        LoginResponseDto loginResponseDto = userService.appleLogin(idToken);
+//        System.out.println(loginResponseDto);
+//        return ApiResponse.ok(loginResponseDto);
+//    }
+
+    @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
+        System.out.println("requestBody.toString(): " + requestBody.toString());
+        System.out.println("requestBody.get('id_token'): " + requestBody.get("id_token"));
+        System.out.println("requestBody.get('code'): " + requestBody.get("code"));
+//        LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
+//        ApiResponse<LoginResponseDto> apiResponse = new ApiResponse<>("OK", 200, loginResponseDto);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")));
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+
     }
 
 
