@@ -271,7 +271,7 @@ public class UserService {
             socialType = "google";
         } else if (socialType.equals("webApple")) {
             socialType = "apple";
-            signupRequestDto.setEmail(foundUser.getEmail());
+            signupRequestDto.setEmail(foundUser.getEmail().split("apple_")[1]);
         }
 
         if (foundUser != null) {
