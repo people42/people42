@@ -1,7 +1,7 @@
 #!/bin/sh
 commit_msg_file=$1
 commit_source=$2
-pattern="^\[(FIX|FEAT|COMMENT|DOCS|TEST|REFACTOR|FILE|HOTFIX|CHORE|fix|feat|comment|docs|test|refactor|file|hotfix|chore)\][ ].+$"
+pattern="^\[(FIX|FEAT|COMMENT|DOCS|TEST|REFACTOR|FILE|HOTFIX|CHORE|fix|feat|comment|docs|test|refactor|file|hotfix|chore|Fix|Feat|Comment|Docs|Test|Refactor|File|Hotfix|Chore)\][ ].+$"
 if [ "$commit_source" = "message" ]; then
     commit_msg=$(cat "$commit_msg_file")
     if ! echo "$commit_msg" | grep -iqE "$pattern"; then
