@@ -46,8 +46,8 @@ public class GpsService {
     private final PlaceRepositoryImpl placeRepositoryImpl;
     private final RedisTemplate<String, Long> gpsTemplate;
     private final RedisTemplate<Long, Integer> userTimeTemplate;
-    private final RedisTemplate<Integer, Long> timeUserTemplate;
-    private final RedisTemplate<Integer, String> timeBrushTemplate;
+    private final RedisTemplate<String, Long> timeUserTemplate;
+    private final RedisTemplate<String, String> timeBrushTemplate;
     private final RedisTemplate<String, String> brushTemplate;
     private final String kakaoRestApiKey;
     private final String googleMapKey;
@@ -87,9 +87,9 @@ public class GpsService {
         }
         System.out.println("2 "+foundPlace);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
-        SetOperations<Integer, Long> expireSetOperation = timeUserTemplate.opsForSet();
+        SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
-        SetOperations<Integer, String> timeBrushOperation = timeBrushTemplate.opsForSet();
+        SetOperations<String, String> timeBrushOperation = timeBrushTemplate.opsForSet();
         SetOperations<String, String> brushOperation = brushTemplate.opsForSet();
         gpsOperation.add("latitude", userIdx, gps.getLatitude());
         gpsOperation.add("longitude", userIdx, gps.getLongitude());
@@ -97,10 +97,10 @@ public class GpsService {
 
         } else {
             Integer prevTime = userExpireOperation.get(userIdx);
-            expireSetOperation.remove(prevTime, userIdx);
+            expireSetOperation.remove("user"+prevTime, userIdx);
         }
         userExpireOperation.set(userIdx, mappedTime + 10);
-        expireSetOperation.add(mappedTime+10, userIdx);
+        expireSetOperation.add("user"+mappedTime+10, userIdx);
 
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
@@ -126,7 +126,7 @@ public class GpsService {
                         brushRepository.save(newBrush);
                         brushOperation.add("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
                                 foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
-                        timeBrushOperation.add(mappedTime+180, userIdx.toString()+" "+targetIdx.toString()+" "+
+                        timeBrushOperation.add("brush"+mappedTime+180, userIdx.toString()+" "+targetIdx.toString()+" "+
                                 foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
                     }
                 }
@@ -146,13 +146,13 @@ public class GpsService {
         LocalDateTime current = LocalDateTime.now();
         Integer mappedTime = toTotalMinutes(current);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
-        SetOperations<Integer, Long> expireSetOperation = timeUserTemplate.opsForSet();
+        SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
-        SetOperations<Integer, String> timeBrushOperation = timeBrushTemplate.opsForSet();
+        SetOperations<String, String> timeBrushOperation = timeBrushTemplate.opsForSet();
         SetOperations<String, String> brushOperation = brushTemplate.opsForSet();
 
-        Set<Long> expiredUsers = expireSetOperation.members(mappedTime);
-        Set<String> expiredBrushes = timeBrushOperation.members(mappedTime);
+        Set<Long> expiredUsers = expireSetOperation.members("user"+mappedTime);
+        Set<String> expiredBrushes = timeBrushOperation.members("brush"+mappedTime);
         if (expiredUsers != null && !expiredUsers.isEmpty()) {
             for (Long userIdx : expiredUsers) {
                 gpsOperation.remove("latitude", userIdx);
@@ -165,8 +165,8 @@ public class GpsService {
                 brushOperation.remove("brushes", brush);
             }
         }
-        timeUserTemplate.delete(mappedTime);
-        timeBrushTemplate.delete(mappedTime);
+        timeUserTemplate.delete("user"+mappedTime);
+        timeBrushTemplate.delete("brush"+mappedTime);
     }
 
 
