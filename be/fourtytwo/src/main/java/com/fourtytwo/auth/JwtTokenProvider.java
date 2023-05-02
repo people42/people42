@@ -6,8 +6,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,9 +62,12 @@ public class JwtTokenProvider {
     }
 
     public Long getUserIdx(String token) {
-        String userIdx = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
-        Long longUserIdx = Long.parseLong(userIdx);
-        return longUserIdx;
+        try {
+            String userIdx = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
+            return Long.parseLong(userIdx);
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("토큰이 유효하지 않습니다.");
+        }
     }
 
     public User getUser(String token) {
@@ -79,7 +84,7 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            return false;
+            throw new AuthenticationServiceException("토큰이 유효하지 않습니다.");
         }
     }
 }
