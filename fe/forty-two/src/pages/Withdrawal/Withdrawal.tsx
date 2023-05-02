@@ -71,34 +71,30 @@ function Withdrawal({}: withdrawalProps) {
 
   const withdrawalApple = () => {
     const appleCode = searchParams.get("code");
-    console.log("asdfasdf", appleCode);
     if (appleCode) {
-      if (accessToken) {
-        postWithdrawalApple(accessToken, appleCode)
-          .then((res) => {
-            userLogout(user);
-            alert("정상적으로 탈퇴 되었습니다.");
-            navigate("/signin");
-          })
-          .catch((e) => {
-            if (e.response.status == 401) {
-              getAccessToken()
-                .then((res) =>
-                  postWithdrawalApple(
-                    res.data.data.accessToken,
-                    appleCode
-                  ).then((res) => {
+      postWithdrawalApple(accessToken, appleCode)
+        .then((res) => {
+          userLogout(user);
+          alert("정상적으로 탈퇴 되었습니다.");
+          navigate("/signin");
+        })
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken()
+              .then((res) =>
+                postWithdrawalApple(res.data.data.accessToken, appleCode).then(
+                  (res) => {
                     userLogout(user);
                     alert("정상적으로 탈퇴 되었습니다.");
                     navigate("/signin");
-                  })
+                  }
                 )
-                .catch((e) => {
-                  alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
-                });
-            }
-          });
-      }
+              )
+              .catch((e) => {
+                alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+              });
+          }
+        });
     } else {
       getAppleSignInCode();
     }
