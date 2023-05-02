@@ -43,7 +43,7 @@ export default MessageCard;
 const StyledMessageCard = styled.div<{
   color: TColorType;
 }>`
-  animation: floatingRight 0.7s;
+  animation: floatingRight 0.3s;
   animation-fill-mode: both;
   max-width: 200px;
   min-width: 150px;

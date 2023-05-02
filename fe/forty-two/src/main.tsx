@@ -6,15 +6,13 @@ import { HelmetProvider } from "react-helmet-async";
 import { RecoilRoot } from "recoil";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <Suspense fallback={<div>Loading...</div>}>
-        <HelmetProvider>
-          <CookiesProvider>
-            <App />
-          </CookiesProvider>
-        </HelmetProvider>
-      </Suspense>
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <Suspense fallback={<div>Loading...</div>}>
+      <HelmetProvider>
+        <CookiesProvider>
+          <App />
+        </CookiesProvider>
+      </HelmetProvider>
+    </Suspense>
+  </RecoilRoot>
 );

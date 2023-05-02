@@ -102,7 +102,7 @@ const StyledHomeTimelineGroup = styled.article<{ isActive: boolean }>`
     text-align: end;
 
     &-info {
-      animation: floatingLeft 0.7s;
+      animation: floatingLeft 0.3s;
       animation-fill-mode: both;
       &-name {
         flex-shrink: 0;

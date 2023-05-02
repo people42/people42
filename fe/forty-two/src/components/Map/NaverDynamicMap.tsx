@@ -1,16 +1,9 @@
-import { userLocationUpdateState } from "../../recoil/location/selectors";
-import { useNavermaps } from "react-naver-maps";
 import { Container as MapDiv, NaverMap } from "react-naver-maps";
-import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
-type naverMapProps = {};
+type naverMapProps = { children: JSX.Element[] | null; center: any };
 
-function NaverDynamicMap({}: naverMapProps) {
-  const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
-  const navermaps = useNavermaps();
-  const center = new navermaps.LatLng(location?.latitude, location?.longitude);
-
+function NaverDynamicMap({ children, center }: naverMapProps) {
   return (
     <StyledNaverMap>
       <MapDiv
@@ -19,7 +12,7 @@ function NaverDynamicMap({}: naverMapProps) {
           height: "100%",
         }}
       >
-        <NaverMap defaultCenter={center} />
+        <NaverMap defaultCenter={center}>{children}</NaverMap>
       </MapDiv>
     </StyledNaverMap>
   );
