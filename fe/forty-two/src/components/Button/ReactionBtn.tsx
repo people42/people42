@@ -126,7 +126,7 @@ const StyledReactionButton = styled.button`
     justify-content: center;
     align-items: center;
     .reaction-icon {
-      animation: floatingRight 0.7s;
+      animation: floatingRight 0.3s;
       cursor: pointer;
       width: 24px;
       height: 24px;

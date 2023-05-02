@@ -23,7 +23,7 @@ function Place() {
   const [placeData, setPlaceData] = useRecoilState(placeState);
   useEffect(() => {
     setPlaceData(null);
-    if (accessToken && placeInfo)
+    if (accessToken && placeInfo) {
       getPlace(accessToken, placeInfo)
         .then((res) => setPlaceData(res.data.data))
         .catch((e) => {
@@ -37,6 +37,9 @@ function Place() {
             });
           }
         });
+    } else {
+      navigate("/");
+    }
   }, [placeInfo]);
 
   return (

@@ -1,12 +1,24 @@
 import { getAccessToken, instance } from "..";
 
 /**
- * [PUT] "account/withdrawal" 회원탈퇴
+ * [DELETE] "account/withdrawal" Google 회원탈퇴
  */
-export async function postWithdrawal(accessToken: string) {
+export async function postWithdrawalGoogle(accessToken: string) {
   return instance({
     "ACCESS-TOKEN": accessToken,
-  }).put("account/withdrawal");
+  }).delete("account/withdrawal");
+}
+
+/**
+ * [DELETE] "account/withdrawal/apple/web" Apple 회원탈퇴
+ */
+export async function postWithdrawalApple(
+  accessToken: string,
+  appleCode: string
+) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).delete("account/withdrawal/apple/web", { data: { appleCode: appleCode } });
 }
 
 /**
@@ -46,4 +58,13 @@ export async function deleteMessage(accessToken: string, messageIdx: number) {
   return instance({
     "ACCESS-TOKEN": accessToken,
   }).put("account/message", { messageIdx: messageIdx });
+}
+
+/**
+ * [DELETE] "account/logout" 로그아웃
+ */
+export async function deleteLogout(accessToken: string) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).delete("account/logout");
 }

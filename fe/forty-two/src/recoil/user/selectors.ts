@@ -8,6 +8,7 @@ export const userLoginState = selector<TUser | null>({
     return user;
   },
   set: ({ set }, userData) => {
+    localStorage.setItem("isLogin", "true");
     set(userState, userData);
   },
 });
@@ -19,6 +20,8 @@ export const userLogoutState = selector<TUser | null>({
     return user;
   },
   set: ({ reset }) => {
+    localStorage.removeItem("isLogin");
+    sessionStorage.removeItem("42_RT");
     reset(userState);
   },
 });
