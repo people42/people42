@@ -118,7 +118,7 @@ public class UserService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String clientId;
-        if (domainType == "web") {
+        if (domainType == "web" || domainType == "webDelete") {
             clientId = appleClientId;
         } else {
             clientId = appleClientAppId;
