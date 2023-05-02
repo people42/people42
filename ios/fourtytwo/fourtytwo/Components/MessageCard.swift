@@ -54,9 +54,12 @@ struct MessageCard: View {
                     }
 
                     
-                    if let placeName = messageInfo.placeName {
-                        Text(placeName)
-                            .font(.customSubtitle2)
+                    HStack {
+                        if let placeName = messageInfo.placeName {
+                            Text(placeName)
+                                .font(.customSubtitle2)
+                        }
+                        Spacer()
                     }
                     
                     if let hour = messageInfo.hour {

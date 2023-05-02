@@ -22,8 +22,7 @@ class APIManager {
     @Published var userState = UserState()
 
     // 기본 HTTP 헤더 설정
-    private var headers: HTTPHeaders = [
-    ]
+    private var headers: HTTPHeaders = []
 
     // 엑세스 토큰을 설정하고 상태 저장소에 저장하는 함수
     func setAccessToken(at accessToken: String?, rt refreshToken: String?) {

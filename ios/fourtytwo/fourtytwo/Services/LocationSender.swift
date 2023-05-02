@@ -9,7 +9,7 @@ class LocationSender {
     }
 
     func startSendingLocations() {
-        timer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
             self.sendLocationToServer()
         }
         registerBackgroundTask()

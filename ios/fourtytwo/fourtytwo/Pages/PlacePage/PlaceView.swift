@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 import MapKit
 
 // MVVM 패턴
@@ -12,8 +11,6 @@ class PlaceViewModel: ObservableObject {
     @Published var messageInfoList: [MessageInfo] = []
     @Published var location: (latitude: Double, longitude: Double)?
     @Published var placeName: String?
-
-    private var cancellables = Set<AnyCancellable>()
     
     func getTimeStringFromISODate(_ isoString: String) -> String? {
         let dateFormatter = ISO8601DateFormatter()
@@ -39,8 +36,6 @@ class PlaceViewModel: ObservableObject {
 extension PlaceView {
     func getPlaceFeed() {
         
-        print(placeViewState.selectedPlaceID!)
-        print(viewModel.removeMicroseconds(placeViewState.placeDate!)) //2023-04-30T19:11:08.351458
         let queryData: [String: Any] = [
             "placeIdx": placeViewState.selectedPlaceID!,
             "time": viewModel.removeMicroseconds(placeViewState.placeDate!),
@@ -142,9 +137,9 @@ struct PlaceView: View {
                 getPlaceFeed()
             }
         }
-        .onChange(of: reactionState.reaction) { newValue in
-            getPlaceFeed()
-        }
+//        .onChange(of: reactionState.reaction) { newValue in
+//            getPlaceFeed()
+//        }
         .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
         .navigationBarBackButtonHidden(true)
         .toolbar {

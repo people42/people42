@@ -6,7 +6,7 @@ struct NavBar: View {
     var body: some View {
         HStack {
             // 메인로고 추가
-            GifUIkit("animatedLogo_w120")
+            GifImage("animatedLogo_w120")
                 .frame(width: 52, height: 40)
                 .padding(.leading, 16)
 //            Image("MainLogo")
