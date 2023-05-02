@@ -11,6 +11,8 @@ struct PlaceMapView: View {
     @State var isMinimized: Bool = false
     @State var toggleHeight: CGFloat = 300
     
+    @State private var existingPositions: [CGPoint] = []
+    
 
     var body: some View {
         ZStack {
@@ -22,9 +24,13 @@ struct PlaceMapView: View {
         .onTapGesture {
             isMinimized.toggle()
             if isMinimized {
-                toggleHeight = 160
+                withAnimation(.easeInOut(duration: 0.8)) {
+                    toggleHeight = 160
+                }
             } else {
-                toggleHeight = 300
+                withAnimation(.easeInOut(duration: 0.8)) {
+                    toggleHeight = 300
+                }
             }
         }
     }
@@ -61,32 +67,35 @@ struct PlaceMapView: View {
     private var profileImages: some View {
         GeometryReader { geometry in
             ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
-                let randomPosition = randomPositionOnScreen(geometry: geometry)
-                GifUIkit(viewModel.messageInfoList[index].profileImage)
-                    .frame(width: 40, height: 40)
-                    .scaleEffect(0.5)
-                    .position(x: randomPosition.x, y: randomPosition.y)
+                let randomPosition = randomPositionOnScreen(geometry: geometry, existingPositions: existingPositions)
+                GifImage(viewModel.messageInfoList[index].profileImage)
+                    .frame(width: 32, height: 32)
+                    .position(randomPosition)
+                    .onAppear {
+                        existingPositions.append(randomPosition)
+                    }
             }
         }
         .frame(height: toggleHeight)
     }
 
-    private func randomPositionOnScreen(geometry: GeometryProxy) -> CGPoint {
-        let padding: CGFloat = 40
-        let centerX = geometry.size.width / 2
-        let centerY = geometry.size.height / 2
-        let avoidCenterWidth: CGFloat = 80
-        let avoidCenterHeight: CGFloat = 80
+    private func randomPositionOnScreen(geometry: GeometryProxy, existingPositions: [CGPoint], minimumDistance: CGFloat = 40) -> CGPoint {
+        var newPosition: CGPoint
+        let padding: CGFloat = 32
         
-        var randomX = CGFloat.random(in: padding..<geometry.size.width - padding)
-        var randomY = CGFloat.random(in: padding..<geometry.size.height - padding)
+        repeat {
+            
+            var randomX = CGFloat.random(in: padding..<geometry.size.width - padding)
+            var randomY = CGFloat.random(in: padding..<geometry.size.height - padding)
+            newPosition = CGPoint(x: randomX, y: randomY)
+            
+        } while existingPositions.contains(where: { distanceBetween($0, newPosition) < minimumDistance })
         
-        while abs(randomX - centerX) < avoidCenterWidth / 2 && abs(randomY - centerY) < avoidCenterHeight / 2 {
-            randomX = CGFloat.random(in: padding..<geometry.size.width - padding)
-            randomY = CGFloat.random(in: padding..<geometry.size.height - padding)
-        }
-        
-        return CGPoint(x: randomX, y: randomY)
+        return newPosition
+    }
+
+    private func distanceBetween(_ point1: CGPoint, _ point2: CGPoint) -> CGFloat {
+        return hypot(point1.x - point2.x, point1.y - point2.y)  // 빗변 계산
     }
 
 }

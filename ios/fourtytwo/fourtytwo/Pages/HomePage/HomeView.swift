@@ -45,6 +45,7 @@ struct HomeView: View {
         NavigationView {
             ZStack {
                 MapView()
+                    .offset(y: 16)
                 
                 VStack {
                     NavBar(isNewAlert: $viewModel.isNewAlert)
@@ -55,9 +56,6 @@ struct HomeView: View {
                     
                     NavigationLink(destination: MyMindView()) {
                         MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
-                            .onAppear {
-                                viewModel.getMyinfo()
-                            }
                     }
                     .background(Color.clear)
                     
@@ -68,11 +66,13 @@ struct HomeView: View {
             }
             .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
             .onAppear {
+                viewModel.getMyinfo()
                 viewModel.checkForNewAlerts()
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {
                     // foreground로 전환될 때 데이터를 새로 고칩니다.
+                    viewModel.getMyinfo()
                     viewModel.checkForNewAlerts()
                 }
             }

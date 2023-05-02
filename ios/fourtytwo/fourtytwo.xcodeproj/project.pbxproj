@@ -149,8 +149,6 @@
 		360D52D029FA078D00F67940 /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52CF29FA078D00F67940 /* AccountService.swift */; };
 		360D52D229FA153B00F67940 /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D129FA153B00F67940 /* FeedService.swift */; };
 		360D52D429FA4A0D00F67940 /* CustomBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */; };
-		360D52D729FBF27700F67940 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D629FBF27700F67940 /* TestView.swift */; };
-		360D52D929FBF28B00F67940 /* TestElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D829FBF28B00F67940 /* TestElement.swift */; };
 		360D52DC29FC1FF400F67940 /* EmojiSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */; };
 		360D52DE29FC38D900F67940 /* DragToDeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52DD29FC38D900F67940 /* DragToDeleteView.swift */; };
 		360D52E129FD20C200F67940 /* animatedLogo_w120.gif in Resources */ = {isa = PBXBuildFile; fileRef = 360D52E029FD20C200F67940 /* animatedLogo_w120.gif */; };
@@ -340,8 +338,6 @@
 		360D52CF29FA078D00F67940 /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
 		360D52D129FA153B00F67940 /* FeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomSheet.swift; sourceTree = "<group>"; };
-		360D52D629FBF27700F67940 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
-		360D52D829FBF28B00F67940 /* TestElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestElement.swift; sourceTree = "<group>"; };
 		360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSwapView.swift; sourceTree = "<group>"; };
 		360D52DD29FC38D900F67940 /* DragToDeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragToDeleteView.swift; sourceTree = "<group>"; };
 		360D52E029FD20C200F67940 /* animatedLogo_w120.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animatedLogo_w120.gif; sourceTree = "<group>"; };
@@ -610,15 +606,6 @@
 			path = Elements;
 			sourceTree = "<group>";
 		};
-		360D52D529FBF26000F67940 /* TestPage */ = {
-			isa = PBXGroup;
-			children = (
-				360D52D629FBF27700F67940 /* TestView.swift */,
-				360D52D829FBF28B00F67940 /* TestElement.swift */,
-			);
-			path = TestPage;
-			sourceTree = "<group>";
-		};
 		360D52DA29FBFA4800F67940 /* PlacePage */ = {
 			isa = PBXGroup;
 			children = (
@@ -677,7 +664,6 @@
 			isa = PBXGroup;
 			children = (
 				360D52DA29FBFA4800F67940 /* PlacePage */,
-				360D52D529FBF26000F67940 /* TestPage */,
 				360D52C129F9168D00F67940 /* MyMindPage */,
 				3606DC0629EE87120025F0FC /* HomePage */,
 				36A2E3D829EE79640003F906 /* SignupPage */,
@@ -1079,7 +1065,6 @@
 				360D52CE29F95C6B00F67940 /* MapView.swift in Sources */,
 				360D52AD29F77ED700F67940 /* ContentView.swift in Sources */,
 				360D52C029F8D2DB00F67940 /* AlertView.swift in Sources */,
-				360D52D929FBF28B00F67940 /* TestElement.swift in Sources */,
 				360D52B529F81C1600F67940 /* LocationSender.swift in Sources */,
 				36BF9C7329EE41B80011677E /* SignupView.swift in Sources */,
 				3606DC0A29EE87AB0025F0FC /* SecondSectionView.swift in Sources */,
@@ -1098,7 +1083,6 @@
 				360D52B329F81BA800F67940 /* LocationManager.swift in Sources */,
 				36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */,
 				3606DC1529EED8640025F0FC /* SegmentedProgressBar.swift in Sources */,
-				360D52D729FBF27700F67940 /* TestView.swift in Sources */,
 				360D52C329F916C700F67940 /* MyMindView.swift in Sources */,
 				3606DC4029F0F1C80025F0FC /* GifImage.swift in Sources */,
 				365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */,

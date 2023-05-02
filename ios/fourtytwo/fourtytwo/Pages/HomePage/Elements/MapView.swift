@@ -45,6 +45,7 @@ struct MapView: View {
     @StateObject private var locationManager = MapManager()
     @State private var numberOfCircles = 2
     @State private var metersPerCircle: Double = 100
+    @State private var isHeadingActive = true
 
     var body: some View {
         ZStack {
@@ -52,11 +53,15 @@ struct MapView: View {
             compass
             circles
         }
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 1.2)) {
+                isHeadingActive.toggle()
+            }
+        }
     }
 
     private var map: some View {
         Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: false)
-//            .rotationEffect(Angle(degrees: locationManager.heading), anchor: .center)
             .clipShape(Circle())
             .frame(height: 480)
             .overlay(
@@ -66,12 +71,14 @@ struct MapView: View {
                     .frame(height: 480)
             )
             .scaleEffect(CGSize(width: 1.1, height: 1.1))
+            .overlay(northArrow, alignment: .top)
+            .rotationEffect(Angle(degrees: isHeadingActive ? -computeAngle(heading: locationManager.heading) : 0))
     }
     
     private var compass: some View {
         VStack {
             Image("arrow")
-                .rotationEffect(Angle(degrees: locationManager.heading))
+                .rotationEffect(Angle(degrees: isHeadingActive ? 0 : computeAngle(heading: locationManager.heading)))
         }
     }
 
@@ -85,6 +92,22 @@ struct MapView: View {
                 .frame(width: CGFloat(metersPerCircle * Double(index + 1) * 2), height: CGFloat(metersPerCircle * Double(index + 1) * 2))
                 .scaledToFit()
         }
+    }
+    
+    private var northArrow: some View {
+        Text("N")
+            .font(.system(size: 24, weight: .bold))
+            .foregroundColor(Color.red.opacity(0.9))
+            .offset(x: 0, y: 40) // 상단에 위치하도록 조정
+    }
+
+    
+    // 예각 생성기
+    private func computeAngle(heading: Double) -> Double {
+        let rawAngle = heading
+        let shortAngle = rawAngle.truncatingRemainder(dividingBy: 360)
+        let finalAngle = shortAngle > 180 ? shortAngle - 360 : shortAngle
+        return finalAngle
     }
 }
 
