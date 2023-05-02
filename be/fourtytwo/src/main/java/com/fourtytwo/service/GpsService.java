@@ -57,10 +57,6 @@ public class GpsService {
         if (user.isEmpty() || !user.get().getIsActive()) {
             return null;
         }
-        Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
-        if (userMessage == null) {
-            return null;
-        }
         Place foundPlace = placeRepository.findByGps(gps.getLatitude(), gps.getLongitude());
         ObjectMapper objectMapper = new ObjectMapper();
         TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {};
@@ -111,6 +107,11 @@ public class GpsService {
 
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
+
+        Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
+        if (userMessage == null) {
+            return null;
+        }
 
         System.out.println("3 "+nearSet);
         System.out.println("4 "+nearLongSet);
