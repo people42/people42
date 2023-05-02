@@ -100,7 +100,7 @@ public class GpsService {
             expireSetOperation.remove("user"+prevTime, userIdx);
         }
         userExpireOperation.set(userIdx, mappedTime + 10);
-        expireSetOperation.add("user"+mappedTime+10, userIdx);
+        expireSetOperation.add("user"+(mappedTime+10), userIdx);
 
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
@@ -113,7 +113,7 @@ public class GpsService {
                 for (Long targetIdx : nearSet) {
                     if (userIdx < targetIdx) {
                         if (Boolean.TRUE.equals(brushOperation.isMember("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent()))) {
+                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent()))) {
                             continue;
                         }
                         Brush newBrush = Brush.builder()
@@ -125,9 +125,9 @@ public class GpsService {
                                 .build();
                         brushRepository.save(newBrush);
                         brushOperation.add("brushes", userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
-                        timeBrushOperation.add("brush"+mappedTime+180, userIdx.toString()+" "+targetIdx.toString()+" "+
-                                foundPlace+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
+                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
+                        timeBrushOperation.add("brush"+(mappedTime+180), userIdx.toString()+" "+targetIdx.toString()+" "+
+                                foundPlace.getName()+" "+messageRepositoryImpl.findRecentByUserIdx(userIdx).getContent()+" "+messageRepositoryImpl.findRecentByUserIdx(targetIdx).getContent());
                     }
                 }
             }
