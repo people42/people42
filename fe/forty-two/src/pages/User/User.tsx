@@ -3,6 +3,7 @@ import { NavBar, NaverDynamicMap } from "../../components";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../utils";
+import { UserMap } from "./components";
 import { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import Skeleton from "react-loading-skeleton";
@@ -10,7 +11,6 @@ import { Marker } from "react-naver-maps";
 import { useNavigate, useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { UserMap } from "./components";
 
 function User() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ function User() {
             navigate(-1);
           }}
         >
-          <IoMdArrowBack size={24} />
+          <IoMdArrowBack size={30} />
           {userData ? (
             <h1>{userData?.nickname}</h1>
           ) : (
@@ -89,6 +89,10 @@ const StyledUser = styled.main`
       ${({ theme }) => theme.text.header6}
       display: flex;
       align-items: center;
+      padding: 8px;
+      svg {
+        margin-right: 8px;
+      }
     }
     &-map {
       width: 100%;

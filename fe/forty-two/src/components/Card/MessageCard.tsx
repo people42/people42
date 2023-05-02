@@ -11,6 +11,7 @@ type messageCardProps = {
 function MessageCard({ props, idx, onClick }: messageCardProps) {
   return props ? (
     <StyledMessageCard
+      count={props.recentMessageInfo.brushCnt}
       color={props.recentMessageInfo.color}
       style={{ animationDelay: `${0.1 * idx}s` }}
     >
@@ -42,6 +43,7 @@ export default MessageCard;
 
 const StyledMessageCard = styled.div<{
   color: TColorType;
+  count: number;
 }>`
   animation: floatingRight 0.3s;
   animation-fill-mode: both;
@@ -74,20 +76,31 @@ const StyledMessageCard = styled.div<{
       padding: 24px 16px 16px 16px;
       background-color: ${(props) =>
         props.theme.color.card[props.color] + "a0"};
-      filter: drop-shadow(
-          4px 4px 0px ${(props) => props.theme.color.card[props.color] + "50"}
-        )
-        drop-shadow(
-          8px 8px 0px ${(props) => props.theme.color.card[props.color] + "50"}
-        );
+      filter: ${(props) =>
+        props.count > 0
+          ? props.count > 1
+            ? `drop-shadow(4px 4px 0px ${
+                props.theme.color.card[props.color] + "50"
+              }) drop-shadow(8px 8px 0px ${
+                props.theme.color.card[props.color] + "50"
+              })`
+            : `drop-shadow(4px 4px 0px ${
+                props.theme.color.card[props.color] + "50"
+              })`
+          : "none"};
       &:hover {
-        filter: drop-shadow(
-            4px 8px 0px ${(props) => props.theme.color.card[props.color] + "50"}
-          )
-          drop-shadow(
-            8px 16px 0px
-              ${(props) => props.theme.color.card[props.color] + "50"}
-          );
+        filter: ${(props) =>
+          props.count > 0
+            ? props.count > 1
+              ? `drop-shadow(4px 8px 0px ${
+                  props.theme.color.card[props.color] + "50"
+                }) drop-shadow(8px 16px 0px ${
+                  props.theme.color.card[props.color] + "50"
+                })`
+              : `drop-shadow(4px 8px 0px ${
+                  props.theme.color.card[props.color] + "50"
+                })`
+            : "none"};
       }
       &:active {
         filter: none;

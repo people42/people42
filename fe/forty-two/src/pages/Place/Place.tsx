@@ -3,7 +3,7 @@ import { NavBar } from "../../components";
 import { placeState } from "../../recoil/place/atoms";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
+import { formatMessageDate, setSessionRefreshToken } from "../../utils";
 import { PlaceMap, PlaceMessageList } from "./components";
 import React, { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
@@ -52,9 +52,17 @@ function Place() {
             navigate(-1);
           }}
         >
-          <IoMdArrowBack size={24} />
+          <IoMdArrowBack size={30} />
           {placeData ? (
-            <h1>{placeData?.placeWithTimeAndGpsInfo.placeName} 근처</h1>
+            <div>
+              <h1>
+                {placeData?.placeWithTimeAndGpsInfo.placeName} 근처에서{" "}
+                {placeData.messagesInfo.length}명과 스쳤습니다.
+              </h1>
+              <p>
+                {formatMessageDate(placeData?.placeWithTimeAndGpsInfo.time)}
+              </p>
+            </div>
           ) : (
             <Skeleton
               baseColor="#86868626"
@@ -68,7 +76,6 @@ function Place() {
           <article className="place-body-list">
             <PlaceMessageList></PlaceMessageList>
           </article>
-
           <div className="place-body-map">
             <PlaceMap></PlaceMap>
           </div>
@@ -82,6 +89,7 @@ export default React.memo(Place);
 
 const StyledPlace = styled.div`
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -90,8 +98,16 @@ const StyledPlace = styled.div`
     cursor: pointer;
     ${({ theme }) => theme.text.header6}
     display: flex;
-    align-items: center;
+    align-items: start;
     margin-bottom: 16px;
+    padding: 8px;
+    svg {
+      margin-right: 8px;
+    }
+    p {
+      ${({ theme }) => theme.text.subtitle2}
+      color: ${({ theme }) => theme.color.text.secondary};
+    }
   }
   .place {
     width: 100%;
@@ -100,17 +116,23 @@ const StyledPlace = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
+    flex-grow: 1;
 
     &-body {
       width: 100%;
       max-width: 1024px;
       display: flex;
       margin-bottom: 24px;
+      position: relative;
+
       &-list {
-        width: 280px;
+        width: 360px;
+        flex-shrink: 0;
       }
       &-map {
         flex-grow: 1;
+        display: flex;
+        justify-content: center;
       }
     }
   }
