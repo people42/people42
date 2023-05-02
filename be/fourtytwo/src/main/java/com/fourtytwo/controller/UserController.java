@@ -56,10 +56,10 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         if (loginResponseDto.getAccessToken() == null) {
             headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")
-                    + "is_signup=false"));
+                    + "&is_signup=false"));
         } else {
             headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code")
-                    + "is_signup=true"));
+                    + "&is_signup=true"));
         }
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
