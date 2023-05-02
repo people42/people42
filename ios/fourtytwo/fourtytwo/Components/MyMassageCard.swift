@@ -64,7 +64,7 @@ struct MyMessageCard: View {
                     RoundedRectangle(cornerRadius: 24)
                         .fill(Color.blue)
                     
-                    GifUIkit(userstate.emoji ??  "", isAnimated: true)
+                    GifImage(userstate.emoji ??  "", isAnimated: true)
                         .frame(width: 80, height: 80)
                         .position(x: 60, y: 0)
                     

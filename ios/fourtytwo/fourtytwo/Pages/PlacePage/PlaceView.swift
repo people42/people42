@@ -124,7 +124,6 @@ struct PlaceView: View {
                         }
                     }
                     .padding()
-                    .padding(.top, 32)
                 }
             }
         }

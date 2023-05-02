@@ -8,6 +8,8 @@ struct PlaceMapView: View {
     
     @State private var metersPerCircle: Double = 100
     @State var location: CLLocationCoordinate2D
+    @State var isMinimized: Bool = false
+    @State var toggleHeight: CGFloat = 300
     
 
     var body: some View {
@@ -17,11 +19,19 @@ struct PlaceMapView: View {
             circles
             profileImages
         }
+        .onTapGesture {
+            isMinimized.toggle()
+            if isMinimized {
+                toggleHeight = 160
+            } else {
+                toggleHeight = 300
+            }
+        }
     }
 
     private var map: some View {
         Map(coordinateRegion: .constant(MKCoordinateRegion(center: location, latitudinalMeters: 500, longitudinalMeters: 500)), interactionModes: [], showsUserLocation: false)
-            .frame(height: 300)
+            .frame(height: toggleHeight)
     }
     
     private var compass: some View {
@@ -40,10 +50,10 @@ struct PlaceMapView: View {
                 .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)
                 .frame(width: CGFloat(metersPerCircle * Double(index + 1) * 2), height: CGFloat(metersPerCircle * Double(index + 1) * 2))
                 .scaledToFit()
-                .frame(height: 300)
+                .frame(height: toggleHeight)
                 .mask(
                     Rectangle()
-                        .frame(width: UIScreen.main.bounds.width, height: 300)
+                        .frame(width: UIScreen.main.bounds.width, height: toggleHeight)
                 )
         }
     }
@@ -58,7 +68,7 @@ struct PlaceMapView: View {
                     .position(x: randomPosition.x, y: randomPosition.y)
             }
         }
-        .frame(height: 300)
+        .frame(height: toggleHeight)
     }
 
     private func randomPositionOnScreen(geometry: GeometryProxy) -> CGPoint {

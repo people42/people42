@@ -30,7 +30,7 @@ struct FirstSectionView: View {
             Circle()
                 .frame(width: 50, height: 50)
                 .foregroundColor(Color("BgPrimary"))
-                .shadow(color: Color.gray.opacity(0.2), radius: 4, x: 4, y: 4)
+                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
                 .overlay(
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 24))
@@ -129,7 +129,7 @@ struct SlotMachineText: View {
         }
         .frame(width: 141, height: 86)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: Color.gray.opacity(0.2), radius: 4, x: 4, y: 4)
+        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
         .animation(.easeInOut, value: currentIndex)
     }
 }
