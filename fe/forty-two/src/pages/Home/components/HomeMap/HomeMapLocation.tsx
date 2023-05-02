@@ -1,3 +1,4 @@
+import Spinner from "../../../../components/Spinner/Spinner";
 import { locationInfoState } from "../../../../recoil/location/atoms";
 import { TbLocationFilled, TbLocationOff, TbLocation } from "react-icons/tb";
 import { useRecoilValue } from "recoil";
@@ -19,7 +20,9 @@ function HomeMapLocation({}: homeMapLocationProps) {
       {locationInfo?.placeName ? (
         <span>{locationInfo?.placeName} 근처</span>
       ) : (
-        <span>로드중</span>
+        <span>
+          <Spinner></Spinner>
+        </span>
       )}
     </StyledHomeMapLocation>
   );
