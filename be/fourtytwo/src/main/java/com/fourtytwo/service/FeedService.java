@@ -200,10 +200,17 @@ public class FeedService {
 
     public UserFeedResDto findUserFeeds(String accessToken, Long targetUserIdx) {
         Long userIdx = checkUserByAccessToken(accessToken);
+        User tartgetUser = userRepository.findByIdAndIsActiveTrue(targetUserIdx);
+        if (tartgetUser == null) {
+            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        }
         List<PlaceResDto> placeResDtos = new ArrayList<>();
         HashMap<Place, Integer> placeMap = new HashMap<>();
 
-        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(userIdx, targetUserIdx);
+        Long bigIdx = userIdx > targetUserIdx ? userIdx : targetUserIdx;
+        Long smallIdx = userIdx > targetUserIdx ? targetUserIdx : userIdx;
+
+        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(smallIdx, bigIdx);
 
         for (Brush brush : brushList) {
             if (placeMap.containsKey(brush.getPlace())) {
@@ -217,16 +224,12 @@ public class FeedService {
                     .placeLongitude(place.getLongitude()).placeLatitude(place.getLatitude()).brushCnt(cnt).build();
             placeResDtos.add(placeResDto);
         });
-        User user = userRepository.findByIdAndIsActiveTrue(targetUserIdx);
-        if (user == null) {
-            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
-        }
         return UserFeedResDto.builder()
                 .placeResDtos(placeResDtos)
                 .brushCnt(brushList.size())
                 .userIdx(targetUserIdx)
-                .nickname(user.getNickname())
-                .emoji(user.getEmoji())
+                .nickname(tartgetUser.getNickname())
+                .emoji(tartgetUser.getEmoji())
                 .build();
     }
 
