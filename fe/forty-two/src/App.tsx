@@ -1,5 +1,5 @@
 import Meta from "./Meta";
-import { postLocation } from "./api";
+import { postFCMToken, postLocation } from "./api";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
@@ -21,7 +21,9 @@ import {
   setSessionRefreshToken,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useEffect } from "react";
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { useEffect, useState } from "react";
 import { NavermapsProvider } from "react-naver-maps";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -69,33 +71,19 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  //////////////////////////
+  // naver map client id import
   const NAVER_MAP_CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
+
+  //////////////////////////
+  // theme
   const [isDark, setIsDark] = useRecoilState(themeState);
-  const [location, setLocation] = useRecoilState<TLocation | null>(
-    userLocationUpdateState
-  );
-  const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
-    locationInfoState
-  );
-  const setUserRefresh = useSetRecoilState(userState);
-  const [user, userLogout] = useRecoilState(userLogoutState);
-
-  const updateCurrentLocation = async () => {
-    getUserLocation().then((res: any) =>
-      setLocation({
-        latitude: res.coords.latitude,
-        longitude: res.coords.longitude,
-      })
-    );
-  };
-
-  const setIsLogin = useSetRecoilState(isLoginState);
-
   useEffect(() => {
+    // 시스템 테마 모드 가져오기
     const isSystemDark: MediaQueryList = window.matchMedia(
       "(prefers-color-scheme: dark)"
     );
-
+    // 테마 모드 변경 핸들러
     const handleSystemDarkChange = (e: MediaQueryListEvent) => {
       if (e.matches) {
         setIsDark(true);
@@ -104,9 +92,35 @@ function App() {
       }
       localStorage.setItem("isDark", e.matches.toString());
     };
-
+    // 시스템 테마 모드 변경 리스너
     isSystemDark.addEventListener("change", handleSystemDarkChange);
+    return () => {
+      isSystemDark.removeEventListener("change", handleSystemDarkChange);
+    };
+  }, []);
 
+  //////////////////////////
+  // location background update
+  const [location, setLocation] = useRecoilState<TLocation | null>(
+    userLocationUpdateState
+  );
+  const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
+    locationInfoState
+  );
+  const setUserRefresh = useSetRecoilState(userState);
+  const [user, userLogout] = useRecoilState(userLogoutState);
+  // 사용자 위치 업데이트 함수
+  const updateCurrentLocation = async () => {
+    getUserLocation().then((res: any) =>
+      setLocation({
+        latitude: res.coords.latitude,
+        longitude: res.coords.longitude,
+      })
+    );
+  };
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
+  useEffect(() => {
+    // 사용자 로그인 여부 검증
     const isLocalLogin: boolean = getLocalIsLogin();
     if (isLocalLogin) {
       getAccessToken()
@@ -122,18 +136,18 @@ function App() {
     } else {
       setIsLogin(false);
     }
-
+    // 사용자 위치 업데이트
     updateCurrentLocation();
+    // 사용자 위치 5분마다 업데이트
     const postLocationInterval = setInterval(() => {
       updateCurrentLocation();
     }, 300000);
 
     return () => {
-      isSystemDark.removeEventListener("change", handleSystemDarkChange);
       clearInterval(postLocationInterval);
     };
   }, []);
-
+  // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
     if (location && user) {
       postLocation(user?.accessToken, location)
@@ -152,6 +166,74 @@ function App() {
     }
   }, [location, user]);
 
+  //////////////////////////
+  // firebase
+  const APP_KEY = import.meta.env.VITE_FIREBASE_APP_KEY;
+  const AUTH_DOMAIN = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+  const PROJECT_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  const STORAGE_BUCKET = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
+  const MESSAGING_SENDER_ID = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
+  const APP_ID = import.meta.env.VITE_FIREBASE_APP_ID;
+  const V_API_ID_KEY = import.meta.env.VITE_FIREBASE_V_API_ID_KEY;
+  const [firebaseConfig, setFirebaseConfig] = useState<any>();
+  useEffect(() => {
+    setFirebaseConfig({
+      apiKey: APP_KEY,
+      authDomain: AUTH_DOMAIN,
+      projectId: PROJECT_ID,
+      storageBucket: STORAGE_BUCKET,
+      messagingSenderId: MESSAGING_SENDER_ID,
+      appId: "1:944428145168:web:643cbb958e1da0bbd9c895",
+    });
+  }, []);
+  // firebase init
+  function requestPermission(app: any) {
+    console.log("Requesting permission...");
+
+    // 브라우저 알림 설정은 프로그래밍으로 불가능
+    // 반드시 유저가 브라우저 설정에서 변경해야 함
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        // 알림 설정되어있는 경우
+        console.log("Notification permission granted.");
+        const messaging = getMessaging(app);
+        onMessage(messaging, (payload) => {
+          // 유저 접속해있을 때
+          console.log("수신된 메시지: ", payload);
+        });
+
+        // 토큰 얻는거는 로그인 혹은 웹 처음 들어왔을 때
+        getToken(messaging, {
+          vapidKey: V_API_ID_KEY,
+        })
+          .then((currentToken) => {
+            if (currentToken && user) {
+              // 토큰 서버에 전달
+              postFCMToken(user.accessToken, currentToken).then((res) =>
+                console.log(res)
+              );
+            } else {
+              console.log("등록된 토큰이 없습니다.");
+            }
+          })
+          .catch((err) => console.log(err));
+      } else if (permission === "denied") {
+        // 유저 알림 설정 꺼져있는 경우
+        console.log("Notification permission denied. Requesting again...");
+        // gpt 추천 메시지
+        alert(
+          "죄송합니다. 브라우저에서 알림 권한 요청 대화 상자를 더 이상 자동으로 표시하지 않도록 설정한 것 같습니다. 알림을 받으려면 수동으로 브라우저 설정에서 알림 권한을 허용해야 합니다. 이를 위해 브라우저 설정을 열고 해당 사이트의 권한을 확인해주세요."
+        );
+      }
+    });
+  }
+  useEffect(() => {
+    if (firebaseConfig && user) {
+      const firebaseApp = initializeApp(firebaseConfig);
+      requestPermission(firebaseApp);
+    }
+  }, [firebaseConfig, user]);
+
   const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
 
   return (
@@ -161,7 +243,9 @@ function App() {
         title={"42"}
         description={"너랑 나 사이"}
         keywords={"SNS, 생각, 지도, 공유, 낭만, 익명"}
-        imgsrc={""}
+        imgsrc={
+          "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/OG_image.png"
+        }
         url={BASE_APP_URL}
       ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>

@@ -68,3 +68,12 @@ export async function deleteLogout(accessToken: string) {
     "ACCESS-TOKEN": accessToken,
   }).delete("account/logout");
 }
+
+/**
+ * [POST] "account/fcm_token" FCM 토큰 등록
+ */
+export async function postFCMToken(accessToken: string, token: string) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).post("account/fcm_token", { token: token });
+}
