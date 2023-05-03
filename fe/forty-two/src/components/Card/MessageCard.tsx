@@ -8,6 +8,8 @@ type messageCardProps = {
   onClick(): void;
 };
 
+const S3_URL = import.meta.env.VITE_S3_URL;
+
 function MessageCard({ props, idx, onClick }: messageCardProps) {
   return props ? (
     <StyledMessageCard
@@ -18,7 +20,7 @@ function MessageCard({ props, idx, onClick }: messageCardProps) {
       <div
         className="emoji"
         style={{
-          backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${props.recentMessageInfo.emoji}.gif")`,
+          backgroundImage: `url("${S3_URL}emoji/animate/${props.recentMessageInfo.emoji}.gif")`,
         }}
       ></div>
       <ReactionBtn props={props}></ReactionBtn>
@@ -47,8 +49,8 @@ const StyledMessageCard = styled.div<{
 }>`
   animation: floatingRight 0.3s;
   animation-fill-mode: both;
-  max-width: 200px;
-  min-width: 150px;
+  width: 100%;
+  max-width: 300px;
   position: relative;
 
   transition: scale 0.3s;
@@ -63,9 +65,10 @@ const StyledMessageCard = styled.div<{
   }
 
   .message {
-    transition: scale 0.3s;
+    transition: scale 0.1s;
     &:hover {
-      scale: 1.02;
+      filter: ${({ theme }) =>
+        theme.isDark == true ? "brightness(1.5)" : "brightness(0.95)"};
     }
     &:active {
       scale: 0.98;

@@ -24,7 +24,10 @@ function HomeMap({}: homeMapProps) {
             <div className="map-icons">
               <div className="map-icons-box">
                 {placeData?.messagesInfo.map((info) => (
-                  <PlaceMapEmojiMarker emoji={info.emoji}></PlaceMapEmojiMarker>
+                  <PlaceMapEmojiMarker
+                    key={`place-map-icon-${info.messageIdx}`}
+                    emoji={info.emoji}
+                  ></PlaceMapEmojiMarker>
                 ))}
               </div>
             </div>

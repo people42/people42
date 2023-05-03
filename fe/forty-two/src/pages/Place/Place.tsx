@@ -40,7 +40,7 @@ function Place() {
     } else {
       navigate("/");
     }
-  }, [placeInfo]);
+  }, []);
 
   return (
     <StyledPlace>
@@ -57,7 +57,7 @@ function Place() {
             <div>
               <h1>
                 {placeData?.placeWithTimeAndGpsInfo.placeName} 근처에서{" "}
-                {placeData.messagesInfo.length}명과 스쳤습니다.
+                {placeData.messagesInfo.length}번 스쳤습니다.
               </h1>
               <p>
                 {formatMessageDate(placeData?.placeWithTimeAndGpsInfo.time)}
@@ -126,7 +126,7 @@ const StyledPlace = styled.div`
       position: relative;
 
       &-list {
-        width: 360px;
+        width: 380px;
         flex-shrink: 0;
       }
       &-map {

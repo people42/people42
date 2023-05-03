@@ -4,12 +4,15 @@ import { userLocationUpdateState } from "../../../../recoil/location/selectors";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../../../utils";
+import UserMapMessageList from "./UserMapMessageList";
 import { useState, useEffect } from "react";
 import { Marker, useNavermaps } from "react-naver-maps";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-type userMapProps = { userData: TUserDetail | undefined };
+type userMapProps = {
+  userData: TUserDetail | undefined;
+};
 
 function UserMap({ userData }: userMapProps) {
   const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
@@ -27,12 +30,12 @@ function UserMap({ userData }: userMapProps) {
     if (userData) {
       const params = { placeIdx: placeIdx, userIdx: userData.userIdx };
       getUserPlace(accessToken, params)
-        .then((res) => console.log(res))
+        .then((res) => setMessagesInfo(res.data.data.messagesInfo))
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               getUserPlace(res.data.data.accessToken, params).then((res) =>
-                console.log(res.data.data)
+                setMessagesInfo(res.data.data.messagesInfo)
               );
               setUserRefresh(res.data.data);
               setSessionRefreshToken(res.data.data.refreshToken);
@@ -41,6 +44,8 @@ function UserMap({ userData }: userMapProps) {
         });
     }
   };
+
+  const S3_URL = import.meta.env.VITE_S3_URL;
 
   useEffect(() => {
     if (userData) {
@@ -59,12 +64,16 @@ function UserMap({ userData }: userMapProps) {
               key={`user-data-${idx}`}
               position={latlng}
               icon={{
-                url: `https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/static/${userData.emoji}.png`,
+                url: `${S3_URL}emoji/static/${userData.emoji}.png`,
                 scaledSize: new navermaps.Size(40, 40),
                 origin: new navermaps.Point(0, 0),
                 anchor: new navermaps.Point(20, 20),
+                style: "margin: 100px; !important",
               }}
-              onClick={(e) => getUserPlaceList(data.placeIdx)}
+              onClick={(e) => {
+                setPlaceInfo(data);
+                getUserPlaceList(data.placeIdx);
+              }}
             />
           );
         })
@@ -76,6 +85,13 @@ function UserMap({ userData }: userMapProps) {
     }
   }, [userData]);
 
+  const [messagesInfo, setMessagesInfo] = useState<
+    TUserDetail["placeMessageInfo"][] | null
+  >(null);
+  const [placeInfo, setPlaceInfo] = useState<
+    TUserDetail["placeResDtos"][0] | null
+  >(null);
+
   return (
     <StyledUserMap>
       {isMapLoad && center ? (
@@ -85,6 +101,12 @@ function UserMap({ userData }: userMapProps) {
           bound={bound}
         ></NaverDynamicMap>
       ) : null}
+      {messagesInfo ? (
+        <UserMapMessageList
+          placeInfo={placeInfo}
+          messagesInfo={messagesInfo}
+        ></UserMapMessageList>
+      ) : null}
     </StyledUserMap>
   );
 }
@@ -92,6 +114,8 @@ function UserMap({ userData }: userMapProps) {
 export default UserMap;
 
 const StyledUserMap = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 `;

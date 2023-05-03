@@ -29,7 +29,7 @@ export default NaverDynamicMap;
 const StyledNaverMap = styled.div`
   width: 100%;
   height: 100%;
-  img {
+  & > div > div > div > div > div > div > div:first-child > div img {
     ${({ theme }) =>
       theme.isDark
         ? "filter: invert(95%) sepia(60%) hue-rotate(180deg) saturate(100%) brightness(0.8);"

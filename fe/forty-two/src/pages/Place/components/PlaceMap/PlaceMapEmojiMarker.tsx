@@ -3,6 +3,8 @@ import styled from "styled-components";
 type placeMapEmojiMarkerProps = { emoji: string };
 
 function PlaceMapEmojiMarker({ emoji }: placeMapEmojiMarkerProps) {
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   return (
     <StyledPlaceMapEmojiMarker
       style={{
@@ -16,7 +18,7 @@ function PlaceMapEmojiMarker({ emoji }: placeMapEmojiMarkerProps) {
           width: 40,
           height: 40,
           backgroundSize: "cover",
-          backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${emoji}.gif")`,
+          backgroundImage: `url("${S3_URL}emoji/animate/${emoji}.gif")`,
         }}
       ></div>
     </StyledPlaceMapEmojiMarker>
