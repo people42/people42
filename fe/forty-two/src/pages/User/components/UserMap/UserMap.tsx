@@ -6,7 +6,7 @@ import { userAccessTokenState } from "../../../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../../../utils";
 import UserMapMessageList from "./UserMapMessageList";
 import { useState, useEffect } from "react";
-import { Marker, useNavermaps } from "react-naver-maps";
+import { Marker, useListener, useNavermaps } from "react-naver-maps";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
@@ -26,17 +26,23 @@ function UserMap({ userData }: userMapProps) {
 
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
+
   const getUserPlaceList = (placeIdx: number) => {
     if (userData) {
       const params = { placeIdx: placeIdx, userIdx: userData.userIdx };
+      setIsOpen(false);
       getUserPlace(accessToken, params)
-        .then((res) => setMessagesInfo(res.data.data.messagesInfo))
+        .then((res) => {
+          setIsOpen(true);
+          setMessagesInfo(res.data.data.messagesInfo);
+        })
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
-              getUserPlace(res.data.data.accessToken, params).then((res) =>
-                setMessagesInfo(res.data.data.messagesInfo)
-              );
+              getUserPlace(res.data.data.accessToken, params).then((res) => {
+                setIsOpen(true);
+                setMessagesInfo(res.data.data.messagesInfo);
+              });
               setUserRefresh(res.data.data);
               setSessionRefreshToken(res.data.data.refreshToken);
             });
@@ -68,11 +74,20 @@ function UserMap({ userData }: userMapProps) {
                 scaledSize: new navermaps.Size(40, 40),
                 origin: new navermaps.Point(0, 0),
                 anchor: new navermaps.Point(20, 20),
-                style: "margin: 100px; !important",
               }}
               onClick={(e) => {
                 setPlaceInfo(data);
                 getUserPlaceList(data.placeIdx);
+              }}
+              onMouseover={(e) => {
+                e.overlay.eventTarget.src = `${S3_URL}emoji/animate/${userData.emoji}.gif`;
+                e.overlay.eventTarget.style.transition = "all 0.3s";
+                e.overlay.eventTarget.style.transform = "scale(1.1)";
+              }}
+              onMouseout={(e) => {
+                e.overlay.eventTarget.src = `${S3_URL}emoji/static/${userData.emoji}.png`;
+                e.overlay.eventTarget.style.transition = "none";
+                e.overlay.eventTarget.style.transform = "scale(1)";
               }}
             />
           );
@@ -91,6 +106,7 @@ function UserMap({ userData }: userMapProps) {
   const [placeInfo, setPlaceInfo] = useState<
     TUserDetail["placeResDtos"][0] | null
   >(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <StyledUserMap>
@@ -101,10 +117,11 @@ function UserMap({ userData }: userMapProps) {
           bound={bound}
         ></NaverDynamicMap>
       ) : null}
-      {messagesInfo ? (
+      {isOpen && messagesInfo ? (
         <UserMapMessageList
           placeInfo={placeInfo}
           messagesInfo={messagesInfo}
+          setIsOpen={setIsOpen}
         ></UserMapMessageList>
       ) : null}
     </StyledUserMap>
