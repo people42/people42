@@ -101,7 +101,6 @@ struct TimelineView: View {
                                     ZStack(alignment: .center) {
                                         TimelinePoint()
                                     }
-                                    .frame(width: 16)
                                     // 누르면 PlaceView로 이동
                                     MessageCard(messageInfo: viewModel.messageInfoList[index])
                                         .onTapGesture {
