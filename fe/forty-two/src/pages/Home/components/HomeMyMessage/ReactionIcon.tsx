@@ -11,7 +11,7 @@ function ReactionIcon({ type, count }: reactionIconProps) {
         className="reaction-icon"
         style={{
           backgroundImage: `url("${S3_URL}emoji/reaction/${type}.png")`,
-          transform: `scale(${count});`,
+          transform: `scale(${count})`,
         }}
       >
         {count}
