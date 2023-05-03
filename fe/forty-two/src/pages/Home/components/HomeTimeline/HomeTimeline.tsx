@@ -51,7 +51,8 @@ export default HomeTimeline;
 
 const StyledHomeTimeline = styled.section`
   flex-shrink: 0;
-  width: 360px;
+  width: 380px;
+  padding-right: 30px;
   position: relative;
   padding-bottom: 40px;
   height: calc(100vh - 56px);

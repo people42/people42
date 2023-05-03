@@ -20,6 +20,10 @@ type TMyMessage = {
   emoji: string;
   message: string | null;
   messageCnt: number;
+  fire: number;
+  heart: number;
+  tear: number;
+  thumbsUp: number;
 };
 
 type TUserDetail = {
@@ -34,4 +38,10 @@ type TUserDetail = {
     placeLongitude: number;
     brushCnt: number;
   }[];
+  placeMessageInfo: {
+    content: string;
+    emotion?: string;
+    messageIdx: number;
+    time: string;
+  };
 };

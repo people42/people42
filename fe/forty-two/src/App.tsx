@@ -146,6 +146,8 @@ function App() {
     }
   }, [location, user]);
 
+  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
+
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
       <GlobalStyle />
@@ -154,7 +156,7 @@ function App() {
         description={"너랑 나 사이"}
         keywords={"SNS, 생각, 지도, 공유, 낭만, 익명"}
         imgsrc={""}
-        url={"https://people42.com"}
+        url={BASE_APP_URL}
       ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <NavermapsProvider ncpClientId={NAVER_MAP_CLIENT_ID}>

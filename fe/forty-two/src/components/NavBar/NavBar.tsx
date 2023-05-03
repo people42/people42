@@ -46,11 +46,11 @@ function NavBar() {
             </>
           ) : null}
           <ThemeBtn></ThemeBtn>
-          <IconBtn
+          {/* <IconBtn
             onClick={() => setIsNotificationModalOn(!isNotificationModalOn)}
           >
             <TbBellFilled size={24} aria-label={"알림"} />
-          </IconBtn>
+          </IconBtn> */}
           <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconBtn>
@@ -79,9 +79,10 @@ const StyledNavBar = styled.nav`
       filter: opacity(0.8);
     }
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.1s;
     &:hover {
-      transform: scale(1.1);
+      filter: ${({ theme }) =>
+        theme.isDark == true ? "brightness(1.5)" : "brightness(1.2)"};
     }
     &:active {
       transform: scale(0.98);

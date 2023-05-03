@@ -22,6 +22,7 @@ type TFeed = {
   };
   place: { placeIdx: number; time: string; page: number; size: number };
   user: { userIdx: number };
+  userPlace: { placeIdx: number; userIdx: number };
 };
 
 type TAuth = {

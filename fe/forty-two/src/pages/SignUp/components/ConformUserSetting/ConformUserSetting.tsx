@@ -81,12 +81,14 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
     }
   };
 
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   return (
     <StyledConformUserSetting>
       <div>
         <SelectedEmojiIcon
           style={{
-            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${signUpUser.emoji}.gif")`,
+            backgroundImage: `url("${S3_URL}emoji/animate/${signUpUser.emoji}.gif")`,
           }}
         ></SelectedEmojiIcon>
         <p>{signUpUser.nickname}</p>
