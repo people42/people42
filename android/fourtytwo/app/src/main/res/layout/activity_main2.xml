@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
-    <TextSwitcher
-        android:id="@+id/custom_switcher"
+    <TextView
+        android:id="@+id/locationTitleTextView"
         android:layout_gravity="center"
         android:inAnimation="@android:anim/slide_in_left"
         android:outAnimation="@android:anim/slide_out_right"

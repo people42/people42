@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.network.Model
+package com.cider.fourtytwo.feed
 
 data class RecentFeedData(
     val recentMessageInfo : RecentMessageInfo,

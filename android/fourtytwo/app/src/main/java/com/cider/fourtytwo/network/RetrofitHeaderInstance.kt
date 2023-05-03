@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 object RetrofitHeaderInstance{
-    private const val BASE_URL = "https://people42.com/be42"
+    private const val BASE_URL = "https://www.people42.com/be42"
     private const val HEADER = ""
 
     private val client = Retrofit

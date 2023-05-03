@@ -1,16 +1,23 @@
 package com.cider.fourtytwo
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.cider.fourtytwo.dataStore.UserDataStore
-import com.cider.fourtytwo.feed.FeedAdapter
+import com.cider.fourtytwo.myHistory.HistoryResponse
+import com.cider.fourtytwo.myHistory.MyMessagesAdapter
 import com.cider.fourtytwo.network.Api
-import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -19,45 +26,62 @@ import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MyMessagesActivity : AppCompatActivity() {
+class MyMessagesActivity : AppCompatActivity(){
     private lateinit var userDataStore: UserDataStore
     val api = RetrofitInstance.getInstance().create(Api::class.java)
-    private lateinit var feedAdapter: FeedAdapter
-    private var feedList: List<RecentFeedData> = ArrayList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 화면이 구성될 때, 스플래시 테마에서 메인 테마로 변경
+        setTheme(R.style.Theme_Fourtytwo)
+        // 로고 장착
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+        supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24)
+        supportActionBar?.title = "나의 생각 기록"      // 타이틀
+        supportActionBar?.elevation = 0.0F  // 그림자 삭제
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_messages)
+
+        val myEmojiView = findViewById<ImageView>(R.id.main_guide_emoji)
+//        val intent = intent
+//        val bundle = intent.extras
+//        val myEmoji = bundle!!.getString("myEmoji")
+        val myEmoji = "robot"
+        Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
+
         userDataStore = UserDataStore(this)
         lifecycleScope.launch {
             val token = userDataStore.get_access_token.first()
             getHistory(token)
         }
     }
-    fun getHistory(header : String){
+    fun getHistory(header : String) {
         val currentDate = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = currentDate.format(formatter)
-        Log.d(TAG, "getHistory: ${currentDate}")
-
         api.getHistory(header, formattedDate).enqueue(object : Callback<HistoryResponse> {
             override fun onResponse(call: Call<HistoryResponse>, response: Response<HistoryResponse>) {
                 if (response.code() == 200) {
-                    Log.i(ContentValues.TAG, "${response.body()?.data}")
+                    val result = response.body()?.data!!
+                    val history = findViewById<RecyclerView>(R.id.history_recyclerView)
+                    val historyAdapter = MyMessagesAdapter(result)
 
+//                    val itemTouchHelper = ItemTouchHelper(SwipeController(historyAdapter))
+//                    // itemTouchHelper에 RecyclerView 부착
+//                    itemTouchHelper.attachToRecyclerView(history)
+
+                    history.adapter = historyAdapter
+                    history.layoutManager = LinearLayoutManager(this@MyMessagesActivity, LinearLayoutManager.VERTICAL, false)
 
                 } else if (response.code() == 401){
-                    Log.i(ContentValues.TAG, "401: 토큰 만료")
-                    // 토큰 다시 받기
+                    Log.i(TAG, "401: 토큰 만료")
                     getToken()
                 } else {
-                    Log.i(ContentValues.TAG, "기타: $response")
-                    Log.i(ContentValues.TAG, "기타: ${response.code()}")
+                    Log.i(TAG, "기타: $response")
                 }
             }
             override fun onFailure(call: Call<HistoryResponse>, t: Throwable) {
-                // 실패
-                Log.d("메세지 전송 2 실패: ", t.message.toString())
+                Log.d("실패: ", t.message.toString())
             }
         })
     }
@@ -90,5 +114,16 @@ class MyMessagesActivity : AppCompatActivity() {
             val token = userDataStore.get_access_token.first()
             getHistory(token)
         }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            else -> {}
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/my_opinion_box"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/message_margin_horizontal"
+    android:paddingLeft="16dp"
     >
     <!--  말풍선 그림자  -->
     <ImageView
@@ -31,21 +31,23 @@
         android:id="@+id/my_opinion_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/opinion_height"
+        android:minHeight="106dp"
         android:background="@drawable/round_box"
         android:text="@string/write"
         android:gravity="center_vertical"
         android:paddingHorizontal="@dimen/message_padding_horizontal"
         android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="6dp"/>
+        android:layout_marginBottom="6dp"
+        android:textColor="@color/white"/>
 
     <!-- 이모지 + 공감 -->
     <RelativeLayout
         android:id="@+id/reaction_box"
         android:layout_width="match_parent"
         android:layout_height="@dimen/reaction_height"
-        android:paddingHorizontal="@dimen/feed_margin_horizontal"
+        android:paddingStart="26dp"
+        android:paddingEnd="39dp"
         android:gravity="center_vertical">
         <ImageView
             android:id="@+id/my_opinion_emoji"

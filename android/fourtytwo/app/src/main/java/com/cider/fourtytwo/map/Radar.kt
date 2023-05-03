@@ -7,5 +7,4 @@ data class Radar(
     val emoji: String,
     val latLng: LatLng,
     val address: LatLng,
-
     )

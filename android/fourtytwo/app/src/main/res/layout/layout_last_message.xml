@@ -13,55 +13,62 @@
     android:layout_marginHorizontal="16dp"
     >
     <TextView
+        android:id="@+id/history_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="시간"
         android:layout_margin="10dp"
         />
     <TextView
-        android:id="@+id/last_text"
+        android:id="@+id/history_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
-        android:text="@string/write"
+        android:textSize="@dimen/login_text_size"
         android:layout_marginHorizontal="10dp"
         />
 
     <!-- 이모지 + 공감 -->
     <RelativeLayout
-        android:id="@+id/reaction_box"
+        android:id="@+id/history_reaction_box"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="center_vertical">
         <ImageView
-            android:id="@+id/reation_first"
+            android:id="@+id/history_reation_first"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/reation_second"
+            android:layout_toStartOf="@id/history_reation_second"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/heart"
             android:layout_alignParentBottom="true"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="100"-->
+<!--            android:layout_toEndOf="@id/history_reation_first"-->
+<!--            android:gravity="center"/>-->
         <ImageView
-            android:id="@+id/reation_second"
+            android:id="@+id/history_reation_second"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/reation_third"
+            android:layout_toStartOf="@id/history_reation_third"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/tear"
             android:layout_alignParentBottom="true"/>
         <ImageView
-            android:id="@+id/reation_third"
+            android:id="@+id/history_reation_third"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/reation_fourth"
+            android:layout_toStartOf="@id/history_reation_fourth"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/thumbsup"
             android:layout_alignParentBottom="true"/>
         <ImageView
-            android:id="@+id/reation_fourth"
+            android:id="@+id/history_reation_fourth"
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:layout_alignParentEnd="true"

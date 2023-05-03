@@ -16,12 +16,10 @@ import com.cider.fourtytwo.UserViewModel
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.FragmentWelcomeBinding
 import com.cider.fourtytwo.network.Api
-import com.cider.fourtytwo.network.Model.SignupForm
-import com.cider.fourtytwo.network.Model.UserInfo
-import com.cider.fourtytwo.network.Model.UserResponse
+import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback

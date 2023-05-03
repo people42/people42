@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.network.Model
+package com.cider.fourtytwo.signIn
 
 data class UserResponse(
     val message : String,

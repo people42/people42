@@ -9,11 +9,12 @@
         android:id="@+id/main_guide_backgroundTint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="106dp"
+        android:background="@drawable/round_box"
         android:layout_marginHorizontal="@dimen/reaction_padding_right"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/round_box"
-        android:minHeight="106dp" />
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"

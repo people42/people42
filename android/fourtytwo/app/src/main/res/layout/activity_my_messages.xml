@@ -9,6 +9,7 @@
         android:id="@+id/recent_message"
         layout="@layout/layout_edit_opinion"/>
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/layout_last_message"

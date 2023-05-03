@@ -1,17 +1,25 @@
 package com.cider.fourtytwo
 
+import android.Manifest
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
-import android.text.Layout
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.animation.Animation
+import android.view.animation.ScaleAnimation
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,10 +27,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.feed.FeedAdapter
+import com.cider.fourtytwo.feed.RecentFeedData
+import com.cider.fourtytwo.feed.RecentFeedResponse
+import com.cider.fourtytwo.map.SetLocationResponse
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.flow.first
@@ -33,11 +47,33 @@ import retrofit2.Response
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(){
-    private lateinit var userDataStore: UserDataStore
     val api = RetrofitInstance.getInstance().create(Api::class.java)
-
+    //유저
+    private lateinit var userDataStore: UserDataStore
+    private lateinit var myEmoji: String
+    //피드
     private lateinit var feedAdapter: FeedAdapter
     private var feedList: List<RecentFeedData> = ArrayList()
+    //지도
+    private lateinit var locationManager: LocationManager
+    private lateinit var myLocationListener: MainActivity.MyLocationListener
+    companion object {
+        val locationPermissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val responsePermissions = permissions.entries.filter {
+                it.key in MainActivity.locationPermissions
+            }
+            if (responsePermissions.filter { it.value == true }.size == MainActivity.locationPermissions.size) {
+                setLocationListener()
+            } else {
+                Toast.makeText(this, "위치 정보를 알 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // 화면이 구성될 때, 스플래시 테마에서 메인 테마로 변경
@@ -68,9 +104,13 @@ class MainActivity : AppCompatActivity(){
                 new_message.text.clear()
             }
         }
+// 내 메세지 누르면 히스토리로 이동
         val myOpinion = findViewById<TextView>(R.id.my_opinion_text)
         myOpinion.setOnClickListener {
             val intent = Intent(this, MyMessagesActivity::class.java)
+            val bundle = Bundle()
+            bundle.putString("myNickname", myEmoji)
+            intent.putExtras(bundle)
             startActivity(intent)
         }
 
@@ -79,8 +119,8 @@ class MainActivity : AppCompatActivity(){
             val token = userDataStore.get_access_token.first()
             feedList = getRecentFeed(token)
             getNowMessage(token)
-            var myEmoji : String = userDataStore.get_emoji.first()
             val myEmojiView = findViewById<ImageView>(R.id.my_opinion_emoji)
+            var myEmoji : String = userDataStore.get_emoji.first()
             setEmoji(myEmoji, myEmojiView)
         }
 
@@ -96,25 +136,135 @@ class MainActivity : AppCompatActivity(){
         val mapFragment = supportFragmentManager.findFragmentById(
             R.id.map_fragment
         ) as? SupportMapFragment
-
         mapFragment?.getMapAsync { googleMap ->
-            googleMap.setOnMapLoadedCallback {
-                //val bounds = LatLngBounds.builder()
+            // 지도 드래그 막기
+            googleMap.uiSettings.isScrollGesturesEnabled = false
 
-                val marker = LatLng(37.568291,126.997780)
+            googleMap.setOnMapLoadedCallback {
+            // 마커 이미지
+                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
+                val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap)
+                //val bounds = LatLngBounds.builder()
+            // 마커 위치
+                val marker = LatLng(36.354946759143,127.29980994578)
                 googleMap.addMarker(
                     MarkerOptions()
                         .position(marker)
-                        .title("여기")
+                        .title("위치 설정 비활성화 시 맛이 없어요")
                         .draggable(false)
                         .alpha(0.9f)
-                        //.icon(BitmapDescriptorFactory.defaultMarker(R.drawable.robot))
+                        .icon(bitmapDescriptor)
                 )
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 19f))
                 //googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
+            // 레이더 애니메이션
+                val scaleAnimation = ScaleAnimation(
+                    0f, // 시작 X 스케일
+                    1f, // 끝 X 스케일
+                    0f, // 시작 Y 스케일
+                    1f, // 끝 Y 스케일
+                    Animation.RELATIVE_TO_SELF, // X 스케일 기준
+                    0.5f, // X 스케일 기준 위치 (0 ~ 1)
+                    Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+                    0.5f // Y 스케일 기준 위치 (0 ~ 1)
+                ).apply {
+                    duration = 4000 // 애니메이션 시간 (ms)
+                    repeatMode = Animation.RESTART // 애니메이션 반복 모드
+                    repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+                }
+                val blueRing = findViewById<ImageView>(R.id.blue_ring)
+                blueRing.startAnimation(scaleAnimation)
             }
             //addMarkers(googleMap)
         }
+        getMylocation()
+    }
+    private fun getMylocation() {
+        if (::locationManager.isInitialized.not()) {
+            locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        }
+        val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (isGpsEnable) {
+            permissionLauncher.launch(MainActivity.locationPermissions)
+        }
+    }
+    @Suppress("MissingPermission")
+    private fun setLocationListener() {
+        val minTime: Long = 1500
+        val minDistance = 100f
+
+        if (::myLocationListener.isInitialized.not()) {
+            myLocationListener = MyLocationListener()
+        }
+        with(locationManager) {
+            requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                minTime, minDistance, myLocationListener
+            )
+            requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                minTime, minDistance, myLocationListener
+            )
+        }
+    }
+    inner class MyLocationListener : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            Toast
+                .makeText(this@MainActivity, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT)
+                .show()
+            lifecycleScope.launch {
+                var params = HashMap<String, Double>()
+                params.put("latitude", location.latitude)
+                params.put("longitude", location.longitude)
+                setLocation(userDataStore.get_access_token.first(), params)
+            }
+            removeLocationListener()
+        }
+        private fun removeLocationListener() {
+            if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
+                locationManager.removeUpdates(myLocationListener)
+            }
+        }
+    }
+    fun setLocation(header : String, params : HashMap<String, Double>?){
+        api.setLocation(header, params).enqueue(object : Callback<SetLocationResponse> {
+            override fun onResponse(call: Call<SetLocationResponse>, response: Response<SetLocationResponse>) {
+                Log.d("위치 전송 응답", response.toString())
+                if (response.code() == 200) {
+                    Log.i(TAG, "위치 전송 응답 잘 보내졌다네")
+                    // 지도의 내 위치 변경
+                    val mapFragment = supportFragmentManager.findFragmentById(
+                        R.id.map_fragment
+                    ) as? SupportMapFragment
+                    mapFragment?.getMapAsync { googleMap ->
+                        // 마커 위치
+                        // 마커 이미지
+                        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
+                        val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap)
+                        val marker = LatLng(params?.get("latitude")!!, params?.get("longitude")!!)
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(marker)
+                                .title("위치 설정 비활성화 시 맛이 없어요")
+                                .draggable(false)
+                                .alpha(0.9f)
+                                .icon(bitmapDescriptor)
+                        )
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 19f))
+                    }
+                } else if (response.code() == 401){
+                    Log.i(TAG, "위치 전송 응답 토큰 만료")
+                    // 토큰 다시 받기
+                    getToken("location", params)
+                } else {
+                    Log.i(TAG, "위치 전송 응답 기타: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<SetLocationResponse>, t: Throwable) {
+                // 실패
+                Log.d("메세지 전송 2 실패: ", t.message.toString())
+            }
+        })
     }
     fun setMessage(Header: String, myMessage: String){
         var params = HashMap<String, String>()
@@ -127,7 +277,7 @@ class MainActivity : AppCompatActivity(){
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 2 401: 토큰 만료")
                     // 토큰 다시 받기
-                    getToken(myMessage)
+                    getToken(myMessage, null)
                 } else {
                     Log.i(TAG, "메세지 전송 기타: ${response.code()}")
                 }
@@ -139,6 +289,7 @@ class MainActivity : AppCompatActivity(){
         })
     }
     fun setEmoji(myEmoji:String, myEmojiView:ImageView){
+        this.myEmoji = myEmoji
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
     }
     fun getNowMessage(header : String) {
@@ -161,12 +312,11 @@ class MainActivity : AppCompatActivity(){
                         // 메세지
                         findViewById<TextView>(R.id.my_opinion_text).text = response.body()?.data!!.message
                     }
-
                     // 공감 크기 정하기
 
                 } else if (response.code() == 401){
                     Log.i(TAG, "NowMessage_onResponse 401: 토큰 만료")
-                    getToken(" ")
+                    getToken(" ", null)
                 } else {
                     Log.i(TAG, "NowMessage_onResponse 기타 코드: ${response.code()}")
                 }
@@ -187,7 +337,7 @@ class MainActivity : AppCompatActivity(){
                     Log.i(ContentValues.TAG, "gerRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){
                     Log.i(TAG, "gerRecentFeed_onResponse 401: 토큰 만료")
-                    getToken(" ")
+                    getToken(" ", null)
                 } else {
                     Log.i(TAG, "gerRecentFeed_onResponse 코드: ${response.code()}")
                 }
@@ -206,18 +356,16 @@ class MainActivity : AppCompatActivity(){
         }
         return feedList
     }
-    fun getToken(type : String) {
+    fun getToken(type : String, double : HashMap<String, Double>?) {
         lifecycleScope.launch {
             val refreshToken = userDataStore.get_refresh_token.first()
             api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                    Log.d("토큰 전송 on response", response.toString())
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
                             Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
                             response.body()?.data?.let {
-                                it1 -> saveUserInfo(it1, type)
+                                it1 -> saveUserInfo(it1, type, double)
                             }
                         } else {
                             Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
@@ -232,18 +380,19 @@ class MainActivity : AppCompatActivity(){
 
         }
     }
-    fun saveUserInfo(payload : UserInfo, type : String){
+    fun saveUserInfo(payload : UserInfo, type : String, double : HashMap<String, Double>?){
         lifecycleScope.launch {
             userDataStore.setUserData(payload)
             val token = userDataStore.get_access_token.first()
             if (type == " "){
                 getRecentFeed(token)
                 getNowMessage(token)
+            } else if (double != null){
+                setLocation(token, double)
             } else {
                 setMessage(token, type)
             }
         }
-        Log.d(TAG, "유저 정보 저장 완료: 444444444444444444444444444444444444")
     }
         //    override fun onMapReady(googleMap: GoogleMap) {
 //        mMap = googleMap

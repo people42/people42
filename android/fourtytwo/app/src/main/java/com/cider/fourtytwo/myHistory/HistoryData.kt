@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.network.Model
+package com.cider.fourtytwo.myHistory
 
 data class HistoryData(
     val content: String,

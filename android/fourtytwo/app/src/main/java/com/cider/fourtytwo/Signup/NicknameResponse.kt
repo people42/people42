@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.network.Model
+package com.cider.fourtytwo.Signup
 
 data class NicknameResponse(
     val message : String,

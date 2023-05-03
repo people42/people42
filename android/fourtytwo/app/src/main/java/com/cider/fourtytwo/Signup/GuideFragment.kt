@@ -20,8 +20,8 @@ import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.FragmentGuideBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
-import com.cider.fourtytwo.network.Model.UserInfo
-import com.cider.fourtytwo.network.Model.UserResponse
+import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
