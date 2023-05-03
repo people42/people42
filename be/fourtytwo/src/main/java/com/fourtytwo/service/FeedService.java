@@ -237,7 +237,11 @@ public class FeedService {
         Long userIdx = checkUserByAccessToken(accessToken);
         Place place = placeRepository.findPlaceById(placeIdx);
         List<UserMessageResDto> messages = new ArrayList<>();
-        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceId(userIdx, targetIdx, placeIdx);
+
+        Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
+        Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
+
+        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceId(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
             UserMessageResDto message = new UserMessageResDto();
             if (userIdx < targetIdx) {
