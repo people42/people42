@@ -10,7 +10,7 @@ import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
 import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
 import { themeState } from "./recoil/theme/atoms";
-import { userState } from "./recoil/user/atoms";
+import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
 import "./reset.css";
 import { GlobalStyle } from "./styles/globalStyle";
@@ -89,6 +89,8 @@ function App() {
     );
   };
 
+  const setIsLogin = useSetRecoilState(isLoginState);
+
   useEffect(() => {
     const isSystemDark: MediaQueryList = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -109,12 +111,16 @@ function App() {
     if (isLocalLogin) {
       getAccessToken()
         .then((res) => {
+          setIsLogin(true);
           setUserRefresh(res.data.data);
           setSessionRefreshToken(res.data.data.refreshToken);
         })
         .catch((e) => {
+          setIsLogin(false);
           userLogout(user);
         });
+    } else {
+      setIsLogin(false);
     }
 
     updateCurrentLocation();
