@@ -13,7 +13,7 @@ export function relativeReactionObject(obj: RatingObject): RatingObject {
   for (let key in obj) {
     result[key as keyof RatingObject] = Number(
       (obj[key as keyof RatingObject] > 0
-        ? ((obj[key as keyof RatingObject] - min) / (max - min)) * 0.8 + 0.2
+        ? ((obj[key as keyof RatingObject] - min) / (max - min)) * 0.6 + 0.4
         : 0
       ).toFixed(2)
     );

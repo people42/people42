@@ -29,10 +29,9 @@ export default HomeMyMessageReaction;
 const StyledHomeMyMessageReaction = styled.div`
   z-index: 10;
   display: flex;
-  align-items: end;
+  align-items: start;
   position: absolute;
-  right: 0px;
+  right: 24px;
   top: 0px;
   height: 72px;
-  background-color: black;
 `;

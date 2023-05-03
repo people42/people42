@@ -1,20 +1,30 @@
 import { Card, MessageCard } from "../../../../components";
 import UserMapMessageCard from "./UserMapMessageCard";
+import { TbX } from "react-icons/tb";
 import styled from "styled-components";
 
 type userMapMessageListProps = {
   placeInfo: TUserDetail["placeResDtos"][0] | null;
   messagesInfo: TUserDetail["placeMessageInfo"][];
+  setIsOpen(isOpen: boolean): void;
 };
 
 function UserMapMessageList({
   placeInfo,
   messagesInfo,
+  setIsOpen,
 }: userMapMessageListProps) {
   return (
     <StyledUserMapMessageList>
       <Card isShadowInner={false} onClick={() => {}}>
         <>
+          <div className="close-btn">
+            <TbX
+              size={24}
+              onClick={() => setIsOpen(false)}
+              aria-label="장소별 메시지 확인 패널 닫기"
+            />
+          </div>
           <h2>{placeInfo?.placeName} 근처</h2>
           <h3>이 장소에서 {placeInfo?.brushCnt}번 스쳤습니다.</h3>
           {messagesInfo.map((data, idx) => (
@@ -60,6 +70,15 @@ const StyledUserMapMessageList = styled.aside`
     }
     & h3 {
       ${({ theme }) => theme.text.caption}
+    }
+  }
+  .close-btn {
+    margin-top: -8px;
+    margin-right: -16px;
+    display: flex;
+    justify-content: end;
+    & > svg {
+      cursor: pointer;
     }
   }
 `;
