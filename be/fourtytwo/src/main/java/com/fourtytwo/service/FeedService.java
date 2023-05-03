@@ -241,7 +241,7 @@ public class FeedService {
         Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
         Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
 
-        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
+        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
             UserMessageResDto message = new UserMessageResDto();
             if (userIdx < targetIdx) {
