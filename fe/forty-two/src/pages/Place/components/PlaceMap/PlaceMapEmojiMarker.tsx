@@ -33,6 +33,7 @@ const StyledPlaceMapEmojiMarker = styled.div`
   width: 40px;
   height: 40px;
   position: absolute;
+
   .emoji {
     z-index: 100;
     cursor: pointer;
