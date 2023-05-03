@@ -16,3 +16,7 @@ export const userState = atom<TUser | null>({
   default: null,
 });
 
+export const isLoginState = atom<"check" | false | true>({
+  key: "isLoginState",
+  default: "check",
+});

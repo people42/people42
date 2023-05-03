@@ -1,17 +1,20 @@
 import Meta from "../../Meta";
 import { NavBar } from "../../components";
-import { userLoginState, userLogoutState } from "../../recoil/user/selectors";
-import { getLocalIsLogin } from "../../utils";
+import { isLoginState } from "../../recoil/user/atoms";
+import { userLoginState } from "../../recoil/user/selectors";
 import { HomeMain } from "./components";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function Home() {
   const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
   const [userEmoji, setUserEmoji] = useState<string>("");
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -28,9 +31,29 @@ function Home() {
     }
   }, [user]);
 
+  useEffect(() => {
+    switch (isLogin) {
+      case "check":
+        console.log("login 확인중");
+        break;
+      case false:
+        navigate("/signin");
+        console.log("login 필요");
+        setIsLogin("check");
+        break;
+      case true:
+        console.log("login 됨");
+        break;
+    }
+  }, [isLogin]);
+
   return (
     <StyledHome>
-      <Meta title={`${userEmoji} ${user?.nickname}의 42 | Home`}></Meta>
+      <Meta
+        title={
+          user ? `${userEmoji} ${user?.nickname}의 42 | Home` : "42 | Home"
+        }
+      ></Meta>
       <NavBar></NavBar>
       <HomeMain></HomeMain>
     </StyledHome>
