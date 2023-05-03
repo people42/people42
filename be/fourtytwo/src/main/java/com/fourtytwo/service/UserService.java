@@ -43,6 +43,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -513,8 +514,11 @@ public class UserService {
         if (!refreshTokenProvider.validateToken(refreshToken)) {
             throw new AuthenticationServiceException("토큰이 만료된 유저입니다.");
         }
-        refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
-        redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
+
+        if (refreshTokenProvider.getTokenValidTime(refreshToken).isBefore(LocalDateTime.now().plusDays(7))) {
+            refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+            redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
+        }
 
         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
         return LoginResponseDto.builder()

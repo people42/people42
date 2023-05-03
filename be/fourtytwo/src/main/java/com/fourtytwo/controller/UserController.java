@@ -1,7 +1,10 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.fcm.FcmTokenReqDto;
 import com.fourtytwo.dto.user.*;
+import com.fourtytwo.service.FcmService;
 import com.fourtytwo.service.UserService;
+import com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,10 +25,11 @@ import java.security.spec.InvalidKeySpecException;
 public class UserController {
 
     private final UserService userService;
+    private final FcmService fcmService;
 
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FcmService fcmService) {
         this.userService = userService;
+        this.fcmService = fcmService;
     }
 
     @PostMapping("/check/google")
@@ -111,5 +115,12 @@ public class UserController {
     public ResponseEntity<ApiResponse<LoginResponseDto>> androidGoogleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "androidGoogle");
         return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/fcm_token")
+    public ResponseEntity<ApiResponse<Object>> updateFcmToken(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                              @Valid @RequestBody FcmTokenReqDto fcmTokenReqDto) {
+        fcmService.updateFcmToken(accessToken, fcmTokenReqDto.getToken());
+        return ApiResponse.ok(null);
     }
 }

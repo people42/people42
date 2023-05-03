@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,8 @@ public class User extends BaseEntity{
     private String emoji;
     private String color;
     private String appleId;
+    private String fcmToken;
+    private LocalDateTime fcmTokenExpirationDateTime;
 
     public List<String> getRoleList() {
         if (this.roles.length() > 0) {
