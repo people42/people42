@@ -20,29 +20,28 @@ import java.util.stream.Collectors;
 @Service
 public class FcmService {
 
-//    @Value("${fcm.key.path}")
-//    private String FCM_PRIVATE_KEY_PATH;
-//
-//    @Value("${fcm.key.scope}")
-//    private String fireBaseScope;
+    @Value("${fcm.key.path}")
+    private String FCM_PRIVATE_KEY_PATH;
 
-    // fcm 기본 설정 진행
-//    @PostConstruct
-//    public void init() {
-//        try {
-//            FirebaseOptions options = FirebaseOptions.builder()
-//                    .setCredentials(
-//                            GoogleCredentials
-//                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
-//                                    .createScoped(List.of(fireBaseScope)))
-//                    .build();
-//            if (FirebaseApp.getApps().isEmpty()) {
-//                FirebaseApp.initializeApp(options);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
-//    }
+    @Value("${fcm.key.scope}")
+    private String fireBaseScope;
+
+    @PostConstruct
+    public void init() {
+        try {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(
+                            GoogleCredentials
+                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
+                                    .createScoped(List.of(fireBaseScope)))
+                    .build();
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     // 알림 보내기
     public void sendByTokenList(List<String> tokenList) {
@@ -56,6 +55,8 @@ public class FcmService {
                         .build())
                 .setToken(token)
                 .build()).collect(Collectors.toList());
+
+        System.out.println(tokenList);
 
         // 요청에 대한 응답을 받을 response
         BatchResponse response;

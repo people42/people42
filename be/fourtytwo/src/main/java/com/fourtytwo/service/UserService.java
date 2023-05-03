@@ -130,12 +130,12 @@ public class UserService {
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
         if (domainType == "web") {
-            map.add("redirect_uri", "https://people42.com/be42/api/v1/auth/check/apple/web");
+            map.add("redirect_uri", "https://www.people42.com/be42/api/v1/auth/check/apple/web");
         } else if (domainType == "webDelete") {
-            map.add("redirect_uri", "https://people42.com/withdrawal/apple");
+            map.add("redirect_uri", "https://www.people42.com/withdrawal/apple");
         }
         else {
-            map.add("redirect_uri", "https://people42.com/signin/apple");
+            map.add("redirect_uri", "https://www.people42.com/signin/apple");
         }
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);

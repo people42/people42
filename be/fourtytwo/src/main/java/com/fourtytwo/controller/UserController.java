@@ -55,10 +55,10 @@ public class UserController {
         LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
         HttpHeaders headers = new HttpHeaders();
         if (loginResponseDto.getAccessToken() == null) {
-            headers.setLocation(URI.create("https://people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
+            headers.setLocation(URI.create("https://www.people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
                     + "&is_signup=false"));
         } else {
-            headers.setLocation(URI.create("https://people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
+            headers.setLocation(URI.create("https://www.people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
                     + "&is_signup=true"));
         }
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
