@@ -15,6 +15,7 @@ struct MessageInfo {
     let cardColor: CardColor
     let messageIdx: Int
     let emotion: String
+    let userIdx: Int
 }
 
 // VM - ViewModel
@@ -30,7 +31,7 @@ class TimelineViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     
                     if let recentFeeds = response.data {
-                        
+                        self.messageInfoList = []
                         self.messageInfoList = recentFeeds.map { recentFeed in
                             
                             // RecentFeed를 MessageInfo로 변환
@@ -45,7 +46,8 @@ class TimelineViewModel: ObservableObject {
                                 hasMultiple: (recentFeed.recentMessageInfo.brushCnt > 1),
                                 cardColor: CardColor(rawValue: recentFeed.recentMessageInfo.color) ?? .red,
                                 messageIdx: recentFeed.recentMessageInfo.messageIdx,
-                                emotion: recentFeed.recentMessageInfo.emotion ?? "delete"
+                                emotion: recentFeed.recentMessageInfo.emotion ?? "delete",
+                                userIdx: recentFeed.recentMessageInfo.userIdx
                             )
                             
                         }
@@ -66,7 +68,6 @@ struct TimelineView: View {
     @StateObject private var viewModel = TimelineViewModel()
     
     @EnvironmentObject var placeViewState: PlaceViewState
-    @EnvironmentObject var reactionState: ReactionState
     
     @Environment(\.scenePhase) private var scenePhase
     
@@ -128,15 +129,6 @@ struct TimelineView: View {
                 .onAppear {
                     viewModel.fetchRecentFeed()
                 }
-                .onChange(of: scenePhase) { newScenePhase in
-                    if newScenePhase == .active {
-                        // foreground로 전환될 때 데이터를 새로 고칩니다.
-                        viewModel.fetchRecentFeed()
-                    }
-                }
-                .onChange(of: reactionState.reaction) { newValue in
-                    viewModel.fetchRecentFeed()
-                }
             }
         } else {
             ZStack {
@@ -189,9 +181,6 @@ struct TimelineView: View {
                         // foreground로 전환될 때 데이터를 새로 고칩니다.
                         viewModel.fetchRecentFeed()
                     }
-                }
-                .onChange(of: reactionState.reaction) { newValue in
-                    viewModel.fetchRecentFeed()
                 }
             }
         }

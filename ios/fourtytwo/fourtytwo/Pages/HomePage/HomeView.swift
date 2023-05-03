@@ -9,8 +9,6 @@ class HomeViewModel: ObservableObject {
     
     @Published var reactionCounts: [String: Int] = ["fire_circle": 0, "heart_circle": 0, "tear_circle": 0, "thumbsUp_circle": 0]
     
-    private var cancellables = Set<AnyCancellable>()
-    
     func checkForNewAlerts() {
         // TODO: Implement checkForNewAlerts
     }

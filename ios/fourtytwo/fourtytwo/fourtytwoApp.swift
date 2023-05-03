@@ -8,7 +8,6 @@ struct fourtytwoApp: App {
     @StateObject private var signUpState = SignUpState()
     @StateObject private var userState = UserState()
     @StateObject private var placeViewState = PlaceViewState()
-    @StateObject private var reactionState = ReactionState()
 
     var body: some Scene {
         WindowGroup {
@@ -17,7 +16,6 @@ struct fourtytwoApp: App {
                 .environmentObject(signUpState)
                 .environmentObject(userState)
                 .environmentObject(placeViewState)
-                .environmentObject(reactionState)
         }
     }
 }

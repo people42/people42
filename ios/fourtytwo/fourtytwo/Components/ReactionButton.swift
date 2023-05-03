@@ -1,13 +1,16 @@
 import SwiftUI
 
 struct ReactionButton: View {
-    @EnvironmentObject var reactionState: ReactionState
     
     @State private var showReactions = false
     @State private var selectedReaction: String?
     
     let messageIdx: Int
-    let emotion: String
+    @State private var emotion: String {
+        didSet {
+            selectedReaction = (emotion == "delete") ? nil : emotion
+        }
+    }
     
     let reactions: [String] = ["heart", "fire", "tear", "thumbsUp"]
     
@@ -98,7 +101,6 @@ struct ReactionButton: View {
             switch result {
             case .success( _):
                 print("emotion selected!")
-                reactionState.reaction += 1
             case .failure(let error):
                 print(error.localizedDescription)
             }

@@ -11,17 +11,7 @@ class PlaceViewModel: ObservableObject {
     @Published var messageInfoList: [MessageInfo] = []
     @Published var location: (latitude: Double, longitude: Double)?
     @Published var placeName: String?
-    
-    func getTimeStringFromISODate(_ isoString: String) -> String? {
-        let dateFormatter = ISO8601DateFormatter()
-        if let date = dateFormatter.date(from: isoString) {
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            return "오늘 \(hour)시쯤"
-        } else {
-            return nil
-        }
-    }
+
     
     func removeMicroseconds(_ dateString: String) -> String {
         if let dotIndex = dateString.lastIndex(of: ".") {
@@ -29,6 +19,84 @@ class PlaceViewModel: ObservableObject {
         } else {
             return dateString
         }
+    }
+}
+
+// V - View
+struct PlaceView: View {
+    @EnvironmentObject var placeViewState: PlaceViewState
+    
+    @StateObject private var viewModel = PlaceViewModel()
+    
+    @State var toggleHeight: CGFloat = 160
+
+    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.scenePhase) private var scenePhase
+
+    var body: some View {
+        VStack {
+            if let location = viewModel.location {
+                PlaceMapView(viewModel: viewModel, location: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), toggleHeight: $toggleHeight)
+            }
+
+
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        if viewModel.messageInfoList.count < 1 {
+                            Spacer()
+                                .frame(height: geometry.size.height / 2 - 90)
+                            HStack {
+                                Spacer()
+                                Text("아직 인연이 없어요")
+                                Spacer()
+                            }
+                            Spacer()
+                        } else {
+                            ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
+                                NavigationLink(destination: PersonView(location: CLLocationCoordinate2D(latitude: viewModel.location?.latitude ?? 0, longitude: viewModel.location?.longitude ?? 0), userIdx: viewModel.messageInfoList[index].userIdx)) {
+                                    HStack(alignment: .center, spacing: 8) {
+                                        MessageCard(messageInfo: viewModel.messageInfoList[index])
+                                    }
+                                }
+                                .padding(.bottom, 16)
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
+                    .padding()
+                }
+                
+            }
+        }
+        .onAppear {
+            getPlaceFeed()
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            if newScenePhase == .active {
+                // foreground로 전환될 때 데이터를 새로 고칩니다.
+                getPlaceFeed()
+            }
+        }
+        .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(Color("Text"))
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text(viewModel.placeName ?? "장소")
+                    .font(.system(size: 18))
+                    .fontWeight(.semibold)
+            }
+        }
+
     }
 }
 
@@ -70,7 +138,8 @@ extension PlaceView {
                                 hasMultiple: (placeFeed.brushCnt > 1),
                                 cardColor: CardColor(rawValue: placeFeed.color) ?? .red,
                                 messageIdx: placeFeed.messageIdx,
-                                emotion: placeFeed.emotion ?? "delete"
+                                emotion: placeFeed.emotion ?? "delete",
+                                userIdx: placeFeed.userIdx
                             )
                             
                         }
@@ -85,87 +154,11 @@ extension PlaceView {
     }
 }
 
-// V - View
-struct PlaceView: View {
-    @EnvironmentObject var placeViewState: PlaceViewState
-    @EnvironmentObject var reactionState: ReactionState
-    
-    @StateObject private var viewModel = PlaceViewModel()
-
-    @Environment(\.presentationMode) var presentationMode
-    @Environment(\.scenePhase) private var scenePhase
-
-    var body: some View {
-        VStack {
-            if let location = viewModel.location {
-                PlaceMapView(viewModel: viewModel, location: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude))
-            }
-
-
-            GeometryReader { geometry in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if viewModel.messageInfoList.count < 1 {
-                            Spacer()
-                                .frame(height: geometry.size.height / 2 - 90)
-                            HStack {
-                                Spacer()
-                                Text("아직 인연이 없어요")
-                                Spacer()
-                            }
-                            Spacer()
-                        } else {
-                            ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
-                                HStack(alignment: .center, spacing: 8) {
-                                    MessageCard(messageInfo: viewModel.messageInfoList[index], fulllText: true)
-                                }
-                                .padding(.bottom, 16)
-                            }
-                        }
-                    }
-                    .padding()
-                }
-            }
-        }
-        .onAppear {
-            getPlaceFeed()
-        }
-        .onChange(of: scenePhase) { newScenePhase in
-            if newScenePhase == .active {
-                // foreground로 전환될 때 데이터를 새로 고칩니다.
-                getPlaceFeed()
-            }
-        }
-//        .onChange(of: reactionState.reaction) { newValue in
-//            getPlaceFeed()
-//        }
-        .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(Color("Text"))
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text(viewModel.placeName ?? "장소")
-                    .font(.system(size: 18))
-                    .fontWeight(.semibold)
-            }
-        }
-
-    }
-}
-
 struct PlaceView_Previews: PreviewProvider {
     static var previews: some View {
         let dummyMessageInfoList: [MessageInfo] = [
-            MessageInfo(profileImage: "robot", stack: 1, nickname: "사용자1", contents: "안녕하세요!", placeIdx: nil, placeName: "장소1", hour: "오늘 15시쯤", hasMultiple: false, cardColor: .red, messageIdx: 1, emotion: "happy"),
-            MessageInfo(profileImage: "alien", stack: 1, nickname: "사용자2", contents: "여기 정말 좋네요!", placeIdx: nil, placeName: "장소1", hour: "오늘 16시쯤", hasMultiple: false, cardColor: .blue, messageIdx: 2, emotion: "happy")
+            MessageInfo(profileImage: "robot", stack: 1, nickname: "사용자1", contents: "안녕하세요!", placeIdx: nil, placeName: "장소1", hour: "오늘 15시쯤", hasMultiple: false, cardColor: .red, messageIdx: 1, emotion: "happy", userIdx: 1),
+            MessageInfo(profileImage: "alien", stack: 1, nickname: "사용자2", contents: "여기 정말 좋네요!", placeIdx: nil, placeName: "장소1", hour: "오늘 16시쯤", hasMultiple: false, cardColor: .blue, messageIdx: 2, emotion: "happy", userIdx: 1)
         ]
         
         let viewModel = PlaceViewModel()
@@ -174,7 +167,6 @@ struct PlaceView_Previews: PreviewProvider {
         
         return PlaceView()
             .environmentObject(PlaceViewState())
-            .environmentObject(ReactionState())
     }
 }
 

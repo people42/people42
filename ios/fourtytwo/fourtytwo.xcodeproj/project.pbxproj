@@ -154,6 +154,117 @@
 		360D52E129FD20C200F67940 /* animatedLogo_w120.gif in Resources */ = {isa = PBXBuildFile; fileRef = 360D52E029FD20C200F67940 /* animatedLogo_w120.gif */; };
 		362552E82A02269D00A2CD4A /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362552E72A02269D00A2CD4A /* PersonView.swift */; };
 		362552EB2A0234C700A2CD4A /* PersonMessageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362552EA2A0234C700A2CD4A /* PersonMessageCard.swift */; };
+		3625535A2A02A34400A2CD4A /* face-in-clouds.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552ED2A02A33F00A2CD4A /* face-in-clouds.png */; };
+		3625535B2A02A34400A2CD4A /* cowboy-hat-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552EE2A02A33F00A2CD4A /* cowboy-hat-face.png */; };
+		3625535C2A02A34400A2CD4A /* face-with-symbols-on-mouth.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552EF2A02A33F00A2CD4A /* face-with-symbols-on-mouth.png */; };
+		3625535D2A02A34400A2CD4A /* smiling-face-with-horns.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F02A02A33F00A2CD4A /* smiling-face-with-horns.png */; };
+		3625535E2A02A34400A2CD4A /* face-savoring-food.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F12A02A33F00A2CD4A /* face-savoring-food.png */; };
+		3625535F2A02A34400A2CD4A /* cold-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F22A02A33F00A2CD4A /* cold-face.png */; };
+		362553602A02A34400A2CD4A /* alien.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F32A02A33F00A2CD4A /* alien.png */; };
+		362553612A02A34400A2CD4A /* pouting-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F42A02A33F00A2CD4A /* pouting-face.png */; };
+		362553622A02A34400A2CD4A /* grinning-face-with-big-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F52A02A33F00A2CD4A /* grinning-face-with-big-eyes.png */; };
+		362553632A02A34400A2CD4A /* robot.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F62A02A33F00A2CD4A /* robot.png */; };
+		362553642A02A34400A2CD4A /* grinning-face-with-smiling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F72A02A33F00A2CD4A /* grinning-face-with-smiling-eyes.png */; };
+		362553652A02A34400A2CD4A /* winking-face-with-tongue.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F82A02A33F00A2CD4A /* winking-face-with-tongue.png */; };
+		362553662A02A34400A2CD4A /* woozy-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552F92A02A33F00A2CD4A /* woozy-face.png */; };
+		362553672A02A34400A2CD4A /* slightly-smiling-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FA2A02A33F00A2CD4A /* slightly-smiling-face.png */; };
+		362553682A02A34400A2CD4A /* grinning-cat-with-smiling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FB2A02A33F00A2CD4A /* grinning-cat-with-smiling-eyes.png */; };
+		362553692A02A34400A2CD4A /* face-with-head-bandage.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FC2A02A33F00A2CD4A /* face-with-head-bandage.png */; };
+		3625536A2A02A34400A2CD4A /* sad-but-relieved-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FD2A02A33F00A2CD4A /* sad-but-relieved-face.png */; };
+		3625536B2A02A34400A2CD4A /* hugging-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FE2A02A33F00A2CD4A /* hugging-face.png */; };
+		3625536C2A02A34400A2CD4A /* face-with-hand-over-mouth.png in Resources */ = {isa = PBXBuildFile; fileRef = 362552FF2A02A34000A2CD4A /* face-with-hand-over-mouth.png */; };
+		3625536D2A02A34400A2CD4A /* money-mouth-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553002A02A34000A2CD4A /* money-mouth-face.png */; };
+		3625536E2A02A34400A2CD4A /* partying-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553012A02A34000A2CD4A /* partying-face.png */; };
+		3625536F2A02A34400A2CD4A /* kissing-cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553022A02A34000A2CD4A /* kissing-cat.png */; };
+		362553702A02A34400A2CD4A /* squinting-face-with-tongue.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553032A02A34000A2CD4A /* squinting-face-with-tongue.png */; };
+		362553712A02A34400A2CD4A /* upside-down-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553042A02A34000A2CD4A /* upside-down-face.png */; };
+		362553722A02A34400A2CD4A /* downcast-face-with-sweat.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553052A02A34000A2CD4A /* downcast-face-with-sweat.png */; };
+		362553732A02A34400A2CD4A /* face-screaming-in-fear.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553062A02A34000A2CD4A /* face-screaming-in-fear.png */; };
+		362553742A02A34400A2CD4A /* nauseated-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553072A02A34000A2CD4A /* nauseated-face.png */; };
+		362553752A02A34400A2CD4A /* smiling-cat-with-heart-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553082A02A34000A2CD4A /* smiling-cat-with-heart-eyes.png */; };
+		362553762A02A34400A2CD4A /* crying-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553092A02A34000A2CD4A /* crying-face.png */; };
+		362553772A02A34400A2CD4A /* confounded-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530A2A02A34000A2CD4A /* confounded-face.png */; };
+		362553782A02A34400A2CD4A /* anxious-face-with-sweat.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530B2A02A34000A2CD4A /* anxious-face-with-sweat.png */; };
+		362553792A02A34400A2CD4A /* thinking-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530C2A02A34000A2CD4A /* thinking-face.png */; };
+		3625537A2A02A34400A2CD4A /* smiling-face-with-hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530D2A02A34000A2CD4A /* smiling-face-with-hearts.png */; };
+		3625537B2A02A34400A2CD4A /* unamused-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530E2A02A34000A2CD4A /* unamused-face.png */; };
+		3625537C2A02A34400A2CD4A /* smiling-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625530F2A02A34000A2CD4A /* smiling-face.png */; };
+		3625537D2A02A34400A2CD4A /* face-with-open-mouth.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553102A02A34000A2CD4A /* face-with-open-mouth.png */; };
+		3625537E2A02A34400A2CD4A /* neutral-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553112A02A34000A2CD4A /* neutral-face.png */; };
+		3625537F2A02A34400A2CD4A /* pleading-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553122A02A34000A2CD4A /* pleading-face.png */; };
+		362553802A02A34400A2CD4A /* kissing-face-with-closed-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553132A02A34000A2CD4A /* kissing-face-with-closed-eyes.png */; };
+		362553812A02A34400A2CD4A /* winking-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553142A02A34000A2CD4A /* winking-face.png */; };
+		362553822A02A34400A2CD4A /* lying-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553152A02A34000A2CD4A /* lying-face.png */; };
+		362553832A02A34400A2CD4A /* nerd-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553162A02A34000A2CD4A /* nerd-face.png */; };
+		362553842A02A34400A2CD4A /* face-with-tongue.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553172A02A34000A2CD4A /* face-with-tongue.png */; };
+		362553852A02A34400A2CD4A /* grinning-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553182A02A34000A2CD4A /* grinning-face.png */; };
+		362553862A02A34400A2CD4A /* face-vomiting.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553192A02A34000A2CD4A /* face-vomiting.png */; };
+		362553872A02A34400A2CD4A /* ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531A2A02A34000A2CD4A /* ghost.png */; };
+		362553882A02A34400A2CD4A /* crying-cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531B2A02A34100A2CD4A /* crying-cat.png */; };
+		362553892A02A34400A2CD4A /* smiling-face-with-heart-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531C2A02A34100A2CD4A /* smiling-face-with-heart-eyes.png */; };
+		3625538A2A02A34400A2CD4A /* face-with-raised-eyebrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531D2A02A34100A2CD4A /* face-with-raised-eyebrow.png */; };
+		3625538B2A02A34400A2CD4A /* face-with-steam-from-nose.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531E2A02A34100A2CD4A /* face-with-steam-from-nose.png */; };
+		3625538C2A02A34400A2CD4A /* anguished-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625531F2A02A34100A2CD4A /* anguished-face.png */; };
+		3625538D2A02A34400A2CD4A /* face-exhaling.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553202A02A34100A2CD4A /* face-exhaling.png */; };
+		3625538E2A02A34400A2CD4A /* frowning-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553212A02A34100A2CD4A /* frowning-face.png */; };
+		3625538F2A02A34400A2CD4A /* cat-with-wry-smile.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553222A02A34100A2CD4A /* cat-with-wry-smile.png */; };
+		362553902A02A34400A2CD4A /* confused-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553232A02A34100A2CD4A /* confused-face.png */; };
+		362553912A02A34400A2CD4A /* purple-monster.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553242A02A34100A2CD4A /* purple-monster.png */; };
+		362553922A02A34400A2CD4A /* angry-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553252A02A34100A2CD4A /* angry-face.png */; };
+		362553932A02A34400A2CD4A /* grinning-face-with-sweat.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553262A02A34100A2CD4A /* grinning-face-with-sweat.png */; };
+		362553942A02A34400A2CD4A /* flushed-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553272A02A34100A2CD4A /* flushed-face.png */; };
+		362553952A02A34400A2CD4A /* hot-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553282A02A34100A2CD4A /* hot-face.png */; };
+		362553962A02A34400A2CD4A /* rolling-on-the-floor-laughing.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553292A02A34100A2CD4A /* rolling-on-the-floor-laughing.png */; };
+		362553972A02A34400A2CD4A /* worried-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532A2A02A34100A2CD4A /* worried-face.png */; };
+		362553982A02A34400A2CD4A /* kissing-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532B2A02A34100A2CD4A /* kissing-face.png */; };
+		362553992A02A34400A2CD4A /* grimacing-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532C2A02A34100A2CD4A /* grimacing-face.png */; };
+		3625539A2A02A34400A2CD4A /* smiling-face-with-halo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532D2A02A34100A2CD4A /* smiling-face-with-halo.png */; };
+		3625539B2A02A34400A2CD4A /* weary-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532E2A02A34100A2CD4A /* weary-face.png */; };
+		3625539C2A02A34400A2CD4A /* tired-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625532F2A02A34100A2CD4A /* tired-face.png */; };
+		3625539D2A02A34400A2CD4A /* disappointed-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553302A02A34100A2CD4A /* disappointed-face.png */; };
+		3625539E2A02A34400A2CD4A /* slightly-frowning-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553312A02A34200A2CD4A /* slightly-frowning-face.png */; };
+		3625539F2A02A34400A2CD4A /* frowning-face-with-open-mouth.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553322A02A34200A2CD4A /* frowning-face-with-open-mouth.png */; };
+		362553A02A02A34400A2CD4A /* pensive-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553332A02A34200A2CD4A /* pensive-face.png */; };
+		362553A12A02A34400A2CD4A /* face-with-thermometer.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553342A02A34200A2CD4A /* face-with-thermometer.png */; };
+		362553A22A02A34400A2CD4A /* grinning-cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553352A02A34200A2CD4A /* grinning-cat.png */; };
+		362553A32A02A34400A2CD4A /* kissing-face-with-smiling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553362A02A34200A2CD4A /* kissing-face-with-smiling-eyes.png */; };
+		362553A42A02A34400A2CD4A /* sleeping-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553372A02A34200A2CD4A /* sleeping-face.png */; };
+		362553A52A02A34400A2CD4A /* exploding-head.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553382A02A34200A2CD4A /* exploding-head.png */; };
+		362553A62A02A34400A2CD4A /* face-without-mouth.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553392A02A34200A2CD4A /* face-without-mouth.png */; };
+		362553A72A02A34400A2CD4A /* yawning-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533A2A02A34200A2CD4A /* yawning-face.png */; };
+		362553A82A02A34400A2CD4A /* beaming-face-with-smiling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533B2A02A34200A2CD4A /* beaming-face-with-smiling-eyes.png */; };
+		362553A92A02A34400A2CD4A /* smiling-face-with-smiling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533C2A02A34200A2CD4A /* smiling-face-with-smiling-eyes.png */; };
+		362553AA2A02A34400A2CD4A /* dizzy-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533D2A02A34200A2CD4A /* dizzy-face.png */; };
+		362553AB2A02A34400A2CD4A /* persevering-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533E2A02A34200A2CD4A /* persevering-face.png */; };
+		362553AC2A02A34400A2CD4A /* face-blowing-a-kiss.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625533F2A02A34200A2CD4A /* face-blowing-a-kiss.png */; };
+		362553AD2A02A34400A2CD4A /* cat-with-tears-of-joy.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553402A02A34200A2CD4A /* cat-with-tears-of-joy.png */; };
+		362553AE2A02A34400A2CD4A /* smiling-face-with-sunglasses.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553412A02A34200A2CD4A /* smiling-face-with-sunglasses.png */; };
+		362553AF2A02A34400A2CD4A /* face-with-medical-mask.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553422A02A34200A2CD4A /* face-with-medical-mask.png */; };
+		362553B02A02A34400A2CD4A /* face-with-tears-of-joy.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553432A02A34200A2CD4A /* face-with-tears-of-joy.png */; };
+		362553B12A02A34400A2CD4A /* smiling-face-with-tear.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553442A02A34300A2CD4A /* smiling-face-with-tear.png */; };
+		362553B22A02A34400A2CD4A /* face-with-spiral-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553452A02A34300A2CD4A /* face-with-spiral-eyes.png */; };
+		362553B32A02A34400A2CD4A /* drooling-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553462A02A34300A2CD4A /* drooling-face.png */; };
+		362553B42A02A34400A2CD4A /* face-with-rolling-eyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553472A02A34300A2CD4A /* face-with-rolling-eyes.png */; };
+		362553B52A02A34400A2CD4A /* disguised-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553482A02A34300A2CD4A /* disguised-face.png */; };
+		362553B62A02A34400A2CD4A /* clown-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553492A02A34300A2CD4A /* clown-face.png */; };
+		362553B72A02A34400A2CD4A /* skull.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534A2A02A34300A2CD4A /* skull.png */; };
+		362553B82A02A34400A2CD4A /* zipper-mouth-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534B2A02A34300A2CD4A /* zipper-mouth-face.png */; };
+		362553B92A02A34400A2CD4A /* smirking-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534C2A02A34300A2CD4A /* smirking-face.png */; };
+		362553BA2A02A34400A2CD4A /* pile-of-poo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534D2A02A34300A2CD4A /* pile-of-poo.png */; };
+		362553BB2A02A34400A2CD4A /* sleepy-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534E2A02A34300A2CD4A /* sleepy-face.png */; };
+		362553BC2A02A34400A2CD4A /* zany-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 3625534F2A02A34300A2CD4A /* zany-face.png */; };
+		362553BD2A02A34400A2CD4A /* face-with-monocle.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553502A02A34300A2CD4A /* face-with-monocle.png */; };
+		362553BE2A02A34400A2CD4A /* relieved-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553512A02A34300A2CD4A /* relieved-face.png */; };
+		362553BF2A02A34400A2CD4A /* weary-cat.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553522A02A34300A2CD4A /* weary-cat.png */; };
+		362553C02A02A34400A2CD4A /* loudly-crying-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553532A02A34300A2CD4A /* loudly-crying-face.png */; };
+		362553C12A02A34400A2CD4A /* hushed-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553542A02A34300A2CD4A /* hushed-face.png */; };
+		362553C22A02A34400A2CD4A /* fearful-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553552A02A34400A2CD4A /* fearful-face.png */; };
+		362553C32A02A34400A2CD4A /* sneezing-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553562A02A34400A2CD4A /* sneezing-face.png */; };
+		362553C42A02A34400A2CD4A /* star-struck.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553572A02A34400A2CD4A /* star-struck.png */; };
+		362553C52A02A34400A2CD4A /* shushing-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553582A02A34400A2CD4A /* shushing-face.png */; };
+		362553C62A02A34400A2CD4A /* grinning-squinting-face.png in Resources */ = {isa = PBXBuildFile; fileRef = 362553592A02A34400A2CD4A /* grinning-squinting-face.png */; };
+		362553C82A02B10500A2CD4A /* PlacePersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553C72A02B10500A2CD4A /* PlacePersonView.swift */; };
+		362553CA2A02B6CE00A2CD4A /* CommonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553C92A02B6CE00A2CD4A /* CommonService.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -345,6 +456,117 @@
 		360D52E029FD20C200F67940 /* animatedLogo_w120.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animatedLogo_w120.gif; sourceTree = "<group>"; };
 		362552E72A02269D00A2CD4A /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
 		362552EA2A0234C700A2CD4A /* PersonMessageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonMessageCard.swift; sourceTree = "<group>"; };
+		362552ED2A02A33F00A2CD4A /* face-in-clouds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-in-clouds.png"; sourceTree = "<group>"; };
+		362552EE2A02A33F00A2CD4A /* cowboy-hat-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cowboy-hat-face.png"; sourceTree = "<group>"; };
+		362552EF2A02A33F00A2CD4A /* face-with-symbols-on-mouth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-symbols-on-mouth.png"; sourceTree = "<group>"; };
+		362552F02A02A33F00A2CD4A /* smiling-face-with-horns.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-horns.png"; sourceTree = "<group>"; };
+		362552F12A02A33F00A2CD4A /* face-savoring-food.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-savoring-food.png"; sourceTree = "<group>"; };
+		362552F22A02A33F00A2CD4A /* cold-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cold-face.png"; sourceTree = "<group>"; };
+		362552F32A02A33F00A2CD4A /* alien.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alien.png; sourceTree = "<group>"; };
+		362552F42A02A33F00A2CD4A /* pouting-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pouting-face.png"; sourceTree = "<group>"; };
+		362552F52A02A33F00A2CD4A /* grinning-face-with-big-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-face-with-big-eyes.png"; sourceTree = "<group>"; };
+		362552F62A02A33F00A2CD4A /* robot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = robot.png; sourceTree = "<group>"; };
+		362552F72A02A33F00A2CD4A /* grinning-face-with-smiling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-face-with-smiling-eyes.png"; sourceTree = "<group>"; };
+		362552F82A02A33F00A2CD4A /* winking-face-with-tongue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "winking-face-with-tongue.png"; sourceTree = "<group>"; };
+		362552F92A02A33F00A2CD4A /* woozy-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "woozy-face.png"; sourceTree = "<group>"; };
+		362552FA2A02A33F00A2CD4A /* slightly-smiling-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slightly-smiling-face.png"; sourceTree = "<group>"; };
+		362552FB2A02A33F00A2CD4A /* grinning-cat-with-smiling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-cat-with-smiling-eyes.png"; sourceTree = "<group>"; };
+		362552FC2A02A33F00A2CD4A /* face-with-head-bandage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-head-bandage.png"; sourceTree = "<group>"; };
+		362552FD2A02A33F00A2CD4A /* sad-but-relieved-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sad-but-relieved-face.png"; sourceTree = "<group>"; };
+		362552FE2A02A33F00A2CD4A /* hugging-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hugging-face.png"; sourceTree = "<group>"; };
+		362552FF2A02A34000A2CD4A /* face-with-hand-over-mouth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-hand-over-mouth.png"; sourceTree = "<group>"; };
+		362553002A02A34000A2CD4A /* money-mouth-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "money-mouth-face.png"; sourceTree = "<group>"; };
+		362553012A02A34000A2CD4A /* partying-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "partying-face.png"; sourceTree = "<group>"; };
+		362553022A02A34000A2CD4A /* kissing-cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kissing-cat.png"; sourceTree = "<group>"; };
+		362553032A02A34000A2CD4A /* squinting-face-with-tongue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "squinting-face-with-tongue.png"; sourceTree = "<group>"; };
+		362553042A02A34000A2CD4A /* upside-down-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upside-down-face.png"; sourceTree = "<group>"; };
+		362553052A02A34000A2CD4A /* downcast-face-with-sweat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "downcast-face-with-sweat.png"; sourceTree = "<group>"; };
+		362553062A02A34000A2CD4A /* face-screaming-in-fear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-screaming-in-fear.png"; sourceTree = "<group>"; };
+		362553072A02A34000A2CD4A /* nauseated-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nauseated-face.png"; sourceTree = "<group>"; };
+		362553082A02A34000A2CD4A /* smiling-cat-with-heart-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-cat-with-heart-eyes.png"; sourceTree = "<group>"; };
+		362553092A02A34000A2CD4A /* crying-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crying-face.png"; sourceTree = "<group>"; };
+		3625530A2A02A34000A2CD4A /* confounded-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "confounded-face.png"; sourceTree = "<group>"; };
+		3625530B2A02A34000A2CD4A /* anxious-face-with-sweat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "anxious-face-with-sweat.png"; sourceTree = "<group>"; };
+		3625530C2A02A34000A2CD4A /* thinking-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thinking-face.png"; sourceTree = "<group>"; };
+		3625530D2A02A34000A2CD4A /* smiling-face-with-hearts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-hearts.png"; sourceTree = "<group>"; };
+		3625530E2A02A34000A2CD4A /* unamused-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unamused-face.png"; sourceTree = "<group>"; };
+		3625530F2A02A34000A2CD4A /* smiling-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face.png"; sourceTree = "<group>"; };
+		362553102A02A34000A2CD4A /* face-with-open-mouth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-open-mouth.png"; sourceTree = "<group>"; };
+		362553112A02A34000A2CD4A /* neutral-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "neutral-face.png"; sourceTree = "<group>"; };
+		362553122A02A34000A2CD4A /* pleading-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pleading-face.png"; sourceTree = "<group>"; };
+		362553132A02A34000A2CD4A /* kissing-face-with-closed-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kissing-face-with-closed-eyes.png"; sourceTree = "<group>"; };
+		362553142A02A34000A2CD4A /* winking-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "winking-face.png"; sourceTree = "<group>"; };
+		362553152A02A34000A2CD4A /* lying-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lying-face.png"; sourceTree = "<group>"; };
+		362553162A02A34000A2CD4A /* nerd-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nerd-face.png"; sourceTree = "<group>"; };
+		362553172A02A34000A2CD4A /* face-with-tongue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-tongue.png"; sourceTree = "<group>"; };
+		362553182A02A34000A2CD4A /* grinning-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-face.png"; sourceTree = "<group>"; };
+		362553192A02A34000A2CD4A /* face-vomiting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-vomiting.png"; sourceTree = "<group>"; };
+		3625531A2A02A34000A2CD4A /* ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ghost.png; sourceTree = "<group>"; };
+		3625531B2A02A34100A2CD4A /* crying-cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crying-cat.png"; sourceTree = "<group>"; };
+		3625531C2A02A34100A2CD4A /* smiling-face-with-heart-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-heart-eyes.png"; sourceTree = "<group>"; };
+		3625531D2A02A34100A2CD4A /* face-with-raised-eyebrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-raised-eyebrow.png"; sourceTree = "<group>"; };
+		3625531E2A02A34100A2CD4A /* face-with-steam-from-nose.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-steam-from-nose.png"; sourceTree = "<group>"; };
+		3625531F2A02A34100A2CD4A /* anguished-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "anguished-face.png"; sourceTree = "<group>"; };
+		362553202A02A34100A2CD4A /* face-exhaling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-exhaling.png"; sourceTree = "<group>"; };
+		362553212A02A34100A2CD4A /* frowning-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frowning-face.png"; sourceTree = "<group>"; };
+		362553222A02A34100A2CD4A /* cat-with-wry-smile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat-with-wry-smile.png"; sourceTree = "<group>"; };
+		362553232A02A34100A2CD4A /* confused-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "confused-face.png"; sourceTree = "<group>"; };
+		362553242A02A34100A2CD4A /* purple-monster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "purple-monster.png"; sourceTree = "<group>"; };
+		362553252A02A34100A2CD4A /* angry-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "angry-face.png"; sourceTree = "<group>"; };
+		362553262A02A34100A2CD4A /* grinning-face-with-sweat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-face-with-sweat.png"; sourceTree = "<group>"; };
+		362553272A02A34100A2CD4A /* flushed-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flushed-face.png"; sourceTree = "<group>"; };
+		362553282A02A34100A2CD4A /* hot-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hot-face.png"; sourceTree = "<group>"; };
+		362553292A02A34100A2CD4A /* rolling-on-the-floor-laughing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rolling-on-the-floor-laughing.png"; sourceTree = "<group>"; };
+		3625532A2A02A34100A2CD4A /* worried-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "worried-face.png"; sourceTree = "<group>"; };
+		3625532B2A02A34100A2CD4A /* kissing-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kissing-face.png"; sourceTree = "<group>"; };
+		3625532C2A02A34100A2CD4A /* grimacing-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grimacing-face.png"; sourceTree = "<group>"; };
+		3625532D2A02A34100A2CD4A /* smiling-face-with-halo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-halo.png"; sourceTree = "<group>"; };
+		3625532E2A02A34100A2CD4A /* weary-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "weary-face.png"; sourceTree = "<group>"; };
+		3625532F2A02A34100A2CD4A /* tired-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tired-face.png"; sourceTree = "<group>"; };
+		362553302A02A34100A2CD4A /* disappointed-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "disappointed-face.png"; sourceTree = "<group>"; };
+		362553312A02A34200A2CD4A /* slightly-frowning-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slightly-frowning-face.png"; sourceTree = "<group>"; };
+		362553322A02A34200A2CD4A /* frowning-face-with-open-mouth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frowning-face-with-open-mouth.png"; sourceTree = "<group>"; };
+		362553332A02A34200A2CD4A /* pensive-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pensive-face.png"; sourceTree = "<group>"; };
+		362553342A02A34200A2CD4A /* face-with-thermometer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-thermometer.png"; sourceTree = "<group>"; };
+		362553352A02A34200A2CD4A /* grinning-cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-cat.png"; sourceTree = "<group>"; };
+		362553362A02A34200A2CD4A /* kissing-face-with-smiling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kissing-face-with-smiling-eyes.png"; sourceTree = "<group>"; };
+		362553372A02A34200A2CD4A /* sleeping-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sleeping-face.png"; sourceTree = "<group>"; };
+		362553382A02A34200A2CD4A /* exploding-head.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "exploding-head.png"; sourceTree = "<group>"; };
+		362553392A02A34200A2CD4A /* face-without-mouth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-without-mouth.png"; sourceTree = "<group>"; };
+		3625533A2A02A34200A2CD4A /* yawning-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yawning-face.png"; sourceTree = "<group>"; };
+		3625533B2A02A34200A2CD4A /* beaming-face-with-smiling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beaming-face-with-smiling-eyes.png"; sourceTree = "<group>"; };
+		3625533C2A02A34200A2CD4A /* smiling-face-with-smiling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-smiling-eyes.png"; sourceTree = "<group>"; };
+		3625533D2A02A34200A2CD4A /* dizzy-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dizzy-face.png"; sourceTree = "<group>"; };
+		3625533E2A02A34200A2CD4A /* persevering-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "persevering-face.png"; sourceTree = "<group>"; };
+		3625533F2A02A34200A2CD4A /* face-blowing-a-kiss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-blowing-a-kiss.png"; sourceTree = "<group>"; };
+		362553402A02A34200A2CD4A /* cat-with-tears-of-joy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat-with-tears-of-joy.png"; sourceTree = "<group>"; };
+		362553412A02A34200A2CD4A /* smiling-face-with-sunglasses.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-sunglasses.png"; sourceTree = "<group>"; };
+		362553422A02A34200A2CD4A /* face-with-medical-mask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-medical-mask.png"; sourceTree = "<group>"; };
+		362553432A02A34200A2CD4A /* face-with-tears-of-joy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-tears-of-joy.png"; sourceTree = "<group>"; };
+		362553442A02A34300A2CD4A /* smiling-face-with-tear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiling-face-with-tear.png"; sourceTree = "<group>"; };
+		362553452A02A34300A2CD4A /* face-with-spiral-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-spiral-eyes.png"; sourceTree = "<group>"; };
+		362553462A02A34300A2CD4A /* drooling-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "drooling-face.png"; sourceTree = "<group>"; };
+		362553472A02A34300A2CD4A /* face-with-rolling-eyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-rolling-eyes.png"; sourceTree = "<group>"; };
+		362553482A02A34300A2CD4A /* disguised-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "disguised-face.png"; sourceTree = "<group>"; };
+		362553492A02A34300A2CD4A /* clown-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clown-face.png"; sourceTree = "<group>"; };
+		3625534A2A02A34300A2CD4A /* skull.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skull.png; sourceTree = "<group>"; };
+		3625534B2A02A34300A2CD4A /* zipper-mouth-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zipper-mouth-face.png"; sourceTree = "<group>"; };
+		3625534C2A02A34300A2CD4A /* smirking-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smirking-face.png"; sourceTree = "<group>"; };
+		3625534D2A02A34300A2CD4A /* pile-of-poo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pile-of-poo.png"; sourceTree = "<group>"; };
+		3625534E2A02A34300A2CD4A /* sleepy-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sleepy-face.png"; sourceTree = "<group>"; };
+		3625534F2A02A34300A2CD4A /* zany-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zany-face.png"; sourceTree = "<group>"; };
+		362553502A02A34300A2CD4A /* face-with-monocle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "face-with-monocle.png"; sourceTree = "<group>"; };
+		362553512A02A34300A2CD4A /* relieved-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "relieved-face.png"; sourceTree = "<group>"; };
+		362553522A02A34300A2CD4A /* weary-cat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "weary-cat.png"; sourceTree = "<group>"; };
+		362553532A02A34300A2CD4A /* loudly-crying-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loudly-crying-face.png"; sourceTree = "<group>"; };
+		362553542A02A34300A2CD4A /* hushed-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hushed-face.png"; sourceTree = "<group>"; };
+		362553552A02A34400A2CD4A /* fearful-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fearful-face.png"; sourceTree = "<group>"; };
+		362553562A02A34400A2CD4A /* sneezing-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sneezing-face.png"; sourceTree = "<group>"; };
+		362553572A02A34400A2CD4A /* star-struck.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star-struck.png"; sourceTree = "<group>"; };
+		362553582A02A34400A2CD4A /* shushing-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shushing-face.png"; sourceTree = "<group>"; };
+		362553592A02A34400A2CD4A /* grinning-squinting-face.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grinning-squinting-face.png"; sourceTree = "<group>"; };
+		362553C72A02B10500A2CD4A /* PlacePersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacePersonView.swift; sourceTree = "<group>"; };
+		362553C92A02B6CE00A2CD4A /* CommonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonService.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -571,6 +793,7 @@
 				360D52B629F81C9B00F67940 /* LocationService.swift */,
 				360D52B229F81BA800F67940 /* LocationManager.swift */,
 				360D52B429F81C1600F67940 /* LocationSender.swift */,
+				362553C92A02B6CE00A2CD4A /* CommonService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -641,6 +864,7 @@
 			isa = PBXGroup;
 			children = (
 				362552EA2A0234C700A2CD4A /* PersonMessageCard.swift */,
+				362553C72A02B10500A2CD4A /* PlacePersonView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -648,6 +872,115 @@
 		362552EC2A023E0D00A2CD4A /* EmojiStatic */ = {
 			isa = PBXGroup;
 			children = (
+				362552F32A02A33F00A2CD4A /* alien.png */,
+				362553252A02A34100A2CD4A /* angry-face.png */,
+				3625531F2A02A34100A2CD4A /* anguished-face.png */,
+				3625530B2A02A34000A2CD4A /* anxious-face-with-sweat.png */,
+				3625533B2A02A34200A2CD4A /* beaming-face-with-smiling-eyes.png */,
+				362553402A02A34200A2CD4A /* cat-with-tears-of-joy.png */,
+				362553222A02A34100A2CD4A /* cat-with-wry-smile.png */,
+				362553492A02A34300A2CD4A /* clown-face.png */,
+				362552F22A02A33F00A2CD4A /* cold-face.png */,
+				3625530A2A02A34000A2CD4A /* confounded-face.png */,
+				362553232A02A34100A2CD4A /* confused-face.png */,
+				362552EE2A02A33F00A2CD4A /* cowboy-hat-face.png */,
+				3625531B2A02A34100A2CD4A /* crying-cat.png */,
+				362553092A02A34000A2CD4A /* crying-face.png */,
+				362553302A02A34100A2CD4A /* disappointed-face.png */,
+				362553482A02A34300A2CD4A /* disguised-face.png */,
+				3625533D2A02A34200A2CD4A /* dizzy-face.png */,
+				362553052A02A34000A2CD4A /* downcast-face-with-sweat.png */,
+				362553462A02A34300A2CD4A /* drooling-face.png */,
+				362553382A02A34200A2CD4A /* exploding-head.png */,
+				3625533F2A02A34200A2CD4A /* face-blowing-a-kiss.png */,
+				362553202A02A34100A2CD4A /* face-exhaling.png */,
+				362552ED2A02A33F00A2CD4A /* face-in-clouds.png */,
+				362552F12A02A33F00A2CD4A /* face-savoring-food.png */,
+				362553062A02A34000A2CD4A /* face-screaming-in-fear.png */,
+				362553192A02A34000A2CD4A /* face-vomiting.png */,
+				362552FF2A02A34000A2CD4A /* face-with-hand-over-mouth.png */,
+				362552FC2A02A33F00A2CD4A /* face-with-head-bandage.png */,
+				362553422A02A34200A2CD4A /* face-with-medical-mask.png */,
+				362553502A02A34300A2CD4A /* face-with-monocle.png */,
+				362553102A02A34000A2CD4A /* face-with-open-mouth.png */,
+				3625531D2A02A34100A2CD4A /* face-with-raised-eyebrow.png */,
+				362553472A02A34300A2CD4A /* face-with-rolling-eyes.png */,
+				362553452A02A34300A2CD4A /* face-with-spiral-eyes.png */,
+				3625531E2A02A34100A2CD4A /* face-with-steam-from-nose.png */,
+				362552EF2A02A33F00A2CD4A /* face-with-symbols-on-mouth.png */,
+				362553432A02A34200A2CD4A /* face-with-tears-of-joy.png */,
+				362553342A02A34200A2CD4A /* face-with-thermometer.png */,
+				362553172A02A34000A2CD4A /* face-with-tongue.png */,
+				362553392A02A34200A2CD4A /* face-without-mouth.png */,
+				362553552A02A34400A2CD4A /* fearful-face.png */,
+				362553272A02A34100A2CD4A /* flushed-face.png */,
+				362553322A02A34200A2CD4A /* frowning-face-with-open-mouth.png */,
+				362553212A02A34100A2CD4A /* frowning-face.png */,
+				3625531A2A02A34000A2CD4A /* ghost.png */,
+				3625532C2A02A34100A2CD4A /* grimacing-face.png */,
+				362552FB2A02A33F00A2CD4A /* grinning-cat-with-smiling-eyes.png */,
+				362553352A02A34200A2CD4A /* grinning-cat.png */,
+				362552F52A02A33F00A2CD4A /* grinning-face-with-big-eyes.png */,
+				362552F72A02A33F00A2CD4A /* grinning-face-with-smiling-eyes.png */,
+				362553262A02A34100A2CD4A /* grinning-face-with-sweat.png */,
+				362553182A02A34000A2CD4A /* grinning-face.png */,
+				362553592A02A34400A2CD4A /* grinning-squinting-face.png */,
+				362553282A02A34100A2CD4A /* hot-face.png */,
+				362552FE2A02A33F00A2CD4A /* hugging-face.png */,
+				362553542A02A34300A2CD4A /* hushed-face.png */,
+				362553022A02A34000A2CD4A /* kissing-cat.png */,
+				362553132A02A34000A2CD4A /* kissing-face-with-closed-eyes.png */,
+				362553362A02A34200A2CD4A /* kissing-face-with-smiling-eyes.png */,
+				3625532B2A02A34100A2CD4A /* kissing-face.png */,
+				362553532A02A34300A2CD4A /* loudly-crying-face.png */,
+				362553152A02A34000A2CD4A /* lying-face.png */,
+				362553002A02A34000A2CD4A /* money-mouth-face.png */,
+				362553072A02A34000A2CD4A /* nauseated-face.png */,
+				362553162A02A34000A2CD4A /* nerd-face.png */,
+				362553112A02A34000A2CD4A /* neutral-face.png */,
+				362553012A02A34000A2CD4A /* partying-face.png */,
+				362553332A02A34200A2CD4A /* pensive-face.png */,
+				3625533E2A02A34200A2CD4A /* persevering-face.png */,
+				3625534D2A02A34300A2CD4A /* pile-of-poo.png */,
+				362553122A02A34000A2CD4A /* pleading-face.png */,
+				362552F42A02A33F00A2CD4A /* pouting-face.png */,
+				362553242A02A34100A2CD4A /* purple-monster.png */,
+				362553512A02A34300A2CD4A /* relieved-face.png */,
+				362552F62A02A33F00A2CD4A /* robot.png */,
+				362553292A02A34100A2CD4A /* rolling-on-the-floor-laughing.png */,
+				362552FD2A02A33F00A2CD4A /* sad-but-relieved-face.png */,
+				362553582A02A34400A2CD4A /* shushing-face.png */,
+				3625534A2A02A34300A2CD4A /* skull.png */,
+				362553372A02A34200A2CD4A /* sleeping-face.png */,
+				3625534E2A02A34300A2CD4A /* sleepy-face.png */,
+				362553312A02A34200A2CD4A /* slightly-frowning-face.png */,
+				362552FA2A02A33F00A2CD4A /* slightly-smiling-face.png */,
+				362553082A02A34000A2CD4A /* smiling-cat-with-heart-eyes.png */,
+				3625532D2A02A34100A2CD4A /* smiling-face-with-halo.png */,
+				3625531C2A02A34100A2CD4A /* smiling-face-with-heart-eyes.png */,
+				3625530D2A02A34000A2CD4A /* smiling-face-with-hearts.png */,
+				362552F02A02A33F00A2CD4A /* smiling-face-with-horns.png */,
+				3625533C2A02A34200A2CD4A /* smiling-face-with-smiling-eyes.png */,
+				362553412A02A34200A2CD4A /* smiling-face-with-sunglasses.png */,
+				362553442A02A34300A2CD4A /* smiling-face-with-tear.png */,
+				3625530F2A02A34000A2CD4A /* smiling-face.png */,
+				3625534C2A02A34300A2CD4A /* smirking-face.png */,
+				362553562A02A34400A2CD4A /* sneezing-face.png */,
+				362553032A02A34000A2CD4A /* squinting-face-with-tongue.png */,
+				362553572A02A34400A2CD4A /* star-struck.png */,
+				3625530C2A02A34000A2CD4A /* thinking-face.png */,
+				3625532F2A02A34100A2CD4A /* tired-face.png */,
+				3625530E2A02A34000A2CD4A /* unamused-face.png */,
+				362553042A02A34000A2CD4A /* upside-down-face.png */,
+				362553522A02A34300A2CD4A /* weary-cat.png */,
+				3625532E2A02A34100A2CD4A /* weary-face.png */,
+				362552F82A02A33F00A2CD4A /* winking-face-with-tongue.png */,
+				362553142A02A34000A2CD4A /* winking-face.png */,
+				362552F92A02A33F00A2CD4A /* woozy-face.png */,
+				3625532A2A02A34100A2CD4A /* worried-face.png */,
+				3625533A2A02A34200A2CD4A /* yawning-face.png */,
+				3625534F2A02A34300A2CD4A /* zany-face.png */,
+				3625534B2A02A34300A2CD4A /* zipper-mouth-face.png */,
 			);
 			path = EmojiStatic;
 			sourceTree = "<group>";
@@ -933,8 +1266,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3606DEB529F2AA540025F0FC /* grinning-face-with-sweat.gif in Resources */,
+				362553952A02A34400A2CD4A /* hot-face.png in Resources */,
 				3606DECD29F2AA540025F0FC /* disguised-face.gif in Resources */,
 				3606DED629F2AA540025F0FC /* anxious-face-with-sweat.gif in Resources */,
+				3625539E2A02A34400A2CD4A /* slightly-frowning-face.png in Resources */,
 				36BF9C4529ED4F3B0011677E /* Preview Assets.xcassets in Resources */,
 				3606DEB729F2AA540025F0FC /* smiling-face.gif in Resources */,
 				3606DEF029F2AA540025F0FC /* face-with-open-mouth.gif in Resources */,
@@ -945,102 +1280,209 @@
 				3606DEA129F2AA540025F0FC /* ghost.gif in Resources */,
 				3606DEFD29F2AA540025F0FC /* zipper-mouth-face.gif in Resources */,
 				3606DF0629F2AA540025F0FC /* face-vomiting.gif in Resources */,
+				3625537A2A02A34400A2CD4A /* smiling-face-with-hearts.png in Resources */,
+				362553A52A02A34400A2CD4A /* exploding-head.png in Resources */,
+				3625537B2A02A34400A2CD4A /* unamused-face.png in Resources */,
 				3606DEEC29F2AA540025F0FC /* sleepy-face.gif in Resources */,
+				3625538F2A02A34400A2CD4A /* cat-with-wry-smile.png in Resources */,
 				3606DED329F2AA540025F0FC /* face-with-tongue.gif in Resources */,
 				3606DEC729F2AA540025F0FC /* flushed-face.gif in Resources */,
+				362553882A02A34400A2CD4A /* crying-cat.png in Resources */,
+				362553A62A02A34400A2CD4A /* face-without-mouth.png in Resources */,
+				362553832A02A34400A2CD4A /* nerd-face.png in Resources */,
+				362553B22A02A34400A2CD4A /* face-with-spiral-eyes.png in Resources */,
+				362553AD2A02A34400A2CD4A /* cat-with-tears-of-joy.png in Resources */,
+				362553AE2A02A34400A2CD4A /* smiling-face-with-sunglasses.png in Resources */,
 				3606DEFE29F2AA540025F0FC /* smiling-face-with-heart-eyes.gif in Resources */,
+				362553C42A02A34400A2CD4A /* star-struck.png in Resources */,
+				362553A92A02A34400A2CD4A /* smiling-face-with-smiling-eyes.png in Resources */,
+				3625538C2A02A34400A2CD4A /* anguished-face.png in Resources */,
+				362553902A02A34400A2CD4A /* confused-face.png in Resources */,
 				3606DEFA29F2AA540025F0FC /* relieved-face.gif in Resources */,
 				3606DED029F2AA540025F0FC /* slightly-frowning-face.gif in Resources */,
+				3625536C2A02A34400A2CD4A /* face-with-hand-over-mouth.png in Resources */,
+				3625536A2A02A34400A2CD4A /* sad-but-relieved-face.png in Resources */,
+				3625539C2A02A34400A2CD4A /* tired-face.png in Resources */,
 				3606DECE29F2AA540025F0FC /* cold-face.gif in Resources */,
+				3625539B2A02A34400A2CD4A /* weary-face.png in Resources */,
+				362553652A02A34400A2CD4A /* winking-face-with-tongue.png in Resources */,
+				362553702A02A34400A2CD4A /* squinting-face-with-tongue.png in Resources */,
 				3606DEBC29F2AA540025F0FC /* smiling-face-with-horns.gif in Resources */,
+				362553AA2A02A34400A2CD4A /* dizzy-face.png in Resources */,
+				362553972A02A34400A2CD4A /* worried-face.png in Resources */,
 				3606DEB129F2AA540025F0FC /* grimacing-face.gif in Resources */,
 				3606DEBE29F2AA540025F0FC /* smiling-cat-with-heart-eyes.gif in Resources */,
 				3606DEAE29F2AA540025F0FC /* sad-but-relieved-face.gif in Resources */,
+				362553992A02A34400A2CD4A /* grimacing-face.png in Resources */,
+				3625537E2A02A34400A2CD4A /* neutral-face.png in Resources */,
+				3625535D2A02A34400A2CD4A /* smiling-face-with-horns.png in Resources */,
+				362553B92A02A34400A2CD4A /* smirking-face.png in Resources */,
+				3625538A2A02A34400A2CD4A /* face-with-raised-eyebrow.png in Resources */,
 				3606DEFC29F2AA540025F0FC /* confounded-face.gif in Resources */,
+				3625535B2A02A34400A2CD4A /* cowboy-hat-face.png in Resources */,
 				3606DEC829F2AA540025F0FC /* frowning-face.gif in Resources */,
 				3606DEA529F2AA540025F0FC /* drooling-face.gif in Resources */,
 				3606DED929F2AA540025F0FC /* robot.gif in Resources */,
 				3606DEED29F2AA540025F0FC /* sneezing-face.gif in Resources */,
+				362553BC2A02A34400A2CD4A /* zany-face.png in Resources */,
+				3625535F2A02A34400A2CD4A /* cold-face.png in Resources */,
 				3606DEA329F2AA540025F0FC /* weary-face.gif in Resources */,
+				3625538E2A02A34400A2CD4A /* frowning-face.png in Resources */,
 				3606DEE129F2AA540025F0FC /* kissing-face-with-closed-eyes.gif in Resources */,
+				362553712A02A34400A2CD4A /* upside-down-face.png in Resources */,
+				362553892A02A34400A2CD4A /* smiling-face-with-heart-eyes.png in Resources */,
 				3606DEFF29F2AA540025F0FC /* squinting-face-with-tongue.gif in Resources */,
 				3606DEF229F2AA540025F0FC /* lying-face.gif in Resources */,
+				362553862A02A34400A2CD4A /* face-vomiting.png in Resources */,
+				362553B62A02A34400A2CD4A /* clown-face.png in Resources */,
+				362553982A02A34400A2CD4A /* kissing-face.png in Resources */,
+				362553812A02A34400A2CD4A /* winking-face.png in Resources */,
 				3606DEF629F2AA540025F0FC /* sleeping-face.gif in Resources */,
 				3606DF0529F2AA540025F0FC /* kissing-cat.gif in Resources */,
 				3606DEAF29F2AA540025F0FC /* thinking-face.gif in Resources */,
 				3606DEF529F2AA540025F0FC /* pile-of-poo.gif in Resources */,
+				362553A02A02A34400A2CD4A /* pensive-face.png in Resources */,
 				3606DED529F2AA540025F0FC /* kissing-face-with-smiling-eyes.gif in Resources */,
 				3606DECA29F2AA540025F0FC /* grinning-squinting-face.gif in Resources */,
 				3606DF0829F2AA540025F0FC /* winking-face.gif in Resources */,
+				362553822A02A34400A2CD4A /* lying-face.png in Resources */,
 				3606DEB829F2AA540025F0FC /* pensive-face.gif in Resources */,
+				362553AF2A02A34400A2CD4A /* face-with-medical-mask.png in Resources */,
 				3606DE9D29F2AA540025F0FC /* smiling-face-with-sunglasses.gif in Resources */,
 				3606DED829F2AA540025F0FC /* downcast-face-with-sweat.gif in Resources */,
 				3606DEC029F2AA540025F0FC /* zany-face.gif in Resources */,
+				362553942A02A34400A2CD4A /* flushed-face.png in Resources */,
 				3606DEA929F2AA540025F0FC /* crying-face.gif in Resources */,
 				3606DEEE29F2AA540025F0FC /* weary-cat.gif in Resources */,
 				3606DEE429F2AA540025F0FC /* nerd-face.gif in Resources */,
 				3606DEC329F2AA540025F0FC /* smiling-face-with-hearts.gif in Resources */,
 				3606DEDB29F2AA540025F0FC /* alien.gif in Resources */,
 				3606DF0429F2AA540025F0FC /* grinning-face-with-big-eyes.gif in Resources */,
+				362553BE2A02A34400A2CD4A /* relieved-face.png in Resources */,
+				362553962A02A34400A2CD4A /* rolling-on-the-floor-laughing.png in Resources */,
+				362553A22A02A34400A2CD4A /* grinning-cat.png in Resources */,
+				362553A72A02A34400A2CD4A /* yawning-face.png in Resources */,
+				3625535C2A02A34400A2CD4A /* face-with-symbols-on-mouth.png in Resources */,
 				3606DEB229F2AA540025F0FC /* face-screaming-in-fear.gif in Resources */,
 				3606DEDD29F2AA540025F0FC /* face-with-tears-of-joy.gif in Resources */,
 				3606DEC429F2AA540025F0FC /* angry-face.gif in Resources */,
 				360D52E129FD20C200F67940 /* animatedLogo_w120.gif in Resources */,
+				362553AC2A02A34400A2CD4A /* face-blowing-a-kiss.png in Resources */,
+				362553A32A02A34400A2CD4A /* kissing-face-with-smiling-eyes.png in Resources */,
 				3606DED729F2AA540025F0FC /* crying-cat.gif in Resources */,
+				362553BF2A02A34400A2CD4A /* weary-cat.png in Resources */,
+				362553912A02A34400A2CD4A /* purple-monster.png in Resources */,
+				362553622A02A34400A2CD4A /* grinning-face-with-big-eyes.png in Resources */,
+				3625537D2A02A34400A2CD4A /* face-with-open-mouth.png in Resources */,
+				362553B82A02A34400A2CD4A /* zipper-mouth-face.png in Resources */,
+				3625539D2A02A34400A2CD4A /* disappointed-face.png in Resources */,
 				3606DEDA29F2AA540025F0FC /* smiling-face-with-halo.gif in Resources */,
+				362553BB2A02A34400A2CD4A /* sleepy-face.png in Resources */,
+				362553C32A02A34400A2CD4A /* sneezing-face.png in Resources */,
 				3606DF0229F2AA540025F0FC /* grinning-cat-with-smiling-eyes.gif in Resources */,
 				3606DEAC29F2AA540025F0FC /* face-with-thermometer.gif in Resources */,
 				3606DEE929F2AA540025F0FC /* face-in-clouds.gif in Resources */,
+				362553B32A02A34400A2CD4A /* drooling-face.png in Resources */,
 				3606DE9E29F2AA540025F0FC /* hushed-face.gif in Resources */,
 				36BF9C4129ED4F3B0011677E /* Assets.xcassets in Resources */,
+				362553632A02A34400A2CD4A /* robot.png in Resources */,
+				3625539A2A02A34400A2CD4A /* smiling-face-with-halo.png in Resources */,
+				362553762A02A34400A2CD4A /* crying-face.png in Resources */,
+				362553932A02A34400A2CD4A /* grinning-face-with-sweat.png in Resources */,
+				362553AB2A02A34400A2CD4A /* persevering-face.png in Resources */,
+				3625535A2A02A34400A2CD4A /* face-in-clouds.png in Resources */,
+				362553692A02A34400A2CD4A /* face-with-head-bandage.png in Resources */,
 				3606DEE629F2AA540025F0FC /* disappointed-face.gif in Resources */,
 				3606DEDF29F2AA540025F0FC /* anguished-face.gif in Resources */,
 				3606DEB429F2AA540025F0FC /* face-blowing-a-kiss.gif in Resources */,
 				36BF9C6F29EDA98A0011677E /* Roboto-Medium.ttf in Resources */,
 				3606DEAD29F2AA540025F0FC /* loudly-crying-face.gif in Resources */,
+				362553682A02A34400A2CD4A /* grinning-cat-with-smiling-eyes.png in Resources */,
+				362553C62A02A34400A2CD4A /* grinning-squinting-face.png in Resources */,
 				3606DEF729F2AA540025F0FC /* face-with-head-bandage.gif in Resources */,
+				362553732A02A34400A2CD4A /* face-screaming-in-fear.png in Resources */,
 				3606DEAA29F2AA540025F0FC /* exploding-head.gif in Resources */,
+				362553922A02A34400A2CD4A /* angry-face.png in Resources */,
 				3606DEEF29F2AA540025F0FC /* grinning-face-with-smiling-eyes.gif in Resources */,
 				3606DEDE29F2AA540025F0FC /* smirking-face.gif in Resources */,
 				3606DF0329F2AA540025F0FC /* face-with-hand-over-mouth.gif in Resources */,
 				3606DEC529F2AA540025F0FC /* nauseated-face.gif in Resources */,
+				362553B42A02A34400A2CD4A /* face-with-rolling-eyes.png in Resources */,
+				362553792A02A34400A2CD4A /* thinking-face.png in Resources */,
+				362553602A02A34400A2CD4A /* alien.png in Resources */,
 				3606DED129F2AA540025F0FC /* face-exhaling.gif in Resources */,
+				3625539F2A02A34400A2CD4A /* frowning-face-with-open-mouth.png in Resources */,
+				362553C22A02A34400A2CD4A /* fearful-face.png in Resources */,
 				3606DEEA29F2AA540025F0FC /* fearful-face.gif in Resources */,
 				3606DEB629F2AA540025F0FC /* face-with-monocle.gif in Resources */,
 				3606DE9C29F2AA540025F0FC /* face-with-steam-from-nose.gif in Resources */,
 				3606DEF329F2AA540025F0FC /* tired-face.gif in Resources */,
 				3606DECB29F2AA540025F0FC /* slightly-smiling-face.gif in Resources */,
+				362553A12A02A34400A2CD4A /* face-with-thermometer.png in Resources */,
 				3606DEDC29F2AA540025F0FC /* upside-down-face.gif in Resources */,
+				362553B12A02A34400A2CD4A /* smiling-face-with-tear.png in Resources */,
 				3606DEF929F2AA540025F0FC /* partying-face.gif in Resources */,
+				3625538D2A02A34400A2CD4A /* face-exhaling.png in Resources */,
+				3625536D2A02A34400A2CD4A /* money-mouth-face.png in Resources */,
+				362553772A02A34400A2CD4A /* confounded-face.png in Resources */,
 				3606DEEB29F2AA540025F0FC /* face-savoring-food.gif in Resources */,
+				362553BA2A02A34400A2CD4A /* pile-of-poo.png in Resources */,
+				362553C12A02A34400A2CD4A /* hushed-face.png in Resources */,
+				362553872A02A34400A2CD4A /* ghost.png in Resources */,
 				3606DEF829F2AA540025F0FC /* purple-monster.gif in Resources */,
 				3606DEFB29F2AA540025F0FC /* shushing-face.gif in Resources */,
 				3606DED229F2AA540025F0FC /* beaming-face-with-smiling-eyes.gif in Resources */,
+				362553662A02A34400A2CD4A /* woozy-face.png in Resources */,
+				362553A82A02A34400A2CD4A /* beaming-face-with-smiling-eyes.png in Resources */,
 				3606DEA729F2AA540025F0FC /* frowning-face-with-open-mouth.gif in Resources */,
+				362553B52A02A34400A2CD4A /* disguised-face.png in Resources */,
+				362553722A02A34400A2CD4A /* downcast-face-with-sweat.png in Resources */,
+				3625538B2A02A34400A2CD4A /* face-with-steam-from-nose.png in Resources */,
+				3625536B2A02A34400A2CD4A /* hugging-face.png in Resources */,
 				3606DEC129F2AA540025F0FC /* skull.gif in Resources */,
+				362553852A02A34400A2CD4A /* grinning-face.png in Resources */,
+				362553A42A02A34400A2CD4A /* sleeping-face.png in Resources */,
+				362553802A02A34400A2CD4A /* kissing-face-with-closed-eyes.png in Resources */,
 				3606DEB329F2AA540025F0FC /* face-without-mouth.gif in Resources */,
+				362553842A02A34400A2CD4A /* face-with-tongue.png in Resources */,
 				3606DEB929F2AA540025F0FC /* clown-face.gif in Resources */,
+				362553C52A02A34400A2CD4A /* shushing-face.png in Resources */,
+				3625536E2A02A34400A2CD4A /* partying-face.png in Resources */,
 				3606DEF129F2AA540025F0FC /* kissing-face.gif in Resources */,
 				3606DEAB29F2AA540025F0FC /* money-mouth-face.gif in Resources */,
+				362553642A02A34400A2CD4A /* grinning-face-with-smiling-eyes.png in Resources */,
 				3606DEA029F2AA540025F0FC /* star-struck.gif in Resources */,
 				3606DED429F2AA540025F0FC /* cat-with-tears-of-joy.gif in Resources */,
+				362553612A02A34400A2CD4A /* pouting-face.png in Resources */,
 				3606DEE529F2AA540025F0FC /* rolling-on-the-floor-laughing.gif in Resources */,
 				3606DEE329F2AA540025F0FC /* face-with-symbols-on-mouth.gif in Resources */,
 				3606DEE829F2AA540025F0FC /* face-with-spiral-eyes.gif in Resources */,
+				362553BD2A02A34400A2CD4A /* face-with-monocle.png in Resources */,
+				3625535E2A02A34400A2CD4A /* face-savoring-food.png in Resources */,
 				3606DECC29F2AA540025F0FC /* yawning-face.gif in Resources */,
+				3625537F2A02A34400A2CD4A /* pleading-face.png in Resources */,
 				3606DEE229F2AA540025F0FC /* face-with-rolling-eyes.gif in Resources */,
+				362553C02A02A34400A2CD4A /* loudly-crying-face.png in Resources */,
+				362553752A02A34400A2CD4A /* smiling-cat-with-heart-eyes.png in Resources */,
+				362553B02A02A34400A2CD4A /* face-with-tears-of-joy.png in Resources */,
 				3606DF0029F2AA540025F0FC /* hugging-face.gif in Resources */,
 				3606DEA629F2AA540025F0FC /* dizzy-face.gif in Resources */,
+				362553672A02A34400A2CD4A /* slightly-smiling-face.png in Resources */,
 				3606DEBD29F2AA540025F0FC /* confused-face.gif in Resources */,
 				3606DEE729F2AA540025F0FC /* worried-face.gif in Resources */,
+				362553B72A02A34400A2CD4A /* skull.png in Resources */,
+				3625536F2A02A34400A2CD4A /* kissing-cat.png in Resources */,
+				362553742A02A34400A2CD4A /* nauseated-face.png in Resources */,
 				3606DE9F29F2AA540025F0FC /* face-with-medical-mask.gif in Resources */,
 				3606DEC629F2AA540025F0FC /* pleading-face.gif in Resources */,
 				3606DEE029F2AA540025F0FC /* cowboy-hat-face.gif in Resources */,
 				3606DEA829F2AA540025F0FC /* grinning-face.gif in Resources */,
+				3625537C2A02A34400A2CD4A /* smiling-face.png in Resources */,
 				3606DF0729F2AA540025F0FC /* winking-face-with-tongue.gif in Resources */,
 				3606DEA229F2AA540025F0FC /* face-with-raised-eyebrow.gif in Resources */,
 				3606DECF29F2AA540025F0FC /* grinning-cat.gif in Resources */,
 				3606DEBB29F2AA540025F0FC /* smiling-face-with-tear.gif in Resources */,
+				362553782A02A34400A2CD4A /* anxious-face-with-sweat.png in Resources */,
 				3606DEA429F2AA540025F0FC /* neutral-face.gif in Resources */,
 				3606DEC229F2AA540025F0FC /* pouting-face.gif in Resources */,
 				3606DEBF29F2AA540025F0FC /* woozy-face.gif in Resources */,
@@ -1078,6 +1520,7 @@
 				362552EB2A0234C700A2CD4A /* PersonMessageCard.swift in Sources */,
 				360D52D029FA078D00F67940 /* AccountService.swift in Sources */,
 				360D52DC29FC1FF400F67940 /* EmojiSwapView.swift in Sources */,
+				362553C82A02B10500A2CD4A /* PlacePersonView.swift in Sources */,
 				3606DC0F29EEB6990025F0FC /* AppleSigninButton.swift in Sources */,
 				36680D2D29F67695001EFD52 /* MyMassageHistory.swift in Sources */,
 				365B964729FE50E600647950 /* ViewState.swift in Sources */,
@@ -1111,6 +1554,7 @@
 				36680D3329F6CB96001EFD52 /* TimelineView.swift in Sources */,
 				3606DC1729EF68640025F0FC /* Font.swift in Sources */,
 				36BF9C3F29ED4F390011677E /* LoginView.swift in Sources */,
+				362553CA2A02B6CE00A2CD4A /* CommonService.swift in Sources */,
 				360D52C729F939B400F67940 /* AlertCard.swift in Sources */,
 				360D52B329F81BA800F67940 /* LocationManager.swift in Sources */,
 				36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */,

@@ -2,9 +2,22 @@ import SwiftUI
 
 
 struct MessageCard: View {
-    let messageInfo: MessageInfo
     @Environment(\.colorScheme) var colorScheme
-    @State var fulllText = false
+    
+    let messageInfo: MessageInfo
+    
+    @State private var contentHeight: CGFloat = 0
+    
+    init(messageInfo: MessageInfo) {
+        self.messageInfo = messageInfo
+        
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        let attributedText = NSAttributedString(string: messageInfo.contents, attributes: [.font: font])
+        let textWidth = UIScreen.main.bounds.width - 32 // Adjust the width based on your layout
+        let textHeight = attributedText.boundingRect(with: CGSize(width: textWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
+        self._contentHeight = State(initialValue: textHeight)
+    }
+
     
     var body: some View {
         ZStack {
@@ -31,6 +44,7 @@ struct MessageCard: View {
                     
                     Text("\(messageInfo.stack)번 스쳤습니다.")
                         .font(.system(size: 16))
+                        .foregroundColor(Color("Text"))
                         .fontWeight(.bold)
                 }
                 .padding(.top, -16)
@@ -41,17 +55,12 @@ struct MessageCard: View {
                     Text(messageInfo.nickname)
                         .font(.customOverline)
                     
-                    if fulllText {
-                        Text(messageInfo.contents)
-                            .font(.customBody1)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.bottom, 16)
-                    } else {
-                        Text(messageInfo.contents)
-                            .font(.customBody1)
-                            .padding(.bottom, 16)
-                    }
+                    Text(messageInfo.contents)
+                        .font(.customBody1)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.bottom, 16)
 
                     
                     HStack {
@@ -85,38 +94,17 @@ struct MessageCard: View {
                 .padding(.trailing)
             }
         }
-        .frame(height: 152)
+        .frame(height: 152 + contentHeight)
         .padding(.bottom, 16)
-    }
-
-    
-    func getTimeStringFromISODate(_ isoString: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        dateFormatter.timeZone = Calendar.current.timeZone
-        if let date = dateFormatter.date(from: isoString) {
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            
-            // 현재 날짜와 비교하여 날짜가 어제인지 오늘인지 판단
-            let now = Date()
-            let components = calendar.dateComponents([.day], from: date, to: now)
-            
-            if components.day == 0 {
-                return "오늘 \(hour)시쯤"
-            } else if components.day == -1 {
-                return "어제 \(hour)시쯤"
-            }
-        }
-        return "시간정보 없음"
     }
 }
 
 struct MessageCard_Previews: PreviewProvider {
     static var previews: some View {
-        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "ContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete"), fulllText: true)
+        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "ContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete", userIdx: 1))
     }
 }
+
 
 enum CardColor: String, CaseIterable {
     case red, orange, yellow, green, sky, blue, purple, pink

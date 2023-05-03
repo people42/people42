@@ -8,8 +8,7 @@ struct PlaceMapView: View {
     
     @State private var metersPerCircle: Double = 100
     @State var location: CLLocationCoordinate2D
-    @State var isMinimized: Bool = false
-    @State var toggleHeight: CGFloat = 300
+    @Binding var toggleHeight: CGFloat
     
     @State private var existingPositions: [CGPoint] = []
     
@@ -21,22 +20,10 @@ struct PlaceMapView: View {
             circles
             profileImages
         }
-        .onTapGesture {
-            isMinimized.toggle()
-            if isMinimized {
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    toggleHeight = 160
-                }
-            } else {
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    toggleHeight = 300
-                }
-            }
-        }
     }
 
     private var map: some View {
-        Map(coordinateRegion: .constant(MKCoordinateRegion(center: location, latitudinalMeters: 500, longitudinalMeters: 500)), interactionModes: [], showsUserLocation: false)
+        Map(coordinateRegion: .constant(MKCoordinateRegion(center: location, latitudinalMeters: 300, longitudinalMeters: 500)), interactionModes: [], showsUserLocation: false)
             .frame(height: toggleHeight)
     }
     
