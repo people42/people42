@@ -114,7 +114,7 @@ struct MessageCard: View {
 
 struct MessageCard_Previews: PreviewProvider {
     static var previews: some View {
-        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "Contents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete"))
+        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "ContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete"), fulllText: true)
     }
 }
 

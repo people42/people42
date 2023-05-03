@@ -16,7 +16,7 @@ class APIManager {
     private init() {}
 
     // API 기본 URL 설정
-    private let baseURL = "https://people42.com/be42/api/v1"
+    private let baseURL = "https://www.people42.com/be42/api/v1"
 
     // LoginUserData 인스턴스를 참조하는 프로퍼티 추가
     @Published var userState = UserState()

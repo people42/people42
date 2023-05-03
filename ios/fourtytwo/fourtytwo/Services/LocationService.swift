@@ -1,23 +1,22 @@
 import Alamofire
 
+struct LocationData: Codable {
+    var placeIdx: Int
+    var placeName: String
+    var time: String
+}
+
 class LocationService {
     private init() {}  // 외부에서의 해당 클래스의 인스턴스를 직접 생산 불가능하게 막는다.
 
-    static func sendLocation(latitude: Double, longitude: Double, completion: @escaping (Result<Bool, AFError>) -> Void) {
+    static func sendLocation(latitude: Double, longitude: Double, completion: @escaping (Result<ResponseMessage<LocationData>, AFError>) -> Void) {
         let endpoint = "/background"
         let parameters: Parameters = [
             "latitude": latitude,
             "longitude": longitude
         ]
 
-        APIManager.shared.request(endpoint: endpoint, method: .post, parameters: parameters, responseType: APIManager.EmptyResponse.self) { result in
-            switch result {
-            case .success:
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        APIManager.shared.request(endpoint: endpoint, method: .post, parameters: parameters, responseType: ResponseMessage<LocationData>.self, completion: completion)
     }
 }
 

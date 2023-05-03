@@ -3,7 +3,7 @@ import BackgroundTasks
 class LocationSender {
     private var timer: Timer?
     private let locationManager: LocationManager
-    
+
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
     }
@@ -33,8 +33,11 @@ class LocationSender {
 
             LocationService.sendLocation(latitude: latitude, longitude: longitude) { result in
                 switch result {
-                case .success:
-                    print("Location sent successfully")
+                case .success(let response):
+                    if response.data != nil {
+                        print("위치전송 성공")
+                    }
+
                 case .failure(let error):
                     print("Error sending location: \(error)")
                 }

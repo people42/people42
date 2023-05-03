@@ -76,11 +76,13 @@ struct TimelineView: View {
         if #available(iOS 15.0, *) {
             ZStack {
                 HStack {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: UIScreen.main.bounds.height)
-                        .padding(.horizontal, 22.5)
-                    Spacer()
+                    if viewModel.messageInfoList.count >= 1 {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 2, height: UIScreen.main.bounds.height)
+                            .padding(.horizontal, 22.5)
+                        Spacer()
+                    }
                 }
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
@@ -139,11 +141,13 @@ struct TimelineView: View {
         } else {
             ZStack {
                 HStack {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: UIScreen.main.bounds.height)
-                        .padding(.horizontal, 22.5)
-                    Spacer()
+                    if viewModel.messageInfoList.count < 1 {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 2, height: UIScreen.main.bounds.height)
+                            .padding(.horizontal, 22.5)
+                        Spacer()
+                    }
                 }
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {

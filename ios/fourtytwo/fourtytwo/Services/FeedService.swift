@@ -55,7 +55,7 @@ struct EmotionFeed: Codable {
 // -----------------------
 // 사람별 피드 조회 자료 구조 시작
 
-struct PersonFeed: Codable {
+struct PersonPlaces: Codable {
     let brushCnt: Int
     let userIdx: Int
     let nickname: String
@@ -71,6 +71,23 @@ struct PlaceResDtos: Codable {
 }
 
 // 사람별 피드 조회 자료 구조 끝
+// -----------------------
+// 사람/장소 피드 조회 자료 구조 시작
+
+struct PersonPlaceFeed: Codable {
+    let messagesInfo: PersonPlaceResDtos
+    let brushCnt: Int
+}
+
+struct PersonPlaceResDtos: Codable {
+    let messageIdx: Int
+    let content: String
+    let time: String
+    let emtion: String?
+}
+
+// 사람/장소 피드 조회 자료 구조 끝
+
 
 struct FeedService {
     private init() {}
@@ -91,8 +108,13 @@ struct FeedService {
     }
     
     // 사람별 피드 조회
-    static func getPersonFeed(data: [String: Any], completion: @escaping (Result<ResponseMessage<PersonFeed>, AFError>) -> Void) {
-        APIManager.shared.request(endpoint: "/feed/place", method: .get, responseType: ResponseMessage<PersonFeed>.self, completion: completion)
+    static func getPersonFeed(data: [String: Any], completion: @escaping (Result<ResponseMessage<PersonPlaces>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/feed/user", method: .get, responseType: ResponseMessage<PersonPlaces>.self, completion: completion)
+    }
+    
+    // 사람/장소 피드 조회
+    static func getPersonPlaceFeed(data: [String: Any], completion: @escaping (Result<ResponseMessage<PersonPlaceFeed>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/feed/user/place", method: .get, responseType: ResponseMessage<PersonPlaceFeed>.self, completion: completion)
     }
 
 }
