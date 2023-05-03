@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 중지
 @Service
@@ -133,6 +134,13 @@ public class FcmService {
             throw new EntityNotFoundException("존재하지 않는 유저입니다.");
         } else if (!user.getIsActive()) {
             throw new EntityNotFoundException("삭제된 유저입니다.");
+        }
+
+        // 기존에 같은 기기에서 사용중이던 유저 있으면 해당 유저는 토큰 삭제
+        Optional<User> originalUser = userRepository.findByFcmToken(fcmToken);
+        if (originalUser.isPresent()) {
+            originalUser.get().setFcmToken(null);
+            originalUser.get().setFcmTokenExpirationDateTime(null);
         }
 
         user.setFcmToken(fcmToken);
