@@ -204,9 +204,9 @@ function App() {
           .then((currentToken) => {
             // 토큰 서버에 전달
             if (currentToken && user) {
-              postFCMToken(user.accessToken, currentToken).then((res) =>
-                console.log(res)
-              );
+              postFCMToken(user.accessToken, currentToken)
+                .then((res) => console.log(res))
+                .catch((e) => console.log(e));
             } else {
               console.log("등록된 토큰이 없습니다.");
             }
