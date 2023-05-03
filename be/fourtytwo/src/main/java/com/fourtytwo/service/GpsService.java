@@ -109,8 +109,8 @@ public class GpsService {
         userExpireOperation.set(userIdx, mappedTime + 10);
         expireSetOperation.add("user"+(mappedTime+10), userIdx);
 
-        Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.005, gps.getLatitude()+0.005);
-        Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.005, gps.getLongitude()+0.005);
+        Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.002, gps.getLatitude()+0.002);
+        Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.002, gps.getLongitude()+0.002);
 
         System.out.println("3 "+nearSet);
         System.out.println("4 "+nearLongSet);
