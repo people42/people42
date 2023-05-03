@@ -1,9 +1,10 @@
-import { getAccessToken, getMyInfo } from "../../api";
-import { userState } from "../../recoil/user/atoms";
-import { userAccessTokenState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
-import MyMessageCardInput from "../Input/MyMessageCardInput";
-import Card from "./Card";
+import { getAccessToken, getMyInfo } from "../../../../api";
+import { Card } from "../../../../components";
+import MyMessageCardInput from "../../../../components/Input/MyMessageCardInput";
+import { userState } from "../../../../recoil/user/atoms";
+import { userAccessTokenState } from "../../../../recoil/user/selectors";
+import { setSessionRefreshToken } from "../../../../utils";
+import HomeMyMessageReaction from "./HomeMyMessageReaction";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -38,16 +39,19 @@ function MyMessageCard({
     }
   }, [accessToken, isMessageEdit]);
 
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   return (
     <StyledMyMessageCard
       count={myMessage?.messageCnt ?? 0}
       isMessageEdit={isMessageEdit}
     >
+      {myMessage ? <HomeMyMessageReaction myMessage={myMessage} /> : null}
       {myMessage ? (
         <div
           className="my-emoji"
           style={{
-            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myMessage?.emoji}.gif")`,
+            backgroundImage: `url("${S3_URL}emoji/animate/${myMessage?.emoji}.gif")`,
           }}
         ></div>
       ) : null}
@@ -108,9 +112,10 @@ const StyledMyMessageCard = styled.div<{
   }
   .my-message {
     cursor: pointer;
-    transition: scale 0.3s;
+    transition: scale 0.1s;
     &:hover {
-      scale: 1.02;
+      filter: ${({ theme }) =>
+        theme.isDark == true ? "brightness(1.05)" : "brightness(0.95)"};
     }
     &:active {
       scale: 0.98;

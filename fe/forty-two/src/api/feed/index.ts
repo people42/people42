@@ -42,3 +42,17 @@ export async function getUser(accessToken: string, params: TFeed["user"]) {
     params: params,
   });
 }
+
+/**
+ * [GET] "feed/user/place" 장소별 사용자 피드 조회
+ */
+export async function getUserPlace(
+  accessToken: string,
+  params: TFeed["userPlace"]
+) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).get("feed/user/place", {
+    params: params,
+  });
+}

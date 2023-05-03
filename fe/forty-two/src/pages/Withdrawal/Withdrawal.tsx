@@ -63,6 +63,7 @@ function Withdrawal({}: withdrawalProps) {
               )
               .catch((e) => {
                 alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+                navigate("/");
               });
           }
         });
@@ -84,16 +85,19 @@ function Withdrawal({}: withdrawalProps) {
         )
         .catch((e) => {
           alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+          navigate("/");
         });
     } else {
       getAppleSignInCode();
     }
   };
 
+  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
+
   const getAppleSignInCode = () => {
     const config = {
       client_id: "com.cider.fortytwo", // This is the service ID we created.
-      redirect_uri: "https://people42.com/withdrawal/apple", // As registered along with our service ID
+      redirect_uri: `${BASE_APP_URL}withdrawal/apple`, // As registered along with our service ID
       response_type: "code",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
       response_mode: "query",

@@ -1,6 +1,7 @@
-import { MyMessageCard } from "../../../../components";
 import HomeMap from "../HomeMap/HomeMap";
 import HomeMyHistory from "../HomeMyHistory/HomeMyHistory";
+import HomeMyMessageReaction from "./HomeMyMessageReaction";
+import MyMessageCard from "./MyMessageCard";
 import { ReactElement, useState } from "react";
 import styled from "styled-components";
 

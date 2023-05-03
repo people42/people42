@@ -28,7 +28,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
       <SwiperSlide key={name} id={name}>
         <StaticEmojiIcon
           style={{
-            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/static/${name}.png")`,
+            backgroundImage: `url("${S3_URL}emoji/static/${name}.png")`,
           }}
         ></StaticEmojiIcon>
       </SwiperSlide>
@@ -51,6 +51,8 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
     setSignUpUserEmoji(document.querySelector(".swiper-slide-active")!.id);
   }, [activeEmojiIndex]);
 
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   return (
     <StyledEmojiSelector>
       <div>
@@ -66,7 +68,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
           <div>
             <SelectedEmojiIcon
               style={{
-                backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${signUpUser.emoji}.gif")`,
+                backgroundImage: `url("${S3_URL}emoji/animate/${signUpUser.emoji}.gif")`,
               }}
             ></SelectedEmojiIcon>
           </div>

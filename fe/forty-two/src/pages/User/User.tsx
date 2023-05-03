@@ -1,16 +1,15 @@
 import { getAccessToken, getUser } from "../../api";
-import { NavBar, NaverDynamicMap } from "../../components";
+import { NavBar } from "../../components";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../utils";
+import { UserMap } from "./components";
 import { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import Skeleton from "react-loading-skeleton";
-import { Marker } from "react-naver-maps";
 import { useNavigate, useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { UserMap } from "./components";
 
 function User() {
   const navigate = useNavigate();
@@ -39,6 +38,8 @@ function User() {
     }
   }, [params]);
 
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   return (
     <StyledUser>
       <NavBar></NavBar>
@@ -49,9 +50,19 @@ function User() {
             navigate(-1);
           }}
         >
-          <IoMdArrowBack size={24} />
+          <IoMdArrowBack size={30} />
           {userData ? (
-            <h1>{userData?.nickname}</h1>
+            <>
+              <div
+                className="emoji"
+                style={{
+                  backgroundImage: `url("${S3_URL}emoji/animate/${userData.emoji}.gif")`,
+                }}
+              ></div>
+              <h1>
+                {userData?.brushCnt}번 스친 {userData?.nickname}
+              </h1>
+            </>
           ) : (
             <Skeleton
               baseColor="#86868626"
@@ -89,10 +100,20 @@ const StyledUser = styled.main`
       ${({ theme }) => theme.text.header6}
       display: flex;
       align-items: center;
+      padding: 8px;
+      svg {
+        margin-right: 8px;
+      }
     }
     &-map {
       width: 100%;
       flex-grow: 1;
     }
+  }
+  .emoji {
+    width: 32px;
+    height: 32px;
+    background-size: cover;
+    margin-right: 8px;
   }
 `;

@@ -70,7 +70,8 @@ const StyledNavModal = styled.div<{ type: string }>`
         cursor: pointer;
 
         :hover {
-          transform: scale(1.1);
+          filter: ${({ theme }) =>
+            theme.isDark == true ? "brightness(1.5)" : "brightness(1.2)"};
         }
       }
     }

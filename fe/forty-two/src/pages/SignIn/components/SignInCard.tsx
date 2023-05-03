@@ -43,10 +43,12 @@ function SignInCard() {
     },
   });
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const getAppleSignInCode = () => {
     const config = {
       client_id: "com.cider.fortytwo", // This is the service ID we created.
-      redirect_uri: "https://people42.com/be42/api/v1/auth/check/apple/web", // As registered along with our service ID
+      redirect_uri: `${API_URL}auth/check/apple/web`, // As registered along with our service ID
       response_type: "code id_token",
       state: "origin:web", // Any string of your choice that you may use for some logic. It's optional and you may omit it.
       scope: "email", // To tell apple we want the user name and emails fields in the response it sends us.
