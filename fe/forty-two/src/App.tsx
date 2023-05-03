@@ -7,6 +7,7 @@ import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Logout from "./pages/Logout/Logout";
 import Withdrawal from "./pages/Withdrawal/Withdrawal";
 import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
+import { isFirebaseLoadState } from "./recoil/FCM/atoms";
 import { locationInfoState } from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
 import { themeState } from "./recoil/theme/atoms";
@@ -26,7 +27,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { useEffect, useState } from "react";
 import { NavermapsProvider } from "react-naver-maps";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -188,27 +189,21 @@ function App() {
   }, []);
   // firebase init
   function requestPermission(app: any) {
-    console.log("Requesting permission...");
-
-    // 브라우저 알림 설정은 프로그래밍으로 불가능
-    // 반드시 유저가 브라우저 설정에서 변경해야 함
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         // 알림 설정되어있는 경우
-        console.log("Notification permission granted.");
         const messaging = getMessaging(app);
         onMessage(messaging, (payload) => {
-          // 유저 접속해있을 때
+          // 유저 접속해있을 때 수신된 메시지
           console.log("수신된 메시지: ", payload);
         });
-
-        // 토큰 얻는거는 로그인 혹은 웹 처음 들어왔을 때
         getToken(messaging, {
+          // 최초 토큰 발행
           vapidKey: V_API_ID_KEY,
         })
           .then((currentToken) => {
+            // 토큰 서버에 전달
             if (currentToken && user) {
-              // 토큰 서버에 전달
               postFCMToken(user.accessToken, currentToken).then((res) =>
                 console.log(res)
               );
@@ -219,18 +214,20 @@ function App() {
           .catch((err) => console.log(err));
       } else if (permission === "denied") {
         // 유저 알림 설정 꺼져있는 경우
-        console.log("Notification permission denied. Requesting again...");
-        // gpt 추천 메시지
         alert(
           "죄송합니다. 브라우저에서 알림 권한 요청 대화 상자를 더 이상 자동으로 표시하지 않도록 설정한 것 같습니다. 알림을 받으려면 수동으로 브라우저 설정에서 알림 권한을 허용해야 합니다. 이를 위해 브라우저 설정을 열고 해당 사이트의 권한을 확인해주세요."
         );
       }
     });
   }
+
+  const [isFirebaseLoad, setIsFirebaseLoad] =
+    useRecoilState(isFirebaseLoadState);
   useEffect(() => {
-    if (firebaseConfig && user) {
+    if (firebaseConfig && user && !isFirebaseLoad) {
       const firebaseApp = initializeApp(firebaseConfig);
       requestPermission(firebaseApp);
+      setIsFirebaseLoad(true);
     }
   }, [firebaseConfig, user]);
 
