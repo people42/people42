@@ -184,7 +184,7 @@ function App() {
       projectId: PROJECT_ID,
       storageBucket: STORAGE_BUCKET,
       messagingSenderId: MESSAGING_SENDER_ID,
-      appId: "1:944428145168:web:643cbb958e1da0bbd9c895",
+      appId: APP_ID,
     });
   }, []);
   // firebase init
