@@ -29,11 +29,15 @@ public class BlockService {
         } else if (!user.getIsActive() || !blockedUser.get().getIsActive()) {
             throw new EntityNotFoundException("삭제된 유저입니다.");
         } else if (user.getId().equals(blockReqDto.getUserIdx())) {
-            throw new DataIntegrityViolationException("요청한 유저와 같은 유저입니다.");
+            throw new EntityNotFoundException("요청한 유저와 같은 유저입니다.");
         }
 
         User bigUser = user.getId() > blockedUser.get().getId() ? user : blockedUser.get();
         User smallUser = user.getId() > blockedUser.get().getId() ? blockedUser.get() : user;
+
+        if (blockRepository.findByUser1IdAndUser2Id(smallUser.getId(), bigUser.getId()).isPresent()) {
+            throw new DataIntegrityViolationException("이미 차단한 유저입니다.");
+        }
 
         Block block = Block.builder()
                 .user1(smallUser)
