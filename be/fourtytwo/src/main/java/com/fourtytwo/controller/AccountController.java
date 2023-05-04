@@ -27,8 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/account")
 @AllArgsConstructor
-public class
-AccountController {
+public class AccountController {
 
     private final UserService userService;
     private final MessageService messageService;
