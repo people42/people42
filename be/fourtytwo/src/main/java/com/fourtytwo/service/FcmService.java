@@ -111,11 +111,11 @@ public class FcmService {
         // 현재 토큰이 유효한 유저에게만 메시지 전송
         Message message = Message.builder()
 //                .putData("image", image)
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .setImage(image)
-                        .build())
+//                .setNotification(Notification.builder()
+//                        .setTitle(title)
+//                        .setBody(body)
+//                        .setImage(image)
+//                        .build())
                 .setToken(user.getFcmToken())
                 .setWebpushConfig(WebpushConfig.builder()
                         .setNotification(WebpushNotification.builder()
@@ -127,6 +127,20 @@ public class FcmService {
                                 .setLink("https://www.people42.com")
                                 .build())
                         .build())
+                .setApnsConfig(ApnsConfig.builder()
+                        .setFcmOptions(ApnsFcmOptions.builder()
+                                .setImage(image)
+                                .build())
+                        .setAps(Aps.builder()
+                                .setContentAvailable(true)
+                                .setSound("default")
+                                .setAlert(ApsAlert.builder()
+                                        .setTitle(title)
+                                        .setBody(body)
+                                        .build())
+                                .build())
+                        .build())
+
                 .build();
 
         try {
