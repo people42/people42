@@ -119,10 +119,4 @@ public class AccountController {
         return ApiResponse.ok(null);
     }
 
-    @GetMapping("/alert")
-    public ResponseEntity<ApiResponse<AlertCntResDto>> getMyAlertCnt(@RequestHeader("ACCESS-TOKEN") String accessToken) {
-        AlertCntResDto alertCntResDto = fcmService.getMyAlertCnt(accessToken);
-        return ApiResponse.ok(alertCntResDto);
-    }
-
 }
