@@ -157,13 +157,6 @@ public class FcmService {
         userRepository.save(user);
     }
 
-    public AlertCntResDto getMyAlertCnt(String accessToken) {
-        User user = checkUser(accessToken);
-        return AlertCntResDto.builder()
-                .alertCnt(expressionRepository.countByMessageUserAndIsReadIsFalse(user))
-                .build();
-    }
-
     private User checkUser(String accessToken) {
         User user = jwtTokenProvider.getUser(accessToken);
         if (user == null) {
