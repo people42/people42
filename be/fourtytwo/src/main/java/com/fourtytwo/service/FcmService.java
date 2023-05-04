@@ -1,7 +1,6 @@
 package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
-import com.fourtytwo.dto.alert.AlertCntResDto;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.user.UserRepository;
@@ -111,7 +110,7 @@ public class FcmService {
 
         // 현재 토큰이 유효한 유저에게만 메시지 전송
         Message message = Message.builder()
-                .putData("image", image)
+//                .putData("image", image)
 //                .setNotification(Notification.builder()
 //                        .setTitle(title)
 //                        .setBody(body)
