@@ -1,3 +1,4 @@
+import { notificationDateTime } from "../../utils";
 import styled from "styled-components";
 
 type navModalNotificationRowProps = { data: TNotificationHistory };
@@ -10,7 +11,9 @@ function NavModalNotificationRow({ data }: navModalNotificationRowProps) {
       <div>
         <p className="notification-title">{data.title}</p>
         <p className="notification-body">{data.body}</p>
-        <p className="notification-time">{data.createdAt}</p>
+        <p className="notification-time">
+          {notificationDateTime(data.createdAt)}
+        </p>
       </div>
     </StyledNavModalNotificationRow>
   );
