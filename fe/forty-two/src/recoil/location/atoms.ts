@@ -9,3 +9,8 @@ export const locationInfoState = atom<TLocationInfo | null>({
   key: "locationInfoState",
   default: null,
 });
+
+export const isLocationPermittedState = atom<"check" | boolean>({
+  key: "isLocationPermittedState",
+  default: "check",
+});

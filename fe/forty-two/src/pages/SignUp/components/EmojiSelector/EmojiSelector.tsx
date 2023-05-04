@@ -15,6 +15,8 @@ type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
 const emojiList: string[] = _.sampleSize(emojiNameList, 22);
 
 function EmojiSelector({ onClick }: emojiSelectorProps) {
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
 
   const setSignUpUserEmoji = (emoji: string) => {
@@ -50,8 +52,6 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
   useEffect(() => {
     setSignUpUserEmoji(document.querySelector(".swiper-slide-active")!.id);
   }, [activeEmojiIndex]);
-
-  const S3_URL = import.meta.env.VITE_S3_URL;
 
   return (
     <StyledEmojiSelector>

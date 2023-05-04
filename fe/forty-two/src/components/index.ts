@@ -10,5 +10,6 @@ export { default as Input } from "./Input/Input";
 export { default as NaverDynamicMap } from "./Map/NaverDynamicMap";
 export { default as NaverStaticMap } from "./Map/NaverStaticMap";
 export { default as NavModal } from "./Modal/NavModal";
+export { default as NavModalNotification } from "./Modal/NavModalNotification";
 export { default as NavModalSetting } from "./Modal/NavModalSetting";
 export { default as NavBar } from "./NavBar/NavBar";

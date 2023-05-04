@@ -33,16 +33,9 @@ function Home() {
 
   useEffect(() => {
     switch (isLogin) {
-      case "check":
-        console.log("login 확인중");
-        break;
       case false:
-        navigate("/signin");
-        console.log("login 필요");
         setIsLogin("check");
-        break;
-      case true:
-        console.log("login 됨");
+        navigate("/signin");
         break;
     }
   }, [isLogin]);
