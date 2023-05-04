@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourtytwo.dto.place.GpsReqDto;
 import com.fourtytwo.dto.place.PlaceWithTimeResDto;
-import com.fourtytwo.entity.Brush;
-import com.fourtytwo.entity.Message;
-import com.fourtytwo.entity.Place;
-import com.fourtytwo.entity.User;
+import com.fourtytwo.entity.*;
+import com.fourtytwo.repository.block.BlockRepository;
 import com.fourtytwo.repository.brush.BrushRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
@@ -43,6 +41,7 @@ public class GpsService {
     private final PlaceRepository placeRepository;
     private final BrushRepository brushRepository;
     private final MessageRepository messageRepository;
+    private final BlockRepository blockRepository;
     private final RedisTemplate<String, Long> gpsTemplate;
     private final RedisTemplate<Long, Integer> userTimeTemplate;
     private final RedisTemplate<String, Long> timeUserTemplate;
@@ -55,10 +54,6 @@ public class GpsService {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
         Optional<User> user = userRepository.findById(userIdx);
         if (user.isEmpty() || !user.get().getIsActive()) {
-            return null;
-        }
-        Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
-        if (userMessage == null) {
             return null;
         }
         Place foundPlace = placeRepository.findByGps(gps.getLatitude(), gps.getLongitude());
@@ -112,6 +107,11 @@ public class GpsService {
         Set<Long> nearSet = gpsOperation.rangeByScore("latitude", gps.getLatitude()-0.002, gps.getLatitude()+0.002);
         Set<Long> nearLongSet = gpsOperation.rangeByScore("longitude", gps.getLongitude()-0.002, gps.getLongitude()+0.002);
 
+        Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
+        if (userMessage == null) {
+            return null;
+        }
+
         System.out.println("3 "+nearSet);
         System.out.println("4 "+nearLongSet);
         if (!nearSet.isEmpty() && !nearLongSet.isEmpty()) {
@@ -119,6 +119,13 @@ public class GpsService {
             if (!nearSet.isEmpty()) {
                 for (Long targetIdx : nearSet) {
                     if (userIdx < targetIdx) {
+
+                        // 차단된 유저 건너뛰기
+                        Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(userIdx, targetIdx);
+                        if (block.isPresent()) {
+                            continue;
+                        }
+
                         Optional<User> oppositeUser = userRepository.findById(targetIdx);
                         if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
                             continue;

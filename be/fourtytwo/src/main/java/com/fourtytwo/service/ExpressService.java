@@ -23,9 +23,9 @@ public class ExpressService {
 
     private final ExpressionRepository expressionRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
     private final MessageRepository messageRepository;
     private final EmotionRepository emotionRepository;
+    private final FcmService fcmService;
 
     public void express(String accessToken, ExpressReqDto expressReqDto) {
         User user = this.checkUserByAccessToken(accessToken);
@@ -48,8 +48,15 @@ public class ExpressService {
                         .emotion(emotion.get())
                         .message(message.get())
                         .user(user)
+                        .isRead(false)
                         .build();
                 expressionRepository.save(newExpression);
+
+                // 기존에 감정 표현을 안 한 메시지에 감정 표현을 한 경우, 메시지 유저에게 FCM 메시지 전송
+                fcmService.sendToUser(message.get().getUser(),
+                        "누군가 당신의 메시지에 감정을 표현했어요",
+                        message.get().getContent(),
+                        "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/" + emotion.get().getName() + ".png");
             }
         } else {
             if (expressReqDto.getEmotion().equals("delete")) {

@@ -15,5 +15,6 @@ public class MessageResDto {
     private String color;
     private Long brushCnt;
     private String emotion;
+    private Boolean isInappropriate;
 
 }

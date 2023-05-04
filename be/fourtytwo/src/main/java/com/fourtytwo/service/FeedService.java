@@ -86,6 +86,7 @@ public class FeedService {
                         .nickname(message.getUser().getNickname())
                         .emoji(message.getUser().getEmoji())
                         .color(message.getUser().getColor())
+                        .isInappropriate(message.getIsInappropriate())
                         .brushCnt(count)
                         .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                         .build();
@@ -165,6 +166,7 @@ public class FeedService {
                             .nickname(message.getUser().getNickname())
                             .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
+                            .isInappropriate(message.getIsInappropriate())
                             .brushCnt(count)
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                             .build();
@@ -200,10 +202,17 @@ public class FeedService {
 
     public UserFeedResDto findUserFeeds(String accessToken, Long targetUserIdx) {
         Long userIdx = checkUserByAccessToken(accessToken);
+        User tartgetUser = userRepository.findByIdAndIsActiveTrue(targetUserIdx);
+        if (tartgetUser == null) {
+            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        }
         List<PlaceResDto> placeResDtos = new ArrayList<>();
         HashMap<Place, Integer> placeMap = new HashMap<>();
 
-        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(userIdx, targetUserIdx);
+        Long bigIdx = userIdx > targetUserIdx ? userIdx : targetUserIdx;
+        Long smallIdx = userIdx > targetUserIdx ? targetUserIdx : userIdx;
+
+        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(smallIdx, bigIdx);
 
         for (Brush brush : brushList) {
             if (placeMap.containsKey(brush.getPlace())) {
@@ -221,7 +230,8 @@ public class FeedService {
                 .placeResDtos(placeResDtos)
                 .brushCnt(brushList.size())
                 .userIdx(targetUserIdx)
-                .nickname(userRepository.findByIdAndIsActiveTrue(targetUserIdx).getNickname())
+                .nickname(tartgetUser.getNickname())
+                .emoji(tartgetUser.getEmoji())
                 .build();
     }
 
@@ -229,19 +239,25 @@ public class FeedService {
         Long userIdx = checkUserByAccessToken(accessToken);
         Place place = placeRepository.findPlaceById(placeIdx);
         List<UserMessageResDto> messages = new ArrayList<>();
-        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceId(userIdx, targetIdx, placeIdx);
+
+        Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
+        Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
+
+        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
             UserMessageResDto message = new UserMessageResDto();
             if (userIdx < targetIdx) {
                 message.setMessageIdx(brush.getMessage2().getId());
                 message.setContent(brush.getMessage2().getContent());
                 message.setTime(brush.getCreatedAt().withNano(0));
+                message.setIsInappropriate(brush.getMessage2().getIsInappropriate());
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             } else {
                 message.setMessageIdx(brush.getMessage1().getId());
                 message.setContent(brush.getMessage1().getContent());
                 message.setTime(brush.getCreatedAt().withNano(0));
+                message.setIsInappropriate(brush.getMessage1().getIsInappropriate());
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             }

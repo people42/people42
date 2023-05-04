@@ -43,6 +43,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -118,7 +119,7 @@ public class UserService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String clientId;
-        if (domainType == "web") {
+        if (domainType == "web" || domainType == "webDelete") {
             clientId = appleClientId;
         } else {
             clientId = appleClientAppId;
@@ -130,9 +131,12 @@ public class UserService {
         map.add("grant_type", "authorization_code");
         map.add("code", appleCode);
         if (domainType == "web") {
-            map.add("redirect_uri", "https://people42.com/be42/api/v1/auth/check/apple/web");
-        } else {
-            map.add("redirect_uri", "https://people42.com/signin/apple");
+            map.add("redirect_uri", "https://www.people42.com/be42/api/v1/auth/check/apple/web");
+        } else if (domainType == "webDelete") {
+            map.add("redirect_uri", "https://www.people42.com/withdrawal/apple");
+        }
+        else {
+            map.add("redirect_uri", "https://www.people42.com/signin/apple");
         }
         map.add("client_id", clientId);
         map.add("client_secret", appleClientSecret);
@@ -416,7 +420,7 @@ public class UserService {
 //        // 사용자 정보 조회
 //        AppleOAuthResponseDto userInfo = getAppleUserInfo(appleAccessToken);
         String clientId;
-        if (domainType == "web") {
+        if (domainType == "web" || domainType == "webDelete") {
             clientId = appleClientId;
         } else {
             clientId = appleClientAppId;
@@ -510,8 +514,11 @@ public class UserService {
         if (!refreshTokenProvider.validateToken(refreshToken)) {
             throw new AuthenticationServiceException("토큰이 만료된 유저입니다.");
         }
-        refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
-        redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
+
+        if (refreshTokenProvider.getTokenValidTime(refreshToken).isBefore(LocalDateTime.now().plusDays(7))) {
+            refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+            redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
+        }
 
         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
         return LoginResponseDto.builder()

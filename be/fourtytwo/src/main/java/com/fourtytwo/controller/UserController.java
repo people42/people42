@@ -1,7 +1,10 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.fcm.FcmTokenReqDto;
 import com.fourtytwo.dto.user.*;
+import com.fourtytwo.service.FcmService;
 import com.fourtytwo.service.UserService;
+import com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,8 +26,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FcmService fcmService) {
         this.userService = userService;
     }
 
@@ -55,10 +57,10 @@ public class UserController {
         LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
         HttpHeaders headers = new HttpHeaders();
         if (loginResponseDto.getAccessToken() == null) {
-            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code").get(0)
+            headers.setLocation(URI.create("https://www.people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
                     + "&is_signup=false"));
         } else {
-            headers.setLocation(URI.create("http://localhost:5174/signin/apple?apple_code=" + requestBody.get("code").get(0)
+            headers.setLocation(URI.create("https://www.people42.com/signin/apple?apple_code=" + requestBody.get("code").get(0)
                     + "&is_signup=true"));
         }
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
