@@ -1,4 +1,4 @@
-package com.fourtytwo.dto.alert;
+package com.fourtytwo.dto.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class AlertCntResDto {
+public class NotificationCntResDto {
 
-    private Long alertCnt;
+    private Long notificationCnt;
 
 }

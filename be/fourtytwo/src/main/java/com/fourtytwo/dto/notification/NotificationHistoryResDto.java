@@ -1,18 +1,17 @@
-package com.fourtytwo.dto.alert;
+package com.fourtytwo.dto.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AlertHistoryResDto {
+@Data
+public class NotificationHistoryResDto {
 
     private String title;
     private String body;
