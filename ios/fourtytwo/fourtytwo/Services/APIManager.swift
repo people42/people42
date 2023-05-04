@@ -127,6 +127,20 @@ class APIManager {
                             completion(.failure(error))
                         }
                     }
+                } else if let statusCode = response.response?.statusCode, statusCode == 409 {
+                    print("\(statusCode) 중복된 요청")
+                    // 에러 데이터 처리
+                    if let data = response.data {
+                        do {
+                            let decoder = JSONDecoder()
+                            let errorResponse = try decoder.decode(ResponseMessage<Empty>.self, from: data)
+                            print("Error Message: \(errorResponse.message), Status: \(errorResponse.status)")
+                            completion(.success(errorResponse as! T))
+                        } catch {
+                            print("Error Decoding Error Message")
+                            completion(.failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)))
+                        }
+                    }
                 } else {
                     // 다른 에러 처리
                     if let data = response.data {
@@ -163,5 +177,4 @@ class APIManager {
             }
         }
     }
-
 }

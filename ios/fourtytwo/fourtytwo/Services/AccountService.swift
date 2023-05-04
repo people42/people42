@@ -57,7 +57,7 @@ struct AccountService {
     }
     
     // 차단
-    static func blockMessage(data: [String : Any], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
+    static func blockUser(data: [String : Any], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
         APIManager.shared.request(endpoint: "/account/block", method: .post, parameters: data, responseType: ResponseMessage<Empty>.self, completion: completion)
     }
     

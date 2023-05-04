@@ -85,7 +85,7 @@ struct BlockView: View {
 
                     Button("차단") {
                         // 차단 기능 구현
-                        
+                        blockUser()
                         presentationMode.wrappedValue.dismiss()
                     }
                     .font(.customButton)
@@ -108,6 +108,23 @@ struct BlockView: View {
     
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+    
+    private func blockUser() {
+        let data = ["userIdx": userIdx]
+        AccountService.blockUser(data: data) { result in
+            switch result {
+            case .success(let response):
+                if response.status == 409 {
+                    // 화면에 에러 메시지 표시
+                    print("이미 차단된 사용자 입니다.")
+                } else {
+                    print("유저 차단")
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
 }
