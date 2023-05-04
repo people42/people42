@@ -55,8 +55,7 @@ struct BlockView: View {
                 }
 
                 ZStack {
-
-                    TextEditor(text: $blockReason)
+                    TopAlignedTextEditor(text: $blockReason)
                         .padding()
                         .background(Color(.systemBackground))
                         .cornerRadius(24)
@@ -65,7 +64,6 @@ struct BlockView: View {
                                 .foregroundColor(blockReason.isEmpty ? .gray : .clear)
                                 .padding(.all, 8)
                         )
-                    
                 }
                 .padding()
 
@@ -117,7 +115,7 @@ struct BlockView: View {
             case .success(let response):
                 if response.status == 409 {
                     // 화면에 에러 메시지 표시
-                    print("이미 차단된 사용자 입니다.")
+                    print("이미 차단된 사용자입니다.")
                 } else {
                     print("유저 차단")
                 }

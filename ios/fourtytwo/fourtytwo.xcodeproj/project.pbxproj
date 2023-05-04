@@ -266,6 +266,8 @@
 		362553C82A02B10500A2CD4A /* PlacePersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553C72A02B10500A2CD4A /* PlacePersonView.swift */; };
 		362553CA2A02B6CE00A2CD4A /* CommonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553C92A02B6CE00A2CD4A /* CommonService.swift */; };
 		362553CC2A0369B300A2CD4A /* BlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553CB2A0369B300A2CD4A /* BlockView.swift */; };
+		362553CE2A0389A600A2CD4A /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553CD2A0389A600A2CD4A /* ReportView.swift */; };
+		362553D02A0395EF00A2CD4A /* TopAlignedTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -569,6 +571,8 @@
 		362553C72A02B10500A2CD4A /* PlacePersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacePersonView.swift; sourceTree = "<group>"; };
 		362553C92A02B6CE00A2CD4A /* CommonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonService.swift; sourceTree = "<group>"; };
 		362553CB2A0369B300A2CD4A /* BlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockView.swift; sourceTree = "<group>"; };
+		362553CD2A0389A600A2CD4A /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAlignedTextEditor.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -665,6 +669,9 @@
 				36DA62FF29F638B6001191DB /* ReactionButton.swift */,
 				36680D2A29F64B78001EFD52 /* MessageCard.swift */,
 				360D52C629F939B400F67940 /* AlertCard.swift */,
+				362553CB2A0369B300A2CD4A /* BlockView.swift */,
+				362553CD2A0389A600A2CD4A /* ReportView.swift */,
+				362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -867,7 +874,6 @@
 			children = (
 				362552EA2A0234C700A2CD4A /* PersonMessageCard.swift */,
 				362553C72A02B10500A2CD4A /* PlacePersonView.swift */,
-				362553CB2A0369B300A2CD4A /* BlockView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -1548,6 +1554,7 @@
 				3606DC0A29EE87AB0025F0FC /* SecondSectionView.swift in Sources */,
 				36DA62F529F60BF6001191DB /* MyMassageCard.swift in Sources */,
 				362552E82A02269D00A2CD4A /* PersonView.swift in Sources */,
+				362553D02A0395EF00A2CD4A /* TopAlignedTextEditor.swift in Sources */,
 				3606DC1129EEB6D30025F0FC /* GoogleSigninButton.swift in Sources */,
 				36DA630029F638B6001191DB /* ReactionButton.swift in Sources */,
 				360D52D429FA4A0D00F67940 /* CustomBottomSheet.swift in Sources */,
@@ -1557,6 +1564,7 @@
 				360D52B729F81C9B00F67940 /* LocationService.swift in Sources */,
 				36680D3329F6CB96001EFD52 /* TimelineView.swift in Sources */,
 				3606DC1729EF68640025F0FC /* Font.swift in Sources */,
+				362553CE2A0389A600A2CD4A /* ReportView.swift in Sources */,
 				36BF9C3F29ED4F390011677E /* LoginView.swift in Sources */,
 				362553CA2A02B6CE00A2CD4A /* CommonService.swift in Sources */,
 				360D52C729F939B400F67940 /* AlertCard.swift in Sources */,

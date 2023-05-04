@@ -8,6 +8,9 @@ struct MessageCard: View {
     
     @State private var contentHeight: CGFloat = 0
     
+    @State private var showActionSheet = false
+    @State private var showReportMessageSheet = false
+    
     init(messageInfo: MessageInfo) {
         self.messageInfo = messageInfo
         
@@ -42,10 +45,25 @@ struct MessageCard: View {
                     GifImage(messageInfo.profileImage, isAnimated: false)
                         .frame(width: 40, height: 40)
                     
-                    Text("\(messageInfo.stack)번 스쳤습니다.")
-                        .font(.system(size: 16))
-                        .foregroundColor(Color("Text"))
-                        .fontWeight(.bold)
+                    HStack {
+                        Text("\(messageInfo.stack)번 스쳤습니다.")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color("Text"))
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            showActionSheet.toggle()
+                        }) {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(Color("Text"))
+                        }
+                        
+                        Spacer()
+                            .frame(width: 48)
+                    }
                 }
                 .padding(.top, -16)
                 .padding(.leading, -16)
@@ -96,6 +114,20 @@ struct MessageCard: View {
         }
         .frame(height: 152 + contentHeight)
         .padding(.bottom, 16)
+        .actionSheet(isPresented: $showActionSheet) {
+            ActionSheet(title: Text("하나의 게시글에 한 번의 신고만 가능합니다.\n3번의 신고가 이루어지면 게시글이 삭제될 수 있습니다."),
+                buttons: [
+                    .destructive(Text("신고")) {
+                        showReportMessageSheet = true
+                    },
+                    .cancel(Text("취소")) { }
+                ])
+        }
+        .sheet(isPresented: $showReportMessageSheet) {
+            if let nickname = messageInfo.nickname, let messageIdx = messageInfo.messageIdx {
+                ReportView(nickname: nickname, messageIdx: messageIdx)
+            }
+        }
     }
 }
 
