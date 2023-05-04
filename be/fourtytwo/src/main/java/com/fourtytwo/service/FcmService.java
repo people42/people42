@@ -160,7 +160,7 @@ public class FcmService {
     public AlertCntResDto getMyAlertCnt(String accessToken) {
         User user = checkUser(accessToken);
         return AlertCntResDto.builder()
-                .alertCnt(expressionRepository.countByMessageUserAndIsReadIsTrue(user))
+                .alertCnt(expressionRepository.countByMessageUserAndIsReadIsFalse(user))
                 .build();
     }
 
