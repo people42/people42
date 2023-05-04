@@ -1,13 +1,12 @@
 package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
-import com.fourtytwo.dto.alert.AlertCntResDto;
-import com.fourtytwo.dto.alert.AlertHistoryResDto;
+import com.fourtytwo.dto.notification.NotificationCntResDto;
+import com.fourtytwo.dto.notification.NotificationHistoryResDto;
 import com.fourtytwo.entity.Expression;
 import com.fourtytwo.entity.User;
 import com.fourtytwo.repository.expression.ExpressionRepository;
 import lombok.AllArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -16,28 +15,28 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class AlertService {
+public class NotificationService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
     private final ExpressionRepository expressionRepository;
 
-    public AlertCntResDto getMyAlertCnt(String accessToken) {
+    public NotificationCntResDto getMyNotificationCnt(String accessToken) {
         User user = checkUser(accessToken);
-        return AlertCntResDto.builder()
-                .alertCnt(expressionRepository.countByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(user))
+        return NotificationCntResDto.builder()
+                .notificationCnt(expressionRepository.countByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(user))
                 .build();
     }
 
-    public List<AlertHistoryResDto> getMyAlertHistory(String accessToken) {
+    public List<NotificationHistoryResDto> getMyNotificationHistory(String accessToken) {
         User user = checkUser(accessToken);
         List<Expression> expressionList = expressionRepository.MessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(user);
-        List<AlertHistoryResDto> alertHistoryResDtos = new ArrayList<>();
+        List<NotificationHistoryResDto> alertHistoryResDtos = new ArrayList<>();
         for (Expression expression : expressionList) {
             if (!expression.getMessage().getIsActive()) {
                 continue;
             }
-            alertHistoryResDtos.add(AlertHistoryResDto.builder()
+            alertHistoryResDtos.add(NotificationHistoryResDto.builder()
                     .title("누군가 당신의 메시지에 감정을 표현했어요")
                     .body(expression.getMessage().getContent())
                     .emoji(expression.getEmotion().getName())
