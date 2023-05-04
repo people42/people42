@@ -3,6 +3,7 @@ import { postFCMToken, postLocation } from "./api";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
+import { NotificationCard } from "./components";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Logout from "./pages/Logout/Logout";
 import Withdrawal from "./pages/Withdrawal/Withdrawal";
@@ -16,6 +17,7 @@ import {
   isFirebaseLoadState,
   isNotificationPermittedState,
 } from "./recoil/notification/atoms";
+import { updateNotificationState } from "./recoil/notification/selector";
 import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
@@ -243,6 +245,12 @@ function App() {
         onMessage(messaging, (payload) => {
           // 유저 접속해있을 때 수신된 메시지
           console.log("수신된 메시지: ", payload);
+          setNewNotification({
+            isShow: true,
+            title: payload.notification?.title ?? "",
+            body: payload.notification?.body ?? "",
+            icon: payload.notification?.icon ?? "",
+          });
         });
         getToken(messaging, {
           // 최초 토큰 발행
@@ -251,20 +259,18 @@ function App() {
           .then((currentToken) => {
             // 토큰 서버에 전달
             if (currentToken && user) {
-              postFCMToken(user.accessToken, currentToken)
-                .then((res) => console.log(res))
-                .catch((e) => console.log(e));
+              postFCMToken(user.accessToken, currentToken).catch((e) => {
+                alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
+                setIsNotificationPermitted(false);
+              });
             } else {
-              console.log("등록된 토큰이 없습니다.");
+              alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
             }
           })
           .catch((err) => console.log(err));
       } else if (permission === "denied") {
         // 유저 알림 설정 꺼져있는 경우
         setIsNotificationPermitted(false);
-        alert(
-          "죄송합니다. 브라우저에서 알림 권한 요청 대화 상자를 더 이상 자동으로 표시하지 않도록 설정한 것 같습니다. 알림을 받으려면 수동으로 브라우저 설정에서 알림 권한을 허용해야 합니다. 이를 위해 브라우저 설정을 열고 해당 사이트의 권한을 확인해주세요."
-        );
       }
     });
   }
@@ -279,6 +285,25 @@ function App() {
       setIsFirebaseLoad(true);
     }
   }, [firebaseConfig, user]);
+
+  // notification
+  const [newNotification, setNewNotification] = useRecoilState(
+    updateNotificationState
+  );
+  useEffect(() => {
+    if (newNotification && newNotification.isShow) {
+      console.log(newNotification);
+      const notificationTimeout = setTimeout(() => {
+        const newNotificationCopy = Object.assign({}, newNotification);
+        newNotificationCopy.isShow = false;
+        setNewNotification(newNotificationCopy);
+      }, 5000);
+
+      return () => {
+        clearTimeout(notificationTimeout);
+      };
+    }
+  }, [newNotification]);
 
   const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
 
@@ -296,6 +321,7 @@ function App() {
       ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <NavermapsProvider ncpClientId={NAVER_MAP_CLIENT_ID}>
+          <NotificationCard></NotificationCard>
           <RouterProvider router={router} />
         </NavermapsProvider>
       </GoogleOAuthProvider>

@@ -33,7 +33,6 @@ const StyledThemeButton = styled.button`
   transition: all 0.1s;
   cursor: pointer;
   &:hover {
-    scale: 1.1;
     & > svg {
       color: ${({ theme }) => (theme.isDark ? "#FDFF9C" : "#FFD954")};
     }

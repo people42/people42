@@ -1,6 +1,7 @@
 import { getAccessToken, getMyInfo } from "../../../../api";
 import { Card } from "../../../../components";
 import MyMessageCardInput from "../../../../components/Input/MyMessageCardInput";
+import { updateNotificationState } from "../../../../recoil/notification/selector";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../../../utils";
@@ -22,6 +23,7 @@ function MyMessageCard({
 }: myMessageCardProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
+  const newNotification = useRecoilValue(updateNotificationState);
 
   const [myMessage, setMyMessage] = useState<TMyMessage>();
   useEffect(() => {
@@ -37,7 +39,7 @@ function MyMessageCard({
           }
         });
     }
-  }, [accessToken, isMessageEdit]);
+  }, [accessToken, isMessageEdit, newNotification]);
 
   const S3_URL = import.meta.env.VITE_S3_URL;
 

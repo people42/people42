@@ -8,7 +8,7 @@ function HomeMapPermission({}: homeMapPermissionProps) {
     <StyledHomeMapPermission>
       <TbLocationBroken size={64} />
       <p>위치를 불러올 수 없습니다</p>
-      <p>위치 권한을 허용해주세요.</p>
+      <p>위치 권한을 허용해주세요</p>
     </StyledHomeMapPermission>
   );
 }

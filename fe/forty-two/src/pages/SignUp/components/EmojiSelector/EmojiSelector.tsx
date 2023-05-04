@@ -15,6 +15,8 @@ type emojiSelectorProps = { onClick(e: React.MouseEvent): void };
 const emojiList: string[] = _.sampleSize(emojiNameList, 22);
 
 function EmojiSelector({ onClick }: emojiSelectorProps) {
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   const [signUpUser, setSignUpUser] = useRecoilState(signUpUserState);
 
   const setSignUpUserEmoji = (emoji: string) => {
@@ -28,7 +30,7 @@ function EmojiSelector({ onClick }: emojiSelectorProps) {
       <SwiperSlide key={name} id={name}>
         <StaticEmojiIcon
           style={{
-            backgroundImage: `url("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/static/${name}.png")`,
+            backgroundImage: `url("${S3_URL}emoji/static/${name}.png")`,
           }}
         ></StaticEmojiIcon>
       </SwiperSlide>

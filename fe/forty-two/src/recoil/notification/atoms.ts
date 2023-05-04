@@ -9,3 +9,8 @@ export const isNotificationPermittedState = atom<"check" | boolean>({
   key: "isNotificationPermittedState",
   default: "check",
 });
+
+export const notificationState = atom<TNotification | null>({
+  key: "notificationState",
+  default: null,
+});
