@@ -111,7 +111,7 @@ public class FcmService {
 
         // 현재 토큰이 유효한 유저에게만 메시지 전송
         Message message = Message.builder()
-//                .putData("time", LocalDateTime.now().toString())
+                .putData("image", image)
 //                .setNotification(Notification.builder()
 //                        .setTitle(title)
 //                        .setBody(body)
