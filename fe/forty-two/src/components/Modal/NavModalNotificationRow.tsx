@@ -1,16 +1,16 @@
 import styled from "styled-components";
 
-type navModalNotificationRowProps = {};
+type navModalNotificationRowProps = { data: TNotificationHistory };
 
-function NavModalNotificationRow({}: navModalNotificationRowProps) {
+function NavModalNotificationRow({ data }: navModalNotificationRowProps) {
   const S3_URL = import.meta.env.VITE_S3_URL;
   return (
     <StyledNavModalNotificationRow>
-      <img src={`${S3_URL}emoji/animate/${"ghost"}.gif`}></img>
+      <img src={`${S3_URL}emoji/reaction/${data.emoji}.png`}></img>
       <div>
-        <span>0분 전</span>
-        <span>누군가 회원님의 생각을 좋아해요</span>
-        <p>노티 내용</p>
+        <p className="notification-title">{data.title}</p>
+        <p className="notification-body">{data.body}</p>
+        <p className="notification-time">{data.createdAt}</p>
       </div>
     </StyledNavModalNotificationRow>
   );
@@ -27,17 +27,27 @@ const StyledNavModalNotificationRow = styled.div`
     margin-right: 8px;
   }
   display: flex;
-  ${({ theme }) => theme.text.body2}
-  & > div {
-    & > span {
-      ${({ theme }) => theme.text.overline}
-      &:nth-child(1) {
-        color: ${({ theme }) => theme.color.text.secondary};
-        margin-right: 8px;
-      }
-    }
-    & > p {
-      margin-top: 4px;
-    }
+
+  .notification-title {
+    ${({ theme }) => theme.text.subtitle2};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 210px;
+  }
+  .notification-body {
+    ${({ theme }) => theme.text.caption};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 210px;
+  }
+  .notification-time {
+    ${({ theme }) => theme.text.overline};
+    color: ${({ theme }) => theme.color.text.secondary};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 210px;
   }
 `;

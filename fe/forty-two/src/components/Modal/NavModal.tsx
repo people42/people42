@@ -12,17 +12,13 @@ type navModalProps = {
 };
 
 function NavModal({ closeModal, type }: navModalProps) {
-  const userNickname = useRecoilValue(userNicknameState);
-
   return (
     <StyledNavModal type={type}>
       <Card isShadowInner={false}>
         <div className="modal">
           <div className="modal-header">
             <p className="modal-header-title">
-              {type == "notification"
-                ? `새로운 알림 ${0}건`
-                : `${userNickname}`}
+              {type == "notification" ? `알림` : `설정`}
             </p>
             <TbX
               className="modal-header-close-icon"

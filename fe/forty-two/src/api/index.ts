@@ -12,6 +12,7 @@ export const instance = (
   });
 
 export * from "./auth";
+export * from "./notification";
 export * from "./account";
 export * from "./policy";
 export * from "./feed";

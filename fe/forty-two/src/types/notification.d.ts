@@ -6,3 +6,10 @@ type TfirebaseConfig = {
   messagingSenderId: string;
   appId: string;
 };
+
+type TNotification = {
+  isShow: boolean;
+  title: string;
+  body: string;
+  icon: string;
+};
