@@ -36,6 +36,7 @@ public class MessageService {
                 .user(user)
                 .content(message)
                 .isActive(true)
+                .isInappropriate(false)
                 .build();
         messageRepository.save(newMessage);
     }

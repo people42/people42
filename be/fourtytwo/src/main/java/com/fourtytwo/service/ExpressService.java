@@ -48,6 +48,7 @@ public class ExpressService {
                         .emotion(emotion.get())
                         .message(message.get())
                         .user(user)
+                        .isRead(false)
                         .build();
                 expressionRepository.save(newExpression);
 
