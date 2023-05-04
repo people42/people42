@@ -14,7 +14,8 @@
         android:background="@drawable/round_box"
         android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="#333644FC"/>
+        android:backgroundTint="#333644FC"
+        android:visibility="gone"/>
     <ImageView
         android:id="@+id/my_opinion_text_shadow1"
         android:layout_width="match_parent"
@@ -23,7 +24,8 @@
         android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="3dp"
-        android:backgroundTint="#663644FC"/>
+        android:backgroundTint="#663644FC"
+        android:visibility="gone"/>
     <!-- 말풍선 -->
     <TextView
         android:id="@+id/my_opinion_text"
@@ -31,12 +33,13 @@
         android:layout_height="wrap_content"
         android:minHeight="@dimen/opinion_height"
         android:background="@drawable/round_box"
-        android:text="content"
+        android:text="@string/write"
         android:gravity="center_vertical"
         android:paddingHorizontal="@dimen/message_padding_horizontal"
         android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="6dp"/>
+        android:layout_marginBottom="6dp"
+        android:paddingTop="7dp"/>
 
     <!-- 이모지 + 공감 -->
     <RelativeLayout

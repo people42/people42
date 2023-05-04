@@ -47,16 +47,11 @@ class WelcomeFragment : Fragment() {
         lifecycleScope.launch {
             userDataStore.setUserNickname(myNickname)
             userDataStore.setUserEmoji(myEmoji)
-            myEmail = userDataStore.get_email.first()
-            myIdToken = userDataStore.get_idToken.first()
         }
         val check = lifecycleScope.launch {
             SignupGoogle(SignupForm(userDataStore.get_email.first(), myNickname, userDataStore.get_idToken.first(), myEmoji))
-            Log.i(TAG, "onCreate닉네임 들어갓는지 확인 데이터 스토어야 일해라: ${userDataStore.get_idToken.first()}")
-            Log.i(TAG, "onCreate닉네임 들어갓는지 확인 데이터 스토어야 일해라: ${userDataStore.get_email.first() }}")
+            Log.d(TAG, "유저 데이터 : 이메일 ${userDataStore.get_email.first()}")
         }
-        Log.i(TAG, "onCreateView되라돼ㅐㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ: ${myEmail}")
-        Log.i(TAG, "onCreateView:제발좀되라고오오오오 ${myIdToken}")
     }
 
     override fun onCreateView(
@@ -84,7 +79,6 @@ class WelcomeFragment : Fragment() {
         _binding = null
     }
     fun SignupGoogle(signupForm: SignupForm){
-        Log.i(TAG, "SignupGoogle: ${signupForm.email}, ${signupForm.nickname}, ${signupForm.o_auth_token}, ${signupForm.emoji}")
         api.signUpGoogle(signupForm).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 Log.d("SignupGoogle_onResponse", response.toString())

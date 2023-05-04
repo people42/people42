@@ -25,37 +25,36 @@
 
         <TextView
             android:id="@+id/guide_explain"
-            android:layout_width="0dp"
+            android:layout_width="411dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="79dp"
-            android:layout_marginBottom="252dp"
             android:gravity="center"
             android:text="지금 나의 생각을 \n 작성해보세요"
-            android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="@dimen/login_text_size"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="100dp"
+            />
 
         <FrameLayout
+            android:id="@+id/think_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteY="151dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guide_explain"
-            android:layout_marginTop="23dp"
-            >
+            tools:layout_editor_absoluteY="154dp"
+            android:layout_marginTop="15dp">
 
             <ImageView
+                android:id="@+id/guide_backgroundTint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/reaction_padding_right"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/round_box"
-                android:minHeight="106dp"/>
+                android:minHeight="106dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -66,16 +65,16 @@
                     android:layout_width="@dimen/reaction_height"
                     android:layout_height="@dimen/reaction_height"
                     android:layout_marginStart="40dp"
-                    android:src="@drawable/robot"
-                    android:elevation="5dp"/>
+                    android:elevation="5dp"
+                    android:src="@drawable/robot" />
 
                 <LinearLayout
                     android:id="@+id/guide_opinion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="35dp"
                     android:layout_marginTop="70dp"
-                    android:layout_marginHorizontal="35dp">
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/guide_text"
@@ -84,45 +83,49 @@
                         android:layout_weight="1"
                         android:background="@drawable/round_box"
                         android:backgroundTint="@color/white"
+                        android:elevation="5dp"
                         android:hint="지금 내 생각을 자유롭게 적어주세요"
-                        android:textColorHint="@color/text_shadow"
-                        android:paddingVertical="8dp"
                         android:paddingHorizontal="15dp"
+                        android:paddingVertical="8dp"
+                        android:textColorHint="@color/text_shadow"
                         android:textSize="15sp"
-                        android:elevation="5dp"/>
+                        android:singleLine="true"/>
 
                     <Button
                         android:id="@+id/think_cloud_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_weight="3"
                         android:background="@drawable/think_cloud"
+                        android:elevation="5dp"
                         android:text="@string/think_cloud"
-                        android:layout_marginStart="12dp"
-                        android:textSize="15sp"
-                        android:elevation="5dp"/>
+                        android:textSize="15sp" />
                 </LinearLayout>
-                <TextView
-                    android:id="@+id/guide_notice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/guide_explain"
-                    android:gravity="center"
-                    android:layout_below="@id/guide_opinion"
-                    android:layout_marginTop="50dp"
-                    android:textColor="@color/monotone_dark"/>
-                <TextView
-                    android:id="@+id/write_later"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/write_later"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_below="@id/guide_notice"
-                    android:layout_marginTop="200dp"
-                    android:textColor="@color/main_blue"/>
             </RelativeLayout>
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/guide_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/guide_explain"
+            android:textColor="@color/monotone_dark"
+            android:layout_marginTop="185dp"
+            app:layout_constraintTop_toBottomOf="@id/guide_explain" />
+
+        <TextView
+            android:id="@+id/write_later"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/write_later"
+            android:textColor="@color/main_blue"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guide_notice" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

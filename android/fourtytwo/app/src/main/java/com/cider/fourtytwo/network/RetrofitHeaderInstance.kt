@@ -1,6 +1,9 @@
 package com.cider.fourtytwo.network
 
-import com.cider.fourtytwo.BuildConfig
+import androidx.datastore.core.DataStore
+import androidx.lifecycle.lifecycleScope
+import com.cider.fourtytwo.dataStore.UserDataStore
+import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -8,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
-object RetrofitHeaderInstance {
+object RetrofitHeaderInstance{
     private const val BASE_URL = "https://people42.com/be42"
     private const val HEADER = ""
 

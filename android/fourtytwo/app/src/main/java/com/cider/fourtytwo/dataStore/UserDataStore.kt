@@ -32,18 +32,6 @@ class UserDataStore (private val context : Context){
     private var accessToken = stringPreferencesKey("accessToken")
     private var idToken = stringPreferencesKey("idToken")
 
-    suspend fun getSignupInfo(): SignupForm? {
-        var result: SignupForm? = null
-        mDataStore.edit { preferences ->
-            result = SignupForm(
-                preferences[email].toString(),
-                preferences[nickname].toString(),
-                preferences[idToken].toString(),
-                preferences[emoji].toString()
-            )
-        }
-        return result
-    }
     val mDataStore = context.dataStore
     val get_email : Flow<String> = context.dataStore.data
         .catch { exception ->
@@ -67,7 +55,7 @@ class UserDataStore (private val context : Context){
         .map {preferences ->
             preferences[idToken].toString() ?: ""
         }
-    val get_nickname : Flow<String> = context.dataStore.data
+    val get_color : Flow<String> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -76,7 +64,40 @@ class UserDataStore (private val context : Context){
             }
         }
         .map {preferences ->
-            preferences[nickname].toString() ?: ""
+            preferences[color].toString() ?: ""
+        }
+    val get_emoji : Flow<String> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[emoji].toString() ?: ""
+        }
+    val get_access_token : Flow<String> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[accessToken].toString() ?: ""
+        }
+    val get_refresh_token : Flow<String> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[refreshToken].toString() ?: ""
         }
 
     suspend fun setUserEmail(user_email: String): String {

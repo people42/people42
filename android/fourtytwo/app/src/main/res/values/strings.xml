@@ -11,6 +11,7 @@
     <string name="choose_emoji">프로필을\n선택해주세요</string>
     <string name="guide_explain">작성한 내용은\n완전히 익명으로 공유됩니다.</string>
     <string name="write_later">나중에 작성할래요</string>
+    <string name="write">지금 내 생각을 자유롭게 작성해주세요 </string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
