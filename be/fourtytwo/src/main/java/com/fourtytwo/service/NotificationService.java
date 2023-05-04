@@ -33,8 +33,9 @@ public class NotificationService {
         List<Expression> expressionList = expressionRepository.findByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalseAndMessage_IsActiveIsTrue(user);
         List<NotificationHistoryResDto> notificationHistoryResDtos = new ArrayList<>();
         for (Expression expression : expressionList) {
+
             notificationHistoryResDtos.add(NotificationHistoryResDto.builder()
-                    .title("누군가 당신의 메시지에 감정을 표현했어요")
+                    .title("누군가 감정을 표현했어요")
                     .body(expression.getMessage().getContent())
                     .emoji(expression.getEmotion().getName())
                     .createdAt(expression.getCreatedAt().withNano(0))
