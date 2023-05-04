@@ -77,33 +77,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                android:text="N번 스쳐간"
                 android:layout_toRightOf="@id/feedEmoji"
                 />
+            <TextView
+                android:id="@+id/feedNickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/feedbrushCnt"
+                />
         </RelativeLayout>
-        <TextView
-            android:id="@+id/feedNickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="닉네임"
-            android:layout_below="@id/feed_user"/>
+
         <TextView
             android:id="@+id/feedContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="컨텐츠"
-            android:layout_below="@id/feedNickname"/>
+            android:layout_below="@id/feed_user"
+            android:textStyle="bold"
+            android:layout_marginVertical="4dp"
+            android:textColor="@color/black"/>
         <TextView
             android:id="@+id/feedLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="장소"
             android:layout_below="@id/feedContent"/>
         <TextView
             android:id="@+id/feedTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="시간"
             android:layout_below="@id/feedLocation"/>
 
         <ImageView

@@ -8,20 +8,22 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.cider.fourtytwo.Signup.SignupActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySigninBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.signIn.UserInfo
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import retrofit2.Call
@@ -34,14 +36,13 @@ class SigninActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var GoogleSignResultLauncher: ActivityResultLauncher<Intent>
-    val api = RetrofitInstance.getInstance().create(Api::class.java)
-    private val viewModel: UserViewModel by viewModels()
+    val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
     private lateinit var userDataStore: UserDataStore
 
     override fun onStart() {
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        Log.d(TAG, "onStart Google account: ${account}")
+        Log.d(TAG, "onStart Google account: $account")
         if (account == null) {
             Log.e("onStart Google account", "로그인 안 되어있음")
         } else {
@@ -71,27 +72,26 @@ class SigninActivity : AppCompatActivity() {
             handleSignInResult(task)
         }
         binding.loginGoogle.setOnClickListener {
-            var signIntent: Intent = mGoogleSignInClient.signInIntent
+            val signIntent: Intent = mGoogleSignInClient.signInIntent
             GoogleSignResultLauncher.launch(signIntent)
         }
     }
 
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val googletokenAuth = account?.idToken.toString()
-            // 유저 정보 저장
+            // 유저 idToken, email 저장
             userDataStore = UserDataStore(this)
             lifecycleScope.launch {
                 account.email?.let {
-                    val check = userDataStore.setUserEmail(it)
                     userDataStore.setUserIdToken(googletokenAuth)
+                    userDataStore.setUserEmail(account?.email!!)
                 }
-                userDataStore.getUserEmail()
             }
             // 회원인지 확인
+            Log.i(TAG, "handleSignInResult: 회원 체크하러 들어감")
             checkUser(googletokenAuth, this)
-
         } catch (e: ApiException) {
             // 취소 시 로그인 창으로
             if (e.statusCode == GoogleSignInStatusCodes.CANCELED) {
@@ -108,14 +108,17 @@ class SigninActivity : AppCompatActivity() {
             Log.e("Google account", "Error getting AccessToken from response", e)
         }
     }
-
-    fun checkUser(idToken: String, context : Context) {
-        var params = HashMap<String, String>()
-        params.put("o_auth_token", idToken)
+    private fun checkUser(idToken: String, context : Context) {
+        Log.i(TAG, "handleSignInResult: 회원 체크하러 들어옴")
+        val params = HashMap<String, String>()
+        params["o_auth_token"] = idToken
         api.getGoogleUser(params).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                Log.i(TAG, "onResponse: ${response.body()?.data}")
                 response.body()?.data?.let {
+                    Log.i(TAG, "handleSignInResult: ${it.user_idx}")
                     if (it.user_idx > 0) {
+                        saveUserInfo(it)
                         val intent = Intent(context, MainActivity::class.java)
                         startActivity(intent)
                     } else {
@@ -128,5 +131,10 @@ class SigninActivity : AppCompatActivity() {
                 Log.d("log", t.message.toString())
             }
         })
+    }
+    fun saveUserInfo(payload : UserInfo){
+        lifecycleScope.launch {
+            userDataStore.setUserData(payload)
+        }
     }
 }

@@ -26,7 +26,6 @@ class NicknameFragment : Fragment() {
     private var _binding : FragmentNicknameBinding? = null
     private val binding get() = _binding!!
     val api = RetrofitInstance.getInstance().create(Api::class.java)
-    private val viewModel : UserViewModel by viewModels()
     private var pickedNickname: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

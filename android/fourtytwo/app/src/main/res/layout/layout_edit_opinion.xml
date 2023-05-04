@@ -12,7 +12,7 @@
         android:minHeight="106dp"
         android:background="@drawable/round_box"
         android:layout_marginHorizontal="@dimen/reaction_padding_right"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginBottom="24dp"
         />
 
@@ -25,8 +25,7 @@
             android:layout_width="@dimen/reaction_height"
             android:layout_height="@dimen/reaction_height"
             android:layout_marginStart="40dp"
-            android:elevation="5dp"
-            android:src="@drawable/robot" />
+            android:elevation="5dp"/>
 
         <LinearLayout
             android:id="@+id/main_guide_opinion"

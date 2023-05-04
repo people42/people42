@@ -43,12 +43,7 @@ class WelcomeFragment : Fragment() {
         // 회원가입
         userDataStore = UserDataStore(requireContext())
         lifecycleScope.launch {
-            userDataStore.setUserNickname(myNickname)
-            userDataStore.setUserEmoji(myEmoji)
-        }
-        val check = lifecycleScope.launch {
-            SignupGoogle(SignupForm(userDataStore.get_email.first(), myNickname, userDataStore.get_idToken.first(), myEmoji))
-            Log.d(TAG, "유저 데이터 : 이메일 ${userDataStore.get_email.first()}")
+            signupGoogle(SignupForm(userDataStore.get_email.first(), myNickname, userDataStore.get_idToken.first(), myEmoji))
         }
     }
 
@@ -57,16 +52,12 @@ class WelcomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
-
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        SignupGoogle(SignupForm(myEmail, myNickname, myIdToken, myEmoji))
-
-
-        var handler = Handler()
+        val handler = Handler()
         handler.postDelayed({
             Navigation.findNavController(view)
                 .navigate(R.id.action_welcomeFragment_to_guideFragment)
@@ -76,17 +67,21 @@ class WelcomeFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
-    fun SignupGoogle(signupForm: SignupForm){
+    private fun signupGoogle(signupForm: SignupForm){
         api.signUpGoogle(signupForm).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                Log.d("SignupGoogle_onResponse", response.toString())
                 Log.d("SignupGoogle_onResponse", response.body()?.data.toString())
-                response.body()?.data?.let {
-                    Log.i(TAG, "onResponse: ${response.body()!!.data.accessToken}")
-                    saveUserInfo(it)
+                if (response.code() == 200) {
+                    response.body()?.data?.let {
+                        saveUserInfo(it)
+                    }
+                } else if (response.code() == 401){
+                    Log.i(TAG, "메세지 전송 401: 토큰 만료")
+                    getToken(signupForm)
+                } else {
+                    Log.i(TAG, "메세지 전송 기타: ${response.code()}")
                 }
             }
-
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 // 실패
                 Log.d("SignupGoogle_onFailure", t.message.toString())
@@ -94,9 +89,34 @@ class WelcomeFragment : Fragment() {
             }
         })
     }
+    fun getToken(signupForm: SignupForm) {
+        lifecycleScope.launch {
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                    if (response.body()?.status == 200) {
+                        saveUserAccessToken(refreshToken, signupForm)
+                    } else {
+                        Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    // 실패
+                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                }
+            })
+
+        }
+    }
     fun saveUserInfo(payload : UserInfo){
         lifecycleScope.launch {
             userDataStore.setUserData(payload)
+        }
+    }
+    fun saveUserAccessToken(token : String, signupForm: SignupForm){
+        lifecycleScope.launch {
+            userDataStore.setUserAccessToken(token)
+            signupGoogle(signupForm)
         }
     }
 }

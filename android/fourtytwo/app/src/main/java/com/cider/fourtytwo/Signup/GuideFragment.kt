@@ -41,10 +41,9 @@ class GuideFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentGuideBinding.inflate(inflater, container, false)
 
-// 회원가입을 위한 유저 데이터 가져오기
+// 유저 데이터 가져오기
         userDataStore = UserDataStore(requireContext())
         val myEmojiView: ImageView = binding.guideEmoji
         var myEmoji = ""
@@ -98,14 +97,12 @@ class GuideFragment : Fragment() {
                     Log.i(TAG, "메세지 전송 2 200: 잘 보내졌다네")
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 2 401: 토큰 만료")
-                    // 토큰 다시 받기
                     getToken(myMessage)
                 } else {
                     Log.i(TAG, "메세지 전송 기타: ${response.code()}")
                 }
             }
             override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
-                // 실패
                 Log.d("메세지 전송 2 실패: ", t.message.toString())
             }
         })
@@ -116,7 +113,6 @@ class GuideFragment : Fragment() {
 
             api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                    Log.d("토큰 전송 on response", response.toString())
                     response.body()?.let {
                         if (it.status == 200) {
                             Log.i(TAG, "토큰 전송 200: 잘 보내졌다네")

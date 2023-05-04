@@ -51,6 +51,15 @@
         android:background="@drawable/radar_circle3"
         android:layout_marginBottom="30dp"
         />
+    <com.skydoves.elasticviews.ElasticImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/marker"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        app:imageView_scale="0.7"
+        app:imageView_duration="300" />
 </FrameLayout>
 
 <!--    <ImageView-->

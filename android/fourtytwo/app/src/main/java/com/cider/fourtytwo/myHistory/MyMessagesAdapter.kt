@@ -34,8 +34,14 @@ class MyMessagesAdapter(private val itemList : List<HistoryData>): RecyclerView.
         Log.d(TAG, "어댑터에 데이터 도착: ${itemList}")
         holder.historyTime.text = timeEdit(itemList.get(position).createdAt)
         holder.historyText.text = itemList.get(position).content
-
-    }
+        if (itemList[position].heart > 0){
+            holder.history_reation_first.text = itemList[position].heart.toString()}
+        if (itemList[position].tear > 0){
+            holder.history_reation_second.text = itemList[position].tear.toString()}
+        if (itemList[position].thumbsUp > 0){
+            holder.history_reation_third.text = itemList[position].thumbsUp.toString()}
+        if (itemList[position].fire > 0){
+            holder.history_reation_fourth.text = itemList[position].fire.toString()}}
     override fun getItemCount(): Int {
         return itemList.size
     }
@@ -43,20 +49,19 @@ class MyMessagesAdapter(private val itemList : List<HistoryData>): RecyclerView.
     inner class MessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var historyTime = itemView.findViewById<TextView>(R.id.history_time)
         var historyText = itemView.findViewById<TextView>(R.id.history_text)
-        var history_reation_first = itemView.findViewById<ImageView>(R.id.history_reation_first)
-        var history_reation_second = itemView.findViewById<ImageView>(R.id.history_reation_second)
-        var history_reation_third = itemView.findViewById<ImageView>(R.id.history_reation_third)
-        var history_reation_fourth = itemView.findViewById<ImageView>(R.id.history_reation_fourth)
+        var history_reation_first = itemView.findViewById<TextView>(R.id.history_reaction_heart)
+        var history_reation_second = itemView.findViewById<TextView>(R.id.history_reaction_tear)
+        var history_reation_third = itemView.findViewById<TextView>(R.id.history_reaction_thumbs)
+        var history_reation_fourth = itemView.findViewById<TextView>(R.id.history_reaction_fire)
 
     }
 
     fun timeEdit(inputDate : String): String? {
-        val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-        val dateTime = LocalDateTime.parse(inputDate, formatterInput)
-
+        val timeString = inputDate.substring(0, 16)
+        val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        val dateTime = LocalDateTime.parse(timeString, formatterInput)
         val formatterOutput = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
         val outputDate = formatterOutput.format(dateTime)
-
         return outputDate // 2023년 05월 03일 00시 47분
     }
 
