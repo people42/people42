@@ -24,19 +24,16 @@ public class NotificationService {
     public NotificationCntResDto getMyNotificationCnt(String accessToken) {
         User user = checkUser(accessToken);
         return NotificationCntResDto.builder()
-                .notificationCnt(expressionRepository.countByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(user))
+                .notificationCnt(expressionRepository.countByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalseAndMessage_IsActiveIsTrue(user))
                 .build();
     }
 
     public List<NotificationHistoryResDto> getMyNotificationHistory(String accessToken) {
         User user = checkUser(accessToken);
-        List<Expression> expressionList = expressionRepository.MessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(user);
-        List<NotificationHistoryResDto> alertHistoryResDtos = new ArrayList<>();
+        List<Expression> expressionList = expressionRepository.findByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalseAndMessage_IsActiveIsTrue(user);
+        List<NotificationHistoryResDto> notificationHistoryResDtos = new ArrayList<>();
         for (Expression expression : expressionList) {
-            if (!expression.getMessage().getIsActive()) {
-                continue;
-            }
-            alertHistoryResDtos.add(NotificationHistoryResDto.builder()
+            notificationHistoryResDtos.add(NotificationHistoryResDto.builder()
                     .title("누군가 당신의 메시지에 감정을 표현했어요")
                     .body(expression.getMessage().getContent())
                     .emoji(expression.getEmotion().getName())
@@ -45,7 +42,7 @@ public class NotificationService {
             expression.setIsRead(true);
             expressionRepository.save(expression);
         }
-        return alertHistoryResDtos;
+        return notificationHistoryResDtos;
     }
 
     private User checkUser(String accessToken) {
