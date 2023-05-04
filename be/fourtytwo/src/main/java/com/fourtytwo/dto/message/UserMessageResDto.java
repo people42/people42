@@ -14,4 +14,5 @@ public class UserMessageResDto {
     private String content;
     private LocalDateTime time;
     private String emotion;
+    private Boolean isInappropriate;
 }

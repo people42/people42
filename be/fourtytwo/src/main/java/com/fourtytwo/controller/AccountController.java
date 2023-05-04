@@ -1,5 +1,6 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.alert.AlertCntResDto;
 import com.fourtytwo.dto.block.BlockReqDto;
 import com.fourtytwo.dto.fcm.FcmTokenReqDto;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
