@@ -50,3 +50,10 @@ type TLocation = {
   latitude: number;
   longitude: number;
 };
+
+type TNotificationHistory = {
+  title: string;
+  body: string;
+  emoji: string;
+  createdAt: string;
+};

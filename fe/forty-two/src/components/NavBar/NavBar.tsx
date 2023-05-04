@@ -1,5 +1,6 @@
 import animatedLogo from "../../assets/images/logo/animatedLogo_w120.gif";
 import IconBtn from "../Button/IconBtn";
+import NotificationNavBtn from "../Button/NotificationNavBtn";
 import ThemeBtn from "../Button/ThemeBtn";
 import NavModal from "../Modal/NavModal";
 import { useState } from "react";
@@ -46,11 +47,10 @@ function NavBar() {
             </>
           ) : null}
           <ThemeBtn></ThemeBtn>
-          <IconBtn
-            onClick={() => setIsNotificationModalOn(!isNotificationModalOn)}
-          >
-            <TbBellFilled size={24} aria-label={"알림"} />
-          </IconBtn>
+          <NotificationNavBtn
+            isNotificationModalOn={isNotificationModalOn}
+            setIsNotificationModalOn={setIsNotificationModalOn}
+          ></NotificationNavBtn>
           <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconBtn>

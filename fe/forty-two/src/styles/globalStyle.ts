@@ -3,6 +3,35 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes notificationIn {
+      0% {
+        width: 96px;
+        height: 96px;
+        transform: translate(-50%, -160%);
+      }
+      60% {
+        width: 96px;
+        height: 96px;
+        transform: translate(-50%, 0%);
+      }
+      100% {
+        width: 400px;
+        height: 96px;
+        transform: translate(-50%, 0%);
+      }
+    }
+    @keyframes notificationOut {
+      from {
+        width: 400px;
+        height: 64px;
+        transform: translate(-50%, 0%);
+      }
+      to {
+        width: 400px;
+        height: 64px;
+        transform: translate(-50%, -160%);
+      }
+    }
     @keyframes circleIn30 {
       from {
         filter: opacity(0);
