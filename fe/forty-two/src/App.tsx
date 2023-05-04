@@ -7,9 +7,15 @@ import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
 import Logout from "./pages/Logout/Logout";
 import Withdrawal from "./pages/Withdrawal/Withdrawal";
 import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
-import { isFirebaseLoadState } from "./recoil/FCM/atoms";
-import { locationInfoState } from "./recoil/location/atoms";
+import {
+  isLocationPermittedState,
+  locationInfoState,
+} from "./recoil/location/atoms";
 import { userLocationUpdateState } from "./recoil/location/selectors";
+import {
+  isFirebaseLoadState,
+  isNotificationPermittedState,
+} from "./recoil/notification/atoms";
 import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
@@ -72,6 +78,8 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const setUserRefresh = useSetRecoilState(userState);
+
   //////////////////////////
   // naver map client id import
   const NAVER_MAP_CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
@@ -108,8 +116,27 @@ function App() {
   const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
     locationInfoState
   );
-  const setUserRefresh = useSetRecoilState(userState);
-  const [user, userLogout] = useRecoilState(userLogoutState);
+  const [isLocationPermitted, setIsLocationPermitted] = useRecoilState(
+    isLocationPermittedState
+  );
+  function requestLocationPermission() {
+    if ("geolocation" in navigator) {
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then(function (permissionStatus) {
+          if (permissionStatus.state === "granted") {
+            // 위치 권한이 켜져 있음
+            setIsLocationPermitted(true);
+          } else {
+            // 위치 권한이 꺼져 있음
+            setIsLocationPermitted(false);
+          }
+        });
+    } else {
+      // 브라우저가 위치 정보를 지원하지 않음
+      setIsLocationPermitted(false);
+    }
+  }
   // 사용자 위치 업데이트 함수
   const updateCurrentLocation = async () => {
     getUserLocation().then((res: any) =>
@@ -119,7 +146,31 @@ function App() {
       })
     );
   };
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
+  useEffect(() => {
+    // 사용자 위치 업데이트
+    if (isLocationPermitted) {
+      updateCurrentLocation();
+    }
+    // 사용자 위치 5분마다 업데이트
+    let postLocationInterval = setInterval(() => {
+      if (isLocationPermitted) {
+        updateCurrentLocation();
+      }
+    }, 300000);
+
+    return () => {
+      clearInterval(postLocationInterval);
+    };
+  }, [isLocationPermitted]);
+
+  //////////////////////////
+  // isLogin
+  const [user, userLogout] = useRecoilState(userLogoutState);
+  const setIsLogin = useSetRecoilState(isLoginState);
   useEffect(() => {
     // 사용자 로그인 여부 검증
     const isLocalLogin: boolean = getLocalIsLogin();
@@ -137,17 +188,8 @@ function App() {
     } else {
       setIsLogin(false);
     }
-    // 사용자 위치 업데이트
-    updateCurrentLocation();
-    // 사용자 위치 5분마다 업데이트
-    const postLocationInterval = setInterval(() => {
-      updateCurrentLocation();
-    }, 300000);
-
-    return () => {
-      clearInterval(postLocationInterval);
-    };
   }, []);
+
   // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
     if (location && user) {
@@ -176,7 +218,8 @@ function App() {
   const MESSAGING_SENDER_ID = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
   const APP_ID = import.meta.env.VITE_FIREBASE_APP_ID;
   const V_API_ID_KEY = import.meta.env.VITE_FIREBASE_V_API_ID_KEY;
-  const [firebaseConfig, setFirebaseConfig] = useState<any>();
+  const [firebaseConfig, setFirebaseConfig] = useState<TfirebaseConfig>();
+  // firebase config
   useEffect(() => {
     setFirebaseConfig({
       apiKey: APP_KEY,
@@ -187,11 +230,15 @@ function App() {
       appId: APP_ID,
     });
   }, []);
-  // firebase init
-  function requestPermission(app: any) {
+  const setIsNotificationPermitted = useSetRecoilState(
+    isNotificationPermittedState
+  );
+  // firebase request permission
+  function requestNotificationPermission(app: any) {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         // 알림 설정되어있는 경우
+        setIsNotificationPermitted(true);
         const messaging = getMessaging(app);
         onMessage(messaging, (payload) => {
           // 유저 접속해있을 때 수신된 메시지
@@ -214,6 +261,7 @@ function App() {
           .catch((err) => console.log(err));
       } else if (permission === "denied") {
         // 유저 알림 설정 꺼져있는 경우
+        setIsNotificationPermitted(false);
         alert(
           "죄송합니다. 브라우저에서 알림 권한 요청 대화 상자를 더 이상 자동으로 표시하지 않도록 설정한 것 같습니다. 알림을 받으려면 수동으로 브라우저 설정에서 알림 권한을 허용해야 합니다. 이를 위해 브라우저 설정을 열고 해당 사이트의 권한을 확인해주세요."
         );
@@ -221,12 +269,13 @@ function App() {
     });
   }
 
+  // firebase init
   const [isFirebaseLoad, setIsFirebaseLoad] =
     useRecoilState(isFirebaseLoadState);
   useEffect(() => {
     if (firebaseConfig && user && !isFirebaseLoad) {
       const firebaseApp = initializeApp(firebaseConfig);
-      requestPermission(firebaseApp);
+      requestNotificationPermission(firebaseApp);
       setIsFirebaseLoad(true);
     }
   }, [firebaseConfig, user]);

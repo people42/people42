@@ -12,6 +12,8 @@ type reactionButtonProps = {
 };
 
 function reactionButton({ props }: reactionButtonProps) {
+  const S3_URL = import.meta.env.VITE_S3_URL;
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const reactionList: TReaction[] = ["heart", "fire", "tear", "thumbsUp"];
   const accessToken = useRecoilValue(userAccessTokenState);
@@ -44,8 +46,6 @@ function reactionButton({ props }: reactionButtonProps) {
           }
         });
   };
-
-  const S3_URL = import.meta.env.VITE_S3_URL;
 
   return (
     <StyledReactionButton

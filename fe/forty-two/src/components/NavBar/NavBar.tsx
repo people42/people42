@@ -46,11 +46,11 @@ function NavBar() {
             </>
           ) : null}
           <ThemeBtn></ThemeBtn>
-          {/* <IconBtn
+          <IconBtn
             onClick={() => setIsNotificationModalOn(!isNotificationModalOn)}
           >
             <TbBellFilled size={24} aria-label={"알림"} />
-          </IconBtn> */}
+          </IconBtn>
           <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
             <TbSettingsFilled size={24} aria-label={"설정"} />
           </IconBtn>

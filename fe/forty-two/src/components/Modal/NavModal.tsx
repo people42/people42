@@ -1,5 +1,6 @@
 import { userNicknameState } from "../../recoil/user/selectors";
 import Card from "../Card/Card";
+import NavModalNotification from "./NavModalNotification";
 import NavModalSetting from "./NavModalSetting";
 import { TbBellFilled, TbSettingsFilled, TbX } from "react-icons/tb";
 import { useRecoilValue } from "recoil";
@@ -20,7 +21,7 @@ function NavModal({ closeModal, type }: navModalProps) {
           <div className="modal-header">
             <p className="modal-header-title">
               {type == "notification"
-                ? `${"ㅁㄴㅇ"}건의 새로운 알림`
+                ? `새로운 알림 ${0}건`
                 : `${userNickname}`}
             </p>
             <TbX
@@ -31,9 +32,9 @@ function NavModal({ closeModal, type }: navModalProps) {
           </div>
           <div className="modal-body">
             {type == "notification" ? (
-              <NavModalSetting></NavModalSetting>
+              <NavModalNotification />
             ) : (
-              <NavModalSetting></NavModalSetting>
+              <NavModalSetting />
             )}
           </div>
         </div>
