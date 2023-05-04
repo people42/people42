@@ -1,7 +1,9 @@
 package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
+import com.fourtytwo.dto.alert.AlertCntResDto;
 import com.fourtytwo.entity.User;
+import com.fourtytwo.repository.expression.ExpressionRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -31,10 +33,12 @@ public class FcmService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ExpressionRepository expressionRepository;
 
-    public FcmService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public FcmService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, ExpressionRepository expressionRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.expressionRepository = expressionRepository;
     }
 
     @PostConstruct
@@ -139,12 +143,7 @@ public class FcmService {
 
     // FCM 토큰 갱신
     public void updateFcmToken(String accessToken, String fcmToken) {
-        User user = jwtTokenProvider.getUser(accessToken);
-        if (user == null) {
-            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
-        } else if (!user.getIsActive()) {
-            throw new EntityNotFoundException("삭제된 유저입니다.");
-        }
+        User user = checkUser(accessToken);
 
         // 기존에 같은 기기에서 사용중이던 유저 있으면 해당 유저는 토큰 삭제
         Optional<User> originalUser = userRepository.findByFcmToken(fcmToken);
@@ -156,6 +155,23 @@ public class FcmService {
         user.setFcmToken(fcmToken);
         user.setFcmTokenExpirationDateTime(LocalDateTime.now().plusMonths(2));
         userRepository.save(user);
+    }
+
+    public AlertCntResDto getMyAlertCnt(String accessToken) {
+        User user = checkUser(accessToken);
+        return AlertCntResDto.builder()
+                .alertCnt(expressionRepository.countByMessageUserAndIsReadIsTrue(user))
+                .build();
+    }
+
+    private User checkUser(String accessToken) {
+        User user = jwtTokenProvider.getUser(accessToken);
+        if (user == null) {
+            throw new EntityNotFoundException("존재하지 않는 유저입니다.");
+        } else if (!user.getIsActive()) {
+            throw new EntityNotFoundException("삭제된 유저입니다.");
+        }
+        return user;
     }
 
 }

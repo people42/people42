@@ -30,4 +30,6 @@ public class Expression extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emotion_idx")
     private Emotion emotion;
+
+    private Boolean isRead;
 }

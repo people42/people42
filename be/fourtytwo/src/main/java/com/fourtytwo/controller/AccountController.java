@@ -1,5 +1,6 @@
 package com.fourtytwo.controller;
 
+import com.fourtytwo.dto.alert.AlertCntResDto;
 import com.fourtytwo.dto.block.BlockReqDto;
 import com.fourtytwo.dto.fcm.FcmTokenReqDto;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
@@ -116,6 +117,12 @@ public class AccountController {
                                                               @Valid @RequestBody FcmTokenReqDto fcmTokenReqDto) {
         fcmService.updateFcmToken(accessToken, fcmTokenReqDto.getToken());
         return ApiResponse.ok(null);
+    }
+
+    @GetMapping("/alert")
+    public ResponseEntity<ApiResponse<Object>> getMyAlertCnt(@RequestHeader("ACCESS-TOKEN") String accessToken) {
+        AlertCntResDto alertCntResDto = fcmService.getMyAlertCnt(accessToken);
+        return ApiResponse.ok(alertCntResDto);
     }
 
 }
