@@ -88,7 +88,6 @@ struct ReportView: View {
                     Button("신고") {
                         // 신고 기능 구현
                         reportMessage()
-                        presentationMode.wrappedValue.dismiss()
                     }
                     .font(.customButton)
                     .padding(12)
@@ -107,7 +106,9 @@ struct ReportView: View {
             UITextView.appearance().backgroundColor = .clear
         }
         .alert(isPresented: $showAlert) {
-            Alert(title: Text(alertMessage), dismissButton: .default(Text("확인")))
+            Alert(title: Text(alertMessage), dismissButton: .default(Text("확인")) {
+                presentationMode.wrappedValue.dismiss()
+            })
         }
     }
     
@@ -123,12 +124,16 @@ struct ReportView: View {
         AccountService.reportMessage(data: data) { result in
             switch result {
             case .success(let response):
-                if response.status == 409 {
-                    alertMessage = "이미 신고된 게시글입니다."
-                } else {
-                    alertMessage = "신고가 완료되었습니다."
+                DispatchQueue.main.async {
+                    
+                    if response.status == 409 {
+                        alertMessage = "이미 신고된 게시글입니다."
+                    } else {
+                        alertMessage = "신고가 완료되었습니다."
+                    }
+                    showAlert = true
+                    
                 }
-                showAlert = true
             case .failure(let error):
                 print(error.localizedDescription)
             }

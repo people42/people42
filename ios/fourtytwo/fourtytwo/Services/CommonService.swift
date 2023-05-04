@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 func getTimeStringFromISODate(_ isoString: String) -> String {
     let dateFormatter = DateFormatter()
@@ -28,3 +29,5 @@ func getTimeStringFromISODate(_ isoString: String) -> String {
     }
     return "시간정보 없음"
 }
+
+

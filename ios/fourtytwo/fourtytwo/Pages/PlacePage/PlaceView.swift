@@ -29,6 +29,7 @@ struct PlaceView: View {
     @StateObject private var viewModel = PlaceViewModel()
     
     @State var toggleHeight: CGFloat = 160
+    @State private var refreshing: Bool = false
 
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.scenePhase) private var scenePhase
@@ -66,6 +67,12 @@ struct PlaceView: View {
                     .padding(.top, 16)
                     .padding()
                 }
+                .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
+                    getPlaceFeed()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        refreshing = false
+                    }
+                }))
             }
         }
         .onAppear {

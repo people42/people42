@@ -59,6 +59,11 @@ struct UserService {
     static func withdrawalApple(data: [String: String], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
         APIManager.shared.request(endpoint: "/account/withdrawal/apple", method: .delete, parameters: data, responseType: ResponseMessage<Empty>.self, completion: completion)
     }
+    
+    // FCM 토큰 갱신
+    static func postFCMToken(data: [String: String], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/account/fcm_token", method: .post, parameters: data, responseType: ResponseMessage<Empty>.self, completion: completion)
+    }
 }
 
 

@@ -58,6 +58,7 @@ struct ReactionButton: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         if showReactions {
                             selectedReaction = nil
+                            selectEmotion()
                         }
                         showReactions.toggle()
                     }

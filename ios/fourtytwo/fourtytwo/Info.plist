@@ -2,33 +2,51 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.536176312507-s1u2tei8qpgg1ttuj722e5thfpqtvgdf</string>
-			</array>
-		</dict>
-	</array>
-	<key>GIDClientID</key>
-	<string>536176312507-s1u2tei8qpgg1ttuj722e5thfpqtvgdf.apps.googleusercontent.com</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Roboto-Medium.ttf</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
-	<key>UIScene configuration dictionary</key>
-	<string></string>
+    <!-- 위치 서비스 관련 키 시작 -->
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>이 앱은 항상 위치 정보에 접근해야 합니다.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>이 앱은 사용 중일 때 위치 정보에 접근해야 합니다.</string>
+    <!-- 위치 서비스 관련 키 끝 -->
+    
+    <!-- 구글 로그인 관련 키 시작 -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.536176312507-s1u2tei8qpgg1ttuj722e5thfpqtvgdf</string>
+            </array>
+        </dict>
+    </array>
+    <key>GIDClientID</key>
+    <string>536176312507-s1u2tei8qpgg1ttuj722e5thfpqtvgdf.apps.googleusercontent.com</string>
+    <!-- 구글 로그인 관련 키 끝 -->
+    
+    <!-- 인터넷 연결 관련 키 시작 -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <!-- 인터넷 연결 관련 키 끝 -->
+    
+    <!-- 사용자 정의 폰트 관련 키 시작 -->
+    <key>UIAppFonts</key>
+    <array>
+        <string>Roboto-Medium.ttf</string>
+    </array>
+    <!-- 사용자 정의 폰트 관련 키 끝 -->
+    
+    <!-- 백그라운드 작업 관련 키 시작 -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>location</string>
+    </array>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.people42.app.sendLocation</string>
+    </array>
+    <!-- 백그라운드 작업 관련 키 끝 -->
 </dict>
 </plist>

@@ -6,6 +6,9 @@ struct BlockView: View {
 
     @State var blockReason: String = ""
     
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    
     let nickname: String
     let userIdx: Int
     
@@ -84,7 +87,6 @@ struct BlockView: View {
                     Button("차단") {
                         // 차단 기능 구현
                         blockUser()
-                        presentationMode.wrappedValue.dismiss()
                     }
                     .font(.customButton)
                     .padding(12)
@@ -102,6 +104,11 @@ struct BlockView: View {
         .onAppear() {
             UITextView.appearance().backgroundColor = .clear
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(alertMessage), dismissButton: .default(Text("확인")) {
+                presentationMode.wrappedValue.dismiss()
+            })
+        }
     }
     
     private func hideKeyboard() {
@@ -113,11 +120,15 @@ struct BlockView: View {
         AccountService.blockUser(data: data) { result in
             switch result {
             case .success(let response):
-                if response.status == 409 {
-                    // 화면에 에러 메시지 표시
-                    print("이미 차단된 사용자입니다.")
-                } else {
-                    print("유저 차단")
+                DispatchQueue.main.async {
+                    
+                    if response.status == 409 {
+                        alertMessage = "이미 차단된 사용자입니다."
+                    } else {
+                        alertMessage = "차단이 완료되었습니다."
+                    }
+                    showAlert = true // 알림창을 표시
+                    
                 }
             case .failure(let error):
                 print(error.localizedDescription)
