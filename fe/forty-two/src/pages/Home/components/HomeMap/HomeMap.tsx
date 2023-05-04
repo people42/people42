@@ -1,9 +1,11 @@
 import mapArrow from "../../../../assets/images/map/mapArrow.png";
 import { NaverStaticMap } from "../../../../components";
+import { isLocationPermittedState } from "../../../../recoil/location/atoms";
 import { userLocationUpdateState } from "../../../../recoil/location/selectors";
 import HomeMapLocation from "./HomeMapLocation";
+import HomeMapPermission from "./HomeMappermission";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type homeMapProps = {};
@@ -23,13 +25,13 @@ function HomeMap({}: homeMapProps) {
     angle: 0,
     distance: 1,
   });
+
   useEffect(() => {
     const mouseMove = (e: any) =>
       setMousePosition({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", mouseMove);
     return window.addEventListener("mousemove", mouseMove);
   }, []);
-
   useEffect(() => {
     let target = document.querySelector(".map-arrow-img");
 
@@ -55,7 +57,10 @@ function HomeMap({}: homeMapProps) {
       setArrowAngleStyle({ angle: angle, distance: distance }); // 결과 출력
     }
   }, [mousePosition]);
-  return (
+
+  const isLocationPermitted = useRecoilValue(isLocationPermittedState);
+
+  return isLocationPermitted ? (
     <StyledHomeMap>
       {isMapLoad ? (
         <div className="map-arrow">
@@ -84,6 +89,10 @@ function HomeMap({}: homeMapProps) {
         location={location}
       ></NaverStaticMap>
     </StyledHomeMap>
+  ) : (
+    <StyledHomeMap>
+      <HomeMapPermission></HomeMapPermission>
+    </StyledHomeMap>
   );
 }
 
@@ -91,7 +100,7 @@ export default HomeMap;
 
 const StyledHomeMap = styled.section`
   position: fixed;
-  z-index: -10;
+  z-index: -1;
   bottom: -100px;
   width: 100vh;
   height: 100vh;
