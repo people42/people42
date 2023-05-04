@@ -50,6 +50,9 @@ struct PersonView: View {
 
     let userIdx: Int?
     
+    @State private var showActionSheet = false
+    @State private var showBlockUserSheet = false
+    
     var body: some View {
         ZStack {
             VStack {
@@ -76,11 +79,33 @@ struct PersonView: View {
                     .font(.system(size: 18))
                 .fontWeight(.semibold)
             }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showActionSheet.toggle()
+                }) {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(Color("Text"))
+                }
+            }
         }
         .onAppear {
             getPersonPlaces()
         }
-
+        .actionSheet(isPresented: $showActionSheet) {
+            ActionSheet(title: Text("선택하세요"),
+                        buttons: [
+                            .destructive(Text("차단")) {
+                                showBlockUserSheet = true
+                            },
+                            .cancel(Text("취소")) { }
+                        ])
+        }
+        .sheet(isPresented: $showBlockUserSheet) {
+            if let nickname = personPlaces?.nickname, let userIdx = userIdx {
+                BlockView(nickname: nickname, userIdx: userIdx)
+            }
+        }
     }
     
     private var header: some View {

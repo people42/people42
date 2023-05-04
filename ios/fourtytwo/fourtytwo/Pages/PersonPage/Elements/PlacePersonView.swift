@@ -25,6 +25,10 @@ struct PlacePersonView: View {
                             PersonMessageCard(messageInfo: messageInfo)
                                 .padding(.bottom, 16)
                         }
+                    } else {
+                        HStack{
+                            Spacer()
+                        }
                     }
                 }
                 .padding()
@@ -61,7 +65,6 @@ extension PlacePersonView {
                                 emotion: messageDto.emtion ?? "delete"
                             )
                         }
-                        print(messagesInfo)
                     }
                 }
             case .failure(let error):

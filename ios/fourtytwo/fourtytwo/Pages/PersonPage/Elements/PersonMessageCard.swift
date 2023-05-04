@@ -70,16 +70,6 @@ struct PersonMessageCard: View {
                 
                 Spacer()
             }
-            
-//            VStack {
-//                Spacer()
-//                HStack(alignment: .bottom) {
-//                    Spacer()
-//                    ReactionButton(messageIdx: messageInfo.messageIdx, emotion: messageInfo.emotion)
-//                        .offset(x: -25, y: 25)
-//                }
-//                .padding(.trailing)
-//            }
         }
         .frame(height: 120 + contentHeight)
         .padding(.bottom, 24)

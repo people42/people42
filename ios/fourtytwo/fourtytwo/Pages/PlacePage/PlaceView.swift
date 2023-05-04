@@ -66,7 +66,6 @@ struct PlaceView: View {
                     .padding(.top, 16)
                     .padding()
                 }
-                
             }
         }
         .onAppear {
