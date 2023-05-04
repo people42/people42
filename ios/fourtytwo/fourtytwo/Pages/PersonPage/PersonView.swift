@@ -2,23 +2,6 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
-// 자료 구조
-//struct PersonPlaces: Codable {
-//    let brushCnt: Int
-//    let userIdx: Int
-//    let nickname: String
-//    let emoji: String
-//    let placeResDtos: [PlaceResDtos]
-//}
-//
-//struct PlaceResDtos: Codable {
-//    let placeIdx: Int
-//    let placeName: String
-//    let placeLatitude: Double
-//    let placeLongitude: Double
-//    let brushCnt: Int
-//}
-
 struct EmojiAnnotation: Identifiable {
     let id = UUID()
     let coordinate: CLLocationCoordinate2D
@@ -55,14 +38,17 @@ struct PersonView: View {
     @State private var emojiAnnotations: [EmojiAnnotation] = []
     @State private var mapBoundary: (minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) = (0, 0, 0, 0)
     
-    @State private var showPlacePersonView: Bool = false
+    @State private var selectedAnnotation: EmojiAnnotation?
+    
+    private var showPlacePersonView: Bool {
+        selectedAnnotation != nil
+    }
+    
     @State private var selectedUserIdx: Int = 0
     @State private var selectedPlaceIdx: Int = 0
     @State private var selectedPlaceName: String = ""
 
-    
     let userIdx: Int?
-    
     
     var body: some View {
         ZStack {
@@ -126,18 +112,22 @@ struct PersonView: View {
             MapAnnotation(coordinate: annotation.coordinate, content: {
                 annotation.annotation
                     .onTapGesture {
-                        selectedUserIdx = annotation.userIdx
-                        selectedPlaceIdx = annotation.placeIdx
-                        selectedPlaceName = annotation.placeName
-                        showPlacePersonView.toggle()
+                        selectedAnnotation = nil
+                        selectedAnnotation = annotation
                     }
             })
         }
-        .sheet(isPresented: $showPlacePersonView) {
-            if let personPlaces = personPlaces {
-                PlacePersonView(userIdx: selectedUserIdx, placeIdx: selectedPlaceIdx, placeName: selectedPlaceName, profileImage: personPlaces.emoji, nickname: personPlaces.nickname)
+        .sheet(isPresented: Binding(get: { showPlacePersonView }, set: { newValue in
+            if !newValue {
+                selectedAnnotation = nil
+            }
+        })) {
+            if let personPlaces = personPlaces,
+               let selectedAnnotation = selectedAnnotation {
+                PlacePersonView(userIdx: selectedAnnotation.userIdx, placeIdx: selectedAnnotation.placeIdx, placeName: selectedAnnotation.placeName, profileImage: personPlaces.emoji, nickname: personPlaces.nickname)
             }
         }
+
     }
 
 

@@ -63,7 +63,7 @@ struct PlaceView: View {
                             }
                         }
                     }
-                    .padding(.top, 8)
+                    .padding(.top, 16)
                     .padding()
                 }
                 

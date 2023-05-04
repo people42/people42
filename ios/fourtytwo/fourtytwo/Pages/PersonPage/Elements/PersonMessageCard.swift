@@ -33,7 +33,7 @@ struct PersonMessageCard: View {
             ZStack {
                 
                 RoundedRectangle(cornerRadius: 24)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color("BgSecondary"))
                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
                     .shadow(color: Color.black.opacity(0.1), radius: 4, x: -2, y: -1)
                 
@@ -55,21 +55,17 @@ struct PersonMessageCard: View {
                     if let hour = messageInfo.time {
                         Text(getTimeStringFromISODate(hour))
                             .font(.customCaption)
-                            .foregroundColor(.monotoneLight)
                     }
-                    
+                    Spacer()
                     Text(messageInfo.contents)
                         .font(.customBody1)
                         .lineLimit(nil)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 16)
-
-                    
+                    Spacer()
 
                 }
                 .padding(.horizontal)
-                .padding(.top)
                 .foregroundColor(Color("Text"))
                 
                 Spacer()
@@ -85,8 +81,8 @@ struct PersonMessageCard: View {
 //                .padding(.trailing)
 //            }
         }
-        .frame(height: 100 + contentHeight)
-        .padding(.bottom, 16)
+        .frame(height: 120 + contentHeight)
+        .padding(.bottom, 24)
     }
 
 }

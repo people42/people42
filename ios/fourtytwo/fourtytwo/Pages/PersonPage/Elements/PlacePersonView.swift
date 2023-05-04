@@ -8,29 +8,32 @@ struct PlacePersonView: View {
     let nickname: String
     
     @State var brushCnt: Int?
-    @State var messagesInfo: [PersonPlaceResDtos]?
+    @State var messagesInfo: [PersonMessageInfo]?
     
     var body: some View {
         VStack {
+            
             if let brushCnt = brushCnt {
                 Text("\(placeName)에서 \(brushCnt)번이나 마주쳤어요!")
+                    .padding(24)
             }
             
             ScrollView {
                 VStack {
-                    ForEach(messagesInfo ?? [], id: \.messageIdx) { messageDto in
-                        let messageInfo = PersonMessageInfo(
-                            messageIdx: messageDto.messageIdx,
-                            profileImage: profileImage,
-                            nickname: nickname,
-                            time: messageDto.time,
-                            contents: messageDto.content,
-                            emotion: messageDto.emtion ?? "default_emotion"
-                        )
-                        PersonMessageCard(messageInfo: messageInfo)
+                    if let messagesInfo = messagesInfo {
+                        ForEach(messagesInfo, id: \.messageIdx) { messageInfo in
+                            PersonMessageCard(messageInfo: messageInfo)
+                                .padding(.bottom, 16)
+                        }
                     }
                 }
+                .padding()
+                .padding(.top, 16)
             }
+        }
+        .background(Color("BgPrimary"))
+        .onAppear {
+            getPersonPlaceFeed()
         }
     }
 }
@@ -46,8 +49,19 @@ extension PlacePersonView {
             case .success(let response):
                 if let responseData = response.data {
                     DispatchQueue.main.async {
-                        messagesInfo = responseData.messagesInfo
                         brushCnt = responseData.brushCnt
+                        
+                        messagesInfo = responseData.messagesInfo.map { messageDto in
+                            PersonMessageInfo(
+                                messageIdx: messageDto.messageIdx,
+                                profileImage: profileImage,
+                                nickname: nickname,
+                                time: messageDto.time,
+                                contents: messageDto.content,
+                                emotion: messageDto.emtion ?? "delete"
+                            )
+                        }
+                        print(messagesInfo)
                     }
                 }
             case .failure(let error):

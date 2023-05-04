@@ -76,7 +76,7 @@ struct CustomBottomSheet: View {
                         }
                         .onEnded { value in
                             withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.8)) {
-                                let threshold: CGFloat = 80
+                                let threshold: CGFloat = 60
 
                                 if value.translation.height < -threshold {
                                     viewModel.offsetY = viewModel.upperY
