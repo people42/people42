@@ -11,4 +11,6 @@ public interface ReportRepository extends JpaRepository<Report, Long>, ReportRep
 
     Optional<Report> findByMessageAndUser1(Message message, User user1);
 
+    Long countByMessage(Message message);
+
 }

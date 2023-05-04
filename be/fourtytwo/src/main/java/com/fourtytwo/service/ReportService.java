@@ -51,6 +51,12 @@ public class ReportService {
 
         reportRepository.save(report);
 
+        // 신고 3회 누적되면 부적절한 메시지로 분류
+        if (reportRepository.countByMessage(message.get()) == 3L) {
+            message.get().setIsInappropriate(true);
+            messageRepository.save(message.get());
+        }
+
     }
 
     public User checkUser(String accessToken) {

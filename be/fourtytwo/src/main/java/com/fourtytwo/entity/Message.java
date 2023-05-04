@@ -27,6 +27,7 @@ public class Message extends BaseEntity{
 
     private String content;
     private Boolean isActive;
+    private Boolean isInappropriate;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Expression> expressions = new ArrayList<>();
