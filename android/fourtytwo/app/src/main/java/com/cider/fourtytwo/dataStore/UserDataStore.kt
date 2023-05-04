@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.cider.fourtytwo.R
-import com.cider.fourtytwo.network.Model.SignupForm
-import com.cider.fourtytwo.network.Model.UserInfo
+import com.cider.fourtytwo.signIn.UserInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

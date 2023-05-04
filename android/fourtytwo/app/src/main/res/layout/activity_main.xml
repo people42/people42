@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    >
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -11,7 +12,18 @@
         <!-- 맨 밑 배경 radar -->
         <include layout="@layout/layout_radar"/>
         <!-- 위 층 내 생각 -->
-        <include layout="@layout/layout_opinion"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <include
+                layout="@layout/layout_opinion"
+                android:id="@+id/layout_opinion"
+                android:visibility="gone"/>
+            <include
+                layout="@layout/layout_edit_opinion"
+                android:id="@+id/layout_edit_opinion"
+                />
+        </FrameLayout>
     </FrameLayout>
 
     <!--  피드  -->

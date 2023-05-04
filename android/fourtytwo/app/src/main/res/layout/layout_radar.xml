@@ -3,30 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="121dp"
     android:paddingBottom="180dp"
     tools:context=".MainActivity">
-
     <fragment
         class="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    <ImageView
+        android:layout_marginBottom="30dp"
+        android:id="@+id/blue_ring"
+        android:layout_width="650dp"
+        android:layout_height="650dp"
+        android:src="@drawable/radar_animation"
+        android:scaleType="center"
+        android:visibility="invisible"
+        android:layout_gravity="center"/>
+    <View
+        android:layout_gravity="center"
+        android:layout_width="650dp"
+        android:layout_height="650dp"
+        android:background="@drawable/circle_shape"
+        android:layout_marginBottom="30dp"/>
+
     <View
         android:layout_gravity="center"
         android:layout_width="121dp"
         android:layout_height="121dp"
-        android:background="@drawable/radar_circle"/>
+        android:background="@drawable/radar_circle"
+        android:layout_marginBottom="30dp"/>
     <View
         android:layout_gravity="center"
         android:layout_width="298dp"
         android:layout_height="298dp"
-        android:background="@drawable/radar_circle"/>
+        android:background="@drawable/radar_circle"
+        android:layout_marginBottom="30dp"/>
     <View
         android:layout_gravity="center"
         android:layout_width="476dp"
         android:layout_height="476dp"
         android:background="@drawable/radar_circle3"
+        android:layout_marginBottom="30dp"
         />
 </FrameLayout>
 

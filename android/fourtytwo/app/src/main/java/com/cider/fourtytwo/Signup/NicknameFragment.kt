@@ -16,7 +16,6 @@ import com.cider.fourtytwo.R
 import com.cider.fourtytwo.UserViewModel
 import com.cider.fourtytwo.databinding.FragmentNicknameBinding
 import com.cider.fourtytwo.network.Api
-import com.cider.fourtytwo.network.Model.NicknameResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import retrofit2.Call
 import retrofit2.Callback

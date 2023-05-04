@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.R
-import com.cider.fourtytwo.network.Model.RecentFeedData
 
 class FeedAdapter(private val context: Context, val itemList : List<RecentFeedData>) :
     RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {

@@ -1,16 +1,7 @@
 package com.cider.fourtytwo
 
-import android.app.Application
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.cider.fourtytwo.dataStore.UserDataStore
-import com.cider.fourtytwo.network.Model.UserInfo
 import com.cider.fourtytwo.network.repository.NetworkRepository
-import kotlinx.coroutines.launch
 
 class UserViewModel() : ViewModel() {
     private val networkRepository = NetworkRepository()

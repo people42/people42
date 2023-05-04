@@ -5,21 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.Toolbar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySettingsBinding
 import com.cider.fourtytwo.network.Api
-import com.cider.fourtytwo.network.Model.RecentFeedResponse
 import com.cider.fourtytwo.network.Model.SignOutResponse
-import com.cider.fourtytwo.network.Model.UserInfo
-import com.cider.fourtytwo.network.Model.UserResponse
+import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -36,6 +32,7 @@ class SettingsActivity : AppCompatActivity() {
     val api = RetrofitInstance.getInstance().create(Api::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Fourtytwo)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         userDataStore = UserDataStore(this)
@@ -52,7 +49,6 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.title = "설정"
         supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
         supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
-
 
         binding.privacyPolicy.setOnClickListener {
             if(binding.privacyPolicyWebview.visibility == VISIBLE) {
@@ -118,6 +114,7 @@ class SettingsActivity : AppCompatActivity() {
                 Log.d("signOut 응답", response.toString())
                 if (response.code() == 200) {
                     Log.i(ContentValues.TAG, "signOut 응답 바디: ${response.body()}")
+                    Toast.makeText(this@SettingsActivity, "안전하게 로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "signOut 401: 토큰 만료")
                     getToken(1)
@@ -136,6 +133,7 @@ class SettingsActivity : AppCompatActivity() {
                 Log.d("withdrawal 응답", response.toString())
                 if (response.code() == 200) {
                     Log.i(ContentValues.TAG, "withdrawal 응답 바디: ${response.body()}")
+                    Toast.makeText(this@SettingsActivity, "회원 탈퇴가 완료 되었습니다.", Toast.LENGTH_SHORT).show()
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "withdrawal 401: 토큰 만료")
                     getToken(2)
