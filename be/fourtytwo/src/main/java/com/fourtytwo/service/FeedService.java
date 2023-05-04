@@ -86,6 +86,7 @@ public class FeedService {
                         .nickname(message.getUser().getNickname())
                         .emoji(message.getUser().getEmoji())
                         .color(message.getUser().getColor())
+                        .isInappropriate(message.getIsInappropriate())
                         .brushCnt(count)
                         .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                         .build();
@@ -165,6 +166,7 @@ public class FeedService {
                             .nickname(message.getUser().getNickname())
                             .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
+                            .isInappropriate(message.getIsInappropriate())
                             .brushCnt(count)
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                             .build();
@@ -248,12 +250,14 @@ public class FeedService {
                 message.setMessageIdx(brush.getMessage2().getId());
                 message.setContent(brush.getMessage2().getContent());
                 message.setTime(brush.getCreatedAt());
+                message.setIsInappropriate(brush.getMessage2().getIsInappropriate());
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             } else {
                 message.setMessageIdx(brush.getMessage1().getId());
                 message.setContent(brush.getMessage1().getContent());
                 message.setTime(brush.getCreatedAt());
+                message.setIsInappropriate(brush.getMessage1().getIsInappropriate());
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             }

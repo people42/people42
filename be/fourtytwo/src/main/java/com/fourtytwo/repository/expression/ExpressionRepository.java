@@ -5,6 +5,7 @@ import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ExpressionRepository extends JpaRepository<Expression, Long> {
@@ -12,5 +13,9 @@ public interface ExpressionRepository extends JpaRepository<Expression, Long> {
     Optional<Expression> findByMessageAndUserId(Message message, Long userId);
 
     Long countByMessageAndEmotionName(Message message, String emotionName);
+
+    Long countByMessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(User user);
+
+    List<Expression> MessageUserAndIsReadIsFalseAndMessage_IsInappropriateIsFalse(User user);
 
 }
