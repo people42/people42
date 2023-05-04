@@ -237,36 +237,13 @@ function App() {
   );
   // firebase request permission
   const requestNotificationPermission = async (app: any) => {
-    Notification.requestPermission().then(async (permission) => {
+    Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         // 알림 설정되어있는 경우
         setIsNotificationPermitted(true);
         const messaging = getMessaging(app);
-        if (messaging) {
-          const newSw = await navigator.serviceWorker.register(
-            "./firebase-messaging-sw.js"
-          );
-
-          getToken(messaging, {
-            // 최초 토큰 발행
-            vapidKey: V_API_ID_KEY,
-            serviceWorkerRegistration: newSw,
-          })
-            .then((currentToken) => {
-              // 토큰 서버에 전달
-              if (currentToken && user) {
-                postFCMToken(user.accessToken, currentToken).catch((e) => {
-                  alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
-                  setIsNotificationPermitted(false);
-                });
-              } else {
-                alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
-              }
-            })
-            .catch((err) => console.log(err));
-        }
-        // 유저 접속해있을 때 수신된 메시지
         onMessage(messaging, (payload) => {
+          // 유저 접속해있을 때 수신된 메시지
           console.log("수신된 메시지: ", payload);
           setNewNotification({
             isShow: true,
@@ -275,6 +252,22 @@ function App() {
             icon: payload.notification?.icon ?? "",
           });
         });
+        getToken(messaging, {
+          // 최초 토큰 발행
+          vapidKey: V_API_ID_KEY,
+        })
+          .then((currentToken) => {
+            // 토큰 서버에 전달
+            if (currentToken && user) {
+              postFCMToken(user.accessToken, currentToken).catch((e) => {
+                alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
+                setIsNotificationPermitted(false);
+              });
+            } else {
+              alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
+            }
+          })
+          .catch((err) => console.log(err));
       } else if (permission === "denied") {
         // 유저 알림 설정 꺼져있는 경우
         setIsNotificationPermitted(false);
