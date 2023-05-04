@@ -102,10 +102,26 @@ public class FcmService {
     }
 
     // 유저 한 명에게 알림 보내기
-    public void sendToUser(User user, String title, String body, String image) {
+    public void sendToUser(User user, String title, String body, String image, String emoji) {
 
         if (user.getFcmToken() == null || !user.getFcmTokenExpirationDateTime().isAfter(LocalDateTime.now())) {
             return;
+        }
+
+        String emoticon = "";
+        switch (emoji) {
+            case "heart":
+                emoticon = "❤";
+                break;
+            case "thumbsUp":
+                emoticon = "👍";
+                break;
+            case "fire":
+                emoticon = "🔥";
+                break;
+            case "tear":
+                emoticon = "💧";
+                break;
         }
 
         // 현재 토큰이 유효한 유저에게만 메시지 전송
@@ -119,7 +135,7 @@ public class FcmService {
                 .setToken(user.getFcmToken())
                 .setWebpushConfig(WebpushConfig.builder()
                         .setNotification(WebpushNotification.builder()
-                                .setTitle(title)
+                                .setTitle(title + emoticon)
                                 .setBody(body)
                                 .setIcon(image)
                                 .build())
@@ -135,12 +151,22 @@ public class FcmService {
                                 .setContentAvailable(true)
                                 .setSound("default")
                                 .setAlert(ApsAlert.builder()
-                                        .setTitle(title)
+                                        .setTitle(title + emoticon)
                                         .setBody(body)
                                         .build())
                                 .build())
                         .build())
-
+                .setAndroidConfig(AndroidConfig.builder()
+                        .setNotification(AndroidNotification.builder()
+                                .setTitle(title + emoticon)
+                                .setBody(body)
+                                .setImage(image)
+                                .setDefaultSound(true)
+                                .setIcon("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/app_icon.png")
+                                .setVisibility(AndroidNotification.Visibility.PUBLIC)
+                                .build())
+                        .setDirectBootOk(true)
+                        .build())
                 .build();
 
         try {

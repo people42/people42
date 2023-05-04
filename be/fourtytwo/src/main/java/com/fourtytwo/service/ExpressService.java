@@ -56,7 +56,8 @@ public class ExpressService {
                 fcmService.sendToUser(message.get().getUser(),
                         "누군가 감정을 표현했어요",
                         message.get().getContent(),
-                        "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/" + emotion.get().getName() + ".png");
+                        "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/reaction/" + emotion.get().getName() + ".png",
+                        emotion.get().getName());
             }
         } else {
             if (expressReqDto.getEmotion().equals("delete")) {
