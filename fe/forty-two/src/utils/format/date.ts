@@ -24,3 +24,22 @@ export function getTodayDate() {
   const day = today.getDate().toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+export function notificationDateTime(dtStr: string) {
+  const dt = new Date(dtStr);
+  const now = new Date();
+  const diffMs = now.valueOf() - dt.valueOf();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  if (diffMins <= 59) {
+    return diffMins + "분 전";
+  } else if (diffHours <= 23) {
+    return diffHours + "시간 전";
+  } else {
+    const month = dt.toLocaleString("default", { month: "long" });
+    const day = dt.getDate();
+    const hour = dt.getHours();
+    const min = dt.getMinutes();
+    return `${month} ${day}일 ${hour}시 ${min}분`;
+  }
+}
