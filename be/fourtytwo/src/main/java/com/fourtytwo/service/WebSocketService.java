@@ -1,12 +1,10 @@
 package com.fourtytwo.service;
 
-import com.fourtytwo.config.WebSocketConfig;
 import com.fourtytwo.dto.socket.MessageDto;
 import com.fourtytwo.dto.socket.MethodType;
-import com.fourtytwo.entity.Message;
+import com.fourtytwo.dto.socket.SessionInfoDto;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
@@ -17,9 +15,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.websocket.*;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -36,6 +31,8 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final Map<Long, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
     private static final ConcurrentSkipListMap<Double, Set<Long>> userLatitudes = new ConcurrentSkipListMap<>();
     private static final ConcurrentSkipListMap<Double, Set<Long>> userLongitudes = new ConcurrentSkipListMap<>();
+
+    private final Gson gson = new Gson();
 
 
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -55,7 +52,7 @@ public class WebSocketService extends TextWebSocketHandler {
             userSession.put(session, userIdx);
             userSessionMap.put(userIdx, session);
             session.getAttributes().put("type", type);
-            session.getAttributes().put("idx", userIdx);
+            session.getAttributes().put("userIdx", userIdx);
         } else {
             guestSession.add(session);
             session.getAttributes().put("type", type);
@@ -106,7 +103,14 @@ public class WebSocketService extends TextWebSocketHandler {
         }
         if (method.equals(MethodType.INIT.name())) {
             METHOD_INIT(session, info);
-        } else {
+        } else if (method.equals(MethodType.MOVE.name())) {
+            METHOD_MOVE(session, info);
+        } else if (method.equals(MethodType.WRITING_MESSAGE.name())) {
+            METHOD_WRITING_MESSAGE(session, info);
+        } else if (method.equals(MethodType.MESSAGE_CHANGED.name())) {
+            METHOD_MESSAGE_CHANGED(session, info);
+        }
+        {
             // 다른 메소드 처리를 여기에 추가합니다.
         }
     }
@@ -117,55 +121,105 @@ public class WebSocketService extends TextWebSocketHandler {
         log.warning("onError:" + exception.getMessage());
     }
 
+    public MessageDto createMessage(WebSocketSession recievingSession, WebSocketSession sendingSession, MethodType type) {
+        MessageDto message = new MessageDto(type);
+        Map<String, Object> messageData = new HashMap<>();
+        if (sendingSession != null) {
+            messageData.put("userIdx", sendingSession.getAttributes().get("userIdx"));
+            messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
+            messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
+            messageData.put("nickname", sendingSession.getAttributes().get("nickname"));
+            messageData.put("message", sendingSession.getAttributes().get("message"));
+            messageData.put("status", sendingSession.getAttributes().get("status"));
+        }
+        if (type.equals(MethodType.INFO)){
+            List<SessionInfoDto> nearUsers = new ArrayList<>();
+            messageData.put("userIdx", recievingSession.getAttributes().get("userIdx"));
+            messageData.put("latitude", recievingSession.getAttributes().get("latitude"));
+            messageData.put("longitude", recievingSession.getAttributes().get("longitude"));
+            for (WebSocketSession targetSession : (Set<WebSocketSession>) recievingSession.getAttributes().get("nearUsers")) {
+                if (targetSession.getAttributes().get("type").equals("user")) {
+                    SessionInfoDto sessionInfoDto = SessionInfoDto.builder()
+                            .userIdx((Long) targetSession.getAttributes().get("userIdx"))
+                            .latitude((Double) targetSession.getAttributes().get("latitude"))
+                            .longitude((Double) targetSession.getAttributes().get("longitude"))
+                            .nickname((String) targetSession.getAttributes().get("nickname"))
+                            .message((String) targetSession.getAttributes().get("message"))
+                            .status((String) targetSession.getAttributes().get("status"))
+                            .build();
+                    nearUsers.add(sessionInfoDto);
+                }
+            }
+            messageData.put("nearUsers", nearUsers);
+        }
+        message.setData(messageData);
+        return message;
+    }
 
-    public Set<WebSocketSession> changeLocation(WebSocketSession session) {
-        MessageDto messageDto = new MessageDto(MethodType.NEAR);
-        messageDto.setData(session.getAttributes());
-        Gson gson = new Gson();
-        String near_message = gson.toJson(messageDto);
-        MessageDto far_messageDto = new MessageDto(MethodType.REMOVE);
-        messageDto.setData(session.getAttributes());
-        String far_message = gson.toJson(messageDto);
+
+    public Set<WebSocketSession> changeLocation(WebSocketSession session) throws IOException {
+        System.out.println("changeLocation 들어옴");
+
 
         List<Double> location = Arrays.asList((Double) session.getAttributes().get("latitude"), (Double) session.getAttributes().get("longitude"));
         Set<WebSocketSession> nearUsers = getNearUsers(location);
-        if (session.getAttributes().get("type").equals("user")) {
-            Set<WebSocketSession> farUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
-            Long userIdx = userSession.get(session);
-            locations.put(userIdx, location);
+
+        System.out.println(nearUsers);
+        Set<WebSocketSession> farUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
+        Long userIdx = userSession.get(session);
+        locations.put(userIdx, location);
+        if (((String) session.getAttributes().get("type")).equals("user")) {
             renewGps(userIdx, location);
-            nearUsers.removeAll(farUsers);
-            System.out.println(nearUsers);
-            System.out.println(farUsers);
-            if (!nearUsers.isEmpty()) {
-                for (WebSocketSession targetSession : nearUsers) {
-                    if (targetSession.equals(session)) {continue;}
+        }
+        System.out.println(nearUsers);
+        System.out.println(farUsers);
+        if (!nearUsers.isEmpty()) {
+            for (WebSocketSession targetSession : nearUsers) {
+                System.out.println("a");
+                if (targetSession.getAttributes().get("userIdx").equals(session.getAttributes().get("userIdx"))) {continue;}
+                if (session.getAttributes().get("type").equals("user")) {
                     ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).add(session);
-                    ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).add(targetSession);
-                    if (targetSession.isOpen()) {
-                        try {
-                            targetSession.sendMessage(new TextMessage(near_message));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
-            }
-            farUsers.removeAll(nearUsers);
-            if (!farUsers.isEmpty()) {
-                for (WebSocketSession targetSession : farUsers) {
-                    ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).remove(session);
-                    ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).remove(targetSession);
-                    if (targetSession.isOpen()) {
-                        try {
-                            targetSession.sendMessage(new TextMessage(far_message));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).add(targetSession);
+                System.out.println("1번"+session.getAttributes());
+                if (targetSession.isOpen()) {
+                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.NEAR));
+                    System.out.println("c");
+                    try {
+                        targetSession.sendMessage(new TextMessage(targetMessage));
+                        System.out.println("d");
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
+        System.out.println("2번"+session.getAttributes());
+        farUsers.removeAll(nearUsers);
+        System.out.println("3번"+session.getAttributes());
+        System.out.println("멀어짐 : "+farUsers);
+        if (!farUsers.isEmpty()) {
+            System.out.println("에이 설마");
+            for (WebSocketSession targetSession : farUsers) {
+                ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).remove(session);
+                ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).remove(targetSession);
+                if (targetSession.isOpen()) {
+                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.FAR));
+                    try {
+                        targetSession.sendMessage(new TextMessage(targetMessage));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        System.out.println(session.getAttributes());
+        MessageDto messageDto = createMessage(session, null, MethodType.INFO);
+        String message = gson.toJson(messageDto);
+        System.out.println("혹시");
+        session.sendMessage(new TextMessage(message));
+
+
         return nearUsers;
     }
 
@@ -192,7 +246,7 @@ public class WebSocketService extends TextWebSocketHandler {
         ConcurrentNavigableMap<Double, Set<Long>> nearLats = userLatitudes.subMap(location.get(0)-0.0005, true, location.get(0)+0.0005, true);
         nearLats.forEach((k, v) -> nearUsers.addAll(v));
         ConcurrentNavigableMap<Double, Set<Long>> nearLongs = userLongitudes.subMap(location.get(1)-0.0005, true, location.get(1)+0.0005, true);
-        nearLats.forEach((k, v) -> nearLongUsers.addAll(v));
+        nearLongs.forEach((k, v) -> nearLongUsers.addAll(v));
         nearUsers.retainAll(nearLongUsers);
         Set<WebSocketSession> nearUserInfos = new HashSet<>();
         if (!nearUsers.isEmpty()) {
@@ -204,12 +258,52 @@ public class WebSocketService extends TextWebSocketHandler {
         return nearUserInfos;
     }
 
+    public void sendMessagesToNearUsers(WebSocketSession session, MethodType methodType) throws IOException {
+        Set<WebSocketSession> nearUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
+        if (!nearUsers.isEmpty()) {
+            for (WebSocketSession targetSession : nearUsers) {
+                String message = gson.toJson(createMessage(targetSession, session, methodType));
+                targetSession.sendMessage(new TextMessage(message));
+            }
+        }
+    }
+
     public void METHOD_INIT(WebSocketSession session, Map<String, Object> info) throws IOException {
+        System.out.println("세팅 전 : "+session.getAttributes());
+        for (String key : info.keySet()) {
+            session.getAttributes().put(key, info.get(key));
+        }
+        System.out.println("changeLocation 들어가기 전");
+        System.out.println("세팅 후 : "+session.getAttributes());
+
+        changeLocation(session);
+        System.out.println("changeLocation 나온 후");
+    }
+
+    public void METHOD_MOVE(WebSocketSession session, Map<String, Object> info) throws IOException {
+        for (String key : info.keySet()) {
+            session.getAttributes().put(key, info.get(key));
+        }
+        System.out.println("changeLocation 들어가기 전");
+
+        changeLocation(session);
+        System.out.println("changeLocation 나온 후");
+    }
+
+    public void METHOD_WRITING_MESSAGE(WebSocketSession session, Map<String, Object> info) throws IOException {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
         }
 
-        changeLocation(session);
+        sendMessagesToNearUsers(session, MethodType.WRITING_MESSAGE);
+    }
+
+    public void METHOD_MESSAGE_CHANGED(WebSocketSession session, Map<String, Object> info) throws IOException {
+        for (String key : info.keySet()) {
+            session.getAttributes().put(key, info.get(key));
+        }
+
+        sendMessagesToNearUsers(session, MethodType.MESSAGE_CHANGED);
     }
 
 }

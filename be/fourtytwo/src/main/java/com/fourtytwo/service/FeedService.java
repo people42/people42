@@ -235,13 +235,13 @@ public class FeedService {
             if (userIdx < targetIdx) {
                 message.setMessageIdx(brush.getMessage2().getId());
                 message.setContent(brush.getMessage2().getContent());
-                message.setTime(brush.getCreatedAt());
+                message.setTime(brush.getCreatedAt().withNano(0));
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             } else {
                 message.setMessageIdx(brush.getMessage1().getId());
                 message.setContent(brush.getMessage1().getContent());
-                message.setTime(brush.getCreatedAt());
+                message.setTime(brush.getCreatedAt().withNano(0));
                 Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx);
                 message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             }

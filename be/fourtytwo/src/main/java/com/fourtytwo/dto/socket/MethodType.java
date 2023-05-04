@@ -5,13 +5,11 @@ public enum MethodType {
     ALONE,
     TOGETHER,
     INIT,
-    ERROR,
-    OFFER,
-    CANDIDATE,
-    ANSWER,
+    MOVE,
     NEAR,
-    REMOVE,
+    FAR,
     WRITING_MESSAGE,
     MESSAGE_CHANGED,
-    EXPRESSION
+    EXPRESSION,
+    INFO
 }
