@@ -25,19 +25,21 @@ struct ReportView: View {
                     VStack(alignment: .leading){
                         Text("\(nickname )")
                             .font(.customHeader6)
+                            .foregroundColor(Color("Text"))
                         HStack {
                             Text("유저의 글을")
                                 .font(.customHeader6)
+                                .foregroundColor(Color("Text"))
                             (
                             Text("신고")
                                 .font(.customHeader6)
                                 .foregroundColor(Color(.systemRed)) +
                             Text("하시겠습니까?")
                                 .font(.customHeader6)
+                                .foregroundColor(Color("Text"))
                             )
                         }
                     }
-                    .foregroundColor(Color("Text"))
                     .padding()
                     Spacer()
                 }
