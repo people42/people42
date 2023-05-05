@@ -318,7 +318,7 @@ public class FeedService {
             }
 
             // 새로운 장소인 경우
-            if (!currentPlace.getId().equals(brush.getPlace().getId())) {
+            if (brush.getId().equals(-1L) || !currentPlace.getId().equals(brush.getPlace().getId())) {
 
                 if (firstBrush != null) {
                     // 상대 유저 조회
