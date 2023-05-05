@@ -6,6 +6,7 @@ function HomeMain() {
   return (
     <StyledHomeMain>
       <HomeTimeline></HomeTimeline>
+      <div className="timeline-bar"></div>
       <HomeMyMessage></HomeMyMessage>
     </StyledHomeMain>
   );
@@ -19,4 +20,14 @@ const StyledHomeMain = styled.main`
   max-width: 1024px;
   display: flex;
   flex-grow: 1;
+
+  .timeline-bar {
+    position: absolute;
+    bottom: 0px;
+    margin-left: 126px;
+    width: 4px;
+    height: 100%;
+    z-index: -3;
+    background-color: ${({ theme }) => theme.color.text.primary + "30"};
+  }
 `;
