@@ -292,27 +292,29 @@ public class FeedService {
 
         for (Brush brush : recentBrushList) {
 
-            // 요청한 유저가 스쳤을 때 상대 메시지 조회
-            Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
-            // 메시지가 없다면 넘기기
-            if (message == null || !message.getIsActive()) {
-                continue;
-            }
+            if (!brush.getId().equals(-1L)) {
+                // 요청한 유저가 스쳤을 때 상대 메시지 조회
+                Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
+                // 메시지가 없다면 넘기기
+                if (message == null || !message.getIsActive()) {
+                    continue;
+                }
 
-            // 차단된 유저의 메시지라면 넘기기
-            Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
-            Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
-            Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
-            if (block.isPresent()) {
-                continue;
-            }
+                // 차단된 유저의 메시지라면 넘기기
+                Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+                Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+                Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+                if (block.isPresent()) {
+                    continue;
+                }
 
-            // 처음 만난 유저인지 조회
-            Long cnt = brushRepository.countByUser1IdAndUser2IdAndCreatedAtIsBefore(smallIdx, bigIdx, LocalDateTime.now().minusDays(1));
-            if (cnt.equals(0L)) {
-                firstTimeUserEmojis.add(message.getUser().getEmoji());
-            } else {
-                repeatUserEmojis.add(message.getUser().getEmoji());
+                // 처음 만난 유저인지 조회
+                Long cnt = brushRepository.countByUser1IdAndUser2IdAndCreatedAtIsBefore(smallIdx, bigIdx, LocalDateTime.now().minusDays(1));
+                if (cnt.equals(0L)) {
+                    firstTimeUserEmojis.add(message.getUser().getEmoji());
+                } else {
+                    repeatUserEmojis.add(message.getUser().getEmoji());
+                }
             }
 
             // 새로운 장소인 경우
