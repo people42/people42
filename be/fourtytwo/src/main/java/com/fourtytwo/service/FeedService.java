@@ -315,13 +315,8 @@ public class FeedService {
                 repeatUserEmojis.add(message.getUser().getEmoji());
             }
 
-            System.out.println(cnt);
-
             // 새로운 장소인 경우
             if (!currentPlace.getId().equals(brush.getPlace().getId())) {
-
-                System.out.println(brush);
-                System.out.println(firstBrush);
 
                 if (firstBrush != null) {
                     // 상대 유저 조회
