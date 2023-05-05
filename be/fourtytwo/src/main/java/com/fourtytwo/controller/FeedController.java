@@ -58,4 +58,10 @@ public class FeedController {
         return ApiResponse.ok(null);
     }
 
+    @GetMapping("/new")
+    public ResponseEntity<ApiResponse<List<NewFeedResDto>>> getNewFeeds(@RequestHeader("ACCESS-TOKEN") String accessToken) {
+        List<NewFeedResDto> newFeedResDtos = feedService.findNewFeeds(accessToken);
+        return ApiResponse.ok(newFeedResDtos);
+    }
+
 }
