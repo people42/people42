@@ -49,6 +49,7 @@ function Banner({}: bannerProps) {
 export default Banner;
 
 const StyledBanner = styled.div`
+  z-index: 100;
   animation: floatingUp 0.5s both;
   animation-delay: 1s;
   position: fixed;
@@ -68,7 +69,6 @@ const StyledBanner = styled.div`
     }
   }
   .banner {
-    z-index: 100;
     display: flex;
     align-items: center;
     overflow: hidden;
