@@ -5,6 +5,7 @@ import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
 import { NotificationCard } from "./components";
 import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
+import DeepLink from "./pages/DeepLink/DeepLink";
 import Logout from "./pages/Logout/Logout";
 import Withdrawal from "./pages/Withdrawal/Withdrawal";
 import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
@@ -33,9 +34,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { useEffect, useState } from "react";
+import { isDesktop } from "react-device-detect";
 import { NavermapsProvider } from "react-naver-maps";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -77,6 +79,10 @@ const router = createBrowserRouter([
     path: "/withdrawal/:platform",
     element: <Withdrawal />,
   },
+  {
+    path: "/mobile",
+    element: <DeepLink />,
+  },
 ]);
 
 function App() {
@@ -112,7 +118,7 @@ function App() {
 
   //////////////////////////
   // location background update
-  const [location, setLocation] = useRecoilState<TLocation | null>(
+  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
     userLocationUpdateState
   );
   const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
@@ -142,14 +148,14 @@ function App() {
   // 사용자 위치 업데이트 함수
   const updateCurrentLocation = async () => {
     getUserLocation().then((res: any) =>
-      setLocation({
+      setUserLocation({
         latitude: res.coords.latitude,
         longitude: res.coords.longitude,
       })
     );
   };
   useEffect(() => {
-    requestLocationPermission();
+    isDesktop ? requestLocationPermission() : null;
   }, []);
 
   useEffect(() => {
@@ -194,22 +200,22 @@ function App() {
 
   // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
-    if (location && user) {
-      postLocation(user?.accessToken, location)
+    if (userLocation && user) {
+      postLocation(user?.accessToken, userLocation)
         .then((res) => setLocationInfo(res.data.data))
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               setUserRefresh(res.data.data);
               setSessionRefreshToken(res.data.data.refreshToken);
-              postLocation(res.data.data.accessToken, location).then((res) =>
-                setLocationInfo(res.data.data)
+              postLocation(res.data.data.accessToken, userLocation).then(
+                (res) => setLocationInfo(res.data.data)
               );
             });
           }
         });
     }
-  }, [location, user]);
+  }, [userLocation, user]);
 
   //////////////////////////
   // firebase
@@ -223,14 +229,16 @@ function App() {
   const [firebaseConfig, setFirebaseConfig] = useState<TfirebaseConfig>();
   // firebase config
   useEffect(() => {
-    setFirebaseConfig({
-      apiKey: APP_KEY,
-      authDomain: AUTH_DOMAIN,
-      projectId: PROJECT_ID,
-      storageBucket: STORAGE_BUCKET,
-      messagingSenderId: MESSAGING_SENDER_ID,
-      appId: APP_ID,
-    });
+    isDesktop
+      ? setFirebaseConfig({
+          apiKey: APP_KEY,
+          authDomain: AUTH_DOMAIN,
+          projectId: PROJECT_ID,
+          storageBucket: STORAGE_BUCKET,
+          messagingSenderId: MESSAGING_SENDER_ID,
+          appId: APP_ID,
+        })
+      : null;
   }, []);
   const setIsNotificationPermitted = useSetRecoilState(
     isNotificationPermittedState
@@ -292,7 +300,6 @@ function App() {
   );
   useEffect(() => {
     if (newNotification && newNotification.isShow) {
-      console.log(newNotification);
       const notificationTimeout = setTimeout(() => {
         const newNotificationCopy = Object.assign({}, newNotification);
         newNotificationCopy.isShow = false;
