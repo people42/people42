@@ -17,7 +17,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest // 위치 정확도를 최상으로 설정합니다.
         self.locationManager.requestAlwaysAuthorization() // 위치 사용 권한을 항상 요청합니다.
         self.locationManager.allowsBackgroundLocationUpdates = true // 백그라운드에서의 위치 업데이트를 허용합니다.
-        self.locationManager.pausesLocationUpdatesAutomatically = false // 백그라운드 위치 업데이트를 자동으로 중지하지 않게 합니다.
+//        self.locationManager.pausesLocationUpdatesAutomatically = false // 백그라운드 위치 업데이트를 자동으로 중지하지 않게 합니다.
         self.locationManager.startUpdatingLocation() // 위치 업데이트를 시작합니다.
     }
 
@@ -31,6 +31,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // locations 배열에서 가장 최근의 위치 정보를 가져옵니다.
         guard let location = locations.last else { return }
+        
+        // 콘솔에 위치 업데이트를 출력합니다.
+//        print("Location update: \(location)")
         
         // 메인 스레드에서 위치 정보를 업데이트합니다.
         DispatchQueue.main.async {

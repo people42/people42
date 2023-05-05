@@ -271,6 +271,7 @@
 		362553D22A039BE200A2CD4A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 362553D12A039BE200A2CD4A /* GoogleService-Info.plist */; };
 		362553D52A039E6C00A2CD4A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 362553D42A039E6C00A2CD4A /* FirebaseMessaging */; };
 		362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */; };
+		362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553D82A043F3300A2CD4A /* WrappedMap.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -578,6 +579,7 @@
 		362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAlignedTextEditor.swift; sourceTree = "<group>"; };
 		362553D12A039BE200A2CD4A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshableModifier.swift; sourceTree = "<group>"; };
+		362553D82A043F3300A2CD4A /* WrappedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedMap.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -1035,6 +1037,7 @@
 				360D52B829F8D14400F67940 /* NavBar.swift */,
 				360D52CD29F95C6B00F67940 /* MapView.swift */,
 				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
+				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -1549,6 +1552,7 @@
 				360D52CA29F941FF00F67940 /* NavLink.swift in Sources */,
 				362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */,
 				360D52D229FA153B00F67940 /* FeedService.swift in Sources */,
+				362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */,
 				365B964429FDA47E00647950 /* PlaceView.swift in Sources */,
 				36680D2F29F6C9D1001EFD52 /* HomeView.swift in Sources */,
 				3606DC0829EE87910025F0FC /* FirstSectionView.swift in Sources */,
@@ -1750,9 +1754,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fourtytwo/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "위치정보 권한이 필요합니다. (항상 or 앱을 사용하는 동안 위치정보를 수신합니다.)";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "위치정보 권한이 필요합니다. (항상 위치정보를 수신합니다.)";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자 위치 정보를 표시합니다.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치가 백그라운드에서도 다른 사람과의 스침을 기록하는데 사용됩니다.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -1796,9 +1800,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fourtytwo/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "위치정보 권한이 필요합니다. (항상 or 앱을 사용하는 동안 위치정보를 수신합니다.)";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "위치정보 권한이 필요합니다. (항상 위치정보를 수신합니다.)";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자 위치 정보를 표시합니다.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치가 백그라운드에서도 다른 사람과의 스침을 기록하는데 사용됩니다.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
