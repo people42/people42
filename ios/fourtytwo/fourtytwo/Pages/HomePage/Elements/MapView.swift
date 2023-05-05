@@ -66,6 +66,12 @@ struct MapView: View {
                 .overlay(northArrow.opacity(isHeadingActive ? 0 : 1), alignment: .top)
             
             circles
+            
+            modeIndicator
+                .padding(.top, 40)
+                .padding(.trailing, 20)
+                .frame(height: 480)
+
         }
         .onTapGesture {
             withAnimation(.easeInOut(duration: 1.2)) {
@@ -94,6 +100,25 @@ struct MapView: View {
                 .scaledToFit()
         }
     }
+    
+    private var modeIndicator: some View {
+        VStack {
+            HStack {
+                Spacer()
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(isHeadingActive ? Color.green : Color.gray, lineWidth: 2)
+                        .frame(width: 48, height: 30)
+
+                    Text(isHeadingActive ? "ON" : "OFF")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(isHeadingActive ? .green : .gray)
+                }
+            }
+            Spacer()
+        }
+    }
+    
 }
 
 struct MapView_Previews: PreviewProvider {

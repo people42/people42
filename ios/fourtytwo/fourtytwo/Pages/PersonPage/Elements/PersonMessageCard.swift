@@ -54,11 +54,10 @@ struct PersonMessageCard: View {
                     
                     if let hour = messageInfo.time {
                         Text(getTimeStringFromISODate(hour))
-                            .font(.customCaption)
-                    }
+                        .font(.customOverline)                    }
                     Spacer()
                     Text(messageInfo.contents)
-                        .font(.customBody1)
+                        .font(.customBody2)
                         .lineLimit(nil)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -71,7 +70,7 @@ struct PersonMessageCard: View {
                 Spacer()
             }
         }
-        .frame(height: 120 + contentHeight)
+        .frame(height: 100 + contentHeight)
         .padding(.bottom, 24)
     }
 

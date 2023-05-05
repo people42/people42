@@ -35,7 +35,7 @@ struct PlacePersonView: View {
                 .padding(.top, 16)
             }
         }
-        .background(Color("BgPrimary"))
+        .background(Color("BgPrimary")).edgesIgnoringSafeArea(.bottom)
         .onAppear {
             getPersonPlaceFeed()
         }

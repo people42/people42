@@ -96,6 +96,7 @@ struct TimelineView: View {
                                 placeViewState.placeDate = viewModel.messageInfoList[index].hour
                             })
                             .padding(.bottom, index == viewModel.messageInfoList.count - 1 ? 100 : 16)
+                            .padding(.trailing, 16)
                         }
                     }
                 }

@@ -14,6 +14,8 @@ struct ReactionButton: View {
     
     let reactions: [String] = ["heart", "fire", "tear", "thumbsUp"]
     
+    let size: CGFloat = 40
+    
     // init()를 명시적으로 작성할때는 모두 초기화 해야함, init()를 사용안 할 경우 자동으로 같은 이름의 프로퍼티와 연동됨.
     init(messageIdx: Int, emotion: String) {
         self.messageIdx = messageIdx
@@ -28,12 +30,12 @@ struct ReactionButton: View {
         ZStack {
             if showReactions {
                 Capsule()
-                    .frame(width: 50 + CGFloat(reactions.count) * 42, height: 50)
+                    .frame(width: size + CGFloat(reactions.count) * size, height: size)
                     .foregroundColor(Color("BgPrimary"))
                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
             } else {
                 Circle()
-                    .frame(width: 50, height: 50)
+                    .frame(width: size, height: size)
                     .foregroundColor(Color("BgPrimary"))
                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
             }
@@ -49,7 +51,7 @@ struct ReactionButton: View {
                         }) {
                             Image(reaction)
                                 .resizable()
-                                .frame(width: 32, height: 32)
+                                .frame(width: size*0.7, height: size*0.7)
                         }
                     }
                 }
@@ -67,17 +69,17 @@ struct ReactionButton: View {
                         HStack {
                             if showReactions {
                                 Image(systemName: "xmark")
-                                    .font(.system(size: 24, weight: .black))
+                                    .font(.system(size: size*0.5, weight: .black))
                                     .foregroundColor(.monotoneGray)
                             } else {
                                 if let selected = selectedReaction {
                                     Image(selected)
                                         .resizable()
-                                        .frame(width: 32, height: 32)
+                                        .frame(width: size*0.7, height: size*0.7)
                                         .foregroundColor(.monotoneGray)
                                 } else {
                                     Image(systemName: "plus")
-                                        .font(.system(size: 24, weight: .black))
+                                        .font(.system(size: size*0.5, weight: .black))
                                         .foregroundColor(.monotoneGray)
                                 }
                             }

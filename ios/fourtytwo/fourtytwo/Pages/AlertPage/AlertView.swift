@@ -31,7 +31,7 @@ struct AlertView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(Color("Text"))
                 }
             }

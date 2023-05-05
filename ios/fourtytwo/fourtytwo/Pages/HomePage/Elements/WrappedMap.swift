@@ -3,28 +3,26 @@ import MapKit
 import CoreLocation
 
 struct WrappedMap: UIViewRepresentable {
-    @Binding var region: MKCoordinateRegion // 지도 영역 바인딩
-    @Binding var currentLocation: CLLocation? // 사용자 현재 위치 바인딩
+    @Binding var region: MKCoordinateRegion
+    @Binding var currentLocation: CLLocation?
 
-    var isHeadingActive: Bool // 방향 활성화 상태
-    var heading: CLLocationDirection // 사용자의 현재 방향
+    var isHeadingActive: Bool
+    var heading: CLLocationDirection
 
-    // Coordinator 생성
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    // MKMapView 생성 및 초기 설정
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = true
+        mapView.isRotateEnabled = false
         return mapView
     }
 
-    // 지도 업데이트 및 화살표 이미지 설정
     func updateUIView(_ mapView: MKMapView, context: Context) {
-        mapView.setRegion(region, animated: true) // 지도 영역 설정
+        mapView.setRegion(region, animated: true)
 
         if let userLocationView = mapView.view(for: mapView.userLocation) {
             if userLocationView.subviews.isEmpty {
@@ -35,14 +33,20 @@ struct WrappedMap: UIViewRepresentable {
                 userLocationView.bringSubviewToFront(directionView)
             }
 
-            // 화살표 이미지 회전 업데이트
             UIView.animate(withDuration: 1.2) {
-                userLocationView.subviews.first?.transform = CGAffineTransform(rotationAngle: CGFloat((heading) * Double.pi / 180))
+                if self.isHeadingActive {
+                    let newCamera = MKMapCamera(lookingAtCenter: mapView.userLocation.coordinate, fromDistance: mapView.camera.altitude, pitch: mapView.camera.pitch, heading: self.heading)
+                    mapView.setCamera(newCamera, animated: false)
+                    userLocationView.subviews.first?.transform = CGAffineTransform.identity
+                } else {
+                    let newCamera = MKMapCamera(lookingAtCenter: mapView.userLocation.coordinate, fromDistance: mapView.camera.altitude, pitch: mapView.camera.pitch, heading: 0)
+                    mapView.setCamera(newCamera, animated: false)
+                    userLocationView.subviews.first?.transform = CGAffineTransform(rotationAngle: CGFloat((self.heading) * Double.pi / 180))
+                }
             }
         }
     }
 
-    // MKMapViewDelegate를 구현하는 Coordinator 클래스
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: WrappedMap
 
@@ -50,7 +54,6 @@ struct WrappedMap: UIViewRepresentable {
             self.parent = parent
         }
 
-        // 사용자 위치 어노테이션 뷰 설정 및 기본 아이콘 제거
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation {
                 let identifier = "UserLocation"
@@ -63,7 +66,7 @@ struct WrappedMap: UIViewRepresentable {
                     view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
                 }
 
-                view.image = nil // 기본 제공되는 사용자 위치 아이콘 제거
+                view.image = nil
                 return view
             }
 

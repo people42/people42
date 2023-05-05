@@ -46,8 +46,11 @@ struct MessageCard: View {
                         .frame(width: 40, height: 40)
                     
                     HStack {
-                        Text("\(messageInfo.stack)번 스쳤습니다.")
-                            .font(.system(size: 16))
+                        Text(messageInfo.nickname)
+                            .font(.customOverline)
+                            .foregroundColor(Color("Text")) +
+                        Text("님과 \(messageInfo.stack)번 스쳤습니다.")
+                            .font(.customOverline)
                             .foregroundColor(Color("Text"))
                             .fontWeight(.bold)
                         
@@ -70,11 +73,9 @@ struct MessageCard: View {
                 .offset(x: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(messageInfo.nickname)
-                        .font(.customOverline)
                     
                     Text(messageInfo.contents)
-                        .font(.customBody1)
+                        .font(.customBody2)
                         .lineLimit(nil)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -84,18 +85,17 @@ struct MessageCard: View {
                     HStack {
                         if let placeName = messageInfo.placeName {
                             Text(placeName)
-                                .font(.customSubtitle2)
+                                .font(.customOverline)
                         }
                         Spacer()
                     }
                     
                     if let hour = messageInfo.hour {
                         Text(getTimeStringFromISODate(hour))
-                            .font(.customCaption)
-                            .foregroundColor(.monotoneLight)
+                            .font(.customOverline)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
                 .padding(.top)
                 .foregroundColor(Color("Text"))
                 
@@ -107,12 +107,12 @@ struct MessageCard: View {
                 HStack(alignment: .bottom) {
                     Spacer()
                     ReactionButton(messageIdx: messageInfo.messageIdx, emotion: messageInfo.emotion)
-                        .offset(x: -25, y: 25)
+                        .offset(x: 0, y: 20)
                 }
                 .padding(.trailing)
             }
         }
-        .frame(height: 152 + contentHeight)
+        .frame(height: 108 + contentHeight)
         .padding(.bottom, 16)
         .actionSheet(isPresented: $showActionSheet) {
             ActionSheet(title: Text("하나의 게시글에 한 번의 신고만 가능합니다.\n3번의 신고가 이루어지면 게시글이 삭제될 수 있습니다."),
