@@ -109,7 +109,11 @@ public class GpsService {
 
         Message userMessage = messageRepository.findRecentByUserIdx(userIdx);
         if (userMessage == null) {
-            return null;
+            return PlaceWithTimeResDto.builder()
+                    .placeIdx(foundPlace.getId())
+                    .placeName(foundPlace.getName())
+                    .time(current)
+                    .build();
         }
 
         System.out.println("3 "+nearSet);
