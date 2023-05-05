@@ -128,21 +128,23 @@ function App() {
     isLocationPermittedState
   );
   function requestLocationPermission() {
-    if ("geolocation" in navigator) {
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then(function (permissionStatus) {
-          if (permissionStatus.state === "granted") {
-            // 위치 권한이 켜져 있음
-            setIsLocationPermitted(true);
-          } else {
-            // 위치 권한이 꺼져 있음
-            setIsLocationPermitted(false);
-          }
-        });
-    } else {
-      // 브라우저가 위치 정보를 지원하지 않음
-      setIsLocationPermitted(false);
+    if (isDesktop) {
+      if ("geolocation" in navigator) {
+        navigator.permissions
+          .query({ name: "geolocation" })
+          .then(function (permissionStatus) {
+            if (permissionStatus.state === "granted") {
+              // 위치 권한이 켜져 있음
+              setIsLocationPermitted(true);
+            } else {
+              // 위치 권한이 꺼져 있음
+              setIsLocationPermitted(false);
+            }
+          });
+      } else {
+        // 브라우저가 위치 정보를 지원하지 않음
+        setIsLocationPermitted(false);
+      }
     }
   }
   // 사용자 위치 업데이트 함수
@@ -160,12 +162,12 @@ function App() {
 
   useEffect(() => {
     // 사용자 위치 업데이트
-    if (isLocationPermitted) {
+    if (isLocationPermitted && isDesktop) {
       updateCurrentLocation();
     }
     // 사용자 위치 5분마다 업데이트
     let postLocationInterval = setInterval(() => {
-      if (isLocationPermitted) {
+      if (isLocationPermitted && isDesktop) {
         updateCurrentLocation();
       }
     }, 300000);
