@@ -42,7 +42,6 @@ function HomeTimeline() {
           props={data}
         ></HomeTimelineGroup>
       ))}
-      <div className="timeline-bar"></div>
     </StyledHomeTimeline>
   );
 }
@@ -68,15 +67,5 @@ const StyledHomeTimeline = styled.section`
   }
   &::-webkit-scrollbar-track {
     background-color: none;
-  }
-
-  .timeline-bar {
-    position: fixed;
-    bottom: 0px;
-    margin-left: 126px;
-    width: 4px;
-    height: 100%;
-    z-index: -3;
-    background-color: ${({ theme }) => theme.color.text.primary + "30"};
   }
 `;

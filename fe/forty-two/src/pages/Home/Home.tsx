@@ -2,11 +2,12 @@ import Meta from "../../Meta";
 import { NavBar } from "../../components";
 import { isLoginState } from "../../recoil/user/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
-import { HomeMain } from "./components";
+import { Banner, HomeMain } from "./components";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 function Home() {
@@ -15,6 +16,10 @@ function Home() {
   const [isLogin, setIsLogin] = useRecoilState(isLoginState);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    isMobile ? navigate("/mobile") : null;
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -47,6 +52,7 @@ function Home() {
           user ? `${userEmoji} ${user?.nickname}의 42 | Home` : "42 | Home"
         }
       ></Meta>
+      <Banner></Banner>
       <NavBar></NavBar>
       <HomeMain></HomeMain>
     </StyledHome>
