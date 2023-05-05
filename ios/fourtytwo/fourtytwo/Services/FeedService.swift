@@ -1,6 +1,22 @@
 import Alamofire
 import SwiftUI
 
+// new 피드 조회 자료 구조 시작
+
+struct NewFeed: Codable {
+    let recentUsersInfo: RecentUsersInfo
+    let placeWithTimeInfo: PlaceWithTimeInfo
+}
+
+struct RecentUsersInfo: Codable {
+    let nickname: String
+    let userCnt: Int
+    let firstTimeUserEmojis: [String]
+    let repeatUserEmojis: [String]
+}
+
+// new 피드 조회 자료 구조 끝
+// -----------------------
 // 최근 피드 조회 자료 구조 시작
 
 struct RecentFeed: Codable {
@@ -92,6 +108,12 @@ struct PersonPlaceResDtos: Codable {
 
 struct FeedService {
     private init() {}
+    
+    // 최근 피드 조회
+    static func getNewFeed(completion: @escaping (Result<ResponseMessage<[NewFeed]>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/feed/new", method: .get, responseType: ResponseMessage<[NewFeed]>.self, completion: completion)
+    }
+    
 
     // 최근 피드 조회
     static func getRecentFeed(completion: @escaping (Result<ResponseMessage<[RecentFeed]>, AFError>) -> Void) {

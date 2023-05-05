@@ -15,7 +15,7 @@ struct PolicyWebView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
             }

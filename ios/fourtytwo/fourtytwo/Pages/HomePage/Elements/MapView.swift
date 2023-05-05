@@ -46,6 +46,8 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 }
 
 struct MapView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @StateObject private var locationManager = MapManager()
 
     @State private var metersPerCircle: Double = 100
@@ -83,7 +85,7 @@ struct MapView: View {
     private var northArrow: some View {
         Text("N")
             .font(.system(size: 24, weight: .bold))
-            .foregroundColor(Color.red.opacity(0.9))
+            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .red.opacity(0.8))
             .offset(x: 0, y: 40) // 상단에 위치하도록 조정
     }
     

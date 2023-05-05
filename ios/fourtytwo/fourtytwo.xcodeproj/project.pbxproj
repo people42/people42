@@ -272,6 +272,8 @@
 		362553D52A039E6C00A2CD4A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 362553D42A039E6C00A2CD4A /* FirebaseMessaging */; };
 		362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */; };
 		362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553D82A043F3300A2CD4A /* WrappedMap.swift */; };
+		362553DB2A05026600A2CD4A /* LocationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DA2A05026600A2CD4A /* LocationCard.swift */; };
+		362553DD2A051F1800A2CD4A /* PlaceTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -580,6 +582,8 @@
 		362553D12A039BE200A2CD4A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshableModifier.swift; sourceTree = "<group>"; };
 		362553D82A043F3300A2CD4A /* WrappedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedMap.swift; sourceTree = "<group>"; };
+		362553DA2A05026600A2CD4A /* LocationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCard.swift; sourceTree = "<group>"; };
+		362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceTimelineView.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -682,6 +686,7 @@
 				362553CD2A0389A600A2CD4A /* ReportView.swift */,
 				362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */,
 				362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */,
+				362553DA2A05026600A2CD4A /* LocationCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1038,6 +1043,7 @@
 				360D52CD29F95C6B00F67940 /* MapView.swift */,
 				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
 				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
+				362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -1537,6 +1543,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				360D52DE29FC38D900F67940 /* DragToDeleteView.swift in Sources */,
+				362553DD2A051F1800A2CD4A /* PlaceTimelineView.swift in Sources */,
 				3606DE2C29F263A80025F0FC /* APIManager.swift in Sources */,
 				3606DC1B29EF83F90025F0FC /* CustomButton.swift in Sources */,
 				360D52B929F8D14400F67940 /* NavBar.swift in Sources */,
@@ -1584,6 +1591,7 @@
 				36BF9C3F29ED4F390011677E /* LoginView.swift in Sources */,
 				362553CA2A02B6CE00A2CD4A /* CommonService.swift in Sources */,
 				360D52C729F939B400F67940 /* AlertCard.swift in Sources */,
+				362553DB2A05026600A2CD4A /* LocationCard.swift in Sources */,
 				360D52B329F81BA800F67940 /* LocationManager.swift in Sources */,
 				36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */,
 				3606DC1529EED8640025F0FC /* SegmentedProgressBar.swift in Sources */,

@@ -10,6 +10,7 @@ struct MessageCard: View {
     
     @State private var showActionSheet = false
     @State private var showReportMessageSheet = false
+    @State private var showBlockUserSheet = false
     
     init(messageInfo: MessageInfo) {
         self.messageInfo = messageInfo
@@ -120,12 +121,20 @@ struct MessageCard: View {
                     .destructive(Text("신고")) {
                         showReportMessageSheet = true
                     },
+                    .destructive(Text("차단")) {
+                        showBlockUserSheet = true
+                    },
                     .cancel(Text("취소")) { }
                 ])
         }
         .sheet(isPresented: $showReportMessageSheet) {
             if let nickname = messageInfo.nickname, let messageIdx = messageInfo.messageIdx {
                 ReportView(nickname: nickname, messageIdx: messageIdx)
+            }
+        }
+        .sheet(isPresented: $showBlockUserSheet) {
+            if let nickname = messageInfo.nickname, let userIdx = messageInfo.userIdx {
+                BlockView(nickname: nickname, userIdx: userIdx)
             }
         }
     }

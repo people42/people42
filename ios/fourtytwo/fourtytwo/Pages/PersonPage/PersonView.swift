@@ -70,7 +70,7 @@ struct PersonView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
             }
@@ -84,7 +84,7 @@ struct PersonView: View {
                     showActionSheet.toggle()
                 }) {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
             }
@@ -93,7 +93,7 @@ struct PersonView: View {
             getPersonPlaces()
         }
         .actionSheet(isPresented: $showActionSheet) {
-            ActionSheet(title: Text("선택하세요"),
+            ActionSheet(title: Text("해당 유저를 차단하시겠습니까?\n차단된 유저와 서로의 게시물을 볼 수 없게 됩니다."),
                         buttons: [
                             .destructive(Text("차단")) {
                                 showBlockUserSheet = true
