@@ -11,13 +11,15 @@ struct LocationCardData {
 }
 
 struct LocationCard: View {
+    @EnvironmentObject var placeViewState: PlaceViewState
     
     let oldContent = ["우리 만난 적이 있을지도?", "또, 너냐?", "안녕하세요", "오랜만이예요", "지금, 뭐하세요?", "정들었을지도 모르겠어", "왜 여기 있어?"]
     let newContent = ["초면이네요. 안녕하신가요.", "안녕하세요", "이 어플 재밌다.", "제가 여기 있어요.", "여길 보세요", "새로운 얼굴이구만", "또 봅시다. 그럼 이만!"]
     
-    var locationCardData: LocationCardData
+    @State var locationCardData: LocationCardData
     
     @State private var isHighlighted = false
+    @State private var isClicked = false
     
     var body: some View {
         ZStack {
@@ -100,16 +102,16 @@ struct LocationCard: View {
                     HStack {
                         Spacer()
                         
-                        Text("눌러서 확인하기")
-                            .font(.customOverline)
-                            .foregroundColor(.gray.opacity(isHighlighted ? 1.0 : 0.3))
-                            .opacity(isHighlighted ? 1.0 : 0.3)
-                            .animation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true))
-                            .onTapGesture {
-                                withAnimation {
+                        if !isClicked {
+                            Text("눌러서 확인하기")
+                                .font(.customOverline)
+                                .foregroundColor(.gray.opacity(isHighlighted ? 1.0 : 0.3))
+                                .opacity(isHighlighted ? 1.0 : 0.3)
+                                .animation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true))
+                                .onAppear() {
                                     self.isHighlighted.toggle()
-                                }
                             }
+                        }
                         
                     }
                     .frame(height: 0)
@@ -120,6 +122,12 @@ struct LocationCard: View {
                 
             }
         }
+        .onTapGesture(perform: {
+            isClicked = true
+            placeViewState.selectedPlaceID = locationCardData.placeIdx
+            placeViewState.navigateToPlaceView = true
+            placeViewState.placeDate = locationCardData.time
+        })
         .padding(16)
     }
 }

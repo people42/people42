@@ -37,18 +37,12 @@ struct PlaceTimelineView: View {
                                     TimelinePoint()
                                 }
                                 LocationCard(locationCardData: locationCardsData[index])
-                                    .onTapGesture(perform: {
-                                        placeViewState.selectedPlaceID = locationCardsData[index].placeIdx
-                                        placeViewState.navigateToPlaceView = true
-                                        placeViewState.placeDate = locationCardsData[index].time
-                                    })
                             }
                             .padding(.bottom, index == locationCardsData.count - 1 ? 100 : 16)
                         }
                     }
                 }
                 .padding()
-                .padding(.top, 16)
             }
             .onAppear {
                 getLocationCardsData()
