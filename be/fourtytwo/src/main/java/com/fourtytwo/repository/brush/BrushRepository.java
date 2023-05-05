@@ -3,10 +3,13 @@ package com.fourtytwo.repository.brush;
 import com.fourtytwo.entity.Brush;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BrushRepository extends JpaRepository<Brush, Long>, BrushRepositoryCustom {
-    public List<Brush> findBrushesByUser1IdAndUser2Id(Long user1Idx, Long user2Idx);
+    List<Brush> findBrushesByUser1IdAndUser2Id(Long user1Idx, Long user2Idx);
 
-    public List<Brush> findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(Long user1Idx, Long user2Idx, Long placeIdx);
+    List<Brush> findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(Long user1Idx, Long user2Idx, Long placeIdx);
+
+    Long countByUser1IdAndUser2IdAndCreatedAtIsBefore(Long user1Idx, Long user2Idx, LocalDateTime time);
 }
