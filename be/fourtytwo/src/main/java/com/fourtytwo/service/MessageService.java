@@ -3,6 +3,7 @@ package com.fourtytwo.service;
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
+import com.fourtytwo.dto.message.TotalMessagesCntResDto;
 import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.entity.Message;
 import com.fourtytwo.entity.User;
@@ -94,6 +95,12 @@ public class MessageService {
         User user = this.checkUser(accessToken);
         user.setEmoji(changeEmojiReqDto.getEmoji());
         userRepository.save(user);
+    }
+
+    public TotalMessagesCntResDto getTotalMessagesCnt() {
+        return TotalMessagesCntResDto.builder()
+                .cnt(messageRepository.countByIsActiveIsTrueAndIsInappropriateIsFalse())
+                .build();
     }
 
 }
