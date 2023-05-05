@@ -2,10 +2,7 @@ package com.fourtytwo.service;
 
 import com.fourtytwo.auth.JwtTokenProvider;
 import com.fourtytwo.dto.brush.BrushResDto;
-import com.fourtytwo.dto.feed.PlaceFeedResDto;
-import com.fourtytwo.dto.feed.RecentFeedResDto;
-import com.fourtytwo.dto.feed.UserFeedResDto;
-import com.fourtytwo.dto.feed.UserPlaceFeedResDto;
+import com.fourtytwo.dto.feed.*;
 import com.fourtytwo.dto.message.MessageResDto;
 import com.fourtytwo.dto.message.UserMessageResDto;
 import com.fourtytwo.dto.place.PlaceResDto;
@@ -61,7 +58,7 @@ public class FeedService {
 
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
                 // 해당 장소에서 메시지가 없다면 넘기기
-                if (message == null) {
+                if (message == null || !message.getIsActive()) {
                     currentPlace = Place.builder().id(-1L).build();
                     continue;
                 }
@@ -135,7 +132,7 @@ public class FeedService {
 
                 // 해당 스침에서 메시지 조회
                 Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
-                if (message == null) {
+                if (message == null || !message.getIsActive()) {
                     continue;
                 }
 
@@ -281,4 +278,93 @@ public class FeedService {
         return userIdx;
     }
 
+    public List<NewFeedResDto> findNewFeeds(String accessToken) {
+        Long userIdx = checkUserByAccessToken(accessToken);
+
+        // 24시간 이내 스침 조회
+        List<Brush> recentBrushList = brushRepository.findRecentBrushByUserIdxOrderByTimeDesc(userIdx);
+        recentBrushList.add(Brush.builder().id(-1L).build());
+        List<NewFeedResDto> newFeedResDtos = new ArrayList<>();
+        Place currentPlace = Place.builder().id(-1L).build();
+        List<String> firstTimeUserEmojis = new ArrayList<>();
+        List<String> repeatUserEmojis = new ArrayList<>();
+        Brush firstBrush = null;
+
+        for (Brush brush : recentBrushList) {
+
+            // 요청한 유저가 스쳤을 때 상대 메시지 조회
+            Message message = messageRepository.findByBrushAndUserIdx(brush, userIdx);
+            // 메시지가 없다면 넘기기
+            if (message == null || !message.getIsActive()) {
+                continue;
+            }
+
+            // 차단된 유저의 메시지라면 넘기기
+            Long bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
+            Long smallIdx = userIdx > message.getUser().getId() ? message.getUser().getId() : userIdx;
+            Optional<Block> block = blockRepository.findByUser1IdAndUser2Id(smallIdx, bigIdx);
+            if (block.isPresent()) {
+                continue;
+            }
+
+            // 처음 만난 유저인지 조회
+            Long cnt = brushRepository.countByUser1IdAndUser2IdAndCreatedAtIsBefore(smallIdx, bigIdx, LocalDateTime.now().minusDays(1));
+            if (cnt.equals(0L)) {
+                firstTimeUserEmojis.add(message.getUser().getEmoji());
+            } else {
+                repeatUserEmojis.add(message.getUser().getEmoji());
+            }
+
+            System.out.println(cnt);
+
+            // 새로운 장소인 경우
+            if (!currentPlace.getId().equals(brush.getPlace().getId())) {
+
+                System.out.println(brush);
+                System.out.println(firstBrush);
+
+                if (firstBrush != null) {
+                    // 상대 유저 조회
+                    Long oppositeUserIdx = firstBrush.getUser1().getId().equals(userIdx) ? firstBrush.getUser2().getId() : firstBrush.getUser1().getId();
+                    Optional<User> oppositeUser = userRepository.findById(oppositeUserIdx);
+                    if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
+                        currentPlace = Place.builder().id(-1L).build();
+                        continue;
+                    }
+
+                    // Dto 저장
+                    NewFeedResDto newFeedResDto = new NewFeedResDto();
+                    newFeedResDto.setRecentUsersInfo(RecentUsersInfoResDto.builder()
+                            .firstTimeUserEmojis(firstTimeUserEmojis)
+                            .repeatUserEmojis(repeatUserEmojis)
+                            .nickname(oppositeUser.get().getNickname())
+                            .userCnt(firstTimeUserEmojis.size() + repeatUserEmojis.size())
+                            .build());
+                    newFeedResDto.setPlaceWithTimeInfo(PlaceWithTimeResDto.builder()
+                            .placeIdx(currentPlace.getId())
+                            .placeName(currentPlace.getName())
+                            .time(firstBrush.getCreatedAt().withNano(0))
+                            .build());
+                    newFeedResDtos.add(newFeedResDto);
+
+                    firstTimeUserEmojis = new ArrayList<>();
+                    repeatUserEmojis = new ArrayList<>();
+                }
+
+                if (brush.getId().equals(-1L)) {
+                    break;
+                }
+
+                // 첫 스침 갱신
+                firstBrush = brush;
+
+                // 현재 위치 갱신
+                currentPlace = brush.getPlace();
+
+            }
+        }
+
+        return newFeedResDtos;
+
+    }
 }
