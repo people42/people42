@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.metrics.LogSessionId
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -150,6 +151,10 @@ class SettingsActivity : AppCompatActivity() {
                 Log.d("withdrawal 실패", t.message.toString())
             }
         })
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

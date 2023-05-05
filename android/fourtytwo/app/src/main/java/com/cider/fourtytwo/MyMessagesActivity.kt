@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -178,12 +179,16 @@ class MyMessagesActivity : AppCompatActivity(){
             }
         }
     }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_notifications -> {
-                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-                true
-            }
+//            R.id.action_notifications -> {
+//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
+//                true
+//            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)

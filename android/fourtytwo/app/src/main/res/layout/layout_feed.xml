@@ -11,7 +11,7 @@
     android:orientation="vertical"
     app:cardBackgroundColor="@color/white"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="220dp"
+    app:behavior_peekHeight="210dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <FrameLayout

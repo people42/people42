@@ -1,14 +1,17 @@
 package com.cider.fourtytwo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -25,6 +28,8 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,10 +44,15 @@ import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -50,7 +60,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
     //유저
     private lateinit var userDataStore: UserDataStore
@@ -58,27 +68,31 @@ class MainActivity : AppCompatActivity(){
     //피드
     private lateinit var feedAdapter: FeedAdapter
     //지도
-    private lateinit var locationManager: LocationManager
-    private lateinit var myLocationListener: MainActivity.MyLocationListener
-    companion object {
-        val locationPermissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    }
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val responsePermissions = permissions.entries.filter {
-                it.key in locationPermissions
-            }
-            if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
-                setLocationListener()
-            } else {
-                Toast.makeText(this, "위치 정보를 알 수 없습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private var map: GoogleMap? = null
+    private var cameraPosition: CameraPosition? = null
+    // The entry point to the Fused Location Provider.
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // not granted.
+    private val defaultLocation = LatLng(36.355324, 127.298268)
+    private var locationPermissionGranted = false
+    // The geographical location where the device is currently located. That is, the last-known
+    // location retrieved by the Fused Location Provider.
+    private var lastKnownLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//
+//            // Get new FCM registration token
+//            val token = task.result
+//
+//            Log.d(TAG, "파이어베이스 $token")
+//        })
+
         // 화면이 구성될 때, 메인 테마로 변경
         setTheme(R.style.Theme_Fourtytwo)
         // 로고 장착
@@ -164,112 +178,61 @@ class MainActivity : AppCompatActivity(){
         }
 
 // 피드
-//        피드가 있으면 R.id.cardLine visibility 보이게
-//        val feed = findViewById<RecyclerView>(R.id.feed)
-//        feedAdapter = FeedAdapter(this, feedList)
-//        //feedAdapter.notifyDataSetChanged()
-//        feed.adapter = feedAdapter
-//        feed.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+// 레이더 애니메이션
+        val scaleAnimation = ScaleAnimation(
+            0f, // 시작 X 스케일
+            1f, // 끝 X 스케일
+            0f, // 시작 Y 스케일
+            1f, // 끝 Y 스케일
+            Animation.RELATIVE_TO_SELF, // X 스케일 기준
+            0.5f, // X 스케일 기준 위치 (0 ~ 1)
+            Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+            0.5f // Y 스케일 기준 위치 (0 ~ 1)
+        ).apply {
+            duration = 4000 // 애니메이션 시간 (ms)
+            repeatMode = Animation.RESTART // 애니메이션 반복 모드
+            repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+        }
+        val blueRing = findViewById<ImageView>(R.id.blue_ring)
+        blueRing.startAnimation(scaleAnimation)
 // 지도
-        val mapFragment = supportFragmentManager.findFragmentById(
-            R.id.map_fragment
-        ) as? SupportMapFragment
-        mapFragment?.getMapAsync { googleMap ->
-            googleMap.uiSettings.isScrollGesturesEnabled = false // 지도 드래그 막기
-            googleMap.uiSettings.isCompassEnabled = true // 나침반
-//            googleMap.setOnMapLoadedCallback {
-//            // 마커 이미지
-//                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
-//                val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap)
-//                //val bounds = LatLngBounds.builder()
-//            // 마커 위치
-//                val marker = LatLng(36.354946759143,127.29980994578)
-//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 19f))
-//                //googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
-            // 레이더 애니메이션
-                val scaleAnimation = ScaleAnimation(
-                    0f, // 시작 X 스케일
-                    1f, // 끝 X 스케일
-                    0f, // 시작 Y 스케일
-                    1f, // 끝 Y 스케일
-                    Animation.RELATIVE_TO_SELF, // X 스케일 기준
-                    0.5f, // X 스케일 기준 위치 (0 ~ 1)
-                    Animation.RELATIVE_TO_SELF, // Y 스케일 기준
-                    0.5f // Y 스케일 기준 위치 (0 ~ 1)
-                ).apply {
-                    duration = 4000 // 애니메이션 시간 (ms)
-                    repeatMode = Animation.RESTART // 애니메이션 반복 모드
-                    repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
-                }
-                val blueRing = findViewById<ImageView>(R.id.blue_ring)
-                blueRing.startAnimation(scaleAnimation)
-//            }
-//            //addMarkers(googleMap)
+        // Retrieve location and camera position from saved instance state.
+        if (savedInstanceState != null) {
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
+            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
         }
-        getMylocation()
-    }
-    private fun getMylocation() {
-        if (::locationManager.isInitialized.not()) {
-            locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        }
-        val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (isGpsEnable) {
-            permissionLauncher.launch(MainActivity.locationPermissions)
-        }
-    }
-    @Suppress("MissingPermission")
-    private fun setLocationListener() {
-        val minTime: Long = 1500
-        val minDistance = 100f
+        // Construct a FusedLocationProviderClient.
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        // Build the map.
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(this)
 
-        if (::myLocationListener.isInitialized.not()) {
-            myLocationListener = MyLocationListener()
-        }
-        with(locationManager) {
-            requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime, minDistance, myLocationListener
-            )
-            requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                minTime, minDistance, myLocationListener
-            )
-        }
-    }
-    inner class MyLocationListener : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            Toast
-                .makeText(this@MainActivity, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT)
-                .show()
-            lifecycleScope.launch {
-                var params = HashMap<String, Double>()
-                params.put("latitude", location.latitude)
-                params.put("longitude", location.longitude)
-                setLocation(userDataStore.get_access_token.first(), params)
-            }
-            removeLocationListener()
-        }
-        private fun removeLocationListener() {
-            if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
-                locationManager.removeUpdates(myLocationListener)
+        findViewById<ImageView>(R.id.myLocation).setOnClickListener {
+            val myLocation = map?.myLocation
+            if (myLocation != null) {
+                val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+                map?.animateCamera(cameraUpdate)
             }
         }
     }
-    fun setLocation(header : String, params : HashMap<String, Double>?){
+
+    private fun setLocation(header : String, params : HashMap<String, Double>?){
         api.setLocation(header, params).enqueue(object : Callback<SetLocationResponse> {
             override fun onResponse(call: Call<SetLocationResponse>, response: Response<SetLocationResponse>) {
                 Log.d("위치 전송 응답", response.toString())
                 if (response.code() == 200) {
                     Log.i(TAG, "위치 전송 응답 잘 보내졌다네")
                     // 지도의 내 위치 변경
-                    val mapFragment = supportFragmentManager.findFragmentById(
-                        R.id.map_fragment
-                    ) as? SupportMapFragment
-                    mapFragment?.getMapAsync { googleMap ->
-                        val myLocation = LatLng(params?.get("latitude")!!, params?.get("longitude")!!)
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 19f))
-                    }
+//                    val mapFragment = supportFragmentManager.findFragmentById(
+//                        R.id.map_fragment
+//                    ) as? SupportMapFragment
+//                    mapFragment?.getMapAsync { googleMap ->
+//                        val myLocation = LatLng(params?.get("latitude")!!, params?.get("longitude")!!)
+//                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 19f))
+//                    }
                 } else if (response.code() == 401){
                     Log.i(TAG, "위치 전송 응답 토큰 만료")
                     getToken("location", params)
@@ -462,61 +425,6 @@ class MainActivity : AppCompatActivity(){
             }
         }
     }
-        //    override fun onMapReady(googleMap: GoogleMap) {
-//        mMap = googleMap
-//        val marker = LatLng(37.568291,126.997780)
-//        mMap.addMarker(MarkerOptions().position(marker).title("여기"))
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(marker))
-//        mMap.moveCamera(CameraUpdateFactory.zoomTo(15f))
-//    }
-//    override fun onStart() {
-//        super.onStart()
-//        mView.onStart()
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//        mView.onStop()
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        mView.onResume()
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        mView.onPause()
-//    }
-//
-//    override fun onLowMemory() {
-//        super.onLowMemory()
-//        mView.onLowMemory()
-//    }
-//
-//    override fun onDestroy() {
-//        mView.onDestroy()
-//        super.onDestroy()
-//    }
-//    override fun onMapReady(googleMap: GoogleMap) {
-//        mMap = googleMap
-//        val seoul = LatLng(37.56, 126.97)
-//        val markerOptions = MarkerOptions()
-//        markerOptions.position(seoul)
-//        markerOptions.title("서울")
-//        markerOptions.snippet("한국의 수도")
-//        mMap.addMarker(markerOptions)
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 10f))
-//    }
-//    private fun addMarkers(googleMap: GoogleMap) {
-//        places.forEach { place ->
-//            val marker = googleMap.addMarker(
-//                MarkerOptions()
-//                    .title(place.nickname)
-//                    .position(place.latLng)
-//            )
-//        }
-//    }
 // 옵션 메뉴
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -524,10 +432,10 @@ class MainActivity : AppCompatActivity(){
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_notifications -> {
-                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-                true
-            }
+//            R.id.action_notifications -> {
+//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
+//                true
+//            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
@@ -536,7 +444,7 @@ class MainActivity : AppCompatActivity(){
             else -> super.onOptionsItemSelected(item)
         }
     }
-    var backPressedTime : Long = 0
+//    var backPressedTime : Long = 0
 //    override fun onBackPressed() {
 //        //2.5초이내에 한 번 더 뒤로가기 클릭 시
 //        if (System.currentTimeMillis() - backPressedTime < 1500) {
@@ -546,4 +454,175 @@ class MainActivity : AppCompatActivity(){
 //        Toast.makeText(this, "한번 더 클릭 시 홈으로 이동됩니다.", Toast.LENGTH_SHORT).show()
 //        backPressedTime = System.currentTimeMillis()
 //    }
+
+    // [START ask_post_notifications]
+    // Declare the launcher at the top of your Activity/Fragment:
+//    private val requestPermissionLauncher = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted: Boolean ->
+//        if (isGranted) {
+//            // FCM SDK (and your app) can post notifications.
+//        } else {
+//            // TODO: Inform user that that your app will not show notifications.
+//        }
+//    }
+//
+//    private fun askNotificationPermission() {
+//        // This is only necessary for API level >= 33 (TIRAMISU)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+//                PackageManager.PERMISSION_GRANTED
+//            ) {
+//                // FCM SDK (and your app) can post notifications.
+//            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+//                // TODO: display an educational UI explaining to the user the features that will be enabled
+//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+//                //       If the user selects "No thanks," allow the user to continue without notifications.
+//            } else {
+//                // Directly ask for the permission
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//            }
+//        }
+//    }
+    // [END ask_post_notifications]
+    /**
+     * Saves the state of the map when the activity is paused.
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        map?.let { map ->
+            outState.putParcelable(KEY_CAMERA_POSITION, map.cameraPosition)
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    /**
+     * Manipulates the map when it's available.
+     * This callback is triggered when the map is ready to be used.
+     */
+    override fun onMapReady(map: GoogleMap) {
+        this.map = map
+        // Prompt the user for permission.
+        getLocationPermission()
+        // Turn on the My Location layer and the related control on the map.
+        updateLocationUI()
+        // Get the current location of the device and set the position of the map.
+        getDeviceLocation()
+    }
+    /**
+     * Gets the current location of the device, and positions the map's camera.
+     */
+    @SuppressLint("MissingPermission")
+    private fun getDeviceLocation() {
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        if (lastKnownLocation != null) {
+                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                        }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        map?.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        map?.uiSettings?.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    /**
+     * Prompts the user for permission to use the device location.
+     */
+    private fun getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+    }
+
+    /**
+     * Handles the result of the request for location permissions.
+     */
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        locationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+        updateLocationUI()
+    }
+
+    /**
+     * Prompts the user to select the current place from a list of likely places, and shows the
+     * current place on the map - provided the user has granted location permission.
+     */
+
+    /**
+     * Updates the map's UI settings based on whether the user has granted location permission.
+     */
+    @SuppressLint("MissingPermission")
+    private fun updateLocationUI() {
+        if (map == null) {
+            return
+        }
+        try {
+            if (locationPermissionGranted) {
+                map?.isMyLocationEnabled = true
+                map?.uiSettings?.isMyLocationButtonEnabled = false // 내 위치 버튼 숨기기
+//                map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
+//                map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
+
+            } else {
+                map?.isMyLocationEnabled = false
+                map?.uiSettings?.isMyLocationButtonEnabled = false
+                lastKnownLocation = null
+                getLocationPermission()
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    companion object {
+        private val TAG = MapsActivityCurrentPlace::class.java.simpleName
+        private const val DEFAULT_ZOOM = 15
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
+        // Keys for storing activity state.
+        private const val KEY_CAMERA_POSITION = "camera_position"
+        private const val KEY_LOCATION = "location"
+    }
 }

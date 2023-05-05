@@ -114,8 +114,8 @@
                 android:text="형용사"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:inAnimation="@anim/expandable_show"
-                android:outAnimation="@anim/expandable_hide"/>
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
 
             <TextSwitcher
                 android:id="@+id/nickname_noun"
@@ -130,8 +130,8 @@
                 android:text="명사"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:inAnimation="@anim/expandable_show"
-                android:outAnimation="@anim/expandable_hide"/>
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
         </LinearLayout>
 
         <TextView

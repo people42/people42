@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Fourtytwo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Fourtytwo" parent="Theme.MaterialComponents.Light.Bridge">
         <!-- 앱바 배경색 -->
         <item name="colorPrimary">@color/white</item>
         <!-- 상태창 컬러 -->

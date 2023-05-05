@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -55,16 +57,16 @@ class GuideFragment : Fragment() {
         // 내 이모지
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
         // 내 말풍선 색
-        binding.guideBackgroundTint.backgroundTintList = when (myColor) {
-            "red" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
-            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.orange))
-            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
-            "green" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
-            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sky))
-            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))
-            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.purple))
-            else -> throw IllegalArgumentException("Invalid color value: $myColor")
-        }
+//        binding.guideBackgroundTint.backgroundTintList = when (myColor) {
+//            "red" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+//            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.orange))
+//            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
+//            "green" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+//            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sky))
+//            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))
+//            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.purple))
+//            else -> throw IllegalArgumentException("Invalid color value: $myColor")
+//        }
         binding.thinkCloudButton.setOnClickListener {
             // 내 생각 전송
             lifecycleScope.launch {
@@ -77,6 +79,25 @@ class GuideFragment : Fragment() {
             // 메인으로 이동
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.guideText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // 내 생각 전송
+                lifecycleScope.launch {
+                    setMessage(userDataStore.get_access_token.first(), binding.guideText.text.toString())
+                    Log.d(TAG, "메세지 전송 1 : 토큰 ${userDataStore.get_access_token.first()}")
+                    Log.d(TAG, "메세지 전송 1: 메세지 ${binding.guideText.text.toString()}")
+                }.isCompleted.let {
+
+                }
+                // 메인으로 이동
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                true
+            } else {
+                false
+            }
         }
         return binding.root
     }

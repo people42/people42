@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -18,12 +19,10 @@ import java.time.format.DateTimeFormatter
 
 class FeedAdapter(private val context: Context, val itemList : List<RecentFeedData>) :
     RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_feed, parent, false)
         return FeedViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         Glide.with(context).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${itemList.get(position).recentMessageInfo.emoji}.gif").into(holder.emoji)
         holder.brushCnt.text = "${ itemList.get(position).recentMessageInfo.brushCnt.toString() }번 스친"
@@ -74,11 +73,11 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
         var emoji = itemView.findViewById<ImageView>(R.id.feedEmoji)
         var brushCnt = itemView.findViewById<TextView>(R.id.feedbrushCnt)
         var nickname = itemView.findViewById<TextView>(R.id.feedNickname)
-        var content: TextView = itemView.findViewById(R.id.feed_message)
+        var content: TextView = itemView.findViewById(R.id.feedContent)
         var place: TextView = itemView.findViewById(R.id.feedLocation)
         var time: TextView = itemView.findViewById(R.id.feedTime)
-        var reaction = itemView.findViewById<ImageView>(R.id.message_reation)
-        var feedMessage = itemView.findViewById<TextView>(R.id.feed_message)
+//        var reaction = itemView.findViewById<ImageView>(R.id.message_reation)
+        var feedMessage = itemView.findViewById<RelativeLayout>(R.id.feed_message)
         var shadow1 = itemView.findViewById<ImageView>(R.id.feed_message_shadow1)
         var shadow2 = itemView.findViewById<ImageView>(R.id.feed_message_shadow2)
     }
