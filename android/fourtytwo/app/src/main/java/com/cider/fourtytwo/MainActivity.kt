@@ -13,6 +13,8 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_ENTER
@@ -53,6 +55,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -208,7 +213,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
+        // 가운데 클릭 시 내 위치로 이동
         findViewById<ImageView>(R.id.myLocation).setOnClickListener {
             val myLocation = map?.myLocation
             if (myLocation != null) {
@@ -217,22 +222,33 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 map?.animateCamera(cameraUpdate)
             }
         }
+        // 1분에 한번씩 위치 전송
+        val handler = Handler()
+        val runnable = object : Runnable {
+            override fun run() {
+                if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    fusedLocationProviderClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            if (location != null) {
+                                var mylocation = HashMap<String, Double>()
+                                mylocation.put("latitude", location.latitude)
+                                mylocation.put("longitude", location.longitude)
+                                lifecycleScope.launch {
+                                    setLocation(userDataStore.get_access_token.first(), mylocation)
+                                }
+                            }
+                        }
+                }
+                handler.postDelayed(this, 60000)
+            }
+        }
+        handler.post(runnable)
     }
-
     private fun setLocation(header : String, params : HashMap<String, Double>?){
         api.setLocation(header, params).enqueue(object : Callback<SetLocationResponse> {
             override fun onResponse(call: Call<SetLocationResponse>, response: Response<SetLocationResponse>) {
                 Log.d("위치 전송 응답", response.toString())
                 if (response.code() == 200) {
-                    Log.i(TAG, "위치 전송 응답 잘 보내졌다네")
-                    // 지도의 내 위치 변경
-//                    val mapFragment = supportFragmentManager.findFragmentById(
-//                        R.id.map_fragment
-//                    ) as? SupportMapFragment
-//                    mapFragment?.getMapAsync { googleMap ->
-//                        val myLocation = LatLng(params?.get("latitude")!!, params?.get("longitude")!!)
-//                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 19f))
-//                    }
                 } else if (response.code() == 401){
                     Log.i(TAG, "위치 전송 응답 토큰 만료")
                     getToken("location", params)
@@ -241,7 +257,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
             override fun onFailure(call: Call<SetLocationResponse>, t: Throwable) {
-                // 실패
                 Log.d("메세지 전송 2 실패: ", t.message.toString())
             }
         })
@@ -615,12 +630,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.e("Exception: %s", e.message, e)
         }
     }
-
     companion object {
-        private val TAG = MapsActivityCurrentPlace::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-
         // Keys for storing activity state.
         private const val KEY_CAMERA_POSITION = "camera_position"
         private const val KEY_LOCATION = "location"
