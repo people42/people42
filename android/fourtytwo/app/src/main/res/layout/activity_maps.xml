@@ -8,7 +8,7 @@
     android:gravity="center_vertical"
     android:layout_marginTop="18dp"
     >
-    <!--  파란 점 + 컨텐츠  -->
+<!--  파란 점 + 컨텐츠  -->
     <ImageView
         android:layout_width="18dp"
         android:layout_height="18dp"
@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/message_padding_horizontal"
-
         >
         <!--  말풍선 그림자  -->
         <ImageView
@@ -26,7 +25,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/round_box"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="23dp"
+            android:layout_marginTop="6dp"
             android:backgroundTint="#26FFF500"/>
         <ImageView
             android:id="@+id/feed_message_shadow1"
@@ -35,20 +34,18 @@
             android:background="@drawable/round_box"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="15dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="3dp"
             android:backgroundTint="#4DFFF500"/>
         <RelativeLayout
             android:id="@+id/feed_message"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:minHeight="@dimen/message_height"
             android:background="@drawable/round_box"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="20dp"
-            android:paddingTop="17dp"
-            android:paddingHorizontal="@dimen/message_margin_horizontal"
-            android:layout_marginTop="17dp"
-            >
+            android:paddingTop="36dp"
+            android:paddingHorizontal="@dimen/message_margin_horizontal">
             <TextView
                 android:id="@+id/feedContent"
                 android:layout_width="wrap_content"
@@ -77,59 +74,57 @@
                 android:text="시간"
                 />
         </RelativeLayout>
-        <!--  한 층 위 : 이모지+리액션  -->
+    <!--  한 층 위 : 이모지+리액션  -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--  이모지, 스침, 닉네임  -->
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="20dp"
-            >
-            <!--  이모지, 스침, 닉네임  -->
-            <RelativeLayout
-                android:id="@+id/feed_user"
+            android:id="@+id/feed_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true">
+            <ImageView
+                android:id="@+id/feedEmoji"
+                android:layout_width="@dimen/feed_emoji_height"
+                android:layout_height="@dimen/feed_emoji_height"
+                android:elevation="5dp"
+                />
+            <TextView
+                android:id="@+id/feedbrushCnt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                >
-                <ImageView
-                    android:id="@+id/feedEmoji"
-                    android:layout_width="@dimen/feed_emoji_height"
-                    android:layout_height="@dimen/feed_emoji_height"
-                    android:elevation="5dp"
-                    />
-                <TextView
-                    android:id="@+id/feedbrushCnt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:layout_toRightOf="@id/feedEmoji"
-                    android:text="스친"
-                    />
-                <TextView
-                    android:id="@+id/feedNickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/feedbrushCnt"
-                    android:text="닉네임"
-                    android:textStyle="bold"
-                    />
-            </RelativeLayout>
-            <ImageView
-                android:id="@+id/message_reation"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/reaction"
-                android:elevation="3dp"
-                android:padding="4dp"
-                android:src="@drawable/baseline_add_24"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="6dp"
-                android:visibility="invisible"
+                android:paddingTop="16dp"
+                android:layout_toRightOf="@id/feedEmoji"
+                android:text="스친"
+                />
+            <TextView
+                android:id="@+id/feedNickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/feedbrushCnt"
+                android:text="닉네임"
+                android:textStyle="bold"
                 />
         </RelativeLayout>
+        <ImageView
+            android:id="@+id/message_reation"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/reaction"
+            android:elevation="3dp"
+            android:padding="4dp"
+            android:src="@drawable/baseline_add_24"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="6dp"
+            android:visibility="invisible"
+            />
+    </RelativeLayout>
     </FrameLayout>
+
 </LinearLayout>
 
 

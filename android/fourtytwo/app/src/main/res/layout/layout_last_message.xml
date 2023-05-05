@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/my_opinion_box"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -26,6 +27,7 @@
         android:minHeight="40dp"
         android:textSize="@dimen/login_text_size"
         android:layout_marginHorizontal="10dp"
+        android:textColor="@color/black"
         />
 
     <!-- 이모지 + 공감 -->
@@ -33,48 +35,83 @@
         android:id="@+id/history_reaction_box"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:gravity="center_vertical">
-        <ImageView
+        android:gravity="center_vertical"
+        >
+        <com.skydoves.elasticviews.ElasticImageView
+            app:button_duration="250"
+            app:button_scale="0.87"
             android:id="@+id/history_reation_first"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/history_reation_second"
+            android:layout_toStartOf="@id/history_reaction_heart"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/heart"
             android:layout_alignParentBottom="true"/>
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="100"-->
-<!--            android:layout_toEndOf="@id/history_reation_first"-->
-<!--            android:gravity="center"/>-->
-        <ImageView
+        <TextView
+            android:id="@+id/history_reaction_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/history_reation_second"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            />
+        <com.skydoves.elasticviews.ElasticImageView
+            app:button_duration="250"
+            app:button_scale="0.87"
             android:id="@+id/history_reation_second"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/history_reation_third"
+            android:layout_toStartOf="@id/history_reaction_tear"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/tear"
             android:layout_alignParentBottom="true"/>
-        <ImageView
+        <TextView
+            android:id="@+id/history_reaction_tear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/history_reation_third"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            />
+        <com.skydoves.elasticviews.ElasticImageView
+            app:button_duration="250"
+            app:button_scale="0.87"
             android:id="@+id/history_reation_third"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_toStartOf="@id/history_reation_fourth"
+            android:layout_toStartOf="@id/history_reaction_thumbs"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/thumbsup"
             android:layout_alignParentBottom="true"/>
-        <ImageView
+        <TextView
+            android:id="@+id/history_reaction_thumbs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/history_reation_fourth"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            />
+        <com.skydoves.elasticviews.ElasticImageView
+            app:button_duration="250"
+            app:button_scale="0.87"
             android:id="@+id/history_reation_fourth"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@id/history_reaction_fire"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/fire"
             android:layout_alignParentBottom="true"/>
+        <TextView
+            android:id="@+id/history_reaction_fire"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentEnd="true"
+            />
     </RelativeLayout>
 </LinearLayout>

@@ -1,14 +1,18 @@
 package com.cider.fourtytwo
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.media.metrics.LogSessionId
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySettingsBinding
@@ -29,8 +33,7 @@ import retrofit2.Response
 class SettingsActivity : AppCompatActivity() {
     private val binding: ActivitySettingsBinding by lazy { ActivitySettingsBinding.inflate(layoutInflater) }
     private lateinit var userDataStore: UserDataStore
-    val api = RetrofitInstance.getInstance().create(Api::class.java)
-
+    val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Fourtytwo)
         super.onCreate(savedInstanceState)
@@ -51,20 +54,22 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
 
         binding.privacyPolicy.setOnClickListener {
-            if(binding.privacyPolicyWebview.visibility == VISIBLE) {
-                binding.privacyPolicyWebview.visibility = GONE
-//                binding.layoutBtn01.animate().apply {
-//                    duration = 300
-//                    rotation(0f)
-//                }
-            } else {
-                binding.privacyPolicyWebview.visibility = VISIBLE
+            val intent = Intent(this, WebViewActivity::class.java)
+            startActivity(intent)
+//            if(binding.privacyPolicyWebview.visibility == VISIBLE) {
+//                binding.privacyPolicyWebview.visibility = GONE
+////                binding.layoutBtn01.animate().apply {
+////                    duration = 300
+////                    rotation(0f)
+////                }
+//            } else {
+//                binding.privacyPolicyWebview.visibility = VISIBLE
 //                binding.termsConditionsWebview.visibility = GONE
 //                binding.layoutBtn01.animate().apply {
 //                    duration = 300
 //                    rotation(180f)
 //                }
-            }
+//            }
         }
 //        binding.termsConditions.setOnClickListener {
 //            if (binding.termsConditionsWebview.visibility == View.VISIBLE) {
@@ -84,7 +89,7 @@ class SettingsActivity : AppCompatActivity() {
 //            }
 //        }
         binding.signout.setOnClickListener{
-            binding.privacyPolicyWebview.visibility = GONE
+//            binding.privacyPolicyWebview.visibility = GONE
 //            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 signOut(userDataStore.get_access_token.first())
@@ -96,19 +101,20 @@ class SettingsActivity : AppCompatActivity() {
                 })
         }
         binding.withdrawal.setOnClickListener{
-            binding.privacyPolicyWebview.visibility = GONE
+//            binding.privacyPolicyWebview.visibility = GONE
 //            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 withdrawal(userDataStore.get_access_token.first())
             }
             mGoogleSignInClient.revokeAccess()
                 .addOnCompleteListener(this, OnCompleteListener {
+                    Toast.makeText(this@SettingsActivity, "회원 탈퇴가 완료 되었습니다.", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, SigninActivity::class.java)
                     startActivity(intent)
                 })
         }
     }
-    fun signOut(header : String){
+    private fun signOut(header : String){
         api.signOut(header).enqueue(object : Callback<SignOutResponse> {
             override fun onResponse(call: Call<SignOutResponse>, response: Response<SignOutResponse>) {
                 Log.d("signOut 응답", response.toString())
@@ -127,13 +133,13 @@ class SettingsActivity : AppCompatActivity() {
             }
         })
     }
-    fun withdrawal(header : String){
+    private fun withdrawal(header : String){
+        Log.i(TAG, "withdrawal: 들어옴")
         api.withdrawal(header).enqueue(object : Callback<SignOutResponse> {
             override fun onResponse(call: Call<SignOutResponse>, response: Response<SignOutResponse>) {
                 Log.d("withdrawal 응답", response.toString())
                 if (response.code() == 200) {
                     Log.i(ContentValues.TAG, "withdrawal 응답 바디: ${response.body()}")
-                    Toast.makeText(this@SettingsActivity, "회원 탈퇴가 완료 되었습니다.", Toast.LENGTH_SHORT).show()
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "withdrawal 401: 토큰 만료")
                     getToken(2)
@@ -145,6 +151,10 @@ class SettingsActivity : AppCompatActivity() {
                 Log.d("withdrawal 실패", t.message.toString())
             }
         })
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -160,9 +170,11 @@ class SettingsActivity : AppCompatActivity() {
     fun getToken(logic : Int) {
         lifecycleScope.launch {
             val refreshToken = userDataStore.get_refresh_token.first()
+            Log.i(TAG, "getToken: ${refreshToken}")
             api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     Log.d("토큰 전송 on response", response.toString())
+                    Log.d("토큰 전송 on response", response.body().toString())
                     response.body()?.let {
                         if (it.status == 200) {
                             Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")

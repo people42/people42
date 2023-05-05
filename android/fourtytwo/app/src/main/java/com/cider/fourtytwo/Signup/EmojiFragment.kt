@@ -133,8 +133,8 @@ class EmojiFragment : Fragment(){
         "zipper-mouth-face")
     private var _binding : FragmentEmojiBinding? = null
     private val binding get() = _binding!!
-    var pickedEmoji = "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${emojiNameList[getRandomEmoji()]}.gif"
     var randomEmoji = emojiNameList[getRandomEmoji()]
+//    var pickedEmoji = "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${randomEmoji}.gif"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -164,7 +164,7 @@ class EmojiFragment : Fragment(){
         }
         // 내 이모지
         val myEmojiView: ImageView = binding.emojiPreview
-        Glide.with(this).load(pickedEmoji).into(myEmojiView)
+        Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${randomEmoji}.gif").into(myEmojiView)
         // 변경
         myEmojiView.setOnClickListener {
             randomEmoji = emojiNameList[getRandomEmoji()]
@@ -172,7 +172,7 @@ class EmojiFragment : Fragment(){
         }
         binding.emojiresetImage.setOnClickListener {
             randomEmoji = emojiNameList[getRandomEmoji()]
-            Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${emojiNameList[getRandomEmoji()]}.gif").into(myEmojiView)
+            Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${randomEmoji}.gif").into(myEmojiView)
         }
 //        val emojiAdapter = EmojiAdapter(requireContext())
 //        emojiAdapter.setOnItemClickListener(object : EmojiAdapter.OnItemClickListener {

@@ -107,22 +107,22 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
-                android:paddingTop="30dp"
+                android:paddingTop="38dp"
                 android:layout_weight="1"
                 android:background="@drawable/nicknameborder"
                 android:gravity="center"
                 android:text="형용사"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:inAnimation="@anim/expandable_show"
-                android:outAnimation="@anim/expandable_hide"/>
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
 
             <TextSwitcher
                 android:id="@+id/nickname_noun"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
-                android:paddingTop="30dp"
+                android:paddingTop="38dp"
                 android:layout_weight="1"
                 android:background="@drawable/nicknameborder"
                 android:gravity="center"
@@ -130,8 +130,8 @@
                 android:text="명사"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                android:inAnimation="@anim/expandable_show"
-                android:outAnimation="@anim/expandable_hide"/>
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
         </LinearLayout>
 
         <TextView

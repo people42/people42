@@ -11,7 +11,7 @@
     android:orientation="vertical"
     app:cardBackgroundColor="@color/white"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="220dp"
+    app:behavior_peekHeight="210dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <FrameLayout
@@ -23,7 +23,8 @@
             android:id="@+id/noFeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="아직 낭만이 없어요"
+            android:text="아직 스친 사람이 없어요"
+            android:layout_marginTop="90dp"
             android:gravity="center"/>
         <View
             android:id="@+id/cardLine"
