@@ -2,6 +2,7 @@ import mapArrow from "../../../../assets/images/map/mapArrow.png";
 import { NaverStaticMap } from "../../../../components";
 import { isLocationPermittedState } from "../../../../recoil/location/atoms";
 import { userLocationUpdateState } from "../../../../recoil/location/selectors";
+import { isLoginState } from "../../../../recoil/user/atoms";
 import HomeMapLocation from "./HomeMapLocation";
 import HomeMapPermission from "./HomeMappermission";
 import { useEffect, useState } from "react";
@@ -59,6 +60,7 @@ function HomeMap({}: homeMapProps) {
   }, [mousePosition]);
 
   const isLocationPermitted = useRecoilValue(isLocationPermittedState);
+  const isLogin = useRecoilValue(isLoginState);
 
   return isLocationPermitted ? (
     <StyledHomeMap>
@@ -83,7 +85,7 @@ function HomeMap({}: homeMapProps) {
           </div>
         ) : null}
       </div>
-      <HomeMapLocation></HomeMapLocation>
+      {isLogin ? <HomeMapLocation></HomeMapLocation> : null}
       <NaverStaticMap
         setIsMapLoad={setIsMapLoad}
         location={location}

@@ -187,18 +187,22 @@ function App() {
     if (isLocalLogin) {
       getAccessToken()
         .then((res) => {
-          setIsLogin(true);
           setUserRefresh(res.data.data);
           setSessionRefreshToken(res.data.data.refreshToken);
         })
         .catch((e) => {
-          setIsLogin(false);
           userLogout(user);
         });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.accessToken) {
+      setIsLogin(true);
     } else {
       setIsLogin(false);
     }
-  }, []);
+  }, [user]);
 
   // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
@@ -217,7 +221,7 @@ function App() {
           }
         });
     }
-  }, [userLocation, user]);
+  }, [userLocation]);
 
   //////////////////////////
   // firebase

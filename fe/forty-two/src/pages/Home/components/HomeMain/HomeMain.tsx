@@ -1,12 +1,23 @@
 import { HomeMyMessage } from "..";
+import { isLoginState } from "../../../../recoil/user/atoms";
 import HomeTimeline from "../HomeTimeline/HomeTimeline";
+import HomeMainPreview from "./HomeMainPreview";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function HomeMain() {
+  const isLogin = useRecoilValue(isLoginState);
+
   return (
     <StyledHomeMain>
-      <HomeTimeline></HomeTimeline>
-      <div className="timeline-bar"></div>
+      {isLogin ? (
+        <>
+          <HomeTimeline></HomeTimeline>
+          <div className="timeline-bar"></div>
+        </>
+      ) : (
+        <HomeMainPreview></HomeMainPreview>
+      )}
       <HomeMyMessage></HomeMyMessage>
     </StyledHomeMain>
   );
