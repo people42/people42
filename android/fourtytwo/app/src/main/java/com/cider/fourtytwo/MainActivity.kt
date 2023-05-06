@@ -2,22 +2,13 @@ package com.cider.fourtytwo
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,9 +18,7 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -41,23 +30,18 @@ import com.cider.fourtytwo.feed.FeedAdapter
 import com.cider.fourtytwo.feed.RecentFeedData
 import com.cider.fourtytwo.feed.RecentFeedResponse
 import com.cider.fourtytwo.map.SetLocationResponse
+import com.cider.fourtytwo.myHistory.MyMessagesActivity
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.place.PlaceActivity
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -71,6 +55,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var userDataStore: UserDataStore
     private lateinit var myEmoji: String
     //피드
+    private lateinit var feedList: List<RecentFeedData>
     private lateinit var feedAdapter: FeedAdapter
     //지도
     private var map: GoogleMap? = null
@@ -117,7 +102,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         lifecycleScope.launch {
             val token = userDataStore.get_access_token.first()
             // 24시간 피드 가져오기
-            getRecentFeed(token)
+            feedList = getRecentFeed(token)
             // 내 현재 메세지 가져오기
             getNowMessage(token)
             // 내 이모지 가져오기
@@ -183,6 +168,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 // 피드
+//        feedAdapter.setItemClickListener(object: FeedAdapter.OnItemClickListener{
+//            override fun onClick(v: View, position: Int) {
+//                // 클릭 시 이벤트 작성
+//                Log.d(TAG, "onClick: 작동하긴함")
+//                Log.d(TAG, "onClick: ${feedList[position].placeWithTimeInfo.placeName}")
+
+//                val intent = Intent(this@MainActivity, PlaceActivity::class.java)
+//                intent.putExtra("placeIdx", feedList[position].placeWithTimeInfo.placeIdx)
+//                intent.putExtra("time", feedList[position].placeWithTimeInfo.time)
+//                intent.putExtra("placeName", feedList[position].placeWithTimeInfo.placeName)
+//                startActivity(intent)
+//            }
+//        })
 
 // 레이더 애니메이션
         val scaleAnimation = ScaleAnimation(
@@ -384,6 +382,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         //feedAdapter.notifyDataSetChanged()
                         feed.adapter = feedAdapter
                         feed.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+                        feedAdapter.setItemClickListener(object: FeedAdapter.OnItemClickListener {
+                            override fun onClick(v: View, position: Int) {
+                                // 클릭 시 이벤트 작성
+                                val intent = Intent(this@MainActivity, PlaceActivity::class.java)
+                                intent.putExtra("placeIdx", feedList[position].placeWithTimeInfo.placeIdx)
+                                intent.putExtra("time", feedList[position].placeWithTimeInfo.time)
+                                intent.putExtra("placeName", feedList[position].placeWithTimeInfo.placeName)
+                                startActivity(intent)
+                            }
+                        })
                     }
                     Log.i(TAG, "getRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){

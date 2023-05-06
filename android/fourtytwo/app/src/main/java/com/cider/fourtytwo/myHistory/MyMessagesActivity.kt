@@ -1,12 +1,12 @@
-package com.cider.fourtytwo
+package com.cider.fourtytwo.myHistory
 
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -17,9 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.cider.fourtytwo.MainActivity
+import com.cider.fourtytwo.R
+import com.cider.fourtytwo.SettingsActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
-import com.cider.fourtytwo.myHistory.HistoryResponse
-import com.cider.fourtytwo.myHistory.MyMessagesAdapter
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
 import com.cider.fourtytwo.network.RetrofitInstance
@@ -42,7 +43,7 @@ class MyMessagesActivity : AppCompatActivity(){
         // 로고 장착
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayUseLogoEnabled(true)
-        supportActionBar?.title = null      // 타이틀 삭제
+        supportActionBar?.title = "나의 생각 기록"      // 타이틀 삭제
         supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
         supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24)
         setContentView(R.layout.activity_my_messages)
@@ -123,16 +124,26 @@ class MyMessagesActivity : AppCompatActivity(){
             override fun onResponse(call: Call<HistoryResponse>, response: Response<HistoryResponse>) {
                 if (response.code() == 200) {
                     val result = response.body()?.data!!
+                    Log.d(TAG, "getHistory onResponse: ${response.body()}")
+                    Log.d(TAG, "getHistory onResponse: $result")
                     val history = findViewById<RecyclerView>(R.id.history_recyclerView)
-                    val historyAdapter = MyMessagesAdapter(result)
+                    val historyAdapter = MyMessagesAdapter(this@MyMessagesActivity, result)
 
 //                    val itemTouchHelper = ItemTouchHelper(SwipeController(historyAdapter))
-//                    // itemTouchHelper에 RecyclerView 부착
+                    // itemTouchHelper에 RecyclerView 부착
 //                    itemTouchHelper.attachToRecyclerView(history)
 
                     history.adapter = historyAdapter
                     history.layoutManager = LinearLayoutManager(this@MyMessagesActivity, LinearLayoutManager.VERTICAL, false)
-
+                    historyAdapter.setOnHistoryClickListener(object : MyMessagesAdapter.OnHistoryClickListener{
+                        override fun onHistoryClick(view: View, position: Int, messageIdx: Int) {
+                            Log.d(TAG, "onRightClick: 액티비티 눌림")
+                            lifecycleScope.launch {
+                                val token = userDataStore.get_access_token.first()
+                                deleteMessage(token, messageIdx)
+                            }
+                        }
+                    })
                 } else if (response.code() == 401){
                     Log.i(TAG, "401: 토큰 만료")
                     getToken(" ")
@@ -145,6 +156,28 @@ class MyMessagesActivity : AppCompatActivity(){
             }
         })
     }
+    private fun deleteMessage(header: String, messageIdx : Int){
+        var params = HashMap<String, Int>()
+        params["messageIdx"] = messageIdx
+        api.deleteMessage(header, params).enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                if (response.code() == 200) {
+                    Log.i(TAG, "onResponse: 메세지 삭제 성공")
+//                    lifecycleScope.launch {
+//                        getHistory(userDataStore.get_access_token.first())
+//                    }
+                } else if (response.code() == 401){
+                    Log.i(TAG, "메세지 전송 401: 토큰 만료")
+                    deleteToken(messageIdx)
+                } else {
+                    Log.i(TAG, "메세지 전송 기타: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                Log.d("메세지 전송 실패: ", t.message.toString())
+            }
+        })
+    }
     fun getToken(myMessage: String) {
         lifecycleScope.launch {
             val refreshToken = userDataStore.get_refresh_token.first()
@@ -153,9 +186,30 @@ class MyMessagesActivity : AppCompatActivity(){
                     response.body()?.let {
                         if (it.status == 200) {
                             Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
-                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
-                            response.body()?.data?.let {
+                                response.body()?.data?.let {
                                     it1 -> saveUserInfo(it1, myMessage)
+                            }
+                        } else {
+                            Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                }
+            })
+        }
+    }
+    fun deleteToken(messageIdx: Int) {
+        lifecycleScope.launch {
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                    response.body()?.let {
+                        if (it.status == 200) {
+                            Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
+                            response.body()?.data?.let {
+                                    it1 -> deleteUserInfo(it1, messageIdx)
                             }
                         } else {
                             Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
@@ -177,6 +231,13 @@ class MyMessagesActivity : AppCompatActivity(){
             } else {
                 setMessage(token, myMessage)
             }
+        }
+    }
+    fun deleteUserInfo(payload : UserInfo, messageIdx: Int){
+        lifecycleScope.launch {
+            userDataStore.setUserData(payload)
+            val token = userDataStore.get_access_token.first()
+            deleteMessage(token, messageIdx)
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -8,11 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.cider.fourtytwo.R
-import com.cider.fourtytwo.UserViewModel
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.FragmentWelcomeBinding
 import com.cider.fourtytwo.network.Api
@@ -28,7 +26,6 @@ import retrofit2.Response
 class WelcomeFragment : Fragment() {
     private var _binding : FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel : UserViewModel by viewModels()
     val api = RetrofitInstance.getInstance().create(Api::class.java)
     private lateinit var userDataStore: UserDataStore
     var myEmail = ""

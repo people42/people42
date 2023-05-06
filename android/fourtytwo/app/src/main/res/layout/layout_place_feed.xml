@@ -11,7 +11,7 @@
     android:orientation="vertical"
     app:cardBackgroundColor="@color/white"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="210dp"
+    app:behavior_peekHeight="320dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <FrameLayout
@@ -19,23 +19,8 @@
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/message_margin_horizontal"
         android:paddingTop="9dp">
-        <TextView
-            android:id="@+id/noFeed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="오늘 스친 사람이 없어요"
-            android:layout_marginTop="90dp"
-            android:gravity="center"/>
-        <View
-            android:id="@+id/cardLine"
-            android:layout_marginLeft="7dp"
-            android:background="@color/line_blue"
-            android:layout_width="3dp"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            />
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/feed"
+            android:id="@+id/place_feed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/recyclerview_feed">

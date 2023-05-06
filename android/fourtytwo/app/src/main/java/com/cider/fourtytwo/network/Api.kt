@@ -6,6 +6,9 @@ import com.cider.fourtytwo.feed.RecentFeedResponse
 import com.cider.fourtytwo.map.SetLocationResponse
 import com.cider.fourtytwo.myHistory.HistoryResponse
 import com.cider.fourtytwo.network.Model.*
+import com.cider.fourtytwo.person.PersonPlaceResponse
+import com.cider.fourtytwo.person.PersonResponse
+import com.cider.fourtytwo.place.PlaceResponse
 import com.cider.fourtytwo.signIn.UserResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -31,30 +34,49 @@ interface Api {
     @DELETE("api/v1/account/logout")
     fun signOut(@Header("ACCESS-TOKEN") accessToken: String) : Call<SignOutResponse>
     // 내 메세지 조회
-    @GET
-        ("api/v1/account/myinfo")
+    @GET("api/v1/account/myinfo")
     fun getNowMessage(@Header("ACCESS-TOKEN") accessToken: String) : Call<NowMessageResponse>
     // 내 상메 히스토리 조회
-    @GET
-    ("api/v1/account/history")
+    @GET("api/v1/account/history")
     fun getHistory(@Header("ACCESS-TOKEN") accessToken: String, @Query("date") date : String) : Call<HistoryResponse>
-
     // 위치 갱신 & 스침 생성
     @POST("api/v1/background")
     fun setLocation(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Double>?) : Call<SetLocationResponse>
     // 최근 피드 조회
-    @GET
-    ("api/v1/feed/recent")
+    @GET("api/v1/feed/recent")
     fun getRecentFeed(@Header("ACCESS-TOKEN") accessToken: String) : Call<RecentFeedResponse>
-
-    // 히스토리 삭제
-    @PUT
-    ("api/v1/account/message")
-    fun deleteMessage(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Int>) : Call<MessageResponse>
-
     // 회원 탈퇴
     @DELETE("api/v1/account/withdrawal")
     fun withdrawal(@Header("ACCESS-TOKEN") accessToken: String) : Call<SignOutResponse>
+    // 장소 조회
+    @GET("api/v1/feed/place")
+    fun getPlaceFeed(@Header("ACCESS-TOKEN") accessToken: String,
+                     @Query("placeIdx") placeIdx : Int,
+                     @Query("time") time : String,
+                     @Query("page") page : Int,
+                     @Query("size") size : Int,
+    ) : Call<PlaceResponse>
+    // 히스토리 삭제
+    @PUT("api/v1/account/message")
+    fun deleteMessage(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Int>) : Call<MessageResponse>
+    //신고
+    @POST("api/v1/account/report")
+    fun setReport(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Any>) : Call<MessageResponse>
+    // 사람 조회
+    @GET("api/v1/feed/user")
+    fun getPersonFeed(@Header("ACCESS-TOKEN") accessToken: String,
+                      @Query("userIdx") userIdx : Int
+    ) : Call<PersonResponse>
 
+// 사람 장소 피드 조회
+    @GET("api/v1/feed/user/place")
+    fun getPersonPlaceFeed(@Header("ACCESS-TOKEN") accessToken: String,
+                      @Query("userIdx") userIdx : Int,
+                      @Query("placeIdx") placeIdx : Int
+    ) : Call<PersonPlaceResponse>
+
+    //차단
+    @POST("api/v1/account/block")
+    fun setBlock(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Int>) : Call<MessageResponse>
 
 }
