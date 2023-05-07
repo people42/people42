@@ -84,6 +84,11 @@ public class GpsService {
                 newPlace.setName(placeName);
                 newPlace.setLatitude(placeLat);
                 newPlace.setLongitude(placeLng);
+                if (newPlace.getName().equals("한밭대학교") || newPlace.getName().equals("컴퍼니소스") || newPlace.getName().equals("운암네오미아")) {
+                    newPlace.setName("삼성화재 유성연수원");
+                    newPlace.setLatitude(36.3552459);
+                    newPlace.setLatitude(127.2981518);
+                }
                 foundPlace = placeRepository.save(newPlace);
             }
         }
