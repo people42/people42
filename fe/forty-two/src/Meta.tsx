@@ -3,65 +3,14 @@ import { Helmet } from "react-helmet-async";
 
 type metaProps = {
   title?: string;
-  description?: string;
-  keywords?: string;
-  imgsrc?: string;
-  url?: string;
 };
 
 function Meta(props: metaProps) {
-  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
   return (
     <Helmet>
       {/* Primary Meta Tags */}
-      <title>{props.title ?? "42 | 어쩌면 마주친 사이"}</title>
-      <meta name="title" content={props.title ?? "42 | 어쩌면 마주친 사이"} />
-      <meta
-        name="description"
-        content={props.description ?? "무심코 스쳐간 인연과 생각을 나눠보세요."}
-      />
-      <meta
-        name="keywords"
-        content={props.keywords ?? "SNS, 생각, 지도, 공유, 낭만, 익명"}
-      />
-
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={BASE_APP_URL} />
-      <meta
-        property="og:title"
-        content={props.title ?? "42 | 어쩌면 마주친 사이"}
-      />
-      <meta
-        property="og:description"
-        content={props.description ?? "무심코 스쳐간 인연과 생각을 나눠보세요."}
-      />
-      <meta
-        property="og:image"
-        content={
-          props.imgsrc ??
-          "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/OG_image.png"
-        }
-      />
-
-      {/* Twitter */}
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content={BASE_APP_URL} />
-      <meta
-        property="twitter:title"
-        content={props.title ?? "42 | 어쩌면 마주친 사이"}
-      />
-      <meta
-        property="twitter:description"
-        content={props.description ?? "무심코 스쳐간 인연과 생각을 나눠보세요."}
-      />
-      <meta
-        property="twitter:image"
-        content={
-          props.imgsrc ??
-          "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/OG_image.png"
-        }
-      ></meta>
+      <title>{props.title}</title>
+      <meta name="title" content={props.title} />
 
       {/* iOS
       <meta property="al:ios:url" content=" ios 앱 URL" />
