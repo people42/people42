@@ -1,6 +1,8 @@
 import appStoreBadge from "../../assets/images/badge/Download_on_the_App_Store_Badge_KR_RGB_blk_100317.svg";
 import appIcon from "../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../assets/images/badge/google-play-badge.png";
+import logoBgBlue from "../../assets/images/logo/logo.svg";
+import { LogoBg } from "../../components";
 import { useEffect } from "react";
 import { isMobile, isAndroid } from "react-device-detect";
 import { useNavigate } from "react-router";
@@ -35,6 +37,8 @@ function DeepLink({}: deepLinkProps) {
         src={isAndroid ? playStoreBadge : appStoreBadge}
       ></img>
       <p className="deeplink-info">곧 출시 예정</p>
+      <p className="deeplink-info">PC에서 이용할 수 있습니다</p>
+      <LogoBg isBlue={false}></LogoBg>
     </StyledDeepLink>
   );
 }
@@ -46,28 +50,35 @@ const StyledDeepLink = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   padding: 24px;
+  margin-top: 24px;
 
   > .deeplink {
     &-title {
+      animation: floatingUp 0.3s both;
+      animation-delay: 0.2s;
       ${({ theme }) => theme.text.header2}
       line-height: 72px;
     }
     &-icon {
       width: 210px;
-      margin-block: 32px 48px;
+      margin-block: 24px 36px;
     }
     &-description {
+      animation: floatingUp 0.3s both;
+      animation-delay: 0.6s;
       ${({ theme }) => theme.text.header6}
     }
     &-badge {
       filter: opacity(0.2);
       width: 200px;
-      margin-block: 80px 8px;
+      margin-block: 48px 8px;
     }
     &-info {
+      animation: floatingUp 0.3s both;
+      animation-delay: 1s;
       ${({ theme }) => theme.text.subtitle2}
       color: ${({ theme }) => theme.color.text.secondary};
     }

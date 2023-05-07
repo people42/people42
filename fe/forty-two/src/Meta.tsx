@@ -16,7 +16,6 @@ function Meta(props: metaProps) {
       {/* Primary Meta Tags */}
       <title>{props.title ?? "42 | 어쩌면 마주친 사이"}</title>
       <meta name="title" content={props.title ?? "42 | 어쩌면 마주친 사이"} />
-      {/* <link rel="shortcut icon" href={`${BASE_APP_URL}favicon.ico`}></link> */}
       <meta
         name="description"
         content={props.description ?? "무심코 스쳐간 인연과 생각을 나눠보세요."}

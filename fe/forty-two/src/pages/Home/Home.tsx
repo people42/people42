@@ -39,7 +39,9 @@ function Home() {
     <StyledHome>
       <Meta
         title={
-          user ? `${userEmoji} ${user?.nickname}의 42 | Home` : "42 | Home"
+          user
+            ? `${userEmoji} ${user?.nickname}의 42 | Home`
+            : "42 | 어쩌면 마주친 사이"
         }
       ></Meta>
       <Banner></Banner>
