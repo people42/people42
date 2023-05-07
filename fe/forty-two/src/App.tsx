@@ -187,18 +187,22 @@ function App() {
     if (isLocalLogin) {
       getAccessToken()
         .then((res) => {
-          setIsLogin(true);
           setUserRefresh(res.data.data);
           setSessionRefreshToken(res.data.data.refreshToken);
         })
         .catch((e) => {
-          setIsLogin(false);
           userLogout(user);
         });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.accessToken) {
+      setIsLogin(true);
     } else {
       setIsLogin(false);
     }
-  }, []);
+  }, [user]);
 
   // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
@@ -217,7 +221,7 @@ function App() {
           }
         });
     }
-  }, [userLocation, user]);
+  }, [userLocation]);
 
   //////////////////////////
   // firebase
@@ -319,17 +323,9 @@ function App() {
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>
       <GlobalStyle />
-      <Meta
-        title={"42"}
-        description={"너랑 나 사이"}
-        keywords={"SNS, 생각, 지도, 공유, 낭만, 익명"}
-        imgsrc={
-          "https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/OG_image.png"
-        }
-        url={BASE_APP_URL}
-      ></Meta>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <NavermapsProvider ncpClientId={NAVER_MAP_CLIENT_ID}>
+          <Meta></Meta>
           <NotificationCard></NotificationCard>
           <RouterProvider router={router} />
         </NavermapsProvider>

@@ -20,7 +20,9 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
     myMessageInputData == ""
       ? alert("내용을 입력해주세요.")
       : postMessage(accessToken, { message: myMessageInputData })
-          .then((res) => onClickCancel())
+          .then((res) => {
+            onClickCancel();
+          })
           .catch((e) => {
             if (e.response.status == 401) {
               getAccessToken().then((res) => {
@@ -28,8 +30,7 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
                 setSessionRefreshToken(res.data.data.refreshToken);
                 postMessage(res.data.data.accessToken, {
                   message: myMessageInputData,
-                });
-                onClickCancel();
+                }).then(() => onClickCancel());
               });
             }
           });
