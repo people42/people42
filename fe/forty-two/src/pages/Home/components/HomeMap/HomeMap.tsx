@@ -1,3 +1,4 @@
+import koreaMap from "../../../../assets/images/map/koreaMap.png";
 import mapArrow from "../../../../assets/images/map/mapArrow.png";
 import { NaverStaticMap } from "../../../../components";
 import { isLocationPermittedState } from "../../../../recoil/location/atoms";
@@ -93,7 +94,9 @@ function HomeMap({}: homeMapProps) {
     </StyledHomeMap>
   ) : (
     <StyledHomeMap>
+      <div className="map-mask"></div>
       <HomeMapPermission></HomeMapPermission>
+      <img className="map-denied" src={koreaMap}></img>
     </StyledHomeMap>
   );
 }
@@ -183,5 +186,14 @@ const StyledHomeMap = styled.section`
       border-radius: 100%;
       border: 1px solid ${({ theme }) => theme.color.text.secondary};
     }
+  }
+
+  .map-denied {
+    position: absolute;
+    width: 100%;
+    ${({ theme }) =>
+      theme.isDark
+        ? "filter: opacity(0.4) invert(95%) sepia(8060%) hue-rotate(180deg) saturate(100%) brightness(0.8);"
+        : "filter: opacity(0.5) grayscale(80%);"};
   }
 `;
