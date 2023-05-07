@@ -7,13 +7,12 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function Home() {
-  const [user, setUser] = useRecoilState<TUser | null>(userLoginState);
+  const user = useRecoilValue<TUser | null>(userLoginState);
   const [userEmoji, setUserEmoji] = useState<string>("");
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
 
   const navigate = useNavigate();
 
@@ -36,20 +35,13 @@ function Home() {
     }
   }, [user]);
 
-  useEffect(() => {
-    switch (isLogin) {
-      case false:
-        setIsLogin("check");
-        navigate("/signin");
-        break;
-    }
-  }, [isLogin]);
-
   return (
     <StyledHome>
       <Meta
         title={
-          user ? `${userEmoji} ${user?.nickname}의 42 | Home` : "42 | Home"
+          user
+            ? `${userEmoji} ${user?.nickname}의 42 | Home`
+            : "42 | 어쩌면 마주친 사이"
         }
       ></Meta>
       <Banner></Banner>

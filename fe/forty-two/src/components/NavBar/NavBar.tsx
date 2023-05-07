@@ -1,4 +1,5 @@
 import animatedLogo from "../../assets/images/logo/animatedLogo_w120.gif";
+import { isLoginState } from "../../recoil/user/atoms";
 import IconBtn from "../Button/IconBtn";
 import NotificationNavBtn from "../Button/NotificationNavBtn";
 import ThemeBtn from "../Button/ThemeBtn";
@@ -6,6 +7,7 @@ import NavModal from "../Modal/NavModal";
 import { useState } from "react";
 import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
 import { useNavigate } from "react-router";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type navBarProps = {};
@@ -20,6 +22,7 @@ function NavBar() {
   };
 
   const navigate = useNavigate();
+  const isLogin = useRecoilValue(isLoginState);
 
   return (
     <StyledNavBar>
@@ -47,13 +50,17 @@ function NavBar() {
             </>
           ) : null}
           <ThemeBtn></ThemeBtn>
-          <NotificationNavBtn
-            isNotificationModalOn={isNotificationModalOn}
-            setIsNotificationModalOn={setIsNotificationModalOn}
-          ></NotificationNavBtn>
-          <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
-            <TbSettingsFilled size={24} aria-label={"설정"} />
-          </IconBtn>
+          {isLogin === true ? (
+            <>
+              <NotificationNavBtn
+                isNotificationModalOn={isNotificationModalOn}
+                setIsNotificationModalOn={setIsNotificationModalOn}
+              ></NotificationNavBtn>
+              <IconBtn onClick={() => setIsSettingModalOn(!isSettingModalOn)}>
+                <TbSettingsFilled size={24} aria-label={"설정"} />
+              </IconBtn>
+            </>
+          ) : null}
         </div>
       </div>
     </StyledNavBar>

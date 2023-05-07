@@ -81,7 +81,9 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
           ></MessageCard>
         </div>
       ) : (
-        <div className="not-message">아직 메시지가 없습니다.</div>
+        <div className="not-message">
+          <p>아직 메시지가 없습니다.</p>
+        </div>
       )}
     </StyledHomeTimelineGroup>
   );
@@ -142,9 +144,17 @@ const StyledHomeTimelineGroup = styled.article<{ isActive: boolean }>`
   }
 
   .not-message {
-    color: ${({ theme }) => theme.color.text.secondary};
+    & > p {
+      color: ${({ theme }) => theme.color.text.secondary};
+      margin-block: 8px;
+    }
+    & > a {
+      color: ${({ theme }) => theme.color.text.secondary};
+    }
     height: 64px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
   }
 `;
