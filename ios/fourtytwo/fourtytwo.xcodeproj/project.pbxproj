@@ -274,6 +274,7 @@
 		362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553D82A043F3300A2CD4A /* WrappedMap.swift */; };
 		362553DB2A05026600A2CD4A /* LocationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DA2A05026600A2CD4A /* LocationCard.swift */; };
 		362553DD2A051F1800A2CD4A /* PlaceTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */; };
+		362553DF2A08AD9E00A2CD4A /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -584,6 +585,7 @@
 		362553D82A043F3300A2CD4A /* WrappedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedMap.swift; sourceTree = "<group>"; };
 		362553DA2A05026600A2CD4A /* LocationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCard.swift; sourceTree = "<group>"; };
 		362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceTimelineView.swift; sourceTree = "<group>"; };
+		362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -818,6 +820,7 @@
 				360D52B229F81BA800F67940 /* LocationManager.swift */,
 				360D52B429F81C1600F67940 /* LocationSender.swift */,
 				362553C92A02B6CE00A2CD4A /* CommonService.swift */,
+				362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1595,6 +1598,7 @@
 				360D52B329F81BA800F67940 /* LocationManager.swift in Sources */,
 				36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */,
 				3606DC1529EED8640025F0FC /* SegmentedProgressBar.swift in Sources */,
+				362553DF2A08AD9E00A2CD4A /* WebSocketManager.swift in Sources */,
 				360D52C329F916C700F67940 /* MyMindView.swift in Sources */,
 				3606DC4029F0F1C80025F0FC /* GifImage.swift in Sources */,
 				365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */,
@@ -1762,6 +1766,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fourtytwo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "사이";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치가 백그라운드에서도 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
@@ -1808,6 +1814,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fourtytwo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "사이";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치가 백그라운드에서도 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치가 다른 사람과의 스침을 기록하는데 사용됩니다.";

@@ -60,7 +60,6 @@ struct MyMassageHistory: View {
                 Spacer()
             }
         }
-        .padding(16)
     }
 }
 

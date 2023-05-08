@@ -23,6 +23,7 @@ struct MyMindView: View {
                             DragToDeleteView(content: MyMassageHistory(contents: data.contents, reactionCnt: data.reactionCnt, time: data.time), onDelete: {
                                 deleteMessage(at: index)
                             })
+                            .padding(16)
                             .padding(.bottom, 8)
                         }
                     } else {
