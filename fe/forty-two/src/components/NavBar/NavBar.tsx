@@ -80,7 +80,6 @@ const StyledNavBar = styled.nav`
   padding: 16px 24px 0px 24px;
   box-sizing: border-box;
   .logo {
-    height: 40px;
     & > img {
       height: 100%;
       filter: opacity(0.8);

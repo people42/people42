@@ -24,7 +24,7 @@ function MyHistoryCard({ idx, history, onClickDelete }: myHistoryCardProps) {
         <div className="history-card">
           <p className="history-card-content">{history.content}</p>
           <p className="history-card-time">
-            {formatMessageDate(history.createdAt)} {"장소"}에서
+            {formatMessageDate(history.createdAt)}
           </p>
         </div>
       </Card>

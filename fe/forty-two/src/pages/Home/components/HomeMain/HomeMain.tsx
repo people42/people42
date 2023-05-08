@@ -10,13 +10,13 @@ function HomeMain() {
 
   return (
     <StyledHomeMain>
-      {isLogin ? (
+      {isLogin === false ? (
+        <HomeMainPreview></HomeMainPreview>
+      ) : (
         <>
           <HomeTimeline></HomeTimeline>
           <div className="timeline-bar"></div>
         </>
-      ) : (
-        <HomeMainPreview></HomeMainPreview>
       )}
       <HomeMyMessage></HomeMyMessage>
     </StyledHomeMain>
