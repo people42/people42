@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fourtytwo</string>
+    <string name="app_name">42</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="likes_hearts">❤</string>

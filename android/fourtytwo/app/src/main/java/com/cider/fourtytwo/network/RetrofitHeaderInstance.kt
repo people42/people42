@@ -1,9 +1,5 @@
 package com.cider.fourtytwo.network
 
-import androidx.datastore.core.DataStore
-import androidx.lifecycle.lifecycleScope
-import com.cider.fourtytwo.dataStore.UserDataStore
-import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response

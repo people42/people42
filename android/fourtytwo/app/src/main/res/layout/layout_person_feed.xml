@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_box"
+    android:backgroundTint="@color/white"
+    android:layout_margin="24dp"
+    android:minHeight="128dp"
+    android:padding="26dp"
+    android:elevation="5dp"
+    >
+    <TextView
+        android:text="장소"
+        android:id="@+id/person_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="15sp">
+    </TextView>
+    <TextView
+        android:text="내용"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:id="@+id/person_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/recyclerview_feed"
+        app:layout_constraintTop_toBottomOf="@id/person_place"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+    </TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>

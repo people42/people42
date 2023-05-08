@@ -10,10 +10,8 @@ import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.cider.fourtytwo.R
-import com.cider.fourtytwo.UserViewModel
 import com.cider.fourtytwo.databinding.FragmentNicknameBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.RetrofitInstance

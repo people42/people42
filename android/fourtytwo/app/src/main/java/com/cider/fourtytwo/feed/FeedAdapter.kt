@@ -24,13 +24,14 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
         return FeedViewHolder(view)
     }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
+        val item = itemList[position]
         Glide.with(context).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${itemList.get(position).recentMessageInfo.emoji}.gif").into(holder.emoji)
-        holder.brushCnt.text = "${ itemList.get(position).recentMessageInfo.brushCnt.toString() }번 스친"
-        holder.nickname.text = itemList.get(position).recentMessageInfo.nickname
-        holder.content.text = itemList.get(position).recentMessageInfo.content
-        holder.place.text = itemList.get(position).placeWithTimeInfo.placeName
-        holder.time.text = timeEdit(itemList.get(position).placeWithTimeInfo.time)
-        val myColor = itemList.get(position).recentMessageInfo.color
+        holder.brushCnt.text = "${ item.recentMessageInfo.brushCnt.toString() }번 스친"
+        holder.nickname.text = item.recentMessageInfo.nickname
+        holder.content.text = item.recentMessageInfo.content
+        holder.place.text = item.placeWithTimeInfo.placeName
+        holder.time.text = timeEdit(item.placeWithTimeInfo.time)
+        val myColor = item.recentMessageInfo.color
         ViewCompat.setBackgroundTintList(holder.feedMessage, ColorStateList.valueOf(Color.RED))
         // 내 말풍선 색
         holder.feedMessage.backgroundTintList = when (myColor) {
@@ -63,8 +64,22 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
             "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
             else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
         }
-
+        holder.itemView.setOnClickListener {
+            itemClickListener?.onClick(it, position)
+        }
+//        holder.itemView.setOnTouchListener(object: OnSwipeTouchListener(context){
+//            override fun onSwipeLeft() {
+//                Toast.makeText(context,"왼쪽으로",Toast.LENGTH_SHORT).show()
+//            }
+//        })
 //        holder.reaction.text = itemList.get(position).recentMessageInfo.content
+    }
+    interface OnItemClickListener {
+        fun onClick(v: View, position: Int)
+    }
+    private lateinit var itemClickListener : OnItemClickListener
+    fun setItemClickListener(onItemClickListener: OnItemClickListener) {
+        this.itemClickListener = onItemClickListener
     }
     override fun getItemCount(): Int {
         return itemList.size

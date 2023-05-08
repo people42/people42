@@ -138,9 +138,7 @@ class EmojiAdapter(private val context: Context) : RecyclerView.Adapter<EmojiAda
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_emoji, parent, false)
-
         val viewHolder: EmojiAdapter.EmojiViewHolder = EmojiViewHolder(view)
-
 
         return EmojiViewHolder(view)
     }

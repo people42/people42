@@ -66,11 +66,12 @@
             android:maxWidth="@dimen/reaction_height"
             android:maxHeight="@dimen/reaction_height"
             android:background="@drawable/round"
-            android:layout_toStartOf="@id/reation_second"
             android:elevation="5dp"
             android:padding="4dp"
+            android:layout_toStartOf="@id/reation_second"
             android:src="@drawable/heart"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
         <ImageView
             android:id="@+id/reation_second"
             android:layout_width="38dp"
@@ -78,11 +79,12 @@
             android:maxWidth="@dimen/reaction_height"
             android:maxHeight="@dimen/reaction_height"
             android:background="@drawable/round"
-            android:layout_toStartOf="@id/reation_third"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/tear"
-            android:layout_alignParentBottom="true"/>
+            android:layout_toStartOf="@id/reation_third"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
         <ImageView
             android:id="@+id/reation_third"
             android:layout_width="38dp"
@@ -90,11 +92,12 @@
             android:maxWidth="@dimen/reaction_height"
             android:maxHeight="@dimen/reaction_height"
             android:background="@drawable/round"
-            android:layout_toStartOf="@id/reation_fourth"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/thumbsup"
-            android:layout_alignParentBottom="true"/>
+            android:layout_toStartOf="@id/reation_fourth"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
         <ImageView
             android:id="@+id/reation_fourth"
             android:layout_width="38dp"
@@ -102,10 +105,11 @@
             android:maxWidth="@dimen/reaction_height"
             android:maxHeight="@dimen/reaction_height"
             android:background="@drawable/round"
-            android:layout_alignParentEnd="true"
             android:elevation="5dp"
             android:padding="4dp"
             android:src="@drawable/fire"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
     </RelativeLayout>
 </FrameLayout>

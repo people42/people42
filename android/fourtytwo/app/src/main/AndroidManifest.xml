@@ -21,58 +21,41 @@
         tools:replace="android:icon"
         tools:targetApi="33">
         <activity
+            android:name=".person.PersonActivity"
+            android:exported="true" />
+        <activity
+            android:name=".place.PlaceActivity"
+            android:exported="true"/>
+        <activity
             android:name=".WebViewActivity"
             android:exported="false" />
         <activity
-            android:name=".MyMessagesActivity"
-            android:exported="true"/>
-        <activity
-            android:name=".MapsActivityCurrentPlace"
-            android:exported="true">
-        </activity>
-
+            android:name=".myHistory.MyMessagesActivity"
+            android:exported="true" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${map_key}" />
-
         <activity
             android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_settings"/>
+            android:exported="true"/>
         <activity
             android:name=".SigninActivity"
-            android:exported="true"
-            android:theme="@style/SplashTheme">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Signup.SignupActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity
-            android:name=".MainActivity2"
-            android:exported="true"
-            android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustPan">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustPan">
-
-             <intent-filter>
-             <action android:name="android.intent.action.MAIN" />
-             <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
         </activity>
         <service
             android:name=".MyFirebaseMessagingService"
@@ -81,17 +64,19 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/icon_notification_true" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+            android:resource="@drawable/ic_stat_name" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/main_blue" />
     </application>
-
-
 </manifest>
