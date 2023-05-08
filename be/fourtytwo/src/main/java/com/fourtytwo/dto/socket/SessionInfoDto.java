@@ -16,6 +16,7 @@ public class SessionInfoDto {
     private Double longitude;
     private String nickname;
     private String message;
+    private String emoji;
     private String status;
 
 }
