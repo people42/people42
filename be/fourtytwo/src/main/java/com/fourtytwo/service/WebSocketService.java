@@ -33,7 +33,7 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final Map<WebSocketSession, Long> userSession = Collections.synchronizedMap(new HashMap<>());
     private static final Map<Long, WebSocketSession> userSessionMap = Collections.synchronizedMap(new HashMap<>());
     private static final Set<WebSocketSession> guestSession = Collections.synchronizedSet(new HashSet<>());
-    private static final Map<Long, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<WebSocketSession, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLatitudes = new ConcurrentSkipListMap<>();
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLongitudes = new ConcurrentSkipListMap<>();
 
@@ -76,25 +76,25 @@ public class WebSocketService extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+
+        Double userLatitude = locations.get(session).get(0);
+        Double userLongitude = locations.get(session).get(1);
+        Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
+        if (!nearUsers.isEmpty()) {
+            for (WebSocketSession otherUserSession : nearUsers) {
+                ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
+            }
+        }
+        userLatitudes.get(userLatitude).remove(session);
+        if (userLatitudes.get(userLatitude).isEmpty()) {
+            userLatitudes.remove(userLatitude);
+        }
+        userLongitudes.get(userLongitude).remove(session);
+        if (userLongitudes.get(userLongitude).isEmpty()) {
+            userLongitudes.remove(userLongitude);
+        }
+        locations.remove(session);
         if ("user".equals(session.getAttributes().get("type"))) {
-            Long userIdx = userSession.get(session);
-            Double userLatitude = locations.get(userIdx).get(0);
-            Double userLongitude = locations.get(userIdx).get(1);
-            Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
-            if (!nearUsers.isEmpty()) {
-                for (WebSocketSession otherUserSession : nearUsers) {
-                    ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
-                }
-            }
-            userLatitudes.get(userLatitude).remove(userIdx);
-            if (userLatitudes.get(userLatitude).isEmpty()) {
-                userLatitudes.remove(userLatitude);
-            }
-            userLongitudes.get(userLongitude).remove(userIdx);
-            if (userLongitudes.get(userLongitude).isEmpty()) {
-                userLongitudes.remove(userLongitude);
-            }
-            locations.remove(userIdx);
             userSession.remove(session);
         } else {
             guestSession.remove(session);
@@ -141,8 +141,8 @@ public class WebSocketService extends TextWebSocketHandler {
         MessageDto message = new MessageDto(type);
         Map<String, Object> messageData = new HashMap<>();
         if (sendingSession != null) {
+            messageData.put("type", sendingSession.getAttributes().get("type"));
             if (sendingSession.getAttributes().get("type").equals("user")) {
-                messageData.put("type", sendingSession.getAttributes().get("type"));
                 messageData.put("userIdx", sendingSession.getAttributes().get("userIdx"));
                 messageData.put("message", sendingSession.getAttributes().get("message"));
                 messageData.put("emoji", sendingSession.getAttributes().get("emoji"));
@@ -152,7 +152,6 @@ public class WebSocketService extends TextWebSocketHandler {
                 messageData.put("status", sendingSession.getAttributes().get("status"));
             }
             else {
-                messageData.put("type", sendingSession.getAttributes().get("type"));
                 messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
                 messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
                 messageData.put("status", sendingSession.getAttributes().get("status"));
@@ -160,8 +159,8 @@ public class WebSocketService extends TextWebSocketHandler {
         }
         if (type.equals(MethodType.INFO)){
             List<SessionInfoDto> nearUsers = new ArrayList<>();
+            messageData.put("type", recievingSession.getAttributes().get("type"));
             if (recievingSession.getAttributes().get("type").equals("user")) {
-                messageData.put("type", recievingSession.getAttributes().get("type"));
                 messageData.put("userIdx", recievingSession.getAttributes().get("userIdx"));
                 messageData.put("message", recievingSession.getAttributes().get("message"));
                 messageData.put("emoji", recievingSession.getAttributes().get("emoji"));
@@ -171,7 +170,6 @@ public class WebSocketService extends TextWebSocketHandler {
                 messageData.put("status", recievingSession.getAttributes().get("status"));
             }
             else {
-                messageData.put("type", recievingSession.getAttributes().get("type"));
                 messageData.put("latitude", recievingSession.getAttributes().get("latitude"));
                 messageData.put("longitude", recievingSession.getAttributes().get("longitude"));
                 messageData.put("status", recievingSession.getAttributes().get("status"));
@@ -215,8 +213,7 @@ public class WebSocketService extends TextWebSocketHandler {
 
         System.out.println(nearUsers);
         Set<WebSocketSession> farUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
-        Long userIdx = userSession.get(session);
-        locations.put(userIdx, location);
+        locations.put(session, location);
         renewGps(session, location);
         System.out.println(nearUsers);
         System.out.println(farUsers);
