@@ -1042,11 +1042,11 @@
 			isa = PBXGroup;
 			children = (
 				36680D3229F6CB96001EFD52 /* TimelineView.swift */,
+				362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */,
 				360D52B829F8D14400F67940 /* NavBar.swift */,
 				360D52CD29F95C6B00F67940 /* MapView.swift */,
 				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
 				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
-				362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
