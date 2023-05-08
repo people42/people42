@@ -16,8 +16,8 @@ export const socketInit = (
   };
 
   socket.onmessage = (event: any) => {
-    console.log("Received data:", event.data);
-    onMessage(event.data);
+    console.log("Received message:", JSON.parse(event.data));
+    onMessage(JSON.parse(event.data));
   };
 
   socket.onerror = (error: any) => {
@@ -59,4 +59,27 @@ export const handleMove = (socket: WebSocket, userData: TSocketUserData) => {
   userData.latitude = userData.latitude;
   userData.longitude = userData.longitude;
   sendMessage(socket, "MOVE", userData);
+};
+
+export const socketInfoReceive = (data: TSocketReceive) => {
+  let nearUserMap = new Map<number, TSocketNearUser>();
+  let guestCnt = 0;
+  data.data.nearUsers.forEach((value: TSocketNearUser) => {
+    switch (value.type) {
+      case "user":
+        nearUserMap.set(value.userIdx, value);
+        break;
+
+      default:
+        guestCnt++;
+        break;
+    }
+  });
+  return { nearUserMap, guestCnt };
+};
+export const socketNearReceive = (data: TSocketReceive) => {
+  console.log(data);
+};
+export const socketFarReceive = (data: TSocketReceive) => {
+  console.log(data);
 };

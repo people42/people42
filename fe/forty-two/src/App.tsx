@@ -19,7 +19,15 @@ import {
   isNotificationPermittedState,
 } from "./recoil/notification/atoms";
 import { updateNotificationState } from "./recoil/notification/selector";
-import { socketState } from "./recoil/socket/atoms";
+import {
+  socketGuestCntState,
+  socketNearUserState,
+  socketState,
+} from "./recoil/socket/atoms";
+import {
+  socketGuestAddState,
+  socketGuestRemoveState,
+} from "./recoil/socket/selectors";
 import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
@@ -33,7 +41,10 @@ import {
   handleMove,
   sendMessage,
   setSessionRefreshToken,
+  socketFarReceive,
+  socketInfoReceive,
   socketInit,
+  socketNearReceive,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { initializeApp } from "firebase/app";
@@ -175,13 +186,13 @@ function App() {
     let postLocationInterval = setInterval(() => {
       if (isLocationPermitted === true && isDesktop) {
         updateCurrentLocation();
-        if (socket && userLocation) {
-          handleMove(socket, {
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-            status: "watching",
-          });
-        }
+      }
+      if (socket && user?.accessToken && userLocation) {
+        handleMove(socket, {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          status: "watching",
+        });
       }
     }, 300000);
 
@@ -234,32 +245,63 @@ function App() {
           }
         });
     }
-  }, [userLocation, user?.nickname]);
+  }, [userLocation, user?.accessToken]);
 
   ////////////////
   // socket
+  const [nearUser, setNearUser] = useRecoilState(socketNearUserState);
+  const [guestCnt, setGuestCnt] = useRecoilState(socketGuestCntState);
+  const setGuestRemove = useSetRecoilState(socketGuestRemoveState);
+  const setGuestAdd = useSetRecoilState(socketGuestAddState);
+
+  const socketOnMessage = (data: TSocketReceive) => {
+    switch (data.method) {
+      case "INFO":
+        const socketInfoReceiveData = socketInfoReceive(data);
+        console.log(socketInfoReceiveData);
+        setNearUser(socketInfoReceiveData.nearUserMap);
+        setGuestCnt(socketInfoReceiveData.guestCnt);
+        break;
+      case "NEAR":
+        if (data.data.type == "user") {
+          console.log(socketNearReceive(data));
+        } else {
+          setGuestAdd(0);
+        }
+        break;
+      case "FAR":
+        if (data.data.type == "user") {
+          console.log(socketNearReceive(data));
+        } else {
+          setGuestRemove(0);
+        }
+        break;
+
+      default:
+        console.log("unknown method:", data);
+        break;
+    }
+  };
+
+  const initSocket = () => {
+    if (userLocation) {
+      console.log(user?.accessToken, userLocation, user?.user_idx);
+      setSocket(
+        socketInit(
+          user?.accessToken ? "user" : "guest",
+          {
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            status: "watching",
+          },
+          socketOnMessage,
+          user?.user_idx
+        )
+      );
+    }
+  };
   useEffect(() => {
-    const initSocket = () => {
-      if (userLocation) {
-        setSocket(
-          socketInit(
-            user?.accessToken ? "user" : "guest",
-            {
-              latitude: userLocation.latitude,
-              longitude: userLocation.longitude,
-              status: "watching",
-            },
-            (data: TSocketReceive) => console.log(data),
-            user?.user_idx
-          )
-        );
-      }
-    };
     if (!socket && userLocation) {
-      initSocket();
-    } else if (socket && userLocation) {
-      setSocket(null);
-      handleClose(socket);
       initSocket();
     }
     return () => {
@@ -267,6 +309,14 @@ function App() {
         handleClose(socket);
       }
     };
+  }, [userLocation]);
+
+  useEffect(() => {
+    if (socket) {
+      handleClose(socket);
+      setSocket(null);
+      initSocket();
+    }
   }, [isLogin]);
 
   //////////////////////////

@@ -5,7 +5,12 @@ export const socketState = atom<WebSocket | null>({
   default: null,
 });
 
-export const socketNearUserState = atom<TSocketUserData[] | []>({
+export const socketNearUserState = atom<Map<number, TSocketNearUser>>({
   key: "socketNearUserState",
-  default: [],
+  default: undefined,
+});
+
+export const socketGuestCntState = atom<number>({
+  key: "socketGuestCntState",
+  default: 0,
 });

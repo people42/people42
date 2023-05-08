@@ -26,21 +26,32 @@ function MyMessageCard({
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
   const newNotification = useRecoilValue(updateNotificationState);
-  const socket = useRecoilValue(socketState);
 
   const [myMessage, setMyMessage] = useState<TMyMessage>();
 
+  const socket = useRecoilValue(socketState);
   const location = useRecoilValue(locationState);
 
-  useEffect(() => {
+  const isEdit = () => {
+    setIsMessageEdit(true);
     if (socket && location) {
       changeStatus(socket, {
         latitude: location?.latitude,
         longitude: location?.longitude,
-        status: isMessageEdit ? "writing" : "watching",
+        status: "writing",
       });
     }
-  }, [isMessageEdit]);
+  };
+  const isNotEdit = () => {
+    setIsMessageEdit(false);
+    if (socket && location) {
+      changeStatus(socket, {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        status: "watching",
+      });
+    }
+  };
 
   useEffect(() => {
     if (accessToken && !isMessageEdit) {
@@ -75,7 +86,7 @@ function MyMessageCard({
       ) : null}
       <div
         onClick={() => {
-          isMessageEdit ? null : setIsMessageEdit(true);
+          isMessageEdit ? null : isEdit();
         }}
         className="my-message"
       >
@@ -84,7 +95,7 @@ function MyMessageCard({
             <p className="my-message-info">지금 나의 생각</p>
             {isMessageEdit ? (
               <MyMessageCardInput
-                onClickCancel={() => setIsMessageEdit(false)}
+                onClickCancel={() => isNotEdit()}
               ></MyMessageCardInput>
             ) : myMessage ? (
               myMessage?.message ? (

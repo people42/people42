@@ -1,21 +1,30 @@
 import { userLocationUpdateState } from "../../../../recoil/location/selectors";
+import {
+  socketGuestCntState,
+  socketNearUserState,
+} from "../../../../recoil/socket/atoms";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 type homeMapSocketProps = {};
 
 function HomeMapSocket({}: homeMapSocketProps) {
-  const location = useRecoilValue<TLocation | null>(userLocationUpdateState);
-  const userData = {
-    latitude: 36.354946759143,
-    longitude: 127.29980994578,
-    nickname: "임희상",
-    message: "윤성운 바보",
-    status: "watching",
-  };
+  const [nearUser, setNearUser] = useRecoilState(socketNearUserState);
+  const [guestCnt, setGuestCnt] = useRecoilState(socketGuestCntState);
 
-  
+  const [nearUserList, setNearUserList] = useState<any[]>();
+
+  useEffect(() => {
+    let userList: any[] = [];
+    if (nearUser) {
+      nearUser.forEach((value, key) => {
+        userList.push(<div key={`near-user-${key}`}>{value.nickname}</div>);
+      });
+    }
+    setNearUserList(userList);
+  }, [nearUser]);
+
   return (
     <StyledHomeMapSocket>
       <div
@@ -23,7 +32,8 @@ function HomeMapSocket({}: homeMapSocketProps) {
           console.log(1);
         }}
       >
-        asdfasdfasdfasfda
+        {guestCnt}
+        {nearUserList}
       </div>
     </StyledHomeMapSocket>
   );
