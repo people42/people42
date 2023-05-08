@@ -123,6 +123,8 @@ public class WebSocketService extends TextWebSocketHandler {
             METHOD_CHANGE_STATUS(session, info);
         } else if (method.equals(MethodType.MESSAGE_CHANGED.name())) {
             METHOD_MESSAGE_CHANGED(session, info);
+        } else if (method.equals(MethodType.CLOSE.name())) {
+            METHOD_CLOSE(session, info);
         }
         {
             // 다른 메소드 처리를 여기에 추가합니다.
@@ -338,6 +340,12 @@ public class WebSocketService extends TextWebSocketHandler {
         }
 
         sendMessagesToNearUsers(session, MethodType.CHANGE_STATUS);
+    }
+
+    public void METHOD_CLOSE(WebSocketSession session, Map<String, Object> info) throws IOException {
+        sendMessagesToNearUsers(session, MethodType.CLOSE);
+
+        session.close();
     }
 
     public void METHOD_MESSAGE_CHANGED(WebSocketSession session, Map<String, Object> info) throws IOException {

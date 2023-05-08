@@ -11,5 +11,6 @@ public enum MethodType {
     CHANGE_STATUS,
     MESSAGE_CHANGED,
     EXPRESSION,
-    INFO
+    INFO,
+    CLOSE
 }
