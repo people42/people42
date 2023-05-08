@@ -22,4 +22,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="mapradius">3dp</dimen>
 
+    <dimen name="circle_shape">650dp</dimen>
+    <dimen name="circle_shape2">750dp</dimen>
+    <dimen name="circle_shape3">850dp</dimen>
+
 </resources>

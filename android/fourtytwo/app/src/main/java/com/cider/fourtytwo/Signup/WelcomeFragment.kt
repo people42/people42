@@ -14,9 +14,12 @@ import com.cider.fourtytwo.R
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.FragmentWelcomeBinding
 import com.cider.fourtytwo.network.Api
+import com.cider.fourtytwo.network.Model.MessageResponse
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -26,10 +29,8 @@ import retrofit2.Response
 class WelcomeFragment : Fragment() {
     private var _binding : FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
-    val api = RetrofitInstance.getInstance().create(Api::class.java)
+    val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
     private lateinit var userDataStore: UserDataStore
-    var myEmail = ""
-    var myIdToken = ""
     var myNickname = ""
     var myEmoji = ""
 
@@ -71,6 +72,7 @@ class WelcomeFragment : Fragment() {
                 if (response.code() == 200) {
                     response.body()?.data?.let {
                         saveUserInfo(it)
+                        setFcmToken(it.accessToken, getFcmToken())
                     }
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 401: 토큰 만료")
@@ -80,9 +82,7 @@ class WelcomeFragment : Fragment() {
                 }
             }
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                // 실패
                 Log.d("SignupGoogle_onFailure", t.message.toString())
-                Log.d("SignupGoogle_onFailure", "fail")
             }
         })
     }
@@ -98,7 +98,6 @@ class WelcomeFragment : Fragment() {
                     }
                 }
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    // 실패
                     Log.d("토큰 전송 on failure: ", t.message.toString())
                 }
             })
@@ -115,5 +114,36 @@ class WelcomeFragment : Fragment() {
             userDataStore.setUserAccessToken(token)
             signupGoogle(signupForm)
         }
+    }
+    private fun setFcmToken(header:String, fcmToken:String){
+        val params = HashMap<String, String>()
+        params["token"] = fcmToken
+        api.setFcmToken(header, params).enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                Log.i(TAG, "setFcmToken: ${response.body()?.data}")
+                if (response.code() == 200) {
+                } else if (response.code() == 401){
+                    Log.i(TAG, "위치 전송 응답 토큰 만료")
+                } else {
+                    Log.i(TAG, "위치 전송 응답 기타: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                Log.d("setFcmToken on failuare", t.message.toString())
+            }
+        })
+    }
+    private fun getFcmToken():String{
+        var token = String()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            token = task.result
+            Log.d(TAG, "파이어베이스 $token")
+        })
+        return token
     }
 }

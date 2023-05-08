@@ -13,20 +13,20 @@
             />
     <View
         android:layout_gravity="center"
-        android:layout_width="750dp"
-        android:layout_height="750dp"
+        android:layout_width="@dimen/circle_shape"
+        android:layout_height="@dimen/circle_shape"
         android:background="@drawable/circle_shape"
         />
     <View
         android:layout_gravity="center"
-        android:layout_width="850dp"
-        android:layout_height="850dp"
+        android:layout_width="@dimen/circle_shape2"
+        android:layout_height="@dimen/circle_shape2"
         android:background="@drawable/circle_shape"
         />
     <View
         android:layout_gravity="center"
-        android:layout_width="690dp"
-        android:layout_height="690dp"
+        android:layout_width="@dimen/circle_shape3"
+        android:layout_height="@dimen/circle_shape3"
         android:background="@drawable/circle_shape"
         />
     <View

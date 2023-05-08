@@ -14,6 +14,7 @@ import com.cider.fourtytwo.Signup.SignupActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySigninBinding
 import com.cider.fourtytwo.network.Api
+import com.cider.fourtytwo.network.Model.MessageResponse
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
@@ -22,7 +23,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONException
@@ -41,12 +44,27 @@ class SigninActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        userDataStore = UserDataStore(this)
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        Log.d(TAG, "onStart Google account: $account")
+        // 로그인 되어있는 유저인지 확인
         if (account == null) {
             Log.e("onStart Google account", "로그인 안 되어있음")
         } else {
             Log.e("onStart Google account", "로그인 완료된 상태")
+            // 토큰 보내고
+            lifecycleScope.launch {
+                val token = userDataStore.get_access_token.first()
+                FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                        return@OnCompleteListener
+                    }
+                    // Get new FCM registration token
+                    val fcmtoken = task.result
+                    Log.d(TAG, "파이어베이스 $fcmtoken")
+                    setFcmToken(token, fcmtoken)
+                })
+            }
             // 메인으로 이동
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -76,7 +94,69 @@ class SigninActivity : AppCompatActivity() {
             GoogleSignResultLauncher.launch(signIntent)
         }
     }
-
+//    private fun getFcmToken():String{
+//        var token = String()
+//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//            // Get new FCM registration token
+//            token = task.result
+//            Log.d(TAG, "파이어베이스 $token")
+//        })
+//        return token
+//    }
+    private fun setFcmToken(header:String, fcmToken:String){
+        val params = HashMap<String, String>()
+        params["token"] = fcmToken
+        Log.i(TAG, "setFcmToken: $fcmToken")
+        api.setFcmToken(header, params).enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                Log.i(TAG, "setFcmToken: ${response.body()}")
+                if (response.code() == 200) {
+                    Log.i(TAG, "setFcmToken 보냄")
+                } else if (response.code() == 401){
+                    Log.i(TAG, "setFcmToken 토큰 만료")
+                    getToken(fcmToken)
+                } else {
+                    Log.i(TAG, "setFcmToken 기타: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                Log.d("setFcmToken on failuare", t.message.toString())
+            }
+        })
+    }
+    fun getToken(fcmToken: String) {
+        lifecycleScope.launch {
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                    response.body()?.let {
+                        if (it.status == 200) {
+                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                            response.body()?.data?.let {
+                                    it1 -> saveUserInfo(it1, fcmToken)
+                            }
+                        } else {
+                            Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                }
+            })
+        }
+    }
+    fun saveUserInfo(payload : UserInfo, fcmToken: String){
+        lifecycleScope.launch {
+            userDataStore.setUserData(payload)
+            val token = userDataStore.get_access_token.first()
+            setFcmToken(token, fcmToken)
+        }
+    }
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
@@ -119,6 +199,20 @@ class SigninActivity : AppCompatActivity() {
                     Log.i(TAG, "handleSignInResult: ${it.user_idx}")
                     if (it.user_idx > 0) {
                         saveUserInfo(it)
+                        lifecycleScope.launch {
+                            val token = userDataStore.get_access_token.first()
+
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                                    return@OnCompleteListener
+                                }
+                                // Get new FCM registration token
+                                val fcmtoken = task.result
+                                Log.d(TAG, "파이어베이스 $fcmtoken")
+                                setFcmToken(token, fcmtoken)
+                            })
+                        }
                         val intent = Intent(context, MainActivity::class.java)
                         startActivity(intent)
                     } else {

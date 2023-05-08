@@ -299,55 +299,41 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         val thirdView = findViewById<ImageView>(R.id.reation_third)
                         val fourthView = findViewById<ImageView>(R.id.reation_fourth)
 
-                        if (response.body()!!.data.heart > 0
-                            || response.body()!!.data.tear > 0
-                            || response.body()!!.data.thumbsUp > 0
-                            || response.body()!!.data.fire > 0){
-                            val layoutParams = RelativeLayout.LayoutParams(30,30)
-                            firstView.layoutParams = layoutParams
-                            secondView.layoutParams = layoutParams
-                            thirdView.layoutParams = layoutParams
-                            fourthView.layoutParams = layoutParams
-                        }
                         if (response.body()!!.data.heart > 0) {
-                            val first = response.body()!!.data.heart
-                            val layoutParams1 : RelativeLayout.LayoutParams
-                            if (first > 6) {
-                                layoutParams1 = RelativeLayout.LayoutParams(60,60)
-                            } else {
-                                layoutParams1 = RelativeLayout.LayoutParams(5*(first) + 30,5*(first) + 30)
-                            }
-                            firstView.layoutParams = layoutParams1
+                            val fourth = response.body()!!.data.heart
+                            val width = 5*(fourth) + 90
+                            val layoutParams = firstView.layoutParams
+                            layoutParams.width = width // 가로 크기 지정
+                            layoutParams.height = width // 세로 크기 지정
+                            firstView.layoutParams = layoutParams
+                            firstView.visibility = VISIBLE
                         }
                         if (response.body()!!.data.tear > 0) {
-                            val second = response.body()!!.data.tear
-                            var layoutParams2 = RelativeLayout.LayoutParams(second * 10,second * 10)
-                            if (second > 6) {
-                                layoutParams2 = RelativeLayout.LayoutParams(60,60)
-                            } else {
-                                layoutParams2 = RelativeLayout.LayoutParams(5*(second) + 30,5*(second) + 30)
-                            }
-                            secondView.layoutParams = layoutParams2
+                            val fourth = response.body()!!.data.tear
+                            val width = 5*(fourth) + 90
+                            val layoutParams = secondView.layoutParams
+                            layoutParams.width = width // 가로 크기 지정
+                            layoutParams.height = width // 세로 크기 지정
+                            secondView.layoutParams = layoutParams
+                            secondView.visibility = VISIBLE
                         }
                         if (response.body()!!.data.thumbsUp > 0) {
-                            val third = response.body()!!.data.thumbsUp
-                            var layoutParams3 = RelativeLayout.LayoutParams(third * 10,third * 10)
-                            if (third > 6) {
-                                layoutParams3 = RelativeLayout.LayoutParams(60,60)
-                            } else {
-                                layoutParams3 = RelativeLayout.LayoutParams(5*(third) + 30,5*(third) + 30)
-                            }
-                            thirdView.layoutParams = layoutParams3
+                            val fourth = response.body()!!.data.thumbsUp
+                            val width = 5*(fourth) + 90
+                            val layoutParams = thirdView.layoutParams
+                            layoutParams.width = width // 가로 크기 지정
+                            layoutParams.height = width // 세로 크기 지정
+                            thirdView.layoutParams = layoutParams
+                            thirdView.visibility = VISIBLE
                         }
                         if (response.body()!!.data.fire > 0) {
                             val fourth = response.body()!!.data.fire
-                            var layoutParams4 = RelativeLayout.LayoutParams(fourth * 10,fourth * 10)
-                            if (fourth > 6) {
-                                layoutParams4 = RelativeLayout.LayoutParams(60,60)
-                            } else {
-                                layoutParams4 = RelativeLayout.LayoutParams(5*(fourth) + 30,5*(fourth) + 30)
-                            }
-                            fourthView.layoutParams = layoutParams4
+                            val width = 5*(fourth) + 90
+                            val layoutParams = fourthView.layoutParams
+                            layoutParams.width = width // 가로 크기 지정
+                            layoutParams.height = width // 세로 크기 지정
+                            fourthView.layoutParams = layoutParams
+                            fourthView.visibility = VISIBLE
                         }
                         // 메세지 여러개면 그림자 생기기
                         if (response.body()?.data?.messageCnt!! > 1) {
