@@ -84,11 +84,6 @@ public class GpsService {
                 newPlace.setName(placeName);
                 newPlace.setLatitude(placeLat);
                 newPlace.setLongitude(placeLng);
-                if (newPlace.getName().equals("한밭대학교") || newPlace.getName().equals("컴퍼니소스") || newPlace.getName().equals("운암네오미아")) {
-                    newPlace.setName("삼성화재 유성연수원");
-                    newPlace.setLatitude(36.3552459);
-                    newPlace.setLatitude(127.2981518);
-                }
                 foundPlace = placeRepository.save(newPlace);
             }
         }
@@ -206,7 +201,8 @@ public class GpsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
                 .queryParam("location", latitude + "%2C" + longitude)
-                .queryParam("radius", 200)
+//                .queryParam("radius", 200)
+                .queryParam("rankby", "distance")
                 .queryParam("language", "ko")
                 .queryParam("type", "point_of_interest")
                 .queryParam("key", googleMapKey);
