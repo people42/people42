@@ -25,8 +25,6 @@
                 />
         </FrameLayout>
     </FrameLayout>
-
     <!--  피드  -->
     <include layout="@layout/layout_feed"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

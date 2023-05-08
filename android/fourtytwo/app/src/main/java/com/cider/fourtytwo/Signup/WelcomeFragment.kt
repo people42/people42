@@ -72,7 +72,15 @@ class WelcomeFragment : Fragment() {
                 if (response.code() == 200) {
                     response.body()?.data?.let {
                         saveUserInfo(it)
-                        setFcmToken(it.accessToken, getFcmToken())
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                                return@OnCompleteListener
+                            }
+                            val fcmtoken = task.result
+                            setFcmToken(it.accessToken, fcmtoken)
+                        })
+
                     }
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 401: 토큰 만료")
@@ -124,6 +132,7 @@ class WelcomeFragment : Fragment() {
                 if (response.code() == 200) {
                 } else if (response.code() == 401){
                     Log.i(TAG, "위치 전송 응답 토큰 만료")
+                    getToken2(fcmToken)
                 } else {
                     Log.i(TAG, "위치 전송 응답 기타: ${response.code()}")
                 }
@@ -133,17 +142,33 @@ class WelcomeFragment : Fragment() {
             }
         })
     }
-    private fun getFcmToken():String{
-        var token = String()
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            // Get new FCM registration token
-            token = task.result
-            Log.d(TAG, "파이어베이스 $token")
-        })
-        return token
+    fun getToken2(fcmToken: String) {
+        lifecycleScope.launch {
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                    response.body()?.let {
+                        if (it.status == 200) {
+                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                            response.body()?.data?.let {
+                                    it1 -> saveUserInfo2(it1, fcmToken)
+                            }
+                        } else {
+                            Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                }
+            })
+        }
+    }
+    fun saveUserInfo2(payload : UserInfo, fcmToken: String){
+        lifecycleScope.launch {
+            userDataStore.setUserData(payload)
+            val token = userDataStore.get_access_token.first()
+            setFcmToken(token, fcmToken)
+        }
     }
 }

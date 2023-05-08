@@ -8,5 +8,6 @@ data class RecentMessageInfo(
     val emoji : String,
     val color : String,
     val brushCnt : Int,
-    val emotion : String
+    val emotion : String,
+    val isInappropriate: Boolean,
 )

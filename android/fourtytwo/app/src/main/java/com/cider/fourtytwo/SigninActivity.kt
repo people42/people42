@@ -94,19 +94,6 @@ class SigninActivity : AppCompatActivity() {
             GoogleSignResultLauncher.launch(signIntent)
         }
     }
-//    private fun getFcmToken():String{
-//        var token = String()
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-//            if (!task.isSuccessful) {
-//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-//                return@OnCompleteListener
-//            }
-//            // Get new FCM registration token
-//            token = task.result
-//            Log.d(TAG, "파이어베이스 $token")
-//        })
-//        return token
-//    }
     private fun setFcmToken(header:String, fcmToken:String){
         val params = HashMap<String, String>()
         params["token"] = fcmToken
@@ -192,8 +179,11 @@ class SigninActivity : AppCompatActivity() {
         Log.i(TAG, "handleSignInResult: 회원 체크하러 들어옴")
         val params = HashMap<String, String>()
         params["o_auth_token"] = idToken
+        Log.d(TAG, "checkUser: $idToken")
         api.getGoogleUser(params).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                Log.i(TAG, "onResponse: ${response}")
+                Log.i(TAG, "onResponse: ${response.body()}")
                 Log.i(TAG, "onResponse: ${response.body()?.data}")
                 response.body()?.data?.let {
                     Log.i(TAG, "handleSignInResult: ${it.user_idx}")

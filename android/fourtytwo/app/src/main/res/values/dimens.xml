@@ -25,5 +25,6 @@
     <dimen name="circle_shape">650dp</dimen>
     <dimen name="circle_shape2">750dp</dimen>
     <dimen name="circle_shape3">850dp</dimen>
+    <dimen name="reaction_heart">20dp</dimen>
 
 </resources>

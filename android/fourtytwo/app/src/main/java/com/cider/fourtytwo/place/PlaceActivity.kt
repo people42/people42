@@ -157,6 +157,18 @@ class PlaceActivity : AppCompatActivity() {
                                 }
                             }
                         }
+
+                        override fun onEmotionClick(
+                            v: View,
+                            position: Int,
+                            emotion: String,
+                            messageIdx: Int
+                        ) {
+                            val params = HashMap<String, Any>()
+                            params.put("emotion", emotion)
+                            params.put("messageIdx", messageIdx)
+                            setEmotion(params)
+                        }
                     })
                     // 지도 위치 이동
                     val mapFragment = supportFragmentManager.findFragmentById(R.id.place_map) as SupportMapFragment
@@ -187,6 +199,38 @@ class PlaceActivity : AppCompatActivity() {
         })
         return feedList
     }
+    fun setEmotion(params : HashMap<String, Any>){
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setEmotion(token, params).enqueue(object : Callback<MessageResponse> {
+                override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                    response.body()?.let {
+                        if (it.status == 200) {
+                            Log.i(ContentValues.TAG, "공감 완료")
+                        } else if (response.code() == 401){
+                            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                    response.body()?.let {
+                                        if (it.status == 200) {
+                                            Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                            response.body()?.data?.let {
+                                                    it1 -> lifecycleScope.launch {
+                                                userDataStore.setUserData(it1)
+                                                setEmotion(params)
+                                            } }
+                                        } else {
+                                            Log.i(ContentValues.TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                        } } }
+                                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                                } })
+                        }else {
+                            Log.i(ContentValues.TAG, "공감 실패 코드: ${response.code()}")
+                        } } }
+                override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                    Log.d("공감 on failure: ", t.message.toString())
+                } }) } }
     val random = Random()
     fun rand(from: Int, to: Int) : Int {
         return random.nextInt(to - from) + from

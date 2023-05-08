@@ -73,11 +73,13 @@ interface Api {
                       @Query("userIdx") userIdx : Int,
                       @Query("placeIdx") placeIdx : Int
     ) : Call<PersonPlaceResponse>
-
     // FCM 토큰 갱신
     @POST("api/v1/account/fcm_token")
     fun setFcmToken(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, String>) : Call<MessageResponse>
 
+    // 감정표현
+    @POST("api/v1/feed/emotion")
+    fun setEmotion(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Any>) : Call<MessageResponse>
 
     //차단
     @POST("api/v1/account/block")

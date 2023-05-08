@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cider.fourtytwo">
-
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 정확한 위치 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 대략적인 위치 -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -20,12 +20,13 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon"
         tools:targetApi="33">
+
         <activity
             android:name=".person.PersonActivity"
             android:exported="true" />
         <activity
             android:name=".place.PlaceActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".WebViewActivity"
             android:exported="false" />
@@ -37,7 +38,7 @@
             android:value="${map_key}" />
         <activity
             android:name=".SettingsActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".SigninActivity"
             android:exported="true">
@@ -79,4 +80,5 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/main_blue" />
     </application>
+
 </manifest>

@@ -16,6 +16,7 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -35,11 +36,12 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
     }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         Glide.with(context).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${itemList.get(position).emoji}.gif").into(holder.emoji)
-        val brush = itemList.get(position).brushCnt
+        val brush = itemList[position].brushCnt
+        val item = itemList[position]
+        val myColor = itemList[position].color
         holder.brushCnt.text = "${ brush }번 스친"
         holder.nickname.text = itemList[position].nickname
         holder.content.text = itemList[position].content
-        val myColor = itemList.get(position).color
         ViewCompat.setBackgroundTintList(holder.feedMessage, ColorStateList.valueOf(Color.RED))
         // 내 말풍선 색
         holder.feedMessage.backgroundTintList = when (myColor) {
@@ -99,7 +101,56 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         }
         // 파란 점 안 보이게
         holder.blueDot.visibility = GONE
-//        holder.reaction.text = itemList.get(position).recentMessageInfo.content
+        // 눌러놨던 공감버튼 표시
+        if (item.emotion != null) {
+            when (item.emotion) {
+                "heart" -> holder.selectPlus.setImageResource(R.drawable.heart)
+                "tear" -> holder.selectPlus.setImageResource(R.drawable.tear)
+                "fire" -> holder.selectPlus.setImageResource(R.drawable.fire)
+                "thumbsUp" ->  holder.selectPlus.setImageResource(R.drawable.thumbsup)
+                else -> holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
+            }
+        }
+// 공감버튼 누르면 선택창 나옴
+        val messageIdx = item.messageIdx
+        holder.messageReation.setOnClickListener {
+            holder.messageReation.visibility = GONE
+            holder.messageReactionSelect.visibility = View.VISIBLE
+        }
+        holder.selectPlus.setOnClickListener {
+            holder.messageReation.visibility = GONE
+            holder.messageReactionSelect.visibility = View.VISIBLE
+        }
+        holder.selectHeart.setOnClickListener {
+            placeClickListener.onEmotionClick(it, position, "heart", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.heart)
+            holder.messageReation.visibility = View.VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectFire.setOnClickListener {
+            placeClickListener.onEmotionClick(it, position, "fire", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.fire)
+            holder.messageReation.visibility = View.VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectTear.setOnClickListener {
+            placeClickListener.onEmotionClick(it, position, "tear", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.tear)
+            holder.messageReation.visibility = View.VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectThumbsup.setOnClickListener {
+            placeClickListener.onEmotionClick(it, position, "thumbsUp", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.thumbsup)
+            holder.messageReation.visibility = View.VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectCancel.setOnClickListener {
+            placeClickListener.onEmotionClick(it, position, "delete", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
+            holder.messageReation.visibility = View.VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
     }
     override fun getItemCount(): Int {
         return itemList.size
@@ -111,15 +162,24 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         var content: TextView = itemView.findViewById(R.id.feedContent)
         var place: TextView = itemView.findViewById(R.id.feedLocation)
         var time: TextView = itemView.findViewById(R.id.feedTime)
-//        var reaction = itemView.findViewById<ImageView>(R.id.message_reation)
         var feedMessage = itemView.findViewById<RelativeLayout>(R.id.feed_message)
         var shadow1 = itemView.findViewById<ImageView>(R.id.feed_message_shadow1)
         var shadow2 = itemView.findViewById<ImageView>(R.id.feed_message_shadow2)
         var blueDot = itemView.findViewById<ImageView>(R.id.blue_dot)
+        var messageReation = itemView.findViewById<LinearLayout>(R.id.message_reation)
+        var selectPlus = itemView.findViewById<ImageView>(R.id.select_plus)
+        var messageReactionSelect = itemView.findViewById<LinearLayout>(R.id.message_reaction_select)
+        var selectHeart = itemView.findViewById<ImageView>(R.id.select_heart)
+        var selectFire = itemView.findViewById<ImageView>(R.id.select_fire)
+        var selectTear = itemView.findViewById<ImageView>(R.id.select_tear)
+        var selectThumbsup = itemView.findViewById<ImageView>(R.id.select_thumbsup)
+        var selectCancel = itemView.findViewById<ImageView>(R.id.select_cancel)
     }
     interface OnPlaceClickListener {
         fun onPlaceClick(view: View, position: Int,userIdx: Int, nickname:String)
         fun onPlaceLongClick(view: View, position: Int, id:Int, messageIdx:Int, userIdx:Int)
+        fun onEmotionClick(v:View, position: Int, emotion : String, messageIdx : Int)
+
     }
     private lateinit var placeClickListener: OnPlaceClickListener
     fun setOnPlaceClickListener(onHistoryClickListener: OnPlaceClickListener) {

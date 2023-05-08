@@ -1,12 +1,18 @@
 package com.cider.fourtytwo.feed
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.opengl.Visibility
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -16,8 +22,9 @@ import com.bumptech.glide.Glide
 import com.cider.fourtytwo.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.reflect.typeOf
 
-class FeedAdapter(private val context: Context, val itemList : List<RecentFeedData>) :
+class FeedAdapter(private val context: Context, private val itemList : List<RecentFeedData>) :
     RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_feed, parent, false)
@@ -67,6 +74,56 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
         holder.itemView.setOnClickListener {
             itemClickListener?.onClick(it, position)
         }
+// 눌러놨던 공감버튼 표시
+        if (item.recentMessageInfo.emotion != null) {
+            when (item.recentMessageInfo.emotion) {
+                "heart" -> holder.selectPlus.setImageResource(R.drawable.heart)
+                "tear" -> holder.selectPlus.setImageResource(R.drawable.tear)
+                "fire" -> holder.selectPlus.setImageResource(R.drawable.fire)
+                "thumbsUp" ->  holder.selectPlus.setImageResource(R.drawable.thumbsup)
+                else -> holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
+            }
+        }
+// 공감버튼 누르면 선택창 나옴
+        val messageIdx = item.recentMessageInfo.messageIdx
+        holder.messageReation.setOnClickListener {
+            holder.messageReation.visibility = GONE
+            holder.messageReactionSelect.visibility = VISIBLE
+        }
+        holder.selectPlus.setOnClickListener {
+            holder.messageReation.visibility = GONE
+            holder.messageReactionSelect.visibility = VISIBLE
+        }
+        holder.selectHeart.setOnClickListener {
+            itemClickListener.onEmotionClick(it, position, "heart", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.heart)
+            holder.messageReation.visibility = VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectFire.setOnClickListener {
+            itemClickListener.onEmotionClick(it, position, "fire", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.fire)
+            holder.messageReation.visibility = VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectTear.setOnClickListener {
+            itemClickListener.onEmotionClick(it, position, "tear", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.tear)
+            holder.messageReation.visibility = VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectThumbsup.setOnClickListener {
+            itemClickListener.onEmotionClick(it, position, "thumbsUp", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.thumbsup)
+            holder.messageReation.visibility = VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
+        holder.selectCancel.setOnClickListener {
+            itemClickListener.onEmotionClick(it, position, "delete", messageIdx)
+            holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
+            holder.messageReation.visibility = VISIBLE
+            holder.messageReactionSelect.visibility = GONE
+        }
 //        holder.itemView.setOnTouchListener(object: OnSwipeTouchListener(context){
 //            override fun onSwipeLeft() {
 //                Toast.makeText(context,"왼쪽으로",Toast.LENGTH_SHORT).show()
@@ -76,6 +133,7 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
     }
     interface OnItemClickListener {
         fun onClick(v: View, position: Int)
+        fun onEmotionClick(v:View, position: Int, emotion : String, messageIdx : Int)
     }
     private lateinit var itemClickListener : OnItemClickListener
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {
@@ -91,10 +149,17 @@ class FeedAdapter(private val context: Context, val itemList : List<RecentFeedDa
         var content: TextView = itemView.findViewById(R.id.feedContent)
         var place: TextView = itemView.findViewById(R.id.feedLocation)
         var time: TextView = itemView.findViewById(R.id.feedTime)
-//        var reaction = itemView.findViewById<ImageView>(R.id.message_reation)
         var feedMessage = itemView.findViewById<RelativeLayout>(R.id.feed_message)
         var shadow1 = itemView.findViewById<ImageView>(R.id.feed_message_shadow1)
         var shadow2 = itemView.findViewById<ImageView>(R.id.feed_message_shadow2)
+        var messageReation = itemView.findViewById<LinearLayout>(R.id.message_reation)
+        var selectPlus = itemView.findViewById<ImageView>(R.id.select_plus)
+        var messageReactionSelect = itemView.findViewById<LinearLayout>(R.id.message_reaction_select)
+        var selectHeart = itemView.findViewById<ImageView>(R.id.select_heart)
+        var selectFire = itemView.findViewById<ImageView>(R.id.select_fire)
+        var selectTear = itemView.findViewById<ImageView>(R.id.select_tear)
+        var selectThumbsup = itemView.findViewById<ImageView>(R.id.select_thumbsup)
+        var selectCancel = itemView.findViewById<ImageView>(R.id.select_cancel)
     }
     fun timeEdit(inputDate : String): String? {
         val timeString = inputDate.substring(0, 16)
