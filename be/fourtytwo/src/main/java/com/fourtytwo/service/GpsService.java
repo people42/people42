@@ -206,7 +206,8 @@ public class GpsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
                 .queryParam("location", latitude + "%2C" + longitude)
-                .queryParam("radius", 200)
+//                .queryParam("radius", 200)
+                .queryParam("rankby", "distance")
                 .queryParam("language", "ko")
                 .queryParam("type", "point_of_interest")
                 .queryParam("key", googleMapKey);
