@@ -40,8 +40,8 @@ function HomeMap({}: homeMapProps) {
     if (target && mousePosition) {
       const mx = mousePosition.x;
       const my = mousePosition.y;
-      const ax = target.getBoundingClientRect().left + 20;
-      const ay = target.getBoundingClientRect().top + 20;
+      const ax = target.getBoundingClientRect().left + 40;
+      const ay = target.getBoundingClientRect().top + 40;
 
       let angle = Math.atan2(ay - my, ax - mx) * (180 / Math.PI) - 90; // 두 점 사이의 각도 (라디안을 각도로 변환)
 
