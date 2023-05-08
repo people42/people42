@@ -138,25 +138,13 @@ public class UserController {
         return ApiResponse.ok(loginResponseDto);
     }
 
-    @PostMapping("/tmp1")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> tmp1(HttpServletResponse response,
-                                                             @RequestBody LoginRequestDto loginRequestDto) {
-        LoginResponseDto loginResponseDto = userService.googleLogin(loginRequestDto.getO_auth_token());
-        setCookie(response, loginResponseDto.getRefreshToken());
-        return ApiResponse.ok(loginResponseDto);
-    }
-
-    @PostMapping("/tmp2")
-    public ResponseEntity<ApiResponse<Object>> tmp2(HttpServletResponse response) {
-        setCookie(response, "a");
-        return ApiResponse.ok(null);
-    }
-
     private void setCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refresh", refreshToken);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refresh", refreshToken)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
