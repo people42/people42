@@ -1,3 +1,4 @@
+export { default as HomeMapSocket } from "./HomeMap/HomeMapSocket";
 export { default as HomeMain } from "./HomeMain/HomeMain";
 export { default as HomeMyMessage } from "./HomeMyMessage/HomeMyMessage";
 export { default as HomeMyMessageReaction } from "./HomeMyMessage/HomeMyMessageReaction";

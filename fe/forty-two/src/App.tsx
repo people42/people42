@@ -19,6 +19,7 @@ import {
   isNotificationPermittedState,
 } from "./recoil/notification/atoms";
 import { updateNotificationState } from "./recoil/notification/selector";
+import { socketState } from "./recoil/socket/atoms";
 import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
@@ -28,7 +29,11 @@ import { lightStyles, darkStyles } from "./styles/theme";
 import {
   getLocalIsLogin,
   getUserLocation,
+  handleClose,
+  handleMove,
+  sendMessage,
   setSessionRefreshToken,
+  socketInit,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { initializeApp } from "firebase/app";
@@ -87,6 +92,10 @@ const router = createBrowserRouter([
 
 function App() {
   const setUserRefresh = useSetRecoilState(userState);
+  const [socket, setSocket] = useRecoilState(socketState);
+  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
+    userLocationUpdateState
+  );
 
   //////////////////////////
   // naver map client id import
@@ -118,9 +127,6 @@ function App() {
 
   //////////////////////////
   // location background update
-  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
-    userLocationUpdateState
-  );
   const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
     locationInfoState
   );
@@ -169,6 +175,13 @@ function App() {
     let postLocationInterval = setInterval(() => {
       if (isLocationPermitted === true && isDesktop) {
         updateCurrentLocation();
+        if (socket && userLocation) {
+          handleMove(socket, {
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            status: "watching",
+          });
+        }
       }
     }, 300000);
 
@@ -180,7 +193,7 @@ function App() {
   //////////////////////////
   // isLogin
   const [user, userLogout] = useRecoilState(userLogoutState);
-  const setIsLogin = useSetRecoilState(isLoginState);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   useEffect(() => {
     // 사용자 로그인 여부 검증
     const isLocalLogin: boolean = getLocalIsLogin();
@@ -222,6 +235,39 @@ function App() {
         });
     }
   }, [userLocation, user?.nickname]);
+
+  ////////////////
+  // socket
+  useEffect(() => {
+    const initSocket = () => {
+      if (userLocation) {
+        setSocket(
+          socketInit(
+            user?.accessToken ? "user" : "guest",
+            {
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              status: "watching",
+            },
+            (data: TSocketReceive) => console.log(data),
+            user?.user_idx
+          )
+        );
+      }
+    };
+    if (!socket && userLocation) {
+      initSocket();
+    } else if (socket && userLocation) {
+      setSocket(null);
+      handleClose(socket);
+      initSocket();
+    }
+    return () => {
+      if (socket) {
+        handleClose(socket);
+      }
+    };
+  }, [isLogin]);
 
   //////////////////////////
   // firebase
@@ -317,8 +363,6 @@ function App() {
       };
     }
   }, [newNotification]);
-
-  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
 
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>

@@ -1,10 +1,12 @@
 import { getAccessToken, getMyInfo } from "../../../../api";
 import { Card } from "../../../../components";
 import MyMessageCardInput from "../../../../components/Input/MyMessageCardInput";
+import { locationState } from "../../../../recoil/location/atoms";
 import { updateNotificationState } from "../../../../recoil/notification/selector";
+import { socketState } from "../../../../recoil/socket/atoms";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
+import { changeStatus, setSessionRefreshToken } from "../../../../utils";
 import HomeMyMessageReaction from "./HomeMyMessageReaction";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -24,8 +26,22 @@ function MyMessageCard({
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
   const newNotification = useRecoilValue(updateNotificationState);
+  const socket = useRecoilValue(socketState);
 
   const [myMessage, setMyMessage] = useState<TMyMessage>();
+
+  const location = useRecoilValue(locationState);
+
+  useEffect(() => {
+    if (socket && location) {
+      changeStatus(socket, {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        status: isMessageEdit ? "writing" : "watching",
+      });
+    }
+  }, [isMessageEdit]);
+
   useEffect(() => {
     if (accessToken && !isMessageEdit) {
       getMyInfo(accessToken)
