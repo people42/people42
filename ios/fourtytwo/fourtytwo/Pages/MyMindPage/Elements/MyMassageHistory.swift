@@ -27,6 +27,7 @@ struct MyMassageHistory: View {
                 VStack {
                     
                     VStack(alignment: .leading, spacing: 16) {
+                        
                         if let time = time {
                             Text(formattedDate(time))
                                 .font(.customOverline)
@@ -34,9 +35,8 @@ struct MyMassageHistory: View {
                             Text("시간 없음")
                         }
                         
-                        
                         Text(contents)
-                            .font(.customBody1)
+                            .font(.customBody2)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.bottom, 16)
@@ -45,27 +45,26 @@ struct MyMassageHistory: View {
                             ForEach(0..<4, id: \.self) { i in
                                 HStack(spacing: 16) {
                                     Image(reactionType[i])
-                                        .scaleEffect(0.4)
-                                        .frame(width: 16, height: 16)
+                                        .scaleEffect(0.3)
+                                        .frame(width: 12, height: 10)
                                     Text("\(reactionCnt[i])")
-                                        .font(.customSubtitle2)
+                                        .font(.customOverline)
                                 }
                             }
                         }
                     }
-                    .padding(24)
-                    Spacer()
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 24)
                     
                 }
                 Spacer()
             }
         }
-        .padding(16)
     }
 }
 
 struct MyMassageHistory_Previews: PreviewProvider {
     static var previews: some View {
-        MyMassageHistory(contents: "Content", reactionCnt: [2,2,2,2], time: Date())
+        MyMassageHistory(contents: "ContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContent", reactionCnt: [2,2,2,2], time: Date())
     }
 }

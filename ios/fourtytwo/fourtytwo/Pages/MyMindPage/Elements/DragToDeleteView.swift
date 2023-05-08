@@ -15,15 +15,15 @@ struct DragToDeleteView<Content: View>: View {
         ZStack(alignment: .trailing) {
             RoundedRectangle(cornerRadius: 32)
                 .foregroundColor(.red)
-                .opacity(dragOffset > -100 ? 0 : Double((dragOffset + 100) / -20))
-                .scaleEffect(0.8)
+                .opacity(dragOffset > -80 ? 0 : Double((dragOffset + 80) / -20))
+                .scaleEffect(0.98)
                 .animation(.easeInOut, value: dragOffset)
 
             Text("삭제")
                 .font(.customHeader6)
                 .foregroundColor(.white)
-                .padding(.trailing, 64)
-                .opacity(dragOffset > -120 ? 0 : 1)
+                .padding(.trailing, 16)
+                .opacity(dragOffset > -100 ? 0 : 1)
                 .animation(.easeInOut, value: dragOffset)
 
             content
@@ -37,7 +37,7 @@ struct DragToDeleteView<Content: View>: View {
                             }
                         }
                         .onEnded { value in
-                            if dragOffset < -120 {
+                            if dragOffset < -100 {
                                 onDelete()
                             }
                             withAnimation {

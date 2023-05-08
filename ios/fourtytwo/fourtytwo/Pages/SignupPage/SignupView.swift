@@ -42,8 +42,8 @@ struct SignupView: View {
                         .background(Color.backgroundSecondary)
                         .cornerRadius(32)
                         .padding(24)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
 
                     Spacer()
                 case 2:
@@ -57,8 +57,8 @@ struct SignupView: View {
                         .background(Color.backgroundSecondary)
                         .cornerRadius(32)
                         .padding(24)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
                     Spacer()
                 case 3:
                     Spacer()
@@ -66,8 +66,8 @@ struct SignupView: View {
 //                        .background(Color.backgroundSecondary)
                         .cornerRadius(32)
                         .padding(24)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
-                        .shadow(color: Color.gray.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.05), radius: 4, x: -1, y: -1)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0 : 0.2), radius: 4, x: 4, y: 4)
                     Spacer()
                 default:
                     Text("Error")

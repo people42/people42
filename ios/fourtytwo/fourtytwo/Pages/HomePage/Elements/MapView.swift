@@ -29,56 +29,72 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         self.currentLocation = location
-        region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
-            latitudinalMeters: 500, longitudinalMeters: 500
-        )
+        DispatchQueue.main.async {
+            self.region = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
+                latitudinalMeters: 500, longitudinalMeters: 500
+            )
+        }
     }
     
     // 헤딩 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        heading = newHeading.trueHeading
+        DispatchQueue.main.async {
+            self.heading = newHeading.trueHeading
+        }
     }
 }
 
 struct MapView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @StateObject private var locationManager = MapManager()
-    @State private var numberOfCircles = 2
+
     @State private var metersPerCircle: Double = 100
+    @State private var isHeadingActive = false
 
     var body: some View {
         ZStack {
-            map
-            compass
+            WrappedMap(region: $locationManager.region, currentLocation: $locationManager.currentLocation, isHeadingActive: isHeadingActive, heading: locationManager.heading)
+                .clipShape(Circle())
+                .frame(height: 480)
+                .overlay(
+                    RadialGradient(gradient: Gradient(colors: [
+                        Color.clear, Color("BgPrimary").opacity(0), Color("BgPrimary").opacity(1)]), center: .center, startRadius: 100, endRadius: 190)
+                        .clipShape(Circle())
+                        .frame(height: 480)
+                )
+                .scaleEffect(CGSize(width: 1.1, height: 1.1))
+                .overlay(northArrow.opacity(isHeadingActive ? 0 : 1), alignment: .top)
+            
             circles
+            
+            modeIndicator
+                .padding(.top, 40)
+                .padding(.trailing, 20)
+                .frame(height: 480)
+
+        }
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 1.2)) {
+                isHeadingActive.toggle()
+            }
         }
     }
 
-    private var map: some View {
-        Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: false)
-//            .rotationEffect(Angle(degrees: locationManager.heading), anchor: .center)
-            .clipShape(Circle())
-            .frame(height: 480)
-            .overlay(
-                RadialGradient(gradient: Gradient(colors: [
-                    Color.clear, Color("BgPrimary").opacity(0), Color("BgPrimary").opacity(1)]), center: .center, startRadius: 100, endRadius: 190)
-                    .clipShape(Circle())
-                    .frame(height: 480)
-            )
-            .scaleEffect(CGSize(width: 1.1, height: 1.1))
+    private var northArrow: some View {
+        Text("N")
+            .font(.system(size: 24, weight: .bold))
+            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .red.opacity(0.8))
+            .offset(x: 0, y: 40) // 상단에 위치하도록 조정
     }
     
-    private var compass: some View {
-        VStack {
-            Image("arrow")
-                .rotationEffect(Angle(degrees: locationManager.heading))
-        }
-    }
-
     private var circles: some View {
         let minOpacity: Double = 0.2
         let maxOpacity: Double = 0.1
+        let numberOfCircles = 2
 
+        // swiftlint:disable:next
         return ForEach(0..<numberOfCircles) { index in
             Circle()
                 .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)
@@ -86,9 +102,26 @@ struct MapView: View {
                 .scaledToFit()
         }
     }
+    
+    private var modeIndicator: some View {
+        VStack {
+            HStack {
+                Spacer()
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(isHeadingActive ? Color.green : Color.gray, lineWidth: 2)
+                        .frame(width: 48, height: 30)
+
+                    Text(isHeadingActive ? "ON" : "OFF")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(isHeadingActive ? .green : .gray)
+                }
+            }
+            Spacer()
+        }
+    }
+    
 }
-
-
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {

@@ -9,8 +9,6 @@ class HomeViewModel: ObservableObject {
     
     @Published var reactionCounts: [String: Int] = ["fire_circle": 0, "heart_circle": 0, "tear_circle": 0, "thumbsUp_circle": 0]
     
-    private var cancellables = Set<AnyCancellable>()
-    
     func checkForNewAlerts() {
         // TODO: Implement checkForNewAlerts
     }
@@ -45,6 +43,7 @@ struct HomeView: View {
         NavigationView {
             ZStack {
                 MapView()
+                    .offset(y: 16)
                 
                 VStack {
                     NavBar(isNewAlert: $viewModel.isNewAlert)
@@ -55,9 +54,6 @@ struct HomeView: View {
                     
                     NavigationLink(destination: MyMindView()) {
                         MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
-                            .onAppear {
-                                viewModel.getMyinfo()
-                            }
                     }
                     .background(Color.clear)
                     
@@ -68,22 +64,17 @@ struct HomeView: View {
             }
             .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
             .onAppear {
+                viewModel.getMyinfo()
                 viewModel.checkForNewAlerts()
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {
                     // foreground로 전환될 때 데이터를 새로 고칩니다.
+                    viewModel.getMyinfo()
                     viewModel.checkForNewAlerts()
                 }
             }
         }
-    }
-}
-
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-            .environmentObject(PlaceViewState())
     }
 }
 

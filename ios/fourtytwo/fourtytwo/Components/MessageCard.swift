@@ -2,9 +2,26 @@ import SwiftUI
 
 
 struct MessageCard: View {
-    let messageInfo: MessageInfo
     @Environment(\.colorScheme) var colorScheme
-    @State var fulllText = false
+    
+    let messageInfo: MessageInfo
+    
+    @State private var contentHeight: CGFloat = 0
+    
+    @State private var showActionSheet = false
+    @State private var showReportMessageSheet = false
+    @State private var showBlockUserSheet = false
+    
+    init(messageInfo: MessageInfo) {
+        self.messageInfo = messageInfo
+        
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        let attributedText = NSAttributedString(string: messageInfo.contents, attributes: [.font: font])
+        let textWidth = UIScreen.main.bounds.width - 32 // Adjust the width based on your layout
+        let textHeight = attributedText.boundingRect(with: CGSize(width: textWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height
+        self._contentHeight = State(initialValue: textHeight)
+    }
+
     
     var body: some View {
         ZStack {
@@ -29,43 +46,57 @@ struct MessageCard: View {
                     GifImage(messageInfo.profileImage, isAnimated: false)
                         .frame(width: 40, height: 40)
                     
-                    Text("\(messageInfo.stack)번 스쳤습니다.")
-                        .font(.system(size: 16))
-                        .fontWeight(.bold)
+                    HStack {
+                        Text(messageInfo.nickname)
+                            .font(.customOverline)
+                            .foregroundColor(Color("Text")) +
+                        Text("님과 \(messageInfo.stack)번 스쳤습니다.")
+                            .font(.customOverline)
+                            .foregroundColor(Color("Text"))
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            showActionSheet.toggle()
+                        }) {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(Color("Text"))
+                        }
+                        
+                        Spacer()
+                            .frame(width: 48)
+                    }
                 }
                 .padding(.top, -16)
                 .padding(.leading, -16)
                 .offset(x: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(messageInfo.nickname)
-                        .font(.customOverline)
                     
-                    if fulllText {
-                        Text(messageInfo.contents)
-                            .font(.customBody1)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.bottom, 16)
-                    } else {
-                        Text(messageInfo.contents)
-                            .font(.customBody1)
-                            .padding(.bottom, 16)
-                    }
+                    Text(messageInfo.contents)
+                        .font(.customBody2)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.bottom, 16)
 
                     
-                    if let placeName = messageInfo.placeName {
-                        Text(placeName)
-                            .font(.customSubtitle2)
+                    HStack {
+                        if let placeName = messageInfo.placeName {
+                            Text(placeName)
+                                .font(.customOverline)
+                        }
+                        Spacer()
                     }
                     
                     if let hour = messageInfo.hour {
                         Text(getTimeStringFromISODate(hour))
-                            .font(.customCaption)
-                            .foregroundColor(.monotoneLight)
+                            .font(.customOverline)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
                 .padding(.top)
                 .foregroundColor(Color("Text"))
                 
@@ -77,43 +108,44 @@ struct MessageCard: View {
                 HStack(alignment: .bottom) {
                     Spacer()
                     ReactionButton(messageIdx: messageInfo.messageIdx, emotion: messageInfo.emotion)
-                        .offset(x: -25, y: 25)
+                        .offset(x: 0, y: 20)
                 }
                 .padding(.trailing)
             }
         }
-        .frame(height: 152)
+        .frame(height: 108 + contentHeight)
         .padding(.bottom, 16)
-    }
-
-    
-    func getTimeStringFromISODate(_ isoString: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        dateFormatter.timeZone = Calendar.current.timeZone
-        if let date = dateFormatter.date(from: isoString) {
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            
-            // 현재 날짜와 비교하여 날짜가 어제인지 오늘인지 판단
-            let now = Date()
-            let components = calendar.dateComponents([.day], from: date, to: now)
-            
-            if components.day == 0 {
-                return "오늘 \(hour)시쯤"
-            } else if components.day == -1 {
-                return "어제 \(hour)시쯤"
+        .actionSheet(isPresented: $showActionSheet) {
+            ActionSheet(title: Text("하나의 게시글에 한 번의 신고만 가능합니다.\n3번의 신고가 이루어지면 게시글이 삭제될 수 있습니다."),
+                buttons: [
+                    .destructive(Text("신고")) {
+                        showReportMessageSheet = true
+                    },
+                    .destructive(Text("차단")) {
+                        showBlockUserSheet = true
+                    },
+                    .cancel(Text("취소")) { }
+                ])
+        }
+        .sheet(isPresented: $showReportMessageSheet) {
+            if let nickname = messageInfo.nickname, let messageIdx = messageInfo.messageIdx {
+                ReportView(nickname: nickname, messageIdx: messageIdx)
             }
         }
-        return "시간정보 없음"
+        .sheet(isPresented: $showBlockUserSheet) {
+            if let nickname = messageInfo.nickname, let userIdx = messageInfo.userIdx {
+                BlockView(nickname: nickname, userIdx: userIdx)
+            }
+        }
     }
 }
 
 struct MessageCard_Previews: PreviewProvider {
     static var previews: some View {
-        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "Contents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete"))
+        MessageCard(messageInfo: MessageInfo(profileImage: "alien", stack: 30, nickname: "NICKNAME", contents: "ContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContentsContents", placeIdx: 1, placeName: "Place", hour: "2023-04-20T13:12:10", hasMultiple: true, cardColor: .blue, messageIdx: 1, emotion: "delete", userIdx: 1))
     }
 }
+
 
 enum CardColor: String, CaseIterable {
     case red, orange, yellow, green, sky, blue, purple, pink

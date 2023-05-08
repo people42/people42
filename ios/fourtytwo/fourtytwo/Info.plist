@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.people42.app.sendLocation</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -24,17 +26,11 @@
 	<array>
 		<string>Roboto-Medium.ttf</string>
 	</array>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>위치정보 권한이 필요합니다. (항상 or 앱을 사용하는 동안 위치정보를 수신합니다.)</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>위치정보 권한이 필요합니다. (항상 위치정보를 수신합니다.)</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>사용자 위치 정보를 표시합니다.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>location</string>
+		<string>processing</string>
 	</array>
-	<key>UIScene configuration dictionary</key>
-	<string></string>
 </dict>
 </plist>

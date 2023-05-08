@@ -16,14 +16,13 @@ class APIManager {
     private init() {}
 
     // API 기본 URL 설정
-    private let baseURL = "https://people42.com/be42/api/v1"
+    private let baseURL = "https://www.people42.com/be42/api/v1"
 
     // LoginUserData 인스턴스를 참조하는 프로퍼티 추가
     @Published var userState = UserState()
 
     // 기본 HTTP 헤더 설정
-    private var headers: HTTPHeaders = [
-    ]
+    private var headers: HTTPHeaders = []
 
     // 엑세스 토큰을 설정하고 상태 저장소에 저장하는 함수
     func setAccessToken(at accessToken: String?, rt refreshToken: String?) {
@@ -106,6 +105,7 @@ class APIManager {
                 } else {
                     let decoder = JSONDecoder()
                     if let data = data, let decodedData = try? decoder.decode(T.self, from: data) {
+                        print("API 요청 성공")
                         completion(.success(decodedData))
                     } else {
                         completion(.failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)))
@@ -125,6 +125,20 @@ class APIManager {
                         case .failure(let error):
                             // 토큰 갱신 실패
                             completion(.failure(error))
+                        }
+                    }
+                } else if let statusCode = response.response?.statusCode, statusCode == 409 {
+                    print("\(statusCode) 중복된 요청")
+                    // 에러 데이터 처리
+                    if let data = response.data {
+                        do {
+                            let decoder = JSONDecoder()
+                            let errorResponse = try decoder.decode(ResponseMessage<Empty>.self, from: data)
+                            print("Error Message: \(errorResponse.message), Status: \(errorResponse.status)")
+                            completion(.success(errorResponse as! T))
+                        } catch {
+                            print("Error Decoding Error Message")
+                            completion(.failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)))
                         }
                     }
                 } else {
@@ -163,5 +177,4 @@ class APIManager {
             }
         }
     }
-
 }

@@ -23,6 +23,7 @@ struct MyMindView: View {
                             DragToDeleteView(content: MyMassageHistory(contents: data.contents, reactionCnt: data.reactionCnt, time: data.time), onDelete: {
                                 deleteMessage(at: index)
                             })
+                            .padding(16)
                             .padding(.bottom, 8)
                         }
                     } else {
@@ -45,7 +46,7 @@ struct MyMindView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
             }

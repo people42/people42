@@ -3,10 +3,6 @@ import Alamofire
 import WebKit
 import AuthenticationServices
 
-// 뷰모델
-class SystemViewModel: ObservableObject {
-    @Published var showingWithdrawalAlert = false
-}
 
 // 환경 변수를 참조하는 함수를 따로 모아둠
 extension SystemView {
@@ -99,7 +95,16 @@ extension SystemView {
         authorizationController.performRequests()
         
     }
-
+    
+    private func contact() {
+        let email = "qorzi00@gmail.com"
+        let subject = "사이 서비스 문의"
+        let body = "이메일 : 회원가입한 이메일을 적어주세요.\n문의 내용 : "
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = URL(string: "mailto:\(email)?subject=\(encodedSubject)&body=\(encodedBody)")!
+        UIApplication.shared.open(url)
+    }
     
 }
 
@@ -109,7 +114,8 @@ struct SystemView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var signUpState: SignUpState
     
-    @StateObject var viewModel = SystemViewModel()
+    @State var showingWithdrawalAlert = false
+    @State var showingContactAlert = false
     
     var appleSignInCoordinator = AppleSignInCoordinator()
     
@@ -125,6 +131,17 @@ struct SystemView: View {
                 NavLink(title: "이용약관 및 개인정보처리방침", page: PolicyWebView())
                 
                 Button(action: {
+                    // 문의하기 알림창
+                    showingContactAlert = true
+                }) {
+                    HStack {
+                        Text("문의하기")
+                            .foregroundColor(Color("Text"))
+                        Spacer()
+                    }
+                }
+                
+                Button(action: {
                     // 로그아웃 버튼 액션
                     logout()
                 }) {
@@ -137,7 +154,7 @@ struct SystemView: View {
                 
                 Button(action: {
                     // 회원 탈퇴 알림창
-                    viewModel.showingWithdrawalAlert = true
+                    showingWithdrawalAlert = true
                 }) {
                     HStack {
                         Text("회원 탈퇴")
@@ -160,7 +177,7 @@ struct SystemView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
             }
@@ -170,11 +187,20 @@ struct SystemView: View {
                     .fontWeight(.semibold)
             }
         }
-        .alert(isPresented: $viewModel.showingWithdrawalAlert) {
+        .alert(isPresented: $showingWithdrawalAlert) {
             Alert(title: Text("회원 탈퇴 확인"),
                   message: Text("정말 탈퇴하시겠습니까?"),
                   primaryButton: .destructive(Text("탈퇴")) {
                     withdrawal()
+                  },
+                  secondaryButton: .cancel(Text("취소"))
+            )
+        }
+        .alert(isPresented: $showingContactAlert) {
+            Alert(title: Text("아래 이메일로 문의해주세요."),
+                  message: Text("qorzi00@gmail.com\n문의하기를 누르시면 이메일 작성으로 넘어갑니다."),
+                  primaryButton: .default(Text("문의하기")) {
+                    contact()
                   },
                   secondaryButton: .cancel(Text("취소"))
             )

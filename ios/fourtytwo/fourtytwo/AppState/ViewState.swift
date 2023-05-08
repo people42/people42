@@ -21,7 +21,3 @@ class PlaceViewState: ObservableObject {
     @Published var navigateToPlaceView: Bool = false
     @Published var placeDate: String?
 }
-
-class ReactionState: ObservableObject {
-    @Published var reaction: Int = 0
-}
