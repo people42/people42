@@ -29,8 +29,8 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final Map<Long, WebSocketSession> userSessionMap = Collections.synchronizedMap(new HashMap<>());
     private static final Set<WebSocketSession> guestSession = Collections.synchronizedSet(new HashSet<>());
     private static final Map<Long, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
-    private static final ConcurrentSkipListMap<Double, Set<Long>> userLatitudes = new ConcurrentSkipListMap<>();
-    private static final ConcurrentSkipListMap<Double, Set<Long>> userLongitudes = new ConcurrentSkipListMap<>();
+    private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLatitudes = new ConcurrentSkipListMap<>();
+    private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLongitudes = new ConcurrentSkipListMap<>();
 
     private final Gson gson = new Gson();
 
@@ -51,12 +51,11 @@ public class WebSocketService extends TextWebSocketHandler {
             Long userIdx = Long.valueOf(userIdxStr);
             userSession.put(session, userIdx);
             userSessionMap.put(userIdx, session);
-            session.getAttributes().put("type", type);
             session.getAttributes().put("userIdx", userIdx);
         } else {
             guestSession.add(session);
-            session.getAttributes().put("type", type);
         }
+        session.getAttributes().put("type", type);
         session.getAttributes().put("nearUsers", new HashSet<WebSocketSession>());
     }
 
@@ -125,6 +124,7 @@ public class WebSocketService extends TextWebSocketHandler {
         MessageDto message = new MessageDto(type);
         Map<String, Object> messageData = new HashMap<>();
         if (sendingSession != null) {
+            messageData.put("type", sendingSession.getAttributes().get("type"));
             messageData.put("userIdx", sendingSession.getAttributes().get("userIdx"));
             messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
             messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
@@ -140,11 +140,20 @@ public class WebSocketService extends TextWebSocketHandler {
             for (WebSocketSession targetSession : (Set<WebSocketSession>) recievingSession.getAttributes().get("nearUsers")) {
                 if (targetSession.getAttributes().get("type").equals("user")) {
                     SessionInfoDto sessionInfoDto = SessionInfoDto.builder()
+                            .type((String) targetSession.getAttributes().get("type"))
                             .userIdx((Long) targetSession.getAttributes().get("userIdx"))
                             .latitude((Double) targetSession.getAttributes().get("latitude"))
                             .longitude((Double) targetSession.getAttributes().get("longitude"))
                             .nickname((String) targetSession.getAttributes().get("nickname"))
                             .message((String) targetSession.getAttributes().get("message"))
+                            .status((String) targetSession.getAttributes().get("status"))
+                            .build();
+                    nearUsers.add(sessionInfoDto);
+                } else {
+                    SessionInfoDto sessionInfoDto = SessionInfoDto.builder()
+                            .type((String) targetSession.getAttributes().get("type"))
+                            .latitude((Double) targetSession.getAttributes().get("latitude"))
+                            .longitude((Double) targetSession.getAttributes().get("longitude"))
                             .status((String) targetSession.getAttributes().get("status"))
                             .build();
                     nearUsers.add(sessionInfoDto);
@@ -168,9 +177,7 @@ public class WebSocketService extends TextWebSocketHandler {
         Set<WebSocketSession> farUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
         Long userIdx = userSession.get(session);
         locations.put(userIdx, location);
-        if (((String) session.getAttributes().get("type")).equals("user")) {
-            renewGps(userIdx, location);
-        }
+        renewGps(session, location);
         System.out.println(nearUsers);
         System.out.println(farUsers);
         if (!nearUsers.isEmpty()) {
@@ -223,17 +230,17 @@ public class WebSocketService extends TextWebSocketHandler {
         return nearUsers;
     }
 
-    public void renewGps(Long userIdx, List<Double> location) {
+    public void renewGps(WebSocketSession session, List<Double> location) {
         if (userLatitudes.containsKey(location.get(0))) {
-            userLatitudes.get(location.get(0)).add(userIdx);
+            userLatitudes.get(location.get(0)).add(session);
         } else {
-            userLatitudes.put(location.get(0), new HashSet<>(Collections.singletonList(userIdx)));
+            userLatitudes.put(location.get(0), new HashSet<>(Collections.singletonList(session)));
         }
 
         if (userLongitudes.containsKey(location.get(1))) {
-            userLongitudes.get(location.get(1)).add(userIdx);
+            userLongitudes.get(location.get(1)).add(session);
         } else {
-            userLongitudes.put(location.get(1), new HashSet<>(Collections.singletonList(userIdx)));
+            userLongitudes.put(location.get(1), new HashSet<>(Collections.singletonList(session)));
         }
         System.out.println("위도들 : "+userLatitudes);
         System.out.println("경도들 : "+userLongitudes);
@@ -241,19 +248,16 @@ public class WebSocketService extends TextWebSocketHandler {
     }
 
     public Set<WebSocketSession> getNearUsers(List<Double> location) {
-        Set<Long> nearUsers = new HashSet<>();
-        Set<Long> nearLongUsers = new HashSet<>();
-        ConcurrentNavigableMap<Double, Set<Long>> nearLats = userLatitudes.subMap(location.get(0)-0.0005, true, location.get(0)+0.0005, true);
+        Set<WebSocketSession> nearUsers = new HashSet<>();
+        Set<WebSocketSession> nearLongUsers = new HashSet<>();
+        ConcurrentNavigableMap<Double, Set<WebSocketSession>> nearLats = userLatitudes.subMap(location.get(0)-0.0005, true, location.get(0)+0.0005, true);
         nearLats.forEach((k, v) -> nearUsers.addAll(v));
-        ConcurrentNavigableMap<Double, Set<Long>> nearLongs = userLongitudes.subMap(location.get(1)-0.0005, true, location.get(1)+0.0005, true);
+        ConcurrentNavigableMap<Double, Set<WebSocketSession>> nearLongs = userLongitudes.subMap(location.get(1)-0.0005, true, location.get(1)+0.0005, true);
         nearLongs.forEach((k, v) -> nearLongUsers.addAll(v));
         nearUsers.retainAll(nearLongUsers);
         Set<WebSocketSession> nearUserInfos = new HashSet<>();
         if (!nearUsers.isEmpty()) {
-            for (Long userIdx : nearUsers) {
-                WebSocketSession targetSession = userSessionMap.get(userIdx);
-                nearUserInfos.add(targetSession);
-            }
+            nearUserInfos.addAll(nearUsers);
         }
         return nearUserInfos;
     }
