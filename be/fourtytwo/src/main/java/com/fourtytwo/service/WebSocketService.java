@@ -184,9 +184,7 @@ public class WebSocketService extends TextWebSocketHandler {
             for (WebSocketSession targetSession : nearUsers) {
                 System.out.println("a");
                 if (targetSession.getAttributes().get("userIdx").equals(session.getAttributes().get("userIdx"))) {continue;}
-                if (session.getAttributes().get("type").equals("user")) {
-                    ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).add(session);
-                }
+                ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).add(session);
                 ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).add(targetSession);
                 System.out.println("1번"+session.getAttributes());
                 if (targetSession.isOpen()) {
