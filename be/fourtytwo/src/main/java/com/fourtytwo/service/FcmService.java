@@ -157,6 +157,7 @@ public class FcmService {
                                 .setDefaultSound(true)
                                 .setIcon("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/etc/app_icon.png")
                                 .setVisibility(AndroidNotification.Visibility.PUBLIC)
+                                .setColor("#3644FC")
                                 .build())
                         .setDirectBootOk(true)
                         .build())
