@@ -6,14 +6,14 @@ import com.fourtytwo.service.FcmService;
 import com.fourtytwo.service.UserService;
 import com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
@@ -31,14 +31,22 @@ public class UserController {
     }
 
     @PostMapping("/check/google")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> googleLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> googleLogin(HttpServletResponse response,
+                                                                     @Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponseDto = userService.googleLogin(loginRequestDto.getO_auth_token());
+        if (loginResponseDto.getRefreshToken() != null) {
+            setCookie(response, loginResponseDto.getRefreshToken());
+        }
         return ApiResponse.ok(loginResponseDto);
     }
 
     @PostMapping(path = "/check/apple")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleLogin(HttpServletResponse response,
+                                                                    @Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponseDto = userService.appleLogin(loginRequestDto.getO_auth_token());
+        if (loginResponseDto.getRefreshToken() != null) {
+            setCookie(response, loginResponseDto.getRefreshToken());
+        }
         return ApiResponse.ok(loginResponseDto);
     }
 
@@ -53,7 +61,8 @@ public class UserController {
 //    }
 
     @PostMapping(path = "/check/apple/web", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(@RequestBody MultiValueMap<String, String> requestBody) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebLogin(HttpServletResponse response,
+                                                                       @RequestBody MultiValueMap<String, String> requestBody) {
         LoginResponseDto loginResponseDto = userService.appleLogin(requestBody.get("id_token").get(0));
         HttpHeaders headers = new HttpHeaders();
         if (loginResponseDto.getAccessToken() == null) {
@@ -74,26 +83,34 @@ public class UserController {
     }
 
     @PostMapping("/signup/google")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(HttpServletResponse response,
+                                                                @Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "google");
+        setCookie(response, loginResponseDto.getRefreshToken());
         return ApiResponse.ok(loginResponseDto);
     }
 
     @PostMapping("/signup/apple")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleSignup(HttpServletResponse response,
+                                                                     @Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "apple");
+        setCookie(response, loginResponseDto.getRefreshToken());
         return ApiResponse.ok(loginResponseDto);
     }
 
     @PostMapping("/signup/apple/web")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> appleWebSignup(HttpServletResponse response,
+                                                                        @Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "webApple");
+        setCookie(response, loginResponseDto.getRefreshToken());
         return ApiResponse.ok(loginResponseDto);
     }
 
     @PostMapping("/apple_user_info")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(@Valid @RequestBody AppleCodeReqDto appleCodeReqDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(HttpServletResponse response,
+                                                                @Valid @RequestBody AppleCodeReqDto appleCodeReqDto) {
         LoginResponseDto loginResponseDto = userService.getAppleUserInfo(appleCodeReqDto);
+        setCookie(response, loginResponseDto.getRefreshToken());
         return ApiResponse.ok(loginResponseDto);
     }
 
@@ -113,5 +130,19 @@ public class UserController {
     public ResponseEntity<ApiResponse<LoginResponseDto>> androidGoogleSignup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         LoginResponseDto loginResponseDto = userService.signup(signupRequestDto, "androidGoogle");
         return ApiResponse.ok(loginResponseDto);
+    }
+
+    @PostMapping("/cookie")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> getAccessTokenByCookie(@CookieValue(name = "refresh") String refresh) {
+        LoginResponseDto loginResponseDto = userService.getAccessToken(refresh);
+        return ApiResponse.ok(loginResponseDto);
+    }
+    
+    private void setCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refresh", refreshToken);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
     }
 }
