@@ -137,12 +137,12 @@ public class UserController {
         LoginResponseDto loginResponseDto = userService.getAccessToken(refresh);
         return ApiResponse.ok(loginResponseDto);
     }
-    
+
     private void setCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie("refresh", refreshToken);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+//        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 }
