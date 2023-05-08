@@ -3,8 +3,13 @@ package com.fourtytwo.service;
 import com.fourtytwo.dto.socket.MessageDto;
 import com.fourtytwo.dto.socket.MethodType;
 import com.fourtytwo.dto.socket.SessionInfoDto;
+import com.fourtytwo.entity.Message;
+import com.fourtytwo.entity.User;
+import com.fourtytwo.repository.message.MessageRepository;
+import com.fourtytwo.repository.user.UserRepository;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
@@ -33,7 +38,8 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLongitudes = new ConcurrentSkipListMap<>();
 
     private final Gson gson = new Gson();
-
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String uri = session.getUri().toString(); // 연결된 URL에서 WebSocket 경로를 가져옵니다.
@@ -49,9 +55,18 @@ public class WebSocketService extends TextWebSocketHandler {
                 throw new IllegalArgumentException("Missing 'user_idx' parameter in WebSocket URL.");
             }
             Long userIdx = Long.valueOf(userIdxStr);
+            User user = userRepository.findByIdAndIsActiveTrue(userIdx);
             userSession.put(session, userIdx);
             userSessionMap.put(userIdx, session);
             session.getAttributes().put("userIdx", userIdx);
+            session.getAttributes().put("nickname", user.getNickname());
+            Message message = messageRepository.findRecentByUserIdx(userIdx);
+            if (message != null) {
+                session.getAttributes().put("message", message.getContent());
+            } else {
+                session.getAttributes().put("message", null);
+            }
+            session.getAttributes().put("emoji", user.getEmoji());
         } else {
             guestSession.add(session);
         }
@@ -104,8 +119,8 @@ public class WebSocketService extends TextWebSocketHandler {
             METHOD_INIT(session, info);
         } else if (method.equals(MethodType.MOVE.name())) {
             METHOD_MOVE(session, info);
-        } else if (method.equals(MethodType.WRITING_MESSAGE.name())) {
-            METHOD_WRITING_MESSAGE(session, info);
+        } else if (method.equals(MethodType.CHANGE_STATUS.name())) {
+            METHOD_CHANGE_STATUS(session, info);
         } else if (method.equals(MethodType.MESSAGE_CHANGED.name())) {
             METHOD_MESSAGE_CHANGED(session, info);
         }
@@ -124,19 +139,41 @@ public class WebSocketService extends TextWebSocketHandler {
         MessageDto message = new MessageDto(type);
         Map<String, Object> messageData = new HashMap<>();
         if (sendingSession != null) {
-            messageData.put("type", sendingSession.getAttributes().get("type"));
-            messageData.put("userIdx", sendingSession.getAttributes().get("userIdx"));
-            messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
-            messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
-            messageData.put("nickname", sendingSession.getAttributes().get("nickname"));
-            messageData.put("message", sendingSession.getAttributes().get("message"));
-            messageData.put("status", sendingSession.getAttributes().get("status"));
+            if (sendingSession.getAttributes().get("type").equals("user")) {
+                messageData.put("type", sendingSession.getAttributes().get("type"));
+                messageData.put("userIdx", sendingSession.getAttributes().get("userIdx"));
+                messageData.put("message", sendingSession.getAttributes().get("message"));
+                messageData.put("emoji", sendingSession.getAttributes().get("emoji"));
+                messageData.put("nickname", sendingSession.getAttributes().get("nickname"));
+                messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
+                messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
+                messageData.put("status", sendingSession.getAttributes().get("status"));
+            }
+            else {
+                messageData.put("type", sendingSession.getAttributes().get("type"));
+                messageData.put("latitude", sendingSession.getAttributes().get("latitude"));
+                messageData.put("longitude", sendingSession.getAttributes().get("longitude"));
+                messageData.put("status", sendingSession.getAttributes().get("status"));
+            }
         }
         if (type.equals(MethodType.INFO)){
             List<SessionInfoDto> nearUsers = new ArrayList<>();
-            messageData.put("userIdx", recievingSession.getAttributes().get("userIdx"));
-            messageData.put("latitude", recievingSession.getAttributes().get("latitude"));
-            messageData.put("longitude", recievingSession.getAttributes().get("longitude"));
+            if (recievingSession.getAttributes().get("type").equals("user")) {
+                messageData.put("type", recievingSession.getAttributes().get("type"));
+                messageData.put("userIdx", recievingSession.getAttributes().get("userIdx"));
+                messageData.put("message", recievingSession.getAttributes().get("message"));
+                messageData.put("emoji", recievingSession.getAttributes().get("emoji"));
+                messageData.put("nickname", recievingSession.getAttributes().get("nickname"));
+                messageData.put("latitude", recievingSession.getAttributes().get("latitude"));
+                messageData.put("longitude", recievingSession.getAttributes().get("longitude"));
+                messageData.put("status", recievingSession.getAttributes().get("status"));
+            }
+            else {
+                messageData.put("type", recievingSession.getAttributes().get("type"));
+                messageData.put("latitude", recievingSession.getAttributes().get("latitude"));
+                messageData.put("longitude", recievingSession.getAttributes().get("longitude"));
+                messageData.put("status", recievingSession.getAttributes().get("status"));
+            }
             for (WebSocketSession targetSession : (Set<WebSocketSession>) recievingSession.getAttributes().get("nearUsers")) {
                 if (targetSession.getAttributes().get("type").equals("user")) {
                     SessionInfoDto sessionInfoDto = SessionInfoDto.builder()
@@ -146,6 +183,7 @@ public class WebSocketService extends TextWebSocketHandler {
                             .longitude((Double) targetSession.getAttributes().get("longitude"))
                             .nickname((String) targetSession.getAttributes().get("nickname"))
                             .message((String) targetSession.getAttributes().get("message"))
+                            .emoji((String) targetSession.getAttributes().get("emoji"))
                             .status((String) targetSession.getAttributes().get("status"))
                             .build();
                     nearUsers.add(sessionInfoDto);
@@ -183,7 +221,9 @@ public class WebSocketService extends TextWebSocketHandler {
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession targetSession : nearUsers) {
                 System.out.println("a");
-                if (targetSession.getAttributes().get("userIdx").equals(session.getAttributes().get("userIdx"))) {continue;}
+                if (targetSession.getAttributes().get("type").equals("user")) {
+                    if (targetSession.getAttributes().get("userIdx").equals(session.getAttributes().get("userIdx"))) {continue;}
+                }
                 ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).add(session);
                 ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).add(targetSession);
                 System.out.println("1번"+session.getAttributes());
@@ -292,17 +332,24 @@ public class WebSocketService extends TextWebSocketHandler {
         System.out.println("changeLocation 나온 후");
     }
 
-    public void METHOD_WRITING_MESSAGE(WebSocketSession session, Map<String, Object> info) throws IOException {
+    public void METHOD_CHANGE_STATUS(WebSocketSession session, Map<String, Object> info) throws IOException {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
         }
 
-        sendMessagesToNearUsers(session, MethodType.WRITING_MESSAGE);
+        sendMessagesToNearUsers(session, MethodType.CHANGE_STATUS);
     }
 
     public void METHOD_MESSAGE_CHANGED(WebSocketSession session, Map<String, Object> info) throws IOException {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
+        }
+        Long userIdx = (Long) session.getAttributes().get("userIdx");
+        Message newMessage = messageRepository.findRecentByUserIdx(userIdx);
+        if (newMessage != null) {
+            session.getAttributes().put("message", newMessage.getContent());
+        } else {
+            session.getAttributes().put("message", null);
         }
 
         sendMessagesToNearUsers(session, MethodType.MESSAGE_CHANGED);
