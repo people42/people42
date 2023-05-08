@@ -1,10 +1,9 @@
 package com.fourtytwo.repository.place;
 
-import com.fourtytwo.entity.Place;
-import com.fourtytwo.entity.QBrush;
-import com.fourtytwo.entity.QMessage;
-import com.fourtytwo.entity.QPlace;
+import com.fourtytwo.entity.*;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +32,7 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom{
         return queryFactory
                 .selectFrom(place)
                 .where(latitudeWithinRange.and(longitudeWithinRange))
+                .orderBy(Expressions.numberTemplate(Double.class, "abs(latitude - {0}) + abs(longitude - {1})", latInput, longInput).asc())
                 .fetchFirst();
     }
 }
