@@ -139,10 +139,12 @@ public class UserController {
     }
 
     private void setCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refresh", refreshToken);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refresh", refreshToken)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
