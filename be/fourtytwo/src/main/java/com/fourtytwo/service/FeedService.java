@@ -288,6 +288,7 @@ public class FeedService {
         Place currentPlace = Place.builder().id(-1L).build();
         List<String> firstTimeUserEmojis = new ArrayList<>();
         List<String> repeatUserEmojis = new ArrayList<>();
+        Set<Long> userIdxSet = new HashSet<>();
         Brush firstBrush = null;
 
         for (Brush brush : recentBrushList) {
@@ -309,11 +310,14 @@ public class FeedService {
                 }
 
                 // 처음 만난 유저인지 조회
-                Long cnt = brushRepository.countByUser1IdAndUser2IdAndCreatedAtIsBefore(smallIdx, bigIdx, LocalDateTime.now().minusDays(1));
-                if (cnt.equals(0L)) {
-                    firstTimeUserEmojis.add(message.getUser().getEmoji());
-                } else {
-                    repeatUserEmojis.add(message.getUser().getEmoji());
+                if (!userIdxSet.contains(message.getUser().getId())) {
+                    Long cnt = brushRepository.countByUser1IdAndUser2IdAndCreatedAtIsBefore(smallIdx, bigIdx, LocalDateTime.now().minusDays(1));
+                    if (cnt.equals(0L)) {
+                        firstTimeUserEmojis.add(message.getUser().getEmoji());
+                    } else {
+                        repeatUserEmojis.add(message.getUser().getEmoji());
+                    }
+                    userIdxSet.add(message.getUser().getId());
                 }
             }
 
@@ -346,6 +350,7 @@ public class FeedService {
 
                     firstTimeUserEmojis = new ArrayList<>();
                     repeatUserEmojis = new ArrayList<>();
+                    userIdxSet = new HashSet<>();
                 }
 
                 if (brush.getId().equals(-1L)) {
