@@ -4,6 +4,7 @@ import { signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../../../utils";
 import _ from "lodash";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -82,9 +83,12 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
   };
 
   const S3_URL = import.meta.env.VITE_S3_URL;
+  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
+
+  const [isAgree, setIsAgree] = useState<boolean>(false);
 
   return (
-    <StyledConformUserSetting>
+    <StyledConformUserSetting isAgree={isAgree}>
       <div>
         <SelectedEmojiIcon
           style={{
@@ -92,10 +96,41 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
           }}
         ></SelectedEmojiIcon>
         <p>{signUpUser.nickname}</p>
+        <div>
+          <input
+            onChange={(e) => setIsAgree(e.target.checked)}
+            type="checkbox"
+            id="agree"
+          />
+          <a
+            className="agree-link"
+            onClick={() =>
+              window.open(
+                `${BASE_APP_URL}policy?nav=false`,
+                "",
+                "'top=10, left=10, width=500, height=600, status=no, menubar=no, toolbar=no, resizable=no'"
+              )
+            }
+          >
+            이용약관 및 개인정보처리방침
+          </a>
+          <label htmlFor="agree">에 동의합니다</label>
+        </div>
       </div>
-      <CommonBtn onClick={signUp} btnType="primary">
-        이 프로필로 시작하기
-      </CommonBtn>
+      <div className="agree-btn">
+        <CommonBtn
+          onClick={
+            isAgree
+              ? signUp
+              : () => {
+                  alert("이용약관 및 개인정보처리방침에 동의해주세요.");
+                }
+          }
+          btnType="primary"
+        >
+          이 프로필로 시작하기
+        </CommonBtn>
+      </div>
       <CommonBtn onClick={onClick} btnType="secondary">
         다시 선택할래요
       </CommonBtn>
@@ -105,7 +140,7 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
 
 export default ConformUserSetting;
 
-const StyledConformUserSetting = styled.div`
+const StyledConformUserSetting = styled.div<{ isAgree: boolean }>`
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -123,6 +158,18 @@ const StyledConformUserSetting = styled.div`
       ${({ theme }) => theme.text.header6}
       margin-top: 8px;
       margin-bottom: 16px;
+    }
+  }
+  .agree-link {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .agree-btn {
+    & > button {
+      ${({ isAgree }) =>
+        isAgree
+          ? ""
+          : "filter: opacity(0.3) grayscale(100); cursor: not-allowed;"}
     }
   }
 `;

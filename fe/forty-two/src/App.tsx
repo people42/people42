@@ -149,12 +149,12 @@ function App() {
   }
   // 사용자 위치 업데이트 함수
   const updateCurrentLocation = async () => {
-    getUserLocation().then((res: any) =>
+    getUserLocation().then((res: any) => {
       setUserLocation({
         latitude: res.coords.latitude,
         longitude: res.coords.longitude,
-      })
-    );
+      });
+    });
   };
   useEffect(() => {
     isDesktop ? requestLocationPermission() : null;
@@ -162,12 +162,12 @@ function App() {
 
   useEffect(() => {
     // 사용자 위치 업데이트
-    if (isLocationPermitted && isDesktop) {
+    if (isLocationPermitted === true && isDesktop) {
       updateCurrentLocation();
     }
     // 사용자 위치 5분마다 업데이트
     let postLocationInterval = setInterval(() => {
-      if (isLocationPermitted && isDesktop) {
+      if (isLocationPermitted === true && isDesktop) {
         updateCurrentLocation();
       }
     }, 300000);
@@ -202,7 +202,7 @@ function App() {
     } else {
       setIsLogin(false);
     }
-  }, [user]);
+  }, [user?.accessToken]);
 
   // 사용자 위치 변경될 때마다 전송
   useEffect(() => {
@@ -221,7 +221,7 @@ function App() {
           }
         });
     }
-  }, [userLocation]);
+  }, [userLocation, user?.nickname]);
 
   //////////////////////////
   // firebase
