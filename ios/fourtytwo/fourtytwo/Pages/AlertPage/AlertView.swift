@@ -4,6 +4,7 @@ struct AlertView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State var newNotifications: [NotificationHistory]?
+    @State private var refreshing: Bool = false
 
     var body: some View {
         VStack {
@@ -52,8 +53,14 @@ struct AlertView: View {
             getNotiHistory()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    getNotiHistory()
-                }
+            getNotiHistory()
+        }
+        .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
+            getNotiHistory()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                refreshing = false
+            }
+        }))
     }
 }
 
