@@ -110,6 +110,7 @@ public class UserService {
         }
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+        deleteRefreshToken(foundUser);
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
         return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
@@ -211,6 +212,7 @@ public class UserService {
 
         String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+        deleteRefreshToken(foundUser);
         redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
         return new LoginResponseDto(foundUser.getId(), foundUser.getEmail(), foundUser.getNickname(), foundUser.getEmoji(), foundUser.getColor(), accessToken, refreshToken, null);
     }
@@ -296,6 +298,7 @@ public class UserService {
                 User savedUser = userRepository.save(foundUser);
                 String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
                 String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
+                deleteRefreshToken(savedUser);
                 redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
                 return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken, null);
             }
@@ -317,6 +320,7 @@ public class UserService {
         User savedUser = userRepository.save(newUser);
         String accessToken = jwtTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(savedUser.getId(), savedUser.getRoleList());
+        deleteRefreshToken(savedUser);
         redisTemplate.opsForHash().put("refresh", refreshToken, savedUser.getId().toString());
         return new LoginResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getNickname(), savedUser.getEmoji(), savedUser.getColor(), accessToken, refreshToken, null);
     }
@@ -389,6 +393,10 @@ public class UserService {
         userRepository.delete(user);
 
         // refresh token 삭제
+        deleteRefreshToken(user);
+    }
+
+    private void deleteRefreshToken(User user) {
         Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
         for (Object key : keys) {
             Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
@@ -449,14 +457,8 @@ public class UserService {
             userRepository.delete(user);
 
             // refresh token 삭제
-            Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
-            for (Object key : keys) {
-                Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
-                if (Objects.equals(userIdx, user.getId())) {
-                    redisTemplate.opsForHash().delete("refresh", key);
-                    break;
-                }
-            }
+            deleteRefreshToken(user);
+
         } catch (HttpClientErrorException e) {
             throw new IllegalArgumentException("Apple Delete User Error");
         }
@@ -520,6 +522,7 @@ public class UserService {
 
         if (refreshTokenProvider.getTokenValidTime(refreshToken).isBefore(LocalDateTime.now().plusDays(7))) {
             refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+            deleteRefreshToken(user);
             redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
         }
 
@@ -565,6 +568,7 @@ public class UserService {
 
         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getRoleList());
         String refreshToken = refreshTokenProvider.createToken(user.getId(), user.getRoleList());
+        deleteRefreshToken(user);
         redisTemplate.opsForHash().put("refresh", refreshToken, user.getId().toString());
         return LoginResponseDto.builder()
                 .user_idx(user.getId())
@@ -604,14 +608,7 @@ public class UserService {
         User user = this.checkUser(accessToken);
 
         // refresh token 삭제
-        Set<Object> keys =  redisTemplate.opsForHash().keys("refresh");
-        for (Object key : keys) {
-            Long userIdx = Long.parseLong((String) redisTemplate.opsForHash().get("refresh", key));
-            if (Objects.equals(userIdx, user.getId())) {
-                redisTemplate.opsForHash().delete("refresh", key);
-                break;
-            }
-        }
+        deleteRefreshToken(user);
     }
 
     public LoginResponseDto getAppleUserInfo(AppleCodeReqDto appleCodeReqDto) {
@@ -625,6 +622,7 @@ public class UserService {
             User foundUser = userRepository.findByAppleId(appleOAuthResponse.getSub());
             String accessToken = jwtTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
             String refreshToken = refreshTokenProvider.createToken(foundUser.getId(), foundUser.getRoleList());
+            deleteRefreshToken(foundUser);
             redisTemplate.opsForHash().put("refresh", refreshToken, foundUser.getId().toString());
             return LoginResponseDto.builder()
                     .user_idx(foundUser.getId())
