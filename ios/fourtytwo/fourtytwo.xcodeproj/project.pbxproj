@@ -278,6 +278,7 @@
 		362553E12A08D99F00A2CD4A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E02A08D99F00A2CD4A /* SceneDelegate.swift */; };
 		362553E32A08DA7E00A2CD4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E22A08DA7E00A2CD4A /* AppDelegate.swift */; };
 		362553E72A0A63E300A2CD4A /* OverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E62A0A63E300A2CD4A /* OverView.swift */; };
+		362553E92A0A956A00A2CD4A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E82A0A956A00A2CD4A /* NotificationService.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -592,6 +593,7 @@
 		362553E02A08D99F00A2CD4A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		362553E22A08DA7E00A2CD4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		362553E62A0A63E300A2CD4A /* OverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverView.swift; sourceTree = "<group>"; };
+		362553E82A0A956A00A2CD4A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -822,6 +824,7 @@
 				3606DE2D29F263C50025F0FC /* UserService.swift */,
 				360D52CF29FA078D00F67940 /* AccountService.swift */,
 				360D52D129FA153B00F67940 /* FeedService.swift */,
+				362553E82A0A956A00A2CD4A /* NotificationService.swift */,
 				360D52B629F81C9B00F67940 /* LocationService.swift */,
 				360D52B229F81BA800F67940 /* LocationManager.swift */,
 				360D52B429F81C1600F67940 /* LocationSender.swift */,
@@ -1568,6 +1571,7 @@
 				365B964729FE50E600647950 /* ViewState.swift in Sources */,
 				3606DC0C29EE87CC0025F0FC /* ThirdSectionView.swift in Sources */,
 				360D52B029F79FA800F67940 /* KeychainSwiftDistrib.swift in Sources */,
+				362553E92A0A956A00A2CD4A /* NotificationService.swift in Sources */,
 				360D52CA29F941FF00F67940 /* NavLink.swift in Sources */,
 				362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */,
 				360D52D229FA153B00F67940 /* FeedService.swift in Sources */,
@@ -1797,7 +1801,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cider.fourtytwo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1845,7 +1849,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cider.fourtytwo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
