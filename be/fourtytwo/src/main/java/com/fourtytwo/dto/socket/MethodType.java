@@ -8,8 +8,9 @@ public enum MethodType {
     MOVE,
     NEAR,
     FAR,
-    WRITING_MESSAGE,
+    CHANGE_STATUS,
     MESSAGE_CHANGED,
     EXPRESSION,
-    INFO
+    INFO,
+    CLOSE
 }
