@@ -1,10 +1,12 @@
 import { getAccessToken, getMyInfo } from "../../../../api";
 import { Card } from "../../../../components";
 import MyMessageCardInput from "../../../../components/Input/MyMessageCardInput";
+import { locationState } from "../../../../recoil/location/atoms";
 import { updateNotificationState } from "../../../../recoil/notification/selector";
+import { socketState } from "../../../../recoil/socket/atoms";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
+import { changeStatus, setSessionRefreshToken } from "../../../../utils";
 import HomeMyMessageReaction from "./HomeMyMessageReaction";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -26,6 +28,31 @@ function MyMessageCard({
   const newNotification = useRecoilValue(updateNotificationState);
 
   const [myMessage, setMyMessage] = useState<TMyMessage>();
+
+  const socket = useRecoilValue(socketState);
+  const location = useRecoilValue(locationState);
+
+  const isEdit = () => {
+    setIsMessageEdit(true);
+    if (socket && location) {
+      changeStatus(socket, {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        status: "writing",
+      });
+    }
+  };
+  const isNotEdit = () => {
+    setIsMessageEdit(false);
+    if (socket && location) {
+      changeStatus(socket, {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        status: "watching",
+      });
+    }
+  };
+
   useEffect(() => {
     if (accessToken && !isMessageEdit) {
       getMyInfo(accessToken)
@@ -59,7 +86,7 @@ function MyMessageCard({
       ) : null}
       <div
         onClick={() => {
-          isMessageEdit ? null : setIsMessageEdit(true);
+          isMessageEdit ? null : isEdit();
         }}
         className="my-message"
       >
@@ -68,7 +95,7 @@ function MyMessageCard({
             <p className="my-message-info">지금 나의 생각</p>
             {isMessageEdit ? (
               <MyMessageCardInput
-                onClickCancel={() => setIsMessageEdit(false)}
+                onClickCancel={() => isNotEdit()}
               ></MyMessageCardInput>
             ) : myMessage ? (
               myMessage?.message ? (

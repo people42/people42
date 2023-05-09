@@ -1,7 +1,4 @@
-import { userState } from "../recoil/user/atoms";
-import { getAccessToken } from "./auth";
 import axios from "axios";
-import { useSetRecoilState } from "recoil";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,8 +7,9 @@ export const instance = (
 ) => {
   const axiosInstance = axios.create({
     baseURL: API_URL,
-    timeout: 3000,
+    timeout: 5000,
     headers: header,
+    withCredentials: true,
   });
 
   // axiosInstance.interceptors.response.use(

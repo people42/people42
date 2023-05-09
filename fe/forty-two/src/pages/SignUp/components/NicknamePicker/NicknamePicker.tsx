@@ -70,7 +70,6 @@ function NicknamePicker({ onClick }: nicknamePickerProps) {
   const getNewNickname = async () => {
     getNickname()
       .then((res) => {
-        console.log();
         if (!randomWordAnimation) {
           setRandomWordAnimation(true);
           const splitNickname = res.data.data.nickname.split(" ");
@@ -83,7 +82,7 @@ function NicknamePicker({ onClick }: nicknamePickerProps) {
           }, 100);
         }
       })
-      .catch((e) => console.log(e));
+      .catch((e) => alert("닉네임 로드 실패. 다시 시도해주세요."));
   };
 
   useEffect(() => {

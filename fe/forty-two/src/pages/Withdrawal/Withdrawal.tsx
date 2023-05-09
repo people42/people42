@@ -4,6 +4,7 @@ import {
   postWithdrawalGoogle,
 } from "../../api";
 import Spinner from "../../components/Spinner/Spinner";
+import { isLoginState } from "../../recoil/user/atoms";
 import {
   userAccessTokenState,
   userLogoutState,
@@ -11,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useSearchParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type withdrawalProps = {};
@@ -22,6 +23,7 @@ function Withdrawal({}: withdrawalProps) {
   const [user, userLogout] = useRecoilState(userLogoutState);
   const params = useParams();
   const [searchParams, setSeratchParams] = useSearchParams();
+  const setIsLogin = useSetRecoilState(isLoginState);
 
   useEffect(() => {
     withdrawal(params.platform);
@@ -44,30 +46,19 @@ function Withdrawal({}: withdrawalProps) {
   };
 
   const withdrawalGoogle = () => {
-    if (accessToken) {
-      postWithdrawalGoogle(accessToken)
-        .then((res) => {
+    getAccessToken()
+      .then((res) =>
+        postWithdrawalGoogle(res.data.data.accessToken).then((res) => {
           userLogout(user);
           alert("정상적으로 탈퇴 되었습니다.");
+          setIsLogin(false);
           navigate("/signin");
         })
-        .catch((e) => {
-          if (e.response.status == 401) {
-            getAccessToken()
-              .then((res) =>
-                postWithdrawalGoogle(res.data.data.accessToken).then((res) => {
-                  userLogout(user);
-                  alert("정상적으로 탈퇴 되었습니다.");
-                  navigate("/signin");
-                })
-              )
-              .catch((e) => {
-                alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
-                navigate("/");
-              });
-          }
-        });
-    }
+      )
+      .catch((e) => {
+        alert("회원 탈퇴 중 문제가 발생했습니다. 다시 시도해주세요.");
+        navigate("/");
+      });
   };
 
   const withdrawalApple = () => {
@@ -79,6 +70,7 @@ function Withdrawal({}: withdrawalProps) {
             (res) => {
               userLogout(user);
               alert("정상적으로 탈퇴 되었습니다.");
+              setIsLogin(false);
               navigate("/signin");
             }
           )

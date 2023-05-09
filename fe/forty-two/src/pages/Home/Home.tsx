@@ -29,9 +29,6 @@ function Home() {
         .then(function (res) {
           setUserEmoji(res.data[0].character);
         })
-        .catch(function (e) {
-          console.log(e);
-        });
     }
   }, [user]);
 

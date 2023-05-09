@@ -52,7 +52,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
                 navigate("/");
               })
               .catch((e) => {
-                console.log(e);
                 alertSignUpError(e.response.data.status);
               })
           : alertSignUpError();
@@ -71,7 +70,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
                 navigate("/");
               })
               .catch((e) => {
-                console.log(e);
                 alertSignUpError(e.response.data.status);
               })
           : alertSignUpError();

@@ -1,5 +1,4 @@
 import appStoreBadge from "../../assets/images/badge/Download_on_the_App_Store_Badge_KR_RGB_blk_100317.svg";
-import testFlightBadge from "../../assets/images/badge/Pre-order_on_the_App_Store_Badge_KR_RGB_blk_121217.svg";
 import appIcon from "../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../assets/images/badge/google-play-badge.png";
 import logoBgBlue from "../../assets/images/logo/logo.svg";
@@ -52,7 +51,7 @@ function DeepLink({}: deepLinkProps) {
               location.href = "https://testflight.apple.com/join/YP7D30sc";
             }}
             className="deeplink-badge"
-            src={testFlightBadge}
+            src={appStoreBadge}
           ></img>
           <p className="deeplink-info">베타 버전 배포중</p>
         </>

@@ -5,6 +5,7 @@ import { isLocationPermittedState } from "../../../../recoil/location/atoms";
 import { userLocationUpdateState } from "../../../../recoil/location/selectors";
 import { isLoginState } from "../../../../recoil/user/atoms";
 import HomeMapLocation from "./HomeMapLocation";
+import HomeMapSocket from "./HomeMapSocket";
 import HomeMapPermission from "./HomeMappermission";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -87,6 +88,7 @@ function HomeMap({}: homeMapProps) {
         ) : null}
       </div>
       {isLogin ? <HomeMapLocation></HomeMapLocation> : null}
+      <HomeMapSocket></HomeMapSocket>
       <NaverStaticMap
         setIsMapLoad={setIsMapLoad}
         location={location}

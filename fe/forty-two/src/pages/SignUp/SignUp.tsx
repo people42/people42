@@ -38,9 +38,6 @@ function SignUp() {
       .then(function (res) {
         setTitleEmoji(res.data[0].character);
       })
-      .catch(function (e) {
-        console.log(e);
-      });
   }, [signUpUser]);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
