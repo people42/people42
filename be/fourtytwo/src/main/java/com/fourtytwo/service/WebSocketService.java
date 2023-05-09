@@ -141,6 +141,7 @@ public class WebSocketService extends TextWebSocketHandler {
             userLongitudes.remove(userLongitude);
         }
         locations.remove(session);
+        noResponseSession.remove(session);
         if ("user".equals(session.getAttributes().get("type"))) {
             userSession.remove(session);
         } else {
