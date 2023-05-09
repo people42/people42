@@ -15,6 +15,7 @@ class WebSocketManager: NSObject, ObservableObject {
     
     private var task: URLSessionWebSocketTask?
     @Published var isConnected: Bool = false
+    private var selfClose: Bool = false // 내가 연결을 해제했는지
     
     // 추가: 웹소켓 연결 시도 횟수를 추적하는 속성
     private var reconnectAttempts = 0
@@ -55,7 +56,8 @@ class WebSocketManager: NSObject, ObservableObject {
             print("Invalid URL")
             return
         }
-
+        
+        selfClose = false
         // URLSessionWebSocketTask를 사용하여 웹소켓 연결을 시작합니다.
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue())
         task = session.webSocketTask(with: url)
@@ -87,6 +89,7 @@ class WebSocketManager: NSObject, ObservableObject {
     
     // 웹소켓 연결 해제 메서드
     func disconnect() {
+        selfClose = true
         task?.cancel(with: .goingAway, reason: nil)
     }
     
@@ -227,8 +230,11 @@ class WebSocketManager: NSObject, ObservableObject {
                 updatedUser["latitude"] = newLocation.latitude
                 updatedUser["longitude"] = newLocation.longitude
             }
-
-            self.nearUsers[userIdx] = updatedUser
+            
+            DispatchQueue.main.async {
+                self.nearUsers[userIdx] = updatedUser
+            }
+            
         }
         print("!!!!!!!!!!!!!!!!!!!!!!!")
         print(self.nearUsers) // 수정된 위치 정보 출력
@@ -262,8 +268,10 @@ class WebSocketManager: NSObject, ObservableObject {
             updatedData["latitude"] = newLocation.latitude
             updatedData["longitude"] = newLocation.longitude
         }
-
-        nearUsers[userIdx] = updatedData
+        
+        DispatchQueue.main.async {
+            self.nearUsers[userIdx] = updatedData
+        }
         
         print("User \(userIdx) updated or added")
     }
@@ -278,7 +286,9 @@ class WebSocketManager: NSObject, ObservableObject {
         }
 
         // 유저 제거
-        nearUsers.removeValue(forKey: userIdx)
+        DispatchQueue.main.async {
+            self.nearUsers.removeValue(forKey: userIdx)
+        }
         
         print("User removed: \(userIdx)")
     }
@@ -293,7 +303,9 @@ class WebSocketManager: NSObject, ObservableObject {
         }
         
         // 유저 상태 변경
-        nearUsers[userIdx]?["status"] = status
+        DispatchQueue.main.async {
+            self.nearUsers[userIdx]?["status"] = status
+        }
         
         print("User \(userIdx) status changed to \(status)")
     }
@@ -308,7 +320,9 @@ class WebSocketManager: NSObject, ObservableObject {
         }
         
         // 유저 메시지 변경
-        nearUsers[userIdx]?["message"] = message
+        DispatchQueue.main.async {
+            self.nearUsers[userIdx]?["message"] = message
+        }
         
         print("User \(userIdx) message changed to \(message)")
     }
@@ -316,7 +330,6 @@ class WebSocketManager: NSObject, ObservableObject {
 
 // 위치 재정렬 메서드들
 extension WebSocketManager {
-    // ------------------ 위치 재정렬 메서드들
 
     // 위치 중복 검사 메서드 (다른 사용자)
     func isOverlappingWithOtherUsers(newLatitude: Double, newLongitude: Double) -> Bool {
@@ -376,7 +389,7 @@ extension WebSocketManager {
 
         // 0.02km(= 20m) ~ 0.25km(= 250m) 사이의 랜덤 거리를 생성합니다.
         let minDistance = 0.02 // 20 meters in km
-        let maxDistance = 0.25 // 250 meters in km
+        let maxDistance = 0.22 // 220 meters in km
         let randomDistance = minDistance + (maxDistance - minDistance) * (Double(arc4random()) / Double(UInt32.max))
         
         return getNewLocation(currentLatitude: currentLatitude, currentLongitude: currentLongitude, bearing: randomBearing, distance: randomDistance)
@@ -387,24 +400,36 @@ extension WebSocketManager {
 // URLSessionWebSocketDelegate를 구현하여 웹소켓의 연결 및 해제 상태를 처리합니다.
 extension WebSocketManager: URLSessionWebSocketDelegate {
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        isConnected = true
-        print("웹소켓 연결 성공")
         
-        // 추가: 연결 성공 시 재연결 시도 횟수를 초기화합니다.
-        reconnectAttempts = 0
-        
-        receiveMessage()
-        
-        handleInit()
+        DispatchQueue.main.async {
+            
+            self.isConnected = true
+            print("웹소켓 연결 성공")
+            
+            // 추가: 연결 성공 시 재연결 시도 횟수를 초기화합니다.
+            self.reconnectAttempts = 0
+            
+            self.receiveMessage()
+            
+            self.handleInit()
+            
+        }
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        isConnected = false
-        print("웹소켓 연결 해제: \(closeCode)")
-
-        // 추가: 웹소켓이 비정상적으로 종료된 경우에만 재연결을 시도합니다.
-        if closeCode != .normalClosure {
-            reconnect()
+        
+        DispatchQueue.main.async {
+            
+            self.isConnected = false
+            print("웹소켓 연결 해제: \(closeCode)")
+            
+            // 내가 종료한게 맞다면 재연결하지 않음
+            if self.selfClose == true { return }
+            
+            // 추가: 웹소켓이 비정상적으로 종료된 경우에만 재연결을 시도합니다.
+            if closeCode != .normalClosure {
+                self.reconnect()
+            }
         }
     }
     

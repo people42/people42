@@ -29,17 +29,17 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         self.currentLocation = location
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
                 latitudinalMeters: 500, longitudinalMeters: 500
             )
         }
     }
-    
+
     // 헤딩 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.heading = newHeading.trueHeading
         }
     }
@@ -53,11 +53,11 @@ struct MapView: View {
     @ObservedObject var webSocketManager = WebSocketManager.shared
 
     @State private var metersPerCircle: Double = 100
-    @State private var isHeadingActive = false
+    @State private var isConnect = true
 
     var body: some View {
         ZStack {
-            WrappedMap(region: $locationManager.region, currentLocation: $locationManager.currentLocation, nearUsers: $webSocketManager.nearUsers, isHeadingActive: isHeadingActive, heading: locationManager.heading)
+            OverView(region: $locationManager.region, currentLocation: $locationManager.currentLocation, nearUsers: $webSocketManager.nearUsers, heading: locationManager.heading)
                 .clipShape(Circle())
                 .frame(height: 480)
                 .overlay(
@@ -67,7 +67,7 @@ struct MapView: View {
                         .frame(height: 480)
                 )
                 .scaleEffect(CGSize(width: 1.1, height: 1.1))
-                .overlay(northArrow.opacity(isHeadingActive ? 0 : 1), alignment: .top)
+                .overlay(northArrow.opacity(isConnect ? 0 : 1), alignment: .top)
             
             circles
             
@@ -79,7 +79,12 @@ struct MapView: View {
         }
         .onTapGesture {
             withAnimation(.easeInOut(duration: 1.2)) {
-                isHeadingActive.toggle()
+                isConnect.toggle()
+                if isConnect {
+                    WebSocketManager.shared.connect()
+                } else {
+                    WebSocketManager.shared.disconnect()
+                }
             }
         }
     }
@@ -111,12 +116,12 @@ struct MapView: View {
                 Spacer()
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(isHeadingActive ? Color.green : Color.gray, lineWidth: 2)
+                        .stroke(isConnect ? Color.green : Color.gray, lineWidth: 2)
                         .frame(width: 48, height: 30)
 
-                    Text(isHeadingActive ? "ON" : "OFF")
+                    Text(isConnect ? "ON" : "OFF")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(isHeadingActive ? .green : .gray)
+                        .foregroundColor(isConnect ? .green : .gray)
                 }
             }
             Spacer()
