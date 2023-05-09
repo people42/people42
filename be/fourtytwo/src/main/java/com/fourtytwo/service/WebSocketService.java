@@ -116,7 +116,7 @@ public class WebSocketService extends TextWebSocketHandler {
         log.warning("onError:" + exception.getMessage());
     }
 
-    private void handleClosedSessions(WebSocketSession session) {
+    private void handleClosedSessions(WebSocketSession session) throws Exception {
         Double userLatitude = locations.get(session).get(0);
         Double userLongitude = locations.get(session).get(1);
         Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
@@ -209,7 +209,7 @@ public class WebSocketService extends TextWebSocketHandler {
     }
 
 
-    public Set<WebSocketSession> changeLocation(WebSocketSession session) throws IOException {
+    public Set<WebSocketSession> changeLocation(WebSocketSession session) throws Exception {
         System.out.println("changeLocation 들어옴");
 
 
@@ -308,7 +308,7 @@ public class WebSocketService extends TextWebSocketHandler {
         return nearUserInfos;
     }
 
-    public void sendMessagesToNearUsers(WebSocketSession session, MethodType methodType) throws IOException {
+    public void sendMessagesToNearUsers(WebSocketSession session, MethodType methodType) throws Exception {
         Set<WebSocketSession> nearUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession targetSession : nearUsers) {
@@ -322,7 +322,7 @@ public class WebSocketService extends TextWebSocketHandler {
         }
     }
 
-    public void METHOD_INIT(WebSocketSession session, Map<String, Object> info) throws IOException {
+    public void METHOD_INIT(WebSocketSession session, Map<String, Object> info) throws Exception {
         System.out.println("세팅 전 : "+session.getAttributes());
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
@@ -334,7 +334,7 @@ public class WebSocketService extends TextWebSocketHandler {
         System.out.println("changeLocation 나온 후");
     }
 
-    public void METHOD_MOVE(WebSocketSession session, Map<String, Object> info) throws IOException {
+    public void METHOD_MOVE(WebSocketSession session, Map<String, Object> info) throws Exception {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
         }
@@ -344,7 +344,7 @@ public class WebSocketService extends TextWebSocketHandler {
         System.out.println("changeLocation 나온 후");
     }
 
-    public void METHOD_CHANGE_STATUS(WebSocketSession session, Map<String, Object> info) throws IOException {
+    public void METHOD_CHANGE_STATUS(WebSocketSession session, Map<String, Object> info) throws Exception {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
         }
@@ -356,7 +356,7 @@ public class WebSocketService extends TextWebSocketHandler {
         session.close();
     }
 
-    public void METHOD_MESSAGE_CHANGED(WebSocketSession session, Map<String, Object> info) throws IOException {
+    public void METHOD_MESSAGE_CHANGED(WebSocketSession session, Map<String, Object> info) throws Exception {
         for (String key : info.keySet()) {
             session.getAttributes().put(key, info.get(key));
         }
