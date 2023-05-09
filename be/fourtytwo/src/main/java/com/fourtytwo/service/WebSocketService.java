@@ -77,29 +77,7 @@ public class WebSocketService extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-        Double userLatitude = locations.get(session).get(0);
-        Double userLongitude = locations.get(session).get(1);
-        Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
-        if (!nearUsers.isEmpty()) {
-            for (WebSocketSession otherUserSession : nearUsers) {
-                otherUserSession.sendMessage(new TextMessage(gson.toJson(createMessage(otherUserSession, session, MethodType.CLOSE))));
-                ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
-            }
-        }
-        userLatitudes.get(userLatitude).remove(session);
-        if (userLatitudes.get(userLatitude).isEmpty()) {
-            userLatitudes.remove(userLatitude);
-        }
-        userLongitudes.get(userLongitude).remove(session);
-        if (userLongitudes.get(userLongitude).isEmpty()) {
-            userLongitudes.remove(userLongitude);
-        }
-        locations.remove(session);
-        if ("user".equals(session.getAttributes().get("type"))) {
-            userSession.remove(session);
-        } else {
-            guestSession.remove(session);
-        }
+        handleClosedSessions(session);
     }
 
     @Override
@@ -136,6 +114,32 @@ public class WebSocketService extends TextWebSocketHandler {
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         exception.printStackTrace();
         log.warning("onError:" + exception.getMessage());
+    }
+
+    private void handleClosedSessions(WebSocketSession session) {
+        Double userLatitude = locations.get(session).get(0);
+        Double userLongitude = locations.get(session).get(1);
+        Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
+        if (!nearUsers.isEmpty()) {
+            for (WebSocketSession otherUserSession : nearUsers) {
+                otherUserSession.sendMessage(new TextMessage(gson.toJson(createMessage(otherUserSession, session, MethodType.CLOSE))));
+                ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
+            }
+        }
+        userLatitudes.get(userLatitude).remove(session);
+        if (userLatitudes.get(userLatitude).isEmpty()) {
+            userLatitudes.remove(userLatitude);
+        }
+        userLongitudes.get(userLongitude).remove(session);
+        if (userLongitudes.get(userLongitude).isEmpty()) {
+            userLongitudes.remove(userLongitude);
+        }
+        locations.remove(session);
+        if ("user".equals(session.getAttributes().get("type"))) {
+            userSession.remove(session);
+        } else {
+            guestSession.remove(session);
+        }
     }
 
     public MessageDto createMessage(WebSocketSession recievingSession, WebSocketSession sendingSession, MethodType type) {
@@ -236,6 +240,8 @@ public class WebSocketService extends TextWebSocketHandler {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    handleClosedSessions(targetSession);
                 }
             }
         }
@@ -255,6 +261,8 @@ public class WebSocketService extends TextWebSocketHandler {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    handleClosedSessions(targetSession);
                 }
             }
         }
@@ -305,7 +313,11 @@ public class WebSocketService extends TextWebSocketHandler {
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession targetSession : nearUsers) {
                 String message = gson.toJson(createMessage(targetSession, session, methodType));
-                targetSession.sendMessage(new TextMessage(message));
+                if (targetSession.isOpen()) {
+                    targetSession.sendMessage(new TextMessage(message));
+                } else {
+                    handleClosedSessions(targetSession);
+                }
             }
         }
     }
