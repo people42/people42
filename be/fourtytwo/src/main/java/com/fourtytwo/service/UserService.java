@@ -242,6 +242,9 @@ public class UserService {
                 if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                     throw new AuthenticationServiceException("유효하지 않은 토큰입니다.");
                 }
+                if (userRepository.findByEmail("google_" + signupRequestDto.getEmail()) != null) {
+                    throw new DataIntegrityViolationException("이미 존재하는 사용자입니다.");
+                }
                 break;
             }
             case "webApple": {
