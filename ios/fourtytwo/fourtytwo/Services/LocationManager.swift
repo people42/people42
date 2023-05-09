@@ -3,6 +3,9 @@ import CoreLocation
 
 // LocationManager 클래스는 사용자의 현재 위치를 추적하고 관리하는 역할을 하는 클래스입니다.
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    
+    // 싱글톤 인스턴스 생성
+    static let shared = LocationManager()
 
     // CLLocationManager 인스턴스를 생성하여 위치 관련 이벤트를 처리할 수 있도록 합니다.
     private let locationManager = CLLocationManager()

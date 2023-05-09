@@ -4,9 +4,6 @@ import UIKit
 
 class WebSocketManager: NSObject, ObservableObject {
     
-    // 나의 위치를 저장하는 프로퍼티 추가
-    var myLocation: CLLocation?
-    
     // 싱글톤 인스턴스 생성
     static let shared = WebSocketManager()
     
@@ -234,10 +231,8 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers[userIdx] = updatedUser
         }
         print("!!!!!!!!!!!!!!!!!!!!!!!")
-        print(nearUsers)
+        print(self.nearUsers) // 수정된 위치 정보 출력
     }
-
-
 
 
     // 메서드 Near 처리
@@ -342,24 +337,49 @@ extension WebSocketManager {
 
     // 위치 중복 검사 메서드 (중앙 위치)
     func isOverlappingWithCenter(newLatitude: Double, newLongitude: Double) -> Bool {
-        guard let myLocation = myLocation else {
+        guard let myLocation = locationManager.currentLocation else {
             print("My location not available.")
             return false
         }
         let newLocation = CLLocation(latitude: newLatitude, longitude: newLongitude)
         let distance = newLocation.distance(from: myLocation)
-        return distance <= 10.0 // 10미터 이내에 있는 경우
+        return distance <= 20.0 // 10미터 이내에 있는 경우
     }
 
     // 새 위치 생성 메서드
-    func getNewLocation(currentLatitude: Double, currentLongitude: Double) -> (latitude: Double, longitude: Double) {
-        // 임의의 방향과 거리를 이용하여 새 위치 생성
-        // 이 예제에서는 임의의 값으로 0.001도를 사용합니다.
-        let randomAngle = Double(arc4random_uniform(360)) * Double.pi / 180.0 // 0 ~ 360도
-        let distance = 0.001 * 0.5 // 약 111미터 = 0.001
-        let newLatitude = currentLatitude + distance * cos(randomAngle)
-        let newLongitude = currentLongitude + distance * sin(randomAngle)
+    func getNewLocation(currentLatitude: Double, currentLongitude: Double, bearing: Double, distance: Double) -> (latitude: Double, longitude: Double) {
+        let earthRadius = 6371.0 // 지구의 반지름 (킬로미터 단위)
+        let radianDistance = distance / earthRadius // 거리를 라디안 단위로 변환
+        let radianBearing = bearing * .pi / 180.0 // 방향을 라디안 단위로 변환
+        
+        let radianLatitude = currentLatitude * .pi / 180.0 // 현재 위도를 라디안 단위로 변환
+        let radianLongitude = currentLongitude * .pi / 180.0 // 현재 경도를 라디안 단위로 변환
+        
+        let newRadianLatitude = asin(sin(radianLatitude) * cos(radianDistance) + cos(radianLatitude) * sin(radianDistance) * cos(radianBearing))
+        var newRadianLongitude = radianLongitude + atan2(sin(radianBearing) * sin(radianDistance) * cos(radianLatitude), cos(radianDistance) - sin(radianLatitude) * sin(newRadianLatitude))
+        
+        // 새로운 경도가 -π보다 작거나 π보다 큰 경우, 적절한 범위(-π ~ π)로 조정
+        if newRadianLongitude < -Double.pi {
+            newRadianLongitude += 2.0 * .pi
+        } else if newRadianLongitude > Double.pi {
+            newRadianLongitude -= 2.0 * .pi
+        }
+        
+        let newLatitude = newRadianLatitude * 180.0 / .pi // 새 위도를 도 단위로 변환
+        let newLongitude = newRadianLongitude * 180.0 / .pi // 새 경도를 도 단위로 변환
+        
         return (newLatitude, newLongitude)
+    }
+    
+    func getNewLocation(currentLatitude: Double, currentLongitude: Double) -> (latitude: Double, longitude: Double) {
+        let randomBearing = Double(arc4random_uniform(360)) // 0 ~ 360도
+
+        // 0.02km(= 20m) ~ 0.25km(= 250m) 사이의 랜덤 거리를 생성합니다.
+        let minDistance = 0.02 // 20 meters in km
+        let maxDistance = 0.25 // 250 meters in km
+        let randomDistance = minDistance + (maxDistance - minDistance) * (Double(arc4random()) / Double(UInt32.max))
+        
+        return getNewLocation(currentLatitude: currentLatitude, currentLongitude: currentLongitude, bearing: randomBearing, distance: randomDistance)
     }
 
 }
@@ -395,12 +415,5 @@ extension WebSocketManager: URLSessionWebSocketDelegate {
             // 추가: 웹소켓 연결에 실패한 경우 재연결을 시도합니다.
             reconnect()
         }
-    }
-}
-
-extension WebSocketManager: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        myLocation = location
     }
 }
