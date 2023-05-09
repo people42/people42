@@ -1,8 +1,11 @@
 package com.cider.fourtytwo.Signup
 
+import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -25,6 +29,7 @@ import com.cider.fourtytwo.network.Model.MessageResponse
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -38,6 +43,7 @@ class GuideFragment : Fragment() {
     val api = RetrofitInstance.getInstance().create(Api::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        askNotificationPermission()
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,25 +62,13 @@ class GuideFragment : Fragment() {
         }
         // 내 이모지
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
-        // 내 말풍선 색
-//        binding.guideBackgroundTint.backgroundTintList = when (myColor) {
-//            "red" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
-//            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.orange))
-//            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
-//            "green" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
-//            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sky))
-//            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))
-//            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.purple))
-//            else -> throw IllegalArgumentException("Invalid color value: $myColor")
-//        }
+
         binding.thinkCloudButton.setOnClickListener {
             // 내 생각 전송
             lifecycleScope.launch {
                 setMessage(userDataStore.get_access_token.first(), binding.guideText.text.toString())
                 Log.d(TAG, "메세지 전송 1 : 토큰 ${userDataStore.get_access_token.first()}")
                 Log.d(TAG, "메세지 전송 1: 메세지 ${binding.guideText.text.toString()}")
-            }.isCompleted.let {
-
             }
             // 메인으로 이동
             val intent = Intent(requireContext(), MainActivity::class.java)
@@ -88,8 +82,6 @@ class GuideFragment : Fragment() {
                     setMessage(userDataStore.get_access_token.first(), binding.guideText.text.toString())
                     Log.d(TAG, "메세지 전송 1 : 토큰 ${userDataStore.get_access_token.first()}")
                     Log.d(TAG, "메세지 전송 1: 메세지 ${binding.guideText.text.toString()}")
-                }.isCompleted.let {
-
                 }
                 // 메인으로 이동
                 val intent = Intent(requireContext(), MainActivity::class.java)
@@ -108,6 +100,40 @@ class GuideFragment : Fragment() {
                 .navigate(R.id.action_guideFragment_to_MainActivity)
         }
     }
+    // Declare the launcher at the top of your Activity/Fragment:
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // FCM SDK (and your app) can post notifications.
+        } else {
+            // TODO: Inform user that that your app will not show notifications.
+            val snackBar = Snackbar.make((binding.snackbarLayout), "소중한 사이의 생각 알림을 받을 수 없어요", Snackbar.LENGTH_INDEFINITE)
+            snackBar.setAction("확인") {}
+            snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            snackBar.show()
+        }
+    }
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // FCM SDK (and your app) can post notifications.
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // TODO: display an educational UI explaining to the user the features that will be enabled
+                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+                //       If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+    // [END ask_post_notifications]
+
     fun setMessage(Header: String, myMessage: String){
         var params = HashMap<String, String>()
         params.put("message", myMessage)

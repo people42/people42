@@ -6,6 +6,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -18,6 +19,7 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -42,12 +44,14 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
@@ -71,18 +75,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lastKnownLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-//            if (!task.isSuccessful) {
-//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-//                return@OnCompleteListener
-//            }
-//
-//            // Get new FCM registration token
-//            val token = task.result
-//
-//            Log.d(TAG, "파이어베이스 $token")
-//        })
-
         // 화면이 구성될 때, 메인 테마로 변경
         setTheme(R.style.Theme_Fourtytwo)
         // 로고 장착
@@ -168,19 +160,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 // 피드
-//        feedAdapter.setItemClickListener(object: FeedAdapter.OnItemClickListener{
-//            override fun onClick(v: View, position: Int) {
-//                // 클릭 시 이벤트 작성
-//                Log.d(TAG, "onClick: 작동하긴함")
-//                Log.d(TAG, "onClick: ${feedList[position].placeWithTimeInfo.placeName}")
-
-//                val intent = Intent(this@MainActivity, PlaceActivity::class.java)
-//                intent.putExtra("placeIdx", feedList[position].placeWithTimeInfo.placeIdx)
-//                intent.putExtra("time", feedList[position].placeWithTimeInfo.time)
-//                intent.putExtra("placeName", feedList[position].placeWithTimeInfo.placeName)
-//                startActivity(intent)
-//            }
-//        })
 
 // 레이더 애니메이션
         val scaleAnimation = ScaleAnimation(
@@ -377,6 +356,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 intent.putExtra("placeName", feedList[position].placeWithTimeInfo.placeName)
                                 startActivity(intent)
                             }
+                            override fun onEmotionClick(v: View, position: Int, emotion: String, messageIdx : Int) {
+                                val params = HashMap<String, Any>()
+                                params.put("emotion", emotion)
+                                params.put("messageIdx", messageIdx)
+                                setEmotion(params)
+                            }
                         })
                     }
                     Log.i(TAG, "getRecentFeed_onResponse feedList: $feedList")
@@ -397,6 +382,38 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         return feedList
     }
+    fun setEmotion(params : HashMap<String, Any>){
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            val refreshToken = userDataStore.get_refresh_token.first()
+            api.setEmotion(token, params).enqueue(object : Callback<MessageResponse> {
+                override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                    response.body()?.let {
+                        if (it.status == 200) {
+                            Log.i(TAG, "공감 완료")
+                        } else if (response.code() == 401){
+                            api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                    response.body()?.let {
+                                        if (it.status == 200) {
+                                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                            response.body()?.data?.let {
+                                                it1 -> lifecycleScope.launch {
+                                                    userDataStore.setUserData(it1)
+                                                    setEmotion(params)
+                                        } }
+                                        } else {
+                                            Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                } } }
+                                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                    Log.d("토큰 전송 on failure: ", t.message.toString())
+                        } })
+                        }else {
+                            Log.i(TAG, "공감 실패 코드: ${response.code()}")
+                } } }
+                override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                    Log.d("공감 on failure: ", t.message.toString())
+    } }) } }
     fun getToken(type : String, double : HashMap<String, Double>?) {
         lifecycleScope.launch {
             val refreshToken = userDataStore.get_refresh_token.first()
@@ -453,18 +470,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             else -> super.onOptionsItemSelected(item)
         }
     }
-//    var backPressedTime : Long = 0
-//    override fun onBackPressed() {
-//        //2.5초이내에 한 번 더 뒤로가기 클릭 시
-//        if (System.currentTimeMillis() - backPressedTime < 1500) {
-//            super.getOnBackPressedDispatcher()
-//            return
-//        }
-//        Toast.makeText(this, "한번 더 클릭 시 홈으로 이동됩니다.", Toast.LENGTH_SHORT).show()
-//        backPressedTime = System.currentTimeMillis()
-//    }
+    var backPressedTime : Long = 0
+    override fun onBackPressed() {
+        //2.5초이내에 한 번 더 뒤로가기 클릭 시
+        if (System.currentTimeMillis() - backPressedTime < 1500) {
+            super.getOnBackPressedDispatcher()
+            exitProcess(0)
+        }
+        Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+        backPressedTime = System.currentTimeMillis()
+    }
 
-    // [START ask_post_notifications]
     // Declare the launcher at the top of your Activity/Fragment:
 //    private val requestPermissionLauncher = registerForActivityResult(
 //        ActivityResultContracts.RequestPermission()
@@ -473,6 +489,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 //            // FCM SDK (and your app) can post notifications.
 //        } else {
 //            // TODO: Inform user that that your app will not show notifications.
+//            val snackBar = Snackbar.make(findViewById(R.id.main_root_layout), "소중한 사이의 생각 알림을 받을 수 없어요", Snackbar.LENGTH_INDEFINITE)
+//            snackBar.setAction("확인") {}
+//            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+//            snackBar.show()
 //        }
 //    }
 //
@@ -582,7 +602,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locationPermissionGranted = false
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
-
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -613,12 +632,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 map?.uiSettings?.isMyLocationButtonEnabled = false // 내 위치 버튼 숨기기
 //                map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
 //                map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
-
             } else {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false
                 lastKnownLocation = null
-                getLocationPermission()
+//                getLocationPermission()
             }
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)

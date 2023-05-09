@@ -98,6 +98,7 @@ class PersonActivity : AppCompatActivity() {
                         Glide.with(this@PersonActivity)
                             .asBitmap()
                             .load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${personEmoji}.gif")
+                            .override(100, 100)
                             .into(object : SimpleTarget<Bitmap>() {
                                 override fun onResourceReady(
                                     resource: Bitmap,
@@ -119,7 +120,7 @@ class PersonActivity : AppCompatActivity() {
                                         }
                                 } // 마커를 포함하는 위치로 지도 이동
                                 val bounds = builder.build()
-                                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 500) // 100: padding 값
+                                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300) // 100: padding 값
                                 googleMap.moveCamera(cameraUpdate)
                             }
                         })
