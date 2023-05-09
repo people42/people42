@@ -200,7 +200,7 @@ class WebSocketManager: NSObject, ObservableObject {
             print("Unhandled method: \(method)")
         }
     }
-    // 기존 코드
+
     // 메서드 Info 처리
     private func handleInfoMessage(_ json: [String: Any]) {
         guard let data = json["data"] as? [String: Any],
@@ -213,102 +213,64 @@ class WebSocketManager: NSObject, ObservableObject {
         self.nearUsers = [:]
 
         for user in nearUsers {
-            guard let userIdx = user["userIdx"] as? Int else {
-                continue
+            guard let userIdx = user["userIdx"] as? Int,
+                  let type = user["type"] as? String,
+                  type != "guest" else {
+                continue // type이 "guest"인 경우 건너뜀
             }
 
-            self.nearUsers[userIdx] = user
+            // 위치 비교를 위해 새로운 변수 생성
+            var updatedUser = user
+
+            // latitude와 longitude 정보가 존재할 경우, 중앙과 겹치지 않도록 새로운 위치를 가져옴
+            if let latitude = user["latitude"] as? Double,
+               let longitude = user["longitude"] as? Double,
+               isOverlappingWithCenter(newLatitude: latitude, newLongitude: longitude) {
+                let newLocation = getNewLocation(currentLatitude: latitude, currentLongitude: longitude)
+                updatedUser["latitude"] = newLocation.latitude
+                updatedUser["longitude"] = newLocation.longitude
+            }
+
+            self.nearUsers[userIdx] = updatedUser
         }
         print("!!!!!!!!!!!!!!!!!!!!!!!")
         print(nearUsers)
     }
-    
+
+
+
+
     // 메서드 Near 처리
     private func handleNearMessage(_ json: [String: Any]) {
         guard let data = json["data"] as? [String: Any],
               let type = data["type"] as? String,
-              let userIdx = data["userIdx"] as? Int,
-              type != "guest" else { // type이 "guest"이면 무시
-            print("Invalid NEAR message format or guest user")
+              let userIdx = data["userIdx"] as? Int else {
+            print("Invalid NEAR message format")
+            return
+        }
+        
+        // type이 "guest"이면 무시
+        guard type != "guest" else {
+            print("Guest user")
             return
         }
         
         // 새로운 유저 추가 혹은 기존 유저 정보 갱신
-        nearUsers[userIdx] = data
+        var updatedData = data
+        
+        // latitude와 longitude 정보가 존재할 경우, 중앙이나 다른 사용자와 겹치지 않도록 새로운 위치를 가져옴
+        if let latitude = data["latitude"] as? Double,
+           let longitude = data["longitude"] as? Double,
+           isOverlappingWithOtherUsers(newLatitude: latitude, newLongitude: longitude) ||
+           isOverlappingWithCenter(newLatitude: latitude, newLongitude: longitude) {
+            let newLocation = getNewLocation(currentLatitude: latitude, currentLongitude: longitude)
+            updatedData["latitude"] = newLocation.latitude
+            updatedData["longitude"] = newLocation.longitude
+        }
+
+        nearUsers[userIdx] = updatedData
         
         print("User \(userIdx) updated or added")
-    }
-
-    // 변경코드
-    // 메서드 Info 처리
-    private func handleInfoMessage(_ json: [String: Any]) {
-        guard let data = json["data"] as? [String: Any],
-              let userIdx = data["userIdx"] as? Int,
-              let latitude = data["latitude"] as? Double,
-              let longitude = data["longitude"] as? Double else {
-            print("Invalid INFO message format")
-            return
-        }
-        
-        var updatedLatitude = latitude
-        var updatedLongitude = longitude
-        
-        if isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) || isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) {
-            print("위치가 중앙과 10미터 이내. 새로운 위치로 이동합니다.")
-            let newLocation = getNewLocation(currentLatitude: updatedLatitude, currentLongitude: updatedLongitude)
-            updatedLatitude = newLocation.latitude
-            updatedLongitude = newLocation.longitude
-        }
-
-        if isOverlappingWithOtherUsers(newLatitude: updatedLatitude, newLongitude: updatedLongitude) || isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) {
-            print("위치가 10미터 이내. 새로운 위치로 이동합니다.")
-            let newLocation = getNewLocation(currentLatitude: updatedLatitude, currentLongitude: updatedLongitude)
-            updatedLatitude = newLocation.latitude
-            updatedLongitude = newLocation.longitude
-        }
-        
-        // 유저 추가
-        nearUsers[userIdx] = ["latitude": updatedLatitude, "longitude": updatedLongitude]
-        
-        print("User added: \(userIdx), location: (\(updatedLatitude), \(updatedLongitude))")
-    }
-
-    // 메서드 Near 처리
-    private func handleNearMessage(_ json: [String: Any]) {
-        guard let data = json["data"] as? [[String: Any]] else {
-            print("Invalid NEAR message format")
-            return
-        }
-
-        for userData in data {
-            guard let userIdx = userData["userIdx"] as? Int,
-                  let latitude = userData["latitude"] as? Double,
-                  let longitude = userData["longitude"] as? Double else {
-                print("Invalid user data in NEAR message")
-                continue
-            }
-
-            var updatedLatitude = latitude
-            var updatedLongitude = longitude
-            
-            if isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) || isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) {
-                print("위치가 중앙과 10미터 이내. 새로운 위치로 이동합니다.")
-                let newLocation = getNewLocation(currentLatitude: updatedLatitude, currentLongitude: updatedLongitude)
-                updatedLatitude = newLocation.latitude
-                updatedLongitude = newLocation.longitude
-            }
-
-            if isOverlappingWithOtherUsers(newLatitude: updatedLatitude, newLongitude: updatedLongitude) || isOverlappingWithCenter(newLatitude: updatedLatitude, newLongitude: updatedLongitude) {
-                print("위치가 10미터 이내. 새로운 위치로 이동합니다.")
-                let newLocation = getNewLocation(currentLatitude: updatedLatitude, currentLongitude: updatedLongitude)
-                updatedLatitude = newLocation.latitude
-                updatedLongitude = newLocation.longitude
-            }
-
-            nearUsers[userIdx] = ["latitude": updatedLatitude, "longitude": updatedLongitude]
-        }
-        
-        print("NEAR message processed, \(data.count) users added/updated")
     }
 
 
