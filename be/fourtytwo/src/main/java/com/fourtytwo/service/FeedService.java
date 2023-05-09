@@ -16,6 +16,7 @@ import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -233,35 +234,59 @@ public class FeedService {
     }
 
     public UserPlaceFeedResDto findUserPlaceFeeds(String accessToken, Long targetIdx, Long placeIdx) {
+
+//        @AllArgsConstructor
+//        @Getter
+//        class BrushInfo {
+//            private Long myMessageIdx;
+//            private Long oppositeMessageIdx;
+//            private LocalDateTime createdAt;
+//        }
+
         Long userIdx = checkUserByAccessToken(accessToken);
-        Place place = placeRepository.findPlaceById(placeIdx);
-        List<UserMessageResDto> messages = new ArrayList<>();
+        List<UserMessageResDto> userMessageResDtos = new ArrayList<>();
+//        Set<BrushInfo> brushMemo = new HashSet<>();
 
         Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
         Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
 
         List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
-            UserMessageResDto message = new UserMessageResDto();
+            UserMessageResDto userMessageResDto = new UserMessageResDto();
+            Message myMessage;
+            Message oppositeMessage;
             if (userIdx < targetIdx) {
-                message.setMessageIdx(brush.getMessage2().getId());
-                message.setContent(brush.getMessage2().getContent());
-                message.setTime(brush.getCreatedAt().withNano(0));
-                message.setIsInappropriate(brush.getMessage2().getIsInappropriate());
-                Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage2(), userIdx);
-                message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
+                myMessage = brush.getMessage1();
+                oppositeMessage = brush.getMessage2();
             } else {
-                message.setMessageIdx(brush.getMessage1().getId());
-                message.setContent(brush.getMessage1().getContent());
-                message.setTime(brush.getCreatedAt().withNano(0));
-                message.setIsInappropriate(brush.getMessage1().getIsInappropriate());
-                Optional<Expression> expression = expressionRepository.findByMessageAndUserId(brush.getMessage1(), userIdx);
-                message.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
+                myMessage = brush.getMessage2();
+                oppositeMessage = brush.getMessage1();
             }
-            messages.add(message);
+
+//            BrushInfo currentBrushInfo = new BrushInfo(myMessage.getId(), oppositeMessage.getId(), brush.getCreatedAt());
+//            boolean flag = false;
+//            for (BrushInfo brushInfo : brushMemo) {
+//                if (brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
+//                        brushInfo.getCreatedAt().minusHours(1L).isBefore(currentBrushInfo.getCreatedAt())) {
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            if (flag) {
+//                continue;
+//            }
+//            brushMemo.add(currentBrushInfo);
+
+            userMessageResDto.setMessageIdx(oppositeMessage.getId());
+            userMessageResDto.setContent(oppositeMessage.getContent());
+            userMessageResDto.setTime(brush.getCreatedAt().withNano(0));
+            userMessageResDto.setIsInappropriate(oppositeMessage.getIsInappropriate());
+            Optional<Expression> expression = expressionRepository.findByMessageAndUserId(oppositeMessage, userIdx);
+            userMessageResDto.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
+            userMessageResDtos.add(userMessageResDto);
         }
         return UserPlaceFeedResDto.builder()
-                .messagesInfo(messages)
+                .messagesInfo(userMessageResDtos)
                 .brushCnt(brushes.size())
                 .build();
     }
