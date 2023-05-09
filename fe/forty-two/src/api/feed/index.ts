@@ -8,6 +8,14 @@ export async function getRecentFeed(accessToken: string) {
     "ACCESS-TOKEN": accessToken,
   }).get("feed/recent");
 }
+/**
+ * [GET] "feed/new" 최근 피드 조회
+ */
+export async function getNewFeed(accessToken: string) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).get("feed/new");
+}
 
 /**
  * [POST] "feed/emotion" 피드 리액션 추가/삭제
