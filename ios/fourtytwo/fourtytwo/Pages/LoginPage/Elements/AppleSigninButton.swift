@@ -85,7 +85,7 @@ struct AppleSigninButton : View{
                         APIManager.shared.setAccessToken(at: userData.accessToken, rt: userData.refreshToken)
                         
                         // 소켓 연결
-                        WebSocketManager.shared.connect()
+//                        WebSocketManager.shared.connect()
                         
                         // 홈으로 이동
                         print("Navigate to the home screen")

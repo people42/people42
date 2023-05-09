@@ -49,13 +49,15 @@ struct MapView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject private var locationManager = MapManager()
+    
+    @ObservedObject var webSocketManager = WebSocketManager.shared
 
     @State private var metersPerCircle: Double = 100
     @State private var isHeadingActive = false
 
     var body: some View {
         ZStack {
-            WrappedMap(region: $locationManager.region, currentLocation: $locationManager.currentLocation, isHeadingActive: isHeadingActive, heading: locationManager.heading)
+            WrappedMap(region: $locationManager.region, currentLocation: $locationManager.currentLocation, nearUsers: $webSocketManager.nearUsers, isHeadingActive: isHeadingActive, heading: locationManager.heading)
                 .clipShape(Circle())
                 .frame(height: 480)
                 .overlay(

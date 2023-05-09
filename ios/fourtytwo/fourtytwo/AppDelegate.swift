@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: MessagingDelegate {
     // fcm 등록 토큰을 받았을 때
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("토큰을 받았다")
+//        print("토큰을 받았다")
         if let token = fcmToken {
             let dataDict: [String: String] = ["token": token]
 //            print(dataDict)
