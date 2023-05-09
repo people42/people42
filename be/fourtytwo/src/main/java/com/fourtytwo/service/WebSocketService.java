@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -36,6 +37,7 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final Map<WebSocketSession, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLatitudes = new ConcurrentSkipListMap<>();
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLongitudes = new ConcurrentSkipListMap<>();
+    private static final Set<WebSocketSession> noResponseSession = Collections.synchronizedSet(new HashSet<>());
 
     private final Gson gson = new Gson();
     private final UserRepository userRepository;
@@ -104,6 +106,8 @@ public class WebSocketService extends TextWebSocketHandler {
             METHOD_MESSAGE_CHANGED(session, info);
         } else if (method.equals(MethodType.CLOSE.name())) {
             METHOD_CLOSE(session, info);
+        } else if (method.equals(MethodType.PONG.name())) {
+            METHOD_PONG(session, info);
         }
         {
             // 다른 메소드 처리를 여기에 추가합니다.
@@ -122,8 +126,10 @@ public class WebSocketService extends TextWebSocketHandler {
         Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession otherUserSession : nearUsers) {
-                otherUserSession.sendMessage(new TextMessage(gson.toJson(createMessage(otherUserSession, session, MethodType.CLOSE))));
-                ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
+                if (otherUserSession.isOpen()) {
+                    otherUserSession.sendMessage(new TextMessage(gson.toJson(createMessage(otherUserSession, session, MethodType.CLOSE))));
+                    ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
+                }
             }
         }
         userLatitudes.get(userLatitude).remove(session);
@@ -210,33 +216,25 @@ public class WebSocketService extends TextWebSocketHandler {
 
 
     public Set<WebSocketSession> changeLocation(WebSocketSession session) throws Exception {
-        System.out.println("changeLocation 들어옴");
 
 
         List<Double> location = Arrays.asList((Double) session.getAttributes().get("latitude"), (Double) session.getAttributes().get("longitude"));
         Set<WebSocketSession> nearUsers = getNearUsers(location);
 
-        System.out.println(nearUsers);
         Set<WebSocketSession> farUsers = new HashSet<>((Set<WebSocketSession>) session.getAttributes().get("nearUsers"));
         locations.put(session, location);
         renewGps(session, location);
-        System.out.println(nearUsers);
-        System.out.println(farUsers);
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession targetSession : nearUsers) {
-                System.out.println("a");
                 if (targetSession.getAttributes().get("type").equals("user")) {
                     if (targetSession.getAttributes().get("userIdx").equals(session.getAttributes().get("userIdx"))) {continue;}
                 }
                 ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).add(session);
                 ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).add(targetSession);
-                System.out.println("1번"+session.getAttributes());
                 if (targetSession.isOpen()) {
                     String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.NEAR));
-                    System.out.println("c");
                     try {
                         targetSession.sendMessage(new TextMessage(targetMessage));
-                        System.out.println("d");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -245,17 +243,13 @@ public class WebSocketService extends TextWebSocketHandler {
                 }
             }
         }
-        System.out.println("2번"+session.getAttributes());
         farUsers.removeAll(nearUsers);
-        System.out.println("3번"+session.getAttributes());
-        System.out.println("멀어짐 : "+farUsers);
         if (!farUsers.isEmpty()) {
-            System.out.println("에이 설마");
             for (WebSocketSession targetSession : farUsers) {
                 ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).remove(session);
                 ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).remove(targetSession);
                 if (targetSession.isOpen()) {
-                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.FAR));
+                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.CLOSE));
                     try {
                         targetSession.sendMessage(new TextMessage(targetMessage));
                     } catch (IOException e) {
@@ -269,7 +263,6 @@ public class WebSocketService extends TextWebSocketHandler {
         System.out.println(session.getAttributes());
         MessageDto messageDto = createMessage(session, null, MethodType.INFO);
         String message = gson.toJson(messageDto);
-        System.out.println("혹시");
         session.sendMessage(new TextMessage(message));
 
 
@@ -288,9 +281,6 @@ public class WebSocketService extends TextWebSocketHandler {
         } else {
             userLongitudes.put(location.get(1), new HashSet<>(Collections.singletonList(session)));
         }
-        System.out.println("위도들 : "+userLatitudes);
-        System.out.println("경도들 : "+userLongitudes);
-        System.out.println("위치들 : "+locations);
     }
 
     public Set<WebSocketSession> getNearUsers(List<Double> location) {
@@ -369,6 +359,52 @@ public class WebSocketService extends TextWebSocketHandler {
         }
 
         sendMessagesToNearUsers(session, MethodType.MESSAGE_CHANGED);
+    }
+
+    public void METHOD_PONG(WebSocketSession session, Map<String, Object> info) {
+        if (!noResponseSession.isEmpty()) {
+            noResponseSession.remove(session);
+        }
+    }
+
+    @Scheduled(fixedRate = 100000)
+    public void customTimeOut() throws Exception {
+        if (!noResponseSession.isEmpty()) {
+            for (WebSocketSession session : noResponseSession) {
+                if (session.isOpen()) {
+                    session.close();
+                } else { handleClosedSessions(session); }
+            }
+        }
+        noResponseSession.clear();
+        if (!guestSession.isEmpty()) {
+            noResponseSession.addAll(guestSession);
+        }
+        if (!userSession.isEmpty()) {
+            noResponseSession.addAll(userSession.keySet());
+        }
+    }
+
+    @Scheduled(fixedRate = 20000)
+    public void sendPING() throws Exception {
+        if (!guestSession.isEmpty()) {
+            for (WebSocketSession session : guestSession) {
+                if (session.isOpen()) {
+                    Map<String, Object> checkMessage = new HashMap<>();
+                    checkMessage.put("method", "PING");
+                    session.sendMessage(new TextMessage(gson.toJson(checkMessage)));
+                } else { handleClosedSessions(session); }
+            }
+        }
+        if (!userSession.isEmpty()) {
+            for (WebSocketSession session : userSession.keySet()) {
+                if (session.isOpen()) {
+                    Map<String, Object> checkMessage = new HashMap<>();
+                    checkMessage.put("method", "PING");
+                    session.sendMessage(new TextMessage(gson.toJson(checkMessage)));
+                } else { handleClosedSessions(session); }
+            }
+        }
     }
 
 }
