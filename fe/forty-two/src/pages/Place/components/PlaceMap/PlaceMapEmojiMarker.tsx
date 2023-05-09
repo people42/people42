@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-type placeMapEmojiMarkerProps = { emoji: string };
+type placeMapEmojiMarkerProps = { emoji: string; idx: number };
 
-function PlaceMapEmojiMarker({ emoji }: placeMapEmojiMarkerProps) {
+function PlaceMapEmojiMarker({ emoji, idx }: placeMapEmojiMarkerProps) {
   const S3_URL = import.meta.env.VITE_S3_URL;
 
   return (
@@ -15,6 +15,8 @@ function PlaceMapEmojiMarker({ emoji }: placeMapEmojiMarkerProps) {
       <div
         className="emoji"
         style={{
+          animation: `popIn 0.3s both`,
+          animationDelay: `${0.1 * idx}s`,
           width: 40,
           height: 40,
           backgroundSize: "cover",
