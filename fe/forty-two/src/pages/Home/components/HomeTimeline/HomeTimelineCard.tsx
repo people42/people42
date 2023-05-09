@@ -32,15 +32,49 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
               </div>
               <div className="home-timeline-emoji">
                 {props.recentUsersInfo.repeatUserEmojis.map((value, idx) => {
-                  return (
-                    <div
-                      className="home-timeline-emoji-icon"
-                      key={`near-user-${idx}`}
-                      style={{
-                        backgroundImage: `url("${S3_URL}emoji/animate/${value}.gif")`,
-                      }}
-                    ></div>
-                  );
+                  if (idx < 3) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/animate/${value}.gif")`,
+                        }}
+                      ></div>
+                    );
+                  } else if (idx < 6) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                        }}
+                      ></div>
+                    );
+                  } else if (idx == 6) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                          filter: "opacity(0.6)",
+                        }}
+                      ></div>
+                    );
+                  } else if (idx == 7) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                          filter: "opacity(0.2)",
+                        }}
+                      ></div>
+                    );
+                  }
                 })}
               </div>
             </>
@@ -52,15 +86,49 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
               </div>
               <div className="home-timeline-emoji">
                 {props.recentUsersInfo.firstTimeUserEmojis.map((value, idx) => {
-                  return (
-                    <div
-                      className="home-timeline-emoji-icon"
-                      key={`near-user-${idx}`}
-                      style={{
-                        backgroundImage: `url("${S3_URL}emoji/animate/${value}.gif")`,
-                      }}
-                    ></div>
-                  );
+                  if (idx < 3) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/animate/${value}.gif")`,
+                        }}
+                      ></div>
+                    );
+                  } else if (idx < 6) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                        }}
+                      ></div>
+                    );
+                  } else if (idx == 6) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                          filter: "opacity(0.6)",
+                        }}
+                      ></div>
+                    );
+                  } else if (idx == 7) {
+                    return (
+                      <div
+                        className="home-timeline-emoji-icon"
+                        key={`near-user-${idx}`}
+                        style={{
+                          backgroundImage: `url("${S3_URL}emoji/static/${value}.png")`,
+                          filter: "opacity(0.2)",
+                        }}
+                      ></div>
+                    );
+                  }
                 })}
               </div>
             </>
@@ -75,16 +143,16 @@ export default HomeTimelineCard;
 
 const StyledHomeTimelineCard = styled.div`
   cursor: pointer;
-  &:hover {
-    filter: ${({ theme }) =>
-      theme.isDark == true ? "brightness(1.5)" : "brightness(0.95)"};
-  }
+  animation: floatingRight 0.3s both;
   &:active {
     scale: 0.98;
   }
   & > div {
+    &:hover {
+      filter: ${({ theme }) =>
+        theme.isDark == true ? "brightness(1.15)" : "brightness(0.95)"};
+    }
     padding: 16px;
-    min-height: 100px;
     & > div {
       ${({ theme }) => theme.text.subtitle2}
     }
@@ -95,7 +163,6 @@ const StyledHomeTimelineCard = styled.div`
   }
   .home-timeline-user-cnt {
     ${({ theme }) => theme.text.subtitle2}
-    font-weight: 700;
     margin-bottom: 8px;
   }
   .home-timeline-emoji {
