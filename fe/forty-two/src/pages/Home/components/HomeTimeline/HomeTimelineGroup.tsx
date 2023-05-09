@@ -1,13 +1,14 @@
 import { MessageCard } from "../../../../components";
 import { locationInfoState } from "../../../../recoil/location/atoms";
 import { formatMessageDate } from "../../../../utils";
+import HomeTimelineCard from "./HomeTimelineCard";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface homeTimeLineGroupProps {
-  props: TFeed["recent"];
+  props: TFeed["new"];
   idx: number;
 }
 
@@ -49,7 +50,7 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
           <p className="location-info-time">
             {props
               ? isActive
-                ? "방금 전"
+                ? "현재 위치"
                 : formatMessageDate(props.placeWithTimeInfo.time)
               : ""}
           </p>
@@ -71,14 +72,12 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
           ></div>
         )}
       </div>
-      {props ? (
-        <div>
-          <MessageCard
-            idx={idx}
-            props={props}
-            onClick={onClickCard}
-          ></MessageCard>
-        </div>
+      {props?.recentUsersInfo ? (
+        <HomeTimelineCard
+          idx={idx}
+          props={props}
+          onClick={onClickCard}
+        ></HomeTimelineCard>
       ) : (
         <div className="not-message">
           <p>아직 메시지가 없습니다.</p>

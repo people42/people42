@@ -1,4 +1,9 @@
-import { getAccessToken, getMyInfo, getRecentFeed } from "../../../../api";
+import {
+  getAccessToken,
+  getMyInfo,
+  getNewFeed,
+  getRecentFeed,
+} from "../../../../api";
 import { FloatIconBtn } from "../../../../components";
 import { userState } from "../../../../recoil/user/atoms";
 import {
@@ -15,15 +20,13 @@ import styled from "styled-components";
 function HomeTimeline() {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
-  const [recentFeedList, setRecentFeedList] = useState<TFeed["recent"][]>([
-    null,
-  ]);
+  const [recentFeedList, setRecentFeedList] = useState<TFeed["new"][]>([]);
   const user = useRecoilValue(userLogoutState);
 
   const getFeed = () => {
-    setRecentFeedList([null]);
+    setRecentFeedList([]);
     if (accessToken) {
-      getRecentFeed(accessToken)
+      getNewFeed(accessToken)
         .then((res) => {
           if (res.data.data && res.data.data.length > 0) {
             setRecentFeedList(res.data.data);
@@ -32,7 +35,7 @@ function HomeTimeline() {
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
-              getRecentFeed(res.data.data.accessToken).then((res) => {
+              getNewFeed(res.data.data.accessToken).then((res) => {
                 if (res.data.data && res.data.data.length > 0) {
                   setRecentFeedList(res.data.data);
                 }
@@ -55,7 +58,7 @@ function HomeTimeline() {
           <TbReload />
         </FloatIconBtn>
       </div>
-      {recentFeedList.map((data: any, idx: number) => (
+      {recentFeedList.map((data: TFeed["new"], idx: number) => (
         <HomeTimelineGroup
           key={`timeline-${idx}`}
           idx={idx}
@@ -89,6 +92,9 @@ const StyledHomeTimeline = styled.section`
     background-color: none;
   }
   .reload-btn {
+    margin-left: 32px;
+    animation: reloadIn 0.3s both;
+    animation-delay: 5s;
     display: flex;
     justify-content: center;
     width: 100%;

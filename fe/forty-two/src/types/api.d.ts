@@ -16,6 +16,19 @@ type TFeed = {
       time: string;
     };
   } | null;
+  new: {
+    recentUsersInfo: {
+      nickname: string; // 대표 유저 닉네임
+      userCnt: number; // 대표 유저 포함 해당 장소 및 시간에서 스친 유저 수
+      firstTimeUserEmojis: string[]; // 처음 만난 유저 이모지 리스트
+      repeatUserEmojis: string[]; // 두 번 이상 만난 유저 이모지 리스트
+    };
+    placeWithTimeInfo: {
+      placeIdx: number;
+      placeName: string;
+      time: string;
+    };
+  };
   emotion: {
     emotion: string;
     messageIdx: number;

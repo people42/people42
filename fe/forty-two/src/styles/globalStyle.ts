@@ -111,6 +111,20 @@ export const GlobalStyle = createGlobalStyle<any>`
         filter: opacity(1) invert(95%) sepia(60%) hue-rotate(180deg) saturate(100%) brightness(1.2);
       }
     }
+    @keyframes reloadIn {
+      0% {
+        transform: scale(0);
+        height: 0px;
+      }
+      80% {
+        transform: scale(1.2);
+        height: 28px;
+      }
+      100% {
+        transform: scale(1);
+        height: 24px;
+      }
+    }
     @keyframes popIn {
       0% {
         transform: scale(0);
