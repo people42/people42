@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -36,6 +37,7 @@ public class WebSocketService extends TextWebSocketHandler {
     private static final Map<WebSocketSession, List<Double>> locations = Collections.synchronizedMap(new HashMap<>());
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLatitudes = new ConcurrentSkipListMap<>();
     private static final ConcurrentSkipListMap<Double, Set<WebSocketSession>> userLongitudes = new ConcurrentSkipListMap<>();
+    private static final Set<WebSocketSession> noResponseSession = Collections.synchronizedSet(new HashSet<>());
 
     private final Gson gson = new Gson();
     private final UserRepository userRepository;
@@ -126,6 +128,8 @@ public class WebSocketService extends TextWebSocketHandler {
             METHOD_MESSAGE_CHANGED(session, info);
         } else if (method.equals(MethodType.CLOSE.name())) {
             METHOD_CLOSE(session, info);
+        } else if (method.equals(MethodType.PONG.name())) {
+            METHOD_PONG(session, info);
         }
         {
             // 다른 메소드 처리를 여기에 추가합니다.
@@ -249,7 +253,7 @@ public class WebSocketService extends TextWebSocketHandler {
                 ((Set<WebSocketSession>) targetSession.getAttributes().get("nearUsers")).remove(session);
                 ((Set<WebSocketSession>) session.getAttributes().get("nearUsers")).remove(targetSession);
                 if (targetSession.isOpen()) {
-                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.FAR));
+                    String targetMessage = gson.toJson(createMessage(targetSession, session, MethodType.CLOSE));
                     try {
                         targetSession.sendMessage(new TextMessage(targetMessage));
                     } catch (IOException e) {
@@ -357,6 +361,53 @@ public class WebSocketService extends TextWebSocketHandler {
         }
 
         sendMessagesToNearUsers(session, MethodType.MESSAGE_CHANGED);
+    }
+
+    public void METHOD_PONG(WebSocketSession session, Map<String, Object> info) {
+        if (!noResponseSession.isEmpty()) {
+            noResponseSession.remove(session);
+        }
+    }
+
+    @Scheduled(fixedRate = 100000)
+    public void customTimeOut() throws IOException {
+        System.out.println(noResponseSession);
+        if (!noResponseSession.isEmpty()) {
+            for (WebSocketSession session : noResponseSession) {
+                if (session.isOpen()) {
+                    session.close();
+                }
+            }
+        }
+        noResponseSession.clear();
+        if (!guestSession.isEmpty()) {
+            noResponseSession.addAll(guestSession);
+        }
+        if (!userSession.isEmpty()) {
+            noResponseSession.addAll(userSession.keySet());
+        }
+    }
+
+    @Scheduled(fixedRate = 20000)
+    public void sendPING() throws IOException {
+        if (!guestSession.isEmpty()) {
+            for (WebSocketSession session : guestSession) {
+                if (session.isOpen()) {
+                    Map<String, Object> checkMessage = new HashMap<>();
+                    checkMessage.put("method", "PING");
+                    session.sendMessage(new TextMessage(gson.toJson(checkMessage)));
+                }
+            }
+        }
+        if (!userSession.isEmpty()) {
+            for (WebSocketSession session : userSession.keySet()) {
+                if (session.isOpen()) {
+                    Map<String, Object> checkMessage = new HashMap<>();
+                    checkMessage.put("method", "PING");
+                    session.sendMessage(new TextMessage(gson.toJson(checkMessage)));
+                }
+            }
+        }
     }
 
 }
