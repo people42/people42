@@ -9,23 +9,34 @@ struct AlertView: View {
     var body: some View {
         VStack {
             if let newNotifications = newNotifications {
-                if newNotifications.count > 0 {
-                    ScrollView {
+                
+                ScrollView {
+                    if newNotifications.count > 0 {
                         VStack {
                             ForEach(newNotifications.indices, id: \.self) { index in
                                 AlertCard(notificationHistory: newNotifications[index])
                             }
                         }
+                    } else {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Text("최근 알림이 없어요")
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                        .frame(width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height * 0.8)
                     }
-                } else {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Text("최근 알림이 없어요")
-                        Spacer()
-                    }
-                    Spacer()
                 }
+                .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
+                    getNotiHistory()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        refreshing = false
+                    }
+                }))
+
             }
         }
         .padding(.horizontal, 8)
@@ -55,12 +66,6 @@ struct AlertView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             getNotiHistory()
         }
-        .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
-            getNotiHistory()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                refreshing = false
-            }
-        }))
     }
 }
 
