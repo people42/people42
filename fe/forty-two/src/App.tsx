@@ -19,6 +19,20 @@ import {
   isNotificationPermittedState,
 } from "./recoil/notification/atoms";
 import { updateNotificationState } from "./recoil/notification/selector";
+import {
+  socketGuestCntState,
+  socketNearUserState,
+  socketNewMessageState,
+  socketState,
+} from "./recoil/socket/atoms";
+import {
+  socketGuestAddState,
+  socketGuestRemoveState,
+  socketNewMessageChangeState,
+  socketPongSendState,
+  socketUserChangeState,
+  socketUserRemoveState,
+} from "./recoil/socket/selectors";
 import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
@@ -28,7 +42,16 @@ import { lightStyles, darkStyles } from "./styles/theme";
 import {
   getLocalIsLogin,
   getUserLocation,
+  handleClose,
+  handleMove,
+  sendMessage,
+  sendPong,
   setSessionRefreshToken,
+  socketChangeStatusReceive,
+  socketFarReceive,
+  socketInfoReceive,
+  socketInit,
+  socketNearReceive,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { initializeApp } from "firebase/app";
@@ -87,6 +110,10 @@ const router = createBrowserRouter([
 
 function App() {
   const setUserRefresh = useSetRecoilState(userState);
+  const [socket, setSocket] = useRecoilState(socketState);
+  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
+    userLocationUpdateState
+  );
 
   //////////////////////////
   // naver map client id import
@@ -118,9 +145,6 @@ function App() {
 
   //////////////////////////
   // location background update
-  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
-    userLocationUpdateState
-  );
   const setLocationInfo = useSetRecoilState<TLocationInfo | null>(
     locationInfoState
   );
@@ -170,6 +194,13 @@ function App() {
       if (isLocationPermitted === true && isDesktop) {
         updateCurrentLocation();
       }
+      if (socket && user?.accessToken && userLocation) {
+        handleMove(socket, {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          status: "watching",
+        });
+      }
     }, 300000);
 
     return () => {
@@ -180,7 +211,7 @@ function App() {
   //////////////////////////
   // isLogin
   const [user, userLogout] = useRecoilState(userLogoutState);
-  const setIsLogin = useSetRecoilState(isLoginState);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   useEffect(() => {
     // 사용자 로그인 여부 검증
     const isLocalLogin: boolean = getLocalIsLogin();
@@ -189,18 +220,20 @@ function App() {
         .then((res) => {
           setUserRefresh(res.data.data);
           setSessionRefreshToken(res.data.data.refreshToken);
+          setIsLogin(true);
         })
         .catch((e) => {
           userLogout(user);
+          setIsLogin(false);
         });
+    } else {
+      setIsLogin(false);
     }
   }, []);
 
   useEffect(() => {
-    if (user?.accessToken) {
+    if (user && user.accessToken && !isLogin) {
       setIsLogin(true);
-    } else {
-      setIsLogin(false);
     }
   }, [user?.accessToken]);
 
@@ -221,7 +254,97 @@ function App() {
           }
         });
     }
-  }, [userLocation, user?.nickname]);
+  }, [userLocation, user?.accessToken]);
+
+  ////////////////
+  // socket
+  const setNearUser = useSetRecoilState(socketNearUserState);
+  const setGuestCnt = useSetRecoilState(socketGuestCntState);
+  const setPongSend = useSetRecoilState(socketPongSendState);
+  const setUserChange = useSetRecoilState(socketUserChangeState);
+  const setUserRemove = useSetRecoilState(socketUserRemoveState);
+  const setNewMessage = useSetRecoilState(socketNewMessageChangeState);
+
+  const socketOnMessage = (data: TSocketReceive) => {
+    switch (data.method) {
+      case "INFO":
+        const socketInfoReceiveData = socketInfoReceive(data);
+        setNearUser(socketInfoReceiveData.nearUserMap);
+        setGuestCnt(socketInfoReceiveData.guestCnt);
+        break;
+      case "NEAR":
+        if (data.data.type == "user") {
+          const newUser: Map<number, TSocketNearUser> = new Map();
+          newUser.set(data.data.userIdx, data.data);
+          setUserChange(newUser);
+        }
+        break;
+      case "CLOSE":
+        const newCloseUser: Map<number, TSocketNearUser> = new Map();
+        newCloseUser.set(data.data.userIdx, data.data);
+        setUserRemove(newCloseUser);
+        break;
+      case "CHANGE_STATUS":
+        const newChangeUser: Map<number, TSocketNearUser> = new Map();
+        newChangeUser.set(data.data.userIdx, data.data);
+        setUserChange(newChangeUser);
+        break;
+      case "MESSAGE_CHANGED":
+        setNewMessage({
+          userIdx: data.data.userIdx,
+          message: data.data.message,
+          nickname: data.data.nickname,
+        });
+        break;
+      case "PING":
+        setPongSend(socket);
+        break;
+
+      default:
+        console.log("unknown method:", data);
+        break;
+    }
+  };
+
+  const initSocket = () => {
+    if (userLocation) {
+      setSocket(
+        socketInit(
+          user?.accessToken ? "user" : "guest",
+          {
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            status: "watching",
+          },
+          socketOnMessage,
+          user?.user_idx
+        )
+      );
+    }
+  };
+  useEffect(() => {
+    const socketclean = () => {
+      if (socket) {
+        handleClose(socket);
+        setSocket(null);
+      }
+    };
+    if (!socket && userLocation && isLogin !== "check") {
+      initSocket();
+    }
+    window.addEventListener("beforeunload", socketclean);
+    return () => {
+      window.removeEventListener("beforeunload", socketclean);
+    };
+  }, [userLocation, user?.accessToken]);
+
+  useEffect(() => {
+    if (socket && socket?.readyState === 1) {
+      handleClose(socket);
+      setSocket(null);
+      initSocket();
+    }
+  }, [isLogin, userLocation]);
 
   //////////////////////////
   // firebase
@@ -258,7 +381,6 @@ function App() {
         const messaging = getMessaging(app);
         onMessage(messaging, (payload) => {
           // 유저 접속해있을 때 수신된 메시지
-          console.log("수신된 메시지: ", payload);
           setNewNotification({
             isShow: true,
             title: payload.notification?.title ?? "",
@@ -281,7 +403,7 @@ function App() {
               alert("알림 설정에 문제가 발생했습니다. 다시 시도해주세요.");
             }
           })
-          .catch((err) => console.log(err));
+          .catch((e) => console.log(e));
       } else if (permission === "denied") {
         // 유저 알림 설정 꺼져있는 경우
         setIsNotificationPermitted(false);
@@ -317,8 +439,6 @@ function App() {
       };
     }
   }, [newNotification]);
-
-  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
 
   return (
     <ThemeProvider theme={isDark ? darkStyles : lightStyles}>

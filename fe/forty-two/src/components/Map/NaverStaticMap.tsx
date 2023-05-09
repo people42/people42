@@ -1,7 +1,5 @@
 import koreaMap from "../../assets/images/map/koreaMap.png";
-import { userLocationUpdateState } from "../../recoil/location/selectors";
-import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 type naverStaticMapProps = {

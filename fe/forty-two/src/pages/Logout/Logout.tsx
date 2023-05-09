@@ -1,6 +1,6 @@
 import { deleteLogout, getAccessToken } from "../../api";
 import Spinner from "../../components/Spinner/Spinner";
-import { userState } from "../../recoil/user/atoms";
+import { isLoginState, userState } from "../../recoil/user/atoms";
 import {
   userAccessTokenState,
   userLogoutState,
@@ -16,6 +16,7 @@ function Logout({}: logoutProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const navigate = useNavigate();
   const [user, userLogout] = useRecoilState(userLogoutState);
+  const setIsLogin = useSetRecoilState(isLoginState);
   useEffect(() => {
     logout();
   }, []);
@@ -23,11 +24,17 @@ function Logout({}: logoutProps) {
   const logout = () => {
     if (accessToken) {
       deleteLogout(accessToken)
-        .then((res) => removeToken())
+        .then((res) => {
+          removeToken();
+          setIsLogin(false);
+        })
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
-              deleteLogout(res.data.data.accessToken).then(() => removeToken());
+              deleteLogout(res.data.data.accessToken).then(() => {
+                removeToken();
+                setIsLogin(false);
+              });
             });
           }
         });

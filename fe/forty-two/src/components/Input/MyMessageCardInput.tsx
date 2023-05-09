@@ -1,11 +1,13 @@
 import { getAccessToken, postMessage } from "../../api";
+import { userLocationUpdateState } from "../../recoil/location/selectors";
+import { socketState } from "../../recoil/socket/atoms";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
+import { handleMessageChanged, setSessionRefreshToken } from "../../utils";
 import CommonBtn from "../Button/CommonBtn";
 import Input from "./Input";
 import { useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type inputProps = {
@@ -16,11 +18,23 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
   const accessToken = useRecoilValue(userAccessTokenState);
   const [myMessageInputData, setMyMessageInputData] = useState<string>("");
   const setUserRefresh = useSetRecoilState(userState);
+  const [socket, setSocket] = useRecoilState(socketState);
+  const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
+    userLocationUpdateState
+  );
+
   const onClickPostMessage = () => {
     myMessageInputData == ""
       ? alert("내용을 입력해주세요.")
       : postMessage(accessToken, { message: myMessageInputData })
           .then((res) => {
+            if (socket && userLocation) {
+              handleMessageChanged(socket, {
+                latitude: userLocation?.latitude,
+                longitude: userLocation?.longitude,
+                status: "watching",
+              });
+            }
             onClickCancel();
           })
           .catch((e) => {
@@ -30,7 +44,16 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
                 setSessionRefreshToken(res.data.data.refreshToken);
                 postMessage(res.data.data.accessToken, {
                   message: myMessageInputData,
-                }).then(() => onClickCancel());
+                }).then(() => {
+                  if (socket && userLocation) {
+                    handleMessageChanged(socket, {
+                      latitude: userLocation?.latitude,
+                      longitude: userLocation?.longitude,
+                      status: "watching",
+                    });
+                  }
+                  onClickCancel();
+                });
               });
             }
           });

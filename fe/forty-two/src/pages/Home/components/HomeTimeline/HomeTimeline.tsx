@@ -1,12 +1,15 @@
 import { getAccessToken, getMyInfo, getRecentFeed } from "../../../../api";
 import { FloatIconBtn } from "../../../../components";
 import { userState } from "../../../../recoil/user/atoms";
-import { userAccessTokenState } from "../../../../recoil/user/selectors";
+import {
+  userAccessTokenState,
+  userLogoutState,
+} from "../../../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../../../utils";
 import HomeTimelineGroup from "./HomeTimelineGroup";
 import { useEffect, useState } from "react";
 import { TbReload } from "react-icons/tb";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function HomeTimeline() {
@@ -15,6 +18,7 @@ function HomeTimeline() {
   const [recentFeedList, setRecentFeedList] = useState<TFeed["recent"][]>([
     null,
   ]);
+  const user = useRecoilValue(userLogoutState);
 
   const getFeed = () => {
     setRecentFeedList([null]);
@@ -42,7 +46,7 @@ function HomeTimeline() {
 
   useEffect(() => {
     getFeed();
-  }, []);
+  }, [user?.accessToken]);
 
   return (
     <StyledHomeTimeline>
