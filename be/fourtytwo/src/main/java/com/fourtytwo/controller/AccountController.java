@@ -10,6 +10,7 @@ import com.fourtytwo.dto.user.ChangeEmojiReqDto;
 import com.fourtytwo.dto.user.MessageReqDto;
 import com.fourtytwo.dto.user.MyInfoResDto;
 import com.fourtytwo.service.*;
+import com.google.api.Http;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.StringUtils;
@@ -17,6 +18,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -36,21 +40,33 @@ public class AccountController {
     private final FcmService fcmService;
 
     @DeleteMapping("/withdrawal")
-    public ResponseEntity<ApiResponse<Object>> deleteUser(@RequestHeader("ACCESS-TOKEN") String accessToken) {
+    public ResponseEntity<ApiResponse<Object>> deleteUser(HttpServletResponse response,
+                                                          @RequestHeader("ACCESS-TOKEN") String accessToken) {
         userService.deleteUser(accessToken);
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ApiResponse.ok(null);
     }
     @DeleteMapping("/withdrawal/apple")
-    public ResponseEntity<ApiResponse<Object>> deleteAppleUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
+    public ResponseEntity<ApiResponse<Object>> deleteAppleUser(HttpServletResponse response,
+                                                               @RequestHeader("ACCESS-TOKEN") String accessToken,
                                                                @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "app");
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ApiResponse.ok(null);
     }
 
     @DeleteMapping("/withdrawal/apple/web")
-    public ResponseEntity<ApiResponse<Object>> deleteAppleWebUser(@RequestHeader("ACCESS-TOKEN") String accessToken,
-                                                               @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public ResponseEntity<ApiResponse<Object>> deleteAppleWebUser(HttpServletResponse response,
+                                                                  @RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                                  @RequestBody AppleCodeReqDto appleCodeReqDto) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         userService.deleteAppleUser(accessToken, appleCodeReqDto.getAppleCode(), "webDelete");
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ApiResponse.ok(null);
     }
 
@@ -85,8 +101,12 @@ public class AccountController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("ACCESS-TOKEN") String accessToken) {
+    public ResponseEntity<ApiResponse<Object>> logout(HttpServletResponse response,
+                                                      @RequestHeader("ACCESS-TOKEN") String accessToken) {
         userService.logout(accessToken);
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ApiResponse.ok(null);
     }
 
