@@ -235,17 +235,17 @@ public class FeedService {
 
     public UserPlaceFeedResDto findUserPlaceFeeds(String accessToken, Long targetIdx, Long placeIdx) {
 
-        @AllArgsConstructor
-        @Getter
-        class BrushInfo {
-            private Long myMessageIdx;
-            private Long oppositeMessageIdx;
-            private LocalDateTime createdAt;
-        }
+//        @AllArgsConstructor
+//        @Getter
+//        class BrushInfo {
+//            private Long myMessageIdx;
+//            private Long oppositeMessageIdx;
+//            private LocalDateTime createdAt;
+//        }
 
         Long userIdx = checkUserByAccessToken(accessToken);
         List<UserMessageResDto> userMessageResDtos = new ArrayList<>();
-        Set<BrushInfo> brushMemo = new HashSet<>();
+//        Set<BrushInfo> brushMemo = new HashSet<>();
 
         Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
         Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
@@ -263,20 +263,19 @@ public class FeedService {
                 oppositeMessage = brush.getMessage1();
             }
 
-            BrushInfo currentBrushInfo = new BrushInfo(myMessage.getId(), oppositeMessage.getId(), brush.getCreatedAt());
-            boolean flag = false;
-            for (BrushInfo brushInfo : brushMemo) {
-                if (brushInfo.myMessageIdx.equals(currentBrushInfo.getMyMessageIdx()) &&
-                        brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
-                        brushInfo.getCreatedAt().minusHours(1L).isBefore(currentBrushInfo.getCreatedAt())) {
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) {
-                continue;
-            }
-            brushMemo.add(currentBrushInfo);
+//            BrushInfo currentBrushInfo = new BrushInfo(myMessage.getId(), oppositeMessage.getId(), brush.getCreatedAt());
+//            boolean flag = false;
+//            for (BrushInfo brushInfo : brushMemo) {
+//                if (brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
+//                        brushInfo.getCreatedAt().minusHours(1L).isBefore(currentBrushInfo.getCreatedAt())) {
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            if (flag) {
+//                continue;
+//            }
+//            brushMemo.add(currentBrushInfo);
 
             userMessageResDto.setMessageIdx(oppositeMessage.getId());
             userMessageResDto.setContent(oppositeMessage.getContent());
