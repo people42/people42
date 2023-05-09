@@ -7,6 +7,13 @@ import { formatMessageDate, setSessionRefreshToken } from "../../utils";
 import { PlaceMap, PlaceMessageList } from "./components";
 import React, { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
+import {
+  TbArrowBigDown,
+  TbArrowBigUp,
+  TbArrowDownCircle,
+  TbArrowUp,
+  TbArrowUpCircle,
+} from "react-icons/tb";
 import Skeleton from "react-loading-skeleton";
 import { useLocation, useNavigate } from "react-router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -20,18 +27,28 @@ function Place() {
   const navigate = useNavigate();
   const placeInfo = location.state;
 
+  const [page, setPage] = useState<number>(0);
+
   const [placeData, setPlaceData] = useRecoilState(placeState);
   useEffect(() => {
     setPlaceData(null);
     if (accessToken && placeInfo) {
-      getPlace(accessToken, placeInfo)
-        .then((res) => setPlaceData(res.data.data))
+      getPlace(accessToken, { page: page, ...placeInfo })
+        .then((res) => {
+          if (res.data.data.messagesInfo.length > 0) {
+            setPlaceData(res.data.data);
+          } else {
+            alert("마지막 페이지입니다.");
+            setPage(page - 1);
+          }
+        })
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
-              getPlace(res.data.data.accessToken, placeInfo).then((res) =>
-                setPlaceData(res.data.data)
-              );
+              getPlace(res.data.data.accessToken, {
+                page: page,
+                ...placeInfo,
+              }).then((res) => setPlaceData(res.data.data));
               setUserRefresh(res.data.data);
               setSessionRefreshToken(res.data.data.refreshToken);
             });
@@ -40,7 +57,7 @@ function Place() {
     } else {
       navigate("/");
     }
-  }, []);
+  }, [page]);
 
   return (
     <StyledPlace>
@@ -71,7 +88,17 @@ function Place() {
         </span>
         <div className="place-body">
           <article className="place-body-list">
+            {page > 0 && placeData ? (
+              <div className="list-page" onClick={() => setPage(page - 1)}>
+                <TbArrowBigUp></TbArrowBigUp> 이전 메시지
+              </div>
+            ) : null}
             <PlaceMessageList></PlaceMessageList>
+            {placeData ? (
+              <div className="list-page" onClick={() => setPage(page + 1)}>
+                <TbArrowBigDown></TbArrowBigDown> 더 많은 메시지
+              </div>
+            ) : null}
           </article>
           <div className="place-body-map">
             <PlaceMap></PlaceMap>
@@ -131,6 +158,22 @@ const StyledPlace = styled.div`
         display: flex;
         justify-content: center;
       }
+    }
+  }
+
+  .list-page {
+    cursor: pointer;
+    margin-top: 16px;
+    width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ${({ theme }) => theme.text.subtitle2}
+    color: ${({ theme }) => theme.color.text.primary};
+    padding: 8px;
+
+    & > svg {
+      margin-right: 4px;
     }
   }
 `;

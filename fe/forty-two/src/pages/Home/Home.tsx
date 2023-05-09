@@ -1,13 +1,12 @@
 import Meta from "../../Meta";
 import { NavBar } from "../../components";
-import { isLoginState } from "../../recoil/user/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
 import { Banner, HomeMain } from "./components";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function Home() {
@@ -28,7 +27,7 @@ function Home() {
         )
         .then(function (res) {
           setUserEmoji(res.data[0].character);
-        })
+        });
     }
   }, [user]);
 

@@ -13,6 +13,7 @@ function PlaceMessageList({}: placeMessageListProps) {
 
   return (
     <StyledPlaceMessageList>
+      
       {placeData ? (
         placeData?.messagesInfo.map((data, idx) => (
           <MessageCard
@@ -38,6 +39,7 @@ function PlaceMessageList({}: placeMessageListProps) {
           borderRadius={24}
         ></Skeleton>
       )}
+      
     </StyledPlaceMessageList>
   );
 }
