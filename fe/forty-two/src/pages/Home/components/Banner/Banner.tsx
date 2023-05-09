@@ -1,5 +1,4 @@
 import appStoreBadge from "../../../../assets/images/badge/Download_on_the_App_Store_Badge_KR_RGB_blk_100317.svg";
-import testFlightBadge from "../../../../assets/images/badge/Pre-order_on_the_App_Store_Badge_KR_RGB_blk_121217.svg";
 import appIcon from "../../../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../../../assets/images/badge/google-play-badge.png";
 import { Card } from "../../../../components";
@@ -44,7 +43,7 @@ function Banner({}: bannerProps) {
                   ></img>
                   <img
                     onClick={() => setIsQrOpen(isQrOpen ? null : "ios")}
-                    src={testFlightBadge}
+                    src={appStoreBadge}
                   ></img>
                 </div>
 

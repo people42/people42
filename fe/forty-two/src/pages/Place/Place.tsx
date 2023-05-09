@@ -55,10 +55,7 @@ function Place() {
           <IoMdArrowBack size={30} />
           {placeData ? (
             <div>
-              <h1>
-                {placeData?.placeWithTimeAndGpsInfo.placeName} 근처에서{" "}
-                {placeData.messagesInfo.length}번 스쳤습니다.
-              </h1>
+              <h1>{placeData?.placeWithTimeAndGpsInfo.placeName} 근처</h1>
               <p>
                 {formatMessageDate(placeData?.placeWithTimeAndGpsInfo.time)}
               </p>

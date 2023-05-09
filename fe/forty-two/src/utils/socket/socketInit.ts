@@ -6,17 +6,21 @@ export const socketInit = (
 ) => {
   const socket: WebSocket = new WebSocket(
     `wss://www.people42.com/be42/socket?type=${type}${
-      userIdx ? `&user_idx=${userIdx}` : null
+      userIdx ? `&user_idx=${userIdx}` : ""
     }`
   );
 
   socket.onopen = () => {
-    console.log("Connected to server");
+    if (process.env.NODE_ENV === "development") {
+      console.log("socket onopen");
+    }
     sendMessage(socket, "INIT", userData);
   };
 
   socket.onmessage = (event: any) => {
-    console.log("Received message:", JSON.parse(event.data));
+    if (process.env.NODE_ENV === "development") {
+      console.log("socket onmessage", JSON.parse(event.data));
+    }
     onMessage(JSON.parse(event.data));
   };
 
@@ -25,7 +29,9 @@ export const socketInit = (
   };
 
   socket.onclose = (event: any) => {
-    console.log("Disconnected from server:", event);
+    if (process.env.NODE_ENV === "development") {
+      console.log("socket onclose", JSON.parse(event.data));
+    }
   };
 
   return socket;
@@ -36,8 +42,15 @@ export const sendMessage = (socket: WebSocket, method: any, data: any) => {
     method: method,
     ...data,
   };
-  console.log(payload);
   socket.send(JSON.stringify(payload));
+};
+
+export const sendPong = (socket: WebSocket) => {
+  socket.send(
+    JSON.stringify({
+      method: "PONG",
+    })
+  );
 };
 
 export const changeStatus = (socket: WebSocket, userData: TSocketUserData) => {
@@ -78,8 +91,11 @@ export const socketInfoReceive = (data: TSocketReceive) => {
   return { nearUserMap, guestCnt };
 };
 export const socketNearReceive = (data: TSocketReceive) => {
-  console.log(data);
+  console.log("Receive Near");
 };
 export const socketFarReceive = (data: TSocketReceive) => {
-  console.log(data);
+  console.log("Receive Far");
+};
+export const socketChangeStatusReceive = (data: TSocketReceive) => {
+  console.log("Receive Change Status");
 };

@@ -1,9 +1,8 @@
 import { isLoginState } from "../../../../recoil/user/atoms";
 import HomeMap from "../HomeMap/HomeMap";
 import HomeMyHistory from "../HomeMyHistory/HomeMyHistory";
-import HomeMyMessageReaction from "./HomeMyMessageReaction";
 import MyMessageCard from "./MyMessageCard";
-import { ReactElement, useState } from "react";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 

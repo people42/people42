@@ -14,3 +14,8 @@ export const socketGuestCntState = atom<number>({
   key: "socketGuestCntState",
   default: 0,
 });
+
+export const socketNewMessageState = atom<TNewMessage | null>({
+  key: "socketNewMessageState",
+  default: undefined,
+});

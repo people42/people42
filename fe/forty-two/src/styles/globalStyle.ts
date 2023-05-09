@@ -3,6 +3,43 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes newMessageBubble {
+      0% {
+        filter: opacity(0);
+        transform: translate(50%, 50%) scale(0%, 0%);
+        box-shadow: none;
+      }
+      5% {
+        filter: opacity(1);
+        transform: translate(0%, 0%) scale(100%, 100%);
+        box-shadow: 0px 0px 48px #3644FC;
+      }
+      80% {
+        filter: opacity(1);
+        transform: translate(0%, 0%) scale(100%, 100%);
+        box-shadow: 0px 0px 0px #3644FC;
+      }
+      100% {
+        filter: opacity(0);
+        transform: translate(0%, 0%) scale(100%, 100%);
+        box-shadow: 0px 0px 0px #3644FC;
+        /* box-shadow: none; */
+      }
+    }
+    @keyframes writingWave {
+      0% {
+        filter: opacity(0.5);
+      }
+      20% {
+        filter: opacity(1);
+      }
+      40% {
+        filter: opacity(0.5);
+      }
+      100%{
+        filter: opacity(0.5);
+      }
+    }
     @keyframes notificationIn {
       0% {
         width: 96px;

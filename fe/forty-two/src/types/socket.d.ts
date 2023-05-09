@@ -4,7 +4,13 @@ type TSocketUserData = {
   status: TSocketStatus;
 };
 
-type TSocketMethod = "INFO" | "NEAR" | "FAR";
+type TSocketMethod =
+  | "INFO"
+  | "NEAR"
+  | "CLOSE"
+  | "CHANGE_STATUS"
+  | "MESSAGE_CHANGED"
+  | "PING";
 type TSocketStatus = "watching" | "writing";
 
 type TSocketNearUser = {
@@ -31,4 +37,10 @@ type TSocketReceive = {
     longitude: number;
     status: TSocketStatus;
   };
+};
+
+type TNewMessage = {
+  userIdx: number;
+  message: string;
+  nickname: string;
 };
