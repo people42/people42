@@ -691,7 +691,6 @@
 				36DA62F429F60BF6001191DB /* MyMassageCard.swift */,
 				36DA62FF29F638B6001191DB /* ReactionButton.swift */,
 				36680D2A29F64B78001EFD52 /* MessageCard.swift */,
-				360D52C629F939B400F67940 /* AlertCard.swift */,
 				362553CB2A0369B300A2CD4A /* BlockView.swift */,
 				362553CD2A0389A600A2CD4A /* ReportView.swift */,
 				362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */,
@@ -846,6 +845,7 @@
 		360D52BE29F8D2B400F67940 /* AlertPage */ = {
 			isa = PBXGroup;
 			children = (
+				362553EA2A0A9EB500A2CD4A /* Elements */,
 				360D52BF29F8D2DB00F67940 /* AlertView.swift */,
 			);
 			path = AlertPage;
@@ -1019,6 +1019,14 @@
 				3625534B2A02A34300A2CD4A /* zipper-mouth-face.png */,
 			);
 			path = EmojiStatic;
+			sourceTree = "<group>";
+		};
+		362553EA2A0A9EB500A2CD4A /* Elements */ = {
+			isa = PBXGroup;
+			children = (
+				360D52C629F939B400F67940 /* AlertCard.swift */,
+			);
+			path = Elements;
 			sourceTree = "<group>";
 		};
 		365B964529FE50A500647950 /* AppState */ = {

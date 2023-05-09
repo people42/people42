@@ -5,13 +5,8 @@ import Combine
 class HomeViewModel: ObservableObject {
     @Published var message: String = "아직 적은 글이 없어요."
     @Published var hasMultiple: Bool = false
-    @Published var isNewAlert: Bool = true
     
     @Published var reactionCounts: [String: Int] = ["fire_circle": 0, "heart_circle": 0, "tear_circle": 0, "thumbsUp_circle": 0]
-    
-    func checkForNewAlerts() {
-        // TODO: Implement checkForNewAlerts
-    }
     
     func getMyinfo() {
         AccountService.getMyinfo { result in
@@ -46,7 +41,7 @@ struct HomeView: View {
                     .offset(y: 16)
                 
                 VStack {
-                    NavBar(isNewAlert: $viewModel.isNewAlert)
+                    NavBar()
                     
                     NavigationLink(destination: PlaceView(), isActive: $placeViewState.navigateToPlaceView) {
                         EmptyView()
@@ -65,13 +60,11 @@ struct HomeView: View {
             .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
             .onAppear {
                 viewModel.getMyinfo()
-                viewModel.checkForNewAlerts()
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {
                     // foreground로 전환될 때 데이터를 새로 고칩니다.
                     viewModel.getMyinfo()
-                    viewModel.checkForNewAlerts()
                 }
             }
         }

@@ -9,7 +9,7 @@ struct Notification: Codable {
 
 // -----------------------
 
-struct NotificationService: Codable {
+struct NotificationHistory: Codable {
     let title: String
     let body: String
     let emoji: String
@@ -28,7 +28,7 @@ struct NotificationService {
     }
     
     // 최근 피드 조회
-    static func getNotificationHistory(completion: @escaping (Result<ResponseMessage<[NotificationService]>, AFError>) -> Void) {
-        APIManager.shared.request(endpoint: "/notification/history", method: .get, responseType: ResponseMessage<[NotificationService]>.self, completion: completion)
+    static func getNotificationHistory(completion: @escaping (Result<ResponseMessage<[NotificationHistory]>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/notification/history", method: .get, responseType: ResponseMessage<[NotificationHistory]>.self, completion: completion)
     }
 }
