@@ -51,9 +51,12 @@ struct MapView: View {
     @StateObject private var locationManager = MapManager()
     
     @ObservedObject var webSocketManager = WebSocketManager.shared
+    
+    // WebSocketManager의 isConnected와 바인딩된 @State 변수
+    @State private var isConnect: Bool = WebSocketManager.shared.isConnected
 
     @State private var metersPerCircle: Double = 100
-    @State private var isConnect = true
+    
 
     var body: some View {
         ZStack {

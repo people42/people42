@@ -123,15 +123,26 @@ class WebSocketManager: NSObject, ObservableObject {
         sendMessage(method: "INIT", data: userData)
     }
     
-    // WRITING_MESSAGE 메시지 처리 메서드
-    func handleWritingMessage() {
-        guard let userData = getCurrentUserData() else { return }
-        sendMessage(method: "WRITING_MESSAGE", data: userData)
+    // CHANGE_STATUS 메시지 처리 메서드
+    func handleChangeStatusWirte() {
+        guard var updatedUserData = getCurrentUserData() else { return }
+        print("status - writing")
+        updatedUserData["status"] = "writing"
+        sendMessage(method: "CHANGE_STATUS", data: updatedUserData)
+    }
+    
+    // CHANGE_STATUS 메시지 처리 메서드
+    func handleChangeStatusWatch() {
+        guard var updatedUserData = getCurrentUserData() else { return }
+        print("status - watching")
+        updatedUserData["status"] = "watching"
+        sendMessage(method: "CHANGE_STATUS", data: updatedUserData)
     }
     
     // MESSAGE_CHANGED 메시지 처리 메서드
     func handleMessageChanged(newMessage: String) {
         guard var updatedUserData = getCurrentUserData() else { return }
+        print("socket - newMessage : \(newMessage)")
         updatedUserData["message"] = newMessage
         sendMessage(method: "MESSAGE_CHANGED", data: updatedUserData)
     }
