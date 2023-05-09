@@ -31,7 +31,6 @@ function HomeTimelineGroup({ props, idx }: homeTimeLineGroupProps) {
       state: {
         placeIdx: props?.placeWithTimeInfo.placeIdx,
         time: props?.placeWithTimeInfo.time,
-        page: 0,
         size: 10,
       },
     });
