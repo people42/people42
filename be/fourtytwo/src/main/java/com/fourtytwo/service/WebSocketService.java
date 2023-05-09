@@ -82,6 +82,7 @@ public class WebSocketService extends TextWebSocketHandler {
         Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
         if (!nearUsers.isEmpty()) {
             for (WebSocketSession otherUserSession : nearUsers) {
+                otherUserSession.sendMessage(new TextMessage(gson.toJson(createMessage(otherUserSession, session, MethodType.CLOSE))));
                 ((Set<WebSocketSession>) otherUserSession.getAttributes().get("nearUsers")).remove(session);
             }
         }
@@ -340,8 +341,6 @@ public class WebSocketService extends TextWebSocketHandler {
     }
 
     public void METHOD_CLOSE(WebSocketSession session, Map<String, Object> info) throws IOException {
-        sendMessagesToNearUsers(session, MethodType.CLOSE);
-
         session.close();
     }
 
