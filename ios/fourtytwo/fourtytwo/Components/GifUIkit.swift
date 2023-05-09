@@ -32,7 +32,7 @@ struct GifUIkit: UIViewRepresentable {
     }
 
 
-    private func loadGifImage(name: String) -> UIImage? {
+    func loadGifImage(name: String) -> UIImage? {
         guard let url = Bundle.main.url(forResource: name, withExtension: "gif") else {
             return nil
         }
@@ -70,7 +70,7 @@ struct GifUIkit: UIViewRepresentable {
     }
 
 
-    private func loadFirstFrame(name: String) -> UIImage? {
+    func loadFirstFrame(name: String) -> UIImage? {
         guard let url = Bundle.main.url(forResource: name, withExtension: "gif") else {
             return nil
         }

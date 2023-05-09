@@ -17,7 +17,7 @@ class LocationSender {
         
         // 60초마다 sendLocationToServer() 메서드를 호출하는 타이머를 생성합니다.
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-            print("timer 전송으로 가동중")
+//            print("timer 전송으로 가동중")
             self.sendLocationToServer()
         }
         
@@ -65,7 +65,7 @@ class LocationSender {
 
     // 백그라운드 작업을 등록하는 메서드입니다.
     private func registerBackgroundTask() {
-        print("백그라운드 작업 등록")
+//        print("백그라운드 작업 등록")
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.people42.app.sendLocation", using: nil) { task in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
         }

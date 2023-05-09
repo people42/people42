@@ -15,6 +15,7 @@ class SignUpState: ObservableObject {
 }
 
 class UserState: ObservableObject {
+    
     private let keychain = KeychainSwift()
     private let accessTokenKey = "access_token"
     private let refreshTokenKey = "refresh_token"

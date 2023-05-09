@@ -73,14 +73,19 @@ struct AppleSigninButton : View{
                         appState.switchView(to: .signup)
                     } else {
                         // accessToken이 있는 경우 홈 화면으로 이동
+                        
                         // 로그인 타입 - 애플
                         signUpData.loginType = .apple
+                        
                         // 유저 정보 저장
                         APIManager.shared.userState.user_idx = userData.user_idx
                         APIManager.shared.userState.email = userData.email
                         APIManager.shared.userState.nickname = userData.nickname
                         APIManager.shared.userState.emoji = userData.emoji
                         APIManager.shared.setAccessToken(at: userData.accessToken, rt: userData.refreshToken)
+                        
+                        // 소켓 연결
+//                        WebSocketManager.shared.connect()
                         
                         // 홈으로 이동
                         print("Navigate to the home screen")

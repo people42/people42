@@ -140,6 +140,15 @@ struct SystemView: View {
                         Spacer()
                     }
                 }
+                .alert(isPresented: $showingContactAlert) {
+                    Alert(title: Text("아래 이메일로 문의해주세요."),
+                          message: Text("qorzi00@gmail.com\n문의하기를 누르시면 이메일 작성으로 넘어갑니다."),
+                          primaryButton: .default(Text("문의하기")) {
+                            contact()
+                          },
+                          secondaryButton: .cancel(Text("취소"))
+                    )
+                }
                 
                 Button(action: {
                     // 로그아웃 버튼 액션
@@ -161,6 +170,15 @@ struct SystemView: View {
                             .foregroundColor(.red)
                         Spacer()
                     }
+                }
+                .alert(isPresented: $showingWithdrawalAlert) {
+                    Alert(title: Text("회원 탈퇴 확인"),
+                          message: Text("정말 탈퇴하시겠습니까?"),
+                          primaryButton: .destructive(Text("탈퇴")) {
+                            withdrawal()
+                          },
+                          secondaryButton: .cancel(Text("취소"))
+                    )
                 }
                 
             }
@@ -187,24 +205,7 @@ struct SystemView: View {
                     .fontWeight(.semibold)
             }
         }
-        .alert(isPresented: $showingWithdrawalAlert) {
-            Alert(title: Text("회원 탈퇴 확인"),
-                  message: Text("정말 탈퇴하시겠습니까?"),
-                  primaryButton: .destructive(Text("탈퇴")) {
-                    withdrawal()
-                  },
-                  secondaryButton: .cancel(Text("취소"))
-            )
-        }
-        .alert(isPresented: $showingContactAlert) {
-            Alert(title: Text("아래 이메일로 문의해주세요."),
-                  message: Text("qorzi00@gmail.com\n문의하기를 누르시면 이메일 작성으로 넘어갑니다."),
-                  primaryButton: .default(Text("문의하기")) {
-                    contact()
-                  },
-                  secondaryButton: .cancel(Text("취소"))
-            )
-        }
+
     }
 }
 
