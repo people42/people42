@@ -3,23 +3,40 @@ import SwiftUI
 struct AlertView: View {
     @Environment(\.presentationMode) var presentationMode
     
-    // Dummy data
-    let dummyData = [
-        (contents: "First alert", reactionNum: 0, time: Date()),
-        (contents: "Second alert", reactionNum: 1, time: Date()),
-        (contents: "Third alert", reactionNum: 2, time: Date()),
-        (contents: "Fourth alert", reactionNum: 3, time: Date()),
-        (contents: "Fifth alert", reactionNum: 0, time: Date())
-    ]
+    @State var newNotifications: [NotificationHistory]?
+    @State private var refreshing: Bool = false
 
     var body: some View {
         VStack {
-            ScrollView {
-                VStack {
-                    ForEach(dummyData, id: \.contents) { data in
-                        AlertCard(viewModel: AlertCardViewModel(reactionNum: data.reactionNum, time: data.time))
+            if let newNotifications = newNotifications {
+                
+                ScrollView {
+                    if newNotifications.count > 0 {
+                        VStack {
+                            ForEach(newNotifications.indices, id: \.self) { index in
+                                AlertCard(notificationHistory: newNotifications[index])
+                            }
+                        }
+                    } else {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Text("최근 알림이 없어요")
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                        .frame(width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height * 0.8)
                     }
                 }
+                .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
+                    getNotiHistory()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        refreshing = false
+                    }
+                }))
+
             }
         }
         .padding(.horizontal, 8)
@@ -36,9 +53,38 @@ struct AlertView: View {
                 }
             }
             ToolbarItem(placement: .principal) {
-                Text("새로운 알림 \(dummyData.count)건")
-                    .font(.system(size: 18))
-                    .fontWeight(.semibold)
+                if let newNotifications = newNotifications {
+                    Text("새로운 알림 \(newNotifications.count)건")
+                        .font(.system(size: 18))
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .onAppear {
+            getNotiHistory()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            getNotiHistory()
+        }
+    }
+}
+
+extension AlertView {
+    func getNotiHistory() {
+        NotificationService.getNotificationHistory { result in
+            
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let newNotis = response.data {
+                        DispatchQueue.main.async {
+                            self.newNotifications = newNotis
+                            print(newNotis)
+                        }
+                    }
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }
