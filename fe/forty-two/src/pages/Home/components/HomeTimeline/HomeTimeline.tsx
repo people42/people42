@@ -5,6 +5,7 @@ import {
   getRecentFeed,
 } from "../../../../api";
 import { FloatIconBtn } from "../../../../components";
+import Spinner from "../../../../components/Spinner/Spinner";
 import { userState } from "../../../../recoil/user/atoms";
 import {
   userAccessTokenState,
@@ -20,24 +21,32 @@ import styled from "styled-components";
 function HomeTimeline() {
   const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
-  const [recentFeedList, setRecentFeedList] = useState<TFeed["new"][]>([]);
+  const [recentFeedList, setRecentFeedList] = useState<
+    TFeed["new"][] | [null] | undefined
+  >();
+  const [reloadCnt, setReloadCnt] = useState<number>(0);
   const user = useRecoilValue(userLogoutState);
 
   const getFeed = () => {
-    setRecentFeedList([]);
+    setRecentFeedList(undefined);
     if (accessToken) {
       getNewFeed(accessToken)
         .then((res) => {
           if (res.data.data && res.data.data.length > 0) {
             setRecentFeedList(res.data.data);
+          } else {
+            setRecentFeedList([null]);
           }
         })
         .catch((e) => {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               getNewFeed(res.data.data.accessToken).then((res) => {
+                console.log(res.data);
                 if (res.data.data && res.data.data.length > 0) {
                   setRecentFeedList(res.data.data);
+                } else {
+                  setRecentFeedList([null]);
                 }
               });
               setUserRefresh(res.data.data);
@@ -53,18 +62,29 @@ function HomeTimeline() {
 
   return (
     <StyledHomeTimeline>
-      <div className="reload-btn">
-        <FloatIconBtn onClick={getFeed}>
+      <div key={reloadCnt} className="reload-btn">
+        <FloatIconBtn
+          onClick={() => {
+            getFeed();
+            setReloadCnt(reloadCnt + 1);
+          }}
+        >
           <TbReload />
         </FloatIconBtn>
       </div>
-      {recentFeedList.map((data: TFeed["new"], idx: number) => (
-        <HomeTimelineGroup
-          key={`timeline-${idx}`}
-          idx={idx}
-          props={data}
-        ></HomeTimelineGroup>
-      ))}
+      {recentFeedList !== undefined ? (
+        recentFeedList.map((data: TFeed["new"] | null, idx: number) => (
+          <HomeTimelineGroup
+            key={`timeline-${idx}`}
+            idx={idx}
+            props={data}
+          ></HomeTimelineGroup>
+        ))
+      ) : (
+        <div className="load-feed-list">
+          <Spinner></Spinner>
+        </div>
+      )}
     </StyledHomeTimeline>
   );
 }
@@ -98,5 +118,10 @@ const StyledHomeTimeline = styled.section`
     display: flex;
     justify-content: center;
     width: 100%;
+  }
+  .load-feed-list {
+    margin-left: 191px;
+    width: 24px;
+    height: 72px;
   }
 `;

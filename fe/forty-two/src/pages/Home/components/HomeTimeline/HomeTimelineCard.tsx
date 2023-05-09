@@ -42,7 +42,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx < 6) {
+                  } else if (idx < 5) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
@@ -52,7 +52,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx == 6) {
+                  } else if (idx == 5) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
@@ -63,7 +63,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx == 7) {
+                  } else if (idx == 6) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
@@ -96,7 +96,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx < 6) {
+                  } else if (idx < 5) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
@@ -106,7 +106,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx == 6) {
+                  } else if (idx == 5) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
@@ -117,7 +117,7 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
                         }}
                       ></div>
                     );
-                  } else if (idx == 7) {
+                  } else if (idx == 6) {
                     return (
                       <div
                         className="home-timeline-emoji-icon"
