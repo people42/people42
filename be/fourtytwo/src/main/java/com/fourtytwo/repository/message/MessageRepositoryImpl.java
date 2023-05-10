@@ -113,7 +113,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
     public Message findRecentByUserIdx(Long userIdx) {
       return queryFactory
               .selectFrom(message)
-              .where(message.user.id.eq(userIdx))
+              .where(message.user.id.eq(userIdx).and(message.isActive.eq(true)))
               .orderBy(message.createdAt.desc())
               .fetchFirst();
     };
