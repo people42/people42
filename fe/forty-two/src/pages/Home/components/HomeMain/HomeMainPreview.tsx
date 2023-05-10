@@ -15,9 +15,6 @@ function HomeMainPreview({}: homeMainPreviewProps) {
     getMessageCnt().then((res) => setMessageCnt(res.data.data.cnt));
   }, []);
 
-  useEffect(() => {
-    console.log(messageCnt);
-  }, [messageCnt]);
   return (
     <StyledHomeMainPreview>
       <h1>어쩌면 마주친 사이</h1>

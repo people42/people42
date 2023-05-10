@@ -42,7 +42,6 @@ function HomeTimeline() {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               getNewFeed(res.data.data.accessToken).then((res) => {
-                console.log(res.data);
                 if (res.data.data && res.data.data.length > 0) {
                   setRecentFeedList(res.data.data);
                 } else {
