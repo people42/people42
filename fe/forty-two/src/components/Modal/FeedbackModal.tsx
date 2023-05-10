@@ -37,6 +37,7 @@ function FeedbackModal({ closeModal }: navModalProps) {
           </div>
           <div className="modal-body">
             <textarea
+              style={{ resize: "none" }}
               placeholder="내용은 익명으로 전송됩니다."
               className="modal-body-textarea"
               onChange={(e) => setFeedbackInputData(e.target.value)}

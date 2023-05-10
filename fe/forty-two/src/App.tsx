@@ -15,7 +15,6 @@ import {
 } from "./recoil/notification/atoms";
 import { updateNotificationState } from "./recoil/notification/selector";
 import {
-  socketAllMessageCntState,
   socketGuestCntState,
   socketNearUserState,
   socketState,
