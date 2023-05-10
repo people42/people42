@@ -66,7 +66,7 @@ public class WebSocketService extends TextWebSocketHandler {
             if (message != null) {
                 session.getAttributes().put("message", message.getContent());
             } else {
-                session.getAttributes().putIfAbsent("message", null);
+                session.getAttributes().put("message", "");
             }
             session.getAttributes().put("emoji", user.getEmoji());
         } else {
