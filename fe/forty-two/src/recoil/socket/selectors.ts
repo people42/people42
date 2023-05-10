@@ -1,5 +1,6 @@
 import { sendPong } from "../../utils";
 import {
+  socketAllMessageCntState,
   socketGuestCntState,
   socketNearUserState,
   socketNewMessageState,
@@ -109,8 +110,12 @@ export const socketNewMessageChangeState = selector<TNewMessage | null>({
     const newMessage = get(socketNewMessageState);
     return newMessage;
   },
-  set: ({ set }, newMessage) => {
+  set: ({ get, set }, newMessage) => {
+    const cnt = get(socketAllMessageCntState);
+    const newCnt = cnt + 1;
+    set(socketAllMessageCntState, newCnt);
     set(socketNewMessageState, null);
     set(socketNewMessageState, newMessage);
   },
 });
+
