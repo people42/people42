@@ -1,6 +1,7 @@
 import Spinner from "../../../../components/Spinner/Spinner";
 import { locationInfoState } from "../../../../recoil/location/atoms";
 import { TbLocationFilled, TbLocationOff, TbLocation } from "react-icons/tb";
+import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
@@ -8,9 +9,12 @@ type homeMapLocationProps = {};
 
 function HomeMapLocation({}: homeMapLocationProps) {
   const locationInfo = useRecoilValue<TLocationInfo | null>(locationInfoState);
-
+  const navigate = useNavigate();
   return (
-    <StyledHomeMapLocation className="map-place-label">
+    <StyledHomeMapLocation
+      onClick={() => navigate("/xxx")}
+      className="map-place-label"
+    >
       {locationInfo?.placeName ? (
         <TbLocationFilled color="#1cb800" size={16} />
       ) : (
