@@ -210,7 +210,6 @@ function App() {
   const setUserChange = useSetRecoilState(socketUserChangeState);
   const setUserRemove = useSetRecoilState(socketUserRemoveState);
   const setNewMessage = useSetRecoilState(socketNewMessageChangeState);
-  const [messageCnt, setMessageCnt] = useRecoilState(socketAllMessageCntState);
 
   const socketOnMessage = (data: TSocketReceive) => {
     switch (data.method) {
@@ -237,18 +236,15 @@ function App() {
         setUserChange(newChangeUser);
         break;
       case "MESSAGE_CHANGED":
-        if (data.data.message) {
-          setNewMessage({
-            userIdx: data.data.userIdx,
-            message: data.data.message,
-            nickname: data.data.nickname,
-          });
-        }
+        setNewMessage({
+          userIdx: data.data.userIdx,
+          message: data.data.message,
+          nickname: data.data.nickname,
+        });
         break;
       case "PING":
         setPongSend(socket);
         break;
-
       default:
         console.log("unknown method:", data);
         break;
