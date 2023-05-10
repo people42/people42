@@ -3,9 +3,10 @@ import { isLoginState } from "../../recoil/user/atoms";
 import IconBtn from "../Button/IconBtn";
 import NotificationNavBtn from "../Button/NotificationNavBtn";
 import ThemeBtn from "../Button/ThemeBtn";
+import FeedbackModal from "../Modal/FeedbackModal";
 import NavModal from "../Modal/NavModal";
 import { useState } from "react";
-import { TbBellFilled, TbSettingsFilled } from "react-icons/tb";
+import { TbBellFilled, TbMailFast, TbSettingsFilled } from "react-icons/tb";
 import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -15,6 +16,7 @@ type navBarProps = {};
 function NavBar() {
   const [isSettingModalOn, setIsSettingModalOn] = useState(false);
   const [isNotificationModalOn, setIsNotificationModalOn] = useState(false);
+  const [isFeedbackModalOn, setIsFeedbackModalOn] = useState(false);
 
   const closeModal = () => {
     setIsSettingModalOn(false);
@@ -31,6 +33,20 @@ function NavBar() {
           <img src={animatedLogo} alt="42-logo" aria-label="home link button" />
         </div>
         <div className="nav-icons">
+          <IconBtn onClick={() => setIsFeedbackModalOn(true)}>
+            <TbMailFast size={24} />
+          </IconBtn>
+          {isFeedbackModalOn ? (
+            <>
+              <FeedbackModal
+                closeModal={() => setIsFeedbackModalOn(false)}
+              ></FeedbackModal>
+              <div
+                onClick={() => closeModal()}
+                className="modal-background"
+              ></div>
+            </>
+          ) : null}
           {isSettingModalOn ? (
             <>
               <NavModal type="setting" closeModal={closeModal}></NavModal>
