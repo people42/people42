@@ -237,11 +237,13 @@ function App() {
         setUserChange(newChangeUser);
         break;
       case "MESSAGE_CHANGED":
-        setNewMessage({
-          userIdx: data.data.userIdx,
-          message: data.data.message,
-          nickname: data.data.nickname,
-        });
+        if (data.data.message) {
+          setNewMessage({
+            userIdx: data.data.userIdx,
+            message: data.data.message,
+            nickname: data.data.nickname,
+          });
+        }
         break;
       case "PING":
         setPongSend(socket);
