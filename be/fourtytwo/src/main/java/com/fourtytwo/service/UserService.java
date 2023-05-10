@@ -609,6 +609,10 @@ public class UserService {
 
         // refresh token 삭제
         deleteRefreshToken(user);
+
+        // fcm token 삭제
+        user.setFcmToken(null);
+        userRepository.save(user);
     }
 
     public LoginResponseDto getAppleUserInfo(AppleCodeReqDto appleCodeReqDto) {
