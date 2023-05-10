@@ -66,16 +66,20 @@ struct FirstSectionView: View {
             switch result {
             case .success(let responseMessage):
                 print("Response: \(responseMessage)")
-                if let nameData = responseMessage.data?.nickname {
-                    print("Nickname data: \(nameData)")
-                    let nameArray = nameData.split(separator: " ")
-                    // 새로운 글자를 추가
-                    newLeftText.append(String(nameArray[0]))
-                    newLeftText.append("")
-                    newRightText.append(String(nameArray[1]))
-                    newRightText.append("")
-                    signUpData.nickname = nameData
+                
+                DispatchQueue.main.async {
+                    if let nameData = responseMessage.data?.nickname {
+                        print("Nickname data: \(nameData)")
+                        let nameArray = nameData.split(separator: " ")
+                        // 새로운 글자를 추가
+                        newLeftText.append(String(nameArray[0]))
+                        newLeftText.append("")
+                        newRightText.append(String(nameArray[1]))
+                        newRightText.append("")
+                        signUpData.nickname = nameData
+                    }
                 }
+                
             case .failure(let error):
                 print("Error: \(error.localizedDescription)")
             }
