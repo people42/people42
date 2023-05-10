@@ -91,6 +91,7 @@ class WebSocketManager: NSObject, ObservableObject {
     func disconnect() {
         selfClose = true
         task?.cancel(with: .goingAway, reason: nil)
+        nearUsers = [:]
     }
     
     // 웹소켓을 통해 메시지를 보내는 메서드

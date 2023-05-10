@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import FirebaseMessaging
 
 func getTimeStringFromISODate(_ isoString: String) -> String {
     let dateFormatter = DateFormatter()
@@ -30,4 +31,21 @@ func getTimeStringFromISODate(_ isoString: String) -> String {
     return "시간정보 없음"
 }
 
-
+func sendFCMTokenToServer() {
+    Messaging.messaging().token { token, error in
+        if let error = error {
+            print("토큰을 가져오는 데 오류가 발생했습니다. \(error)")
+        } else if let token = token {
+            let dataDict: [String: String] = ["token": token]
+            // 서버로 FCM 토큰 전달
+            UserService.postFCMToken(data: dataDict) { result in
+                switch result {
+                case .success(let response):
+                    print("FCM 토큰 전송 성공: \(response.message)")
+                case .failure(let error):
+                    print("FCM 토큰 전송 실패: \(error)")
+                }
+            }
+        }
+    }
+}

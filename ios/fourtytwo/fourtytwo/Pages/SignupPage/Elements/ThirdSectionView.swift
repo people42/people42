@@ -78,6 +78,7 @@ struct ThirdSectionView: View {
         switch result {
         case .success(let responseMessage):
             if let userData = responseMessage.data {
+                
                 // 유저 정보 저장
                 APIManager.shared.userState.user_idx = userData.user_idx
                 APIManager.shared.userState.email = userData.email
@@ -87,6 +88,9 @@ struct ThirdSectionView: View {
                 
                 // 소켓 연결
 //                WebSocketManager.shared.connect()
+                
+                // FCMToken 전송
+                sendFCMTokenToServer()
                 
                 // 홈으로 이동
                 appState.currentView = .home
