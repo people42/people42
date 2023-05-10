@@ -99,7 +99,7 @@ public class MessageService {
 
     public TotalMessagesCntResDto getTotalMessagesCnt() {
         return TotalMessagesCntResDto.builder()
-                .cnt(messageRepository.countByIsActiveIsTrueAndIsInappropriateIsFalse())
+                .cnt(messageRepository.count())
                 .build();
     }
 
