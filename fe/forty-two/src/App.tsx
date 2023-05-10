@@ -241,17 +241,6 @@ function App() {
           message: data.data.message,
           nickname: data.data.nickname,
         });
-        const notification = new Notification(
-          "근처에 새로운 메시지가 있어요!",
-          {
-            icon: appIcon,
-            body: data.data.message,
-          }
-        );
-
-        notification.onclick = function () {
-          window.open("https://www.people42.com");
-        };
         break;
       case "PING":
         setPongSend(socket);
