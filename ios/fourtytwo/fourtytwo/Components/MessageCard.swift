@@ -1,5 +1,19 @@
 import SwiftUI
 
+struct MessageInfo {
+    let profileImage: String
+    let stack: Int
+    let nickname: String
+    let contents: String
+    let placeIdx: Int?
+    let placeName: String
+    let hour: String
+    let hasMultiple: Bool
+    let cardColor: CardColor
+    let messageIdx: Int
+    let emotion: String
+    let userIdx: Int
+}
 
 struct MessageCard: View {
     @Environment(\.colorScheme) var colorScheme

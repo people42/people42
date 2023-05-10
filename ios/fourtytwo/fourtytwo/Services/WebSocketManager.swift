@@ -151,6 +151,10 @@ class WebSocketManager: NSObject, ObservableObject {
     // MOVE 메시지 처리 메서드
     func handleMove(newLatitude: Double, newLongitude: Double) {
         guard var updatedUserData = getCurrentUserData() else { return }
+        
+        // 연결 상태에서만 전송
+        guard isConnected else { return }
+        
         updatedUserData["latitude"] = newLatitude
         updatedUserData["longitude"] = newLongitude
         sendMessage(method: "MOVE", data: updatedUserData)
@@ -234,8 +238,6 @@ class WebSocketManager: NSObject, ObservableObject {
             return
         }
         
-        // 유저 목록 초기화
-        self.nearUsers = [:]
 
         for user in nearUsers {
             guard let userIdx = user["userIdx"] as? Int,
@@ -246,6 +248,11 @@ class WebSocketManager: NSObject, ObservableObject {
 
             // 위치 비교를 위해 새로운 변수 생성
             var updatedUser = user
+
+            // 이미 존재하는 유저인 경우, 넘어감
+            if self.nearUsers[userIdx] != nil {
+                continue
+            }
 
             // latitude와 longitude 정보가 존재할 경우, 중앙과 겹치지 않도록 새로운 위치를 가져옴
             if let latitude = user["latitude"] as? Double,
@@ -259,8 +266,25 @@ class WebSocketManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 self.nearUsers[userIdx] = updatedUser
             }
-            
         }
+
+        
+//        if let farUsers = farUsers {
+//            for user in farUsers {
+//                guard let userIdx = user["userIdx"] as? Int,
+//                      let type = user["type"] as? String,
+//                      type != "guest" else {
+//                    continue // type이 "guest"인 경우 건너뜀
+//                }
+//
+//                // 유저 제거
+//                DispatchQueue.main.async {
+//                    self.nearUsers.removeValue(forKey: userIdx)
+//                }
+//
+//            }
+//        }
+
         print("!!!!!!!!!!!!!!!!!!!!!!!-INIT 결과")
         print(self.nearUsers) // 수정된 위치 정보 출력
     }
@@ -355,7 +379,7 @@ class WebSocketManager: NSObject, ObservableObject {
     // 메서드 PING 처리
     private func handlePingMessage() {
         
-        print("ping recived")
+        print("Ping recived")
         handlePong()
     }
 }

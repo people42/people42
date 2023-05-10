@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+@MainActor
 class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var region: MKCoordinateRegion
     @Published var currentLocation: CLLocation? // 위치
@@ -13,44 +14,51 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 36.355352726497806, longitude: 127.29817332461586),
             latitudinalMeters: 1000, longitudinalMeters: 1000
-//        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01) // 배율
         )
         super.init()
         locationManager.delegate = self
-//        locationManager.distanceFilter = kCLDistanceFilterNone // 위치가 조금이라도 변경되면 업데이트
         locationManager.distanceFilter = 5 // 위치가 5미터 이상 변경되면 업데이트
 
-        // 위치
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-        // 헤딩
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.startUpdatingHeading()
-    }
-
-    // 위치 업데이트
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        
-        DispatchQueue.main.async {
-            print("위치 업데이트!")
-            self.currentLocation = location
-            self.region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
-                latitudinalMeters: 500, longitudinalMeters: 500
-            )
+        Task {
+            
+            await MainActor.run {
+                // 위치
+                locationManager.requestWhenInUseAuthorization()
+                locationManager.startUpdatingLocation()
+                // 헤딩
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                locationManager.startUpdatingHeading()
+            }
         }
     }
 
-    // 해딩 업데이트
+    // 위치 업데이트 - nonisolated 붙히면 안됨
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+
+        Task {
+            await MainActor.run {
+                print("위치 업데이트!")
+                self.currentLocation = location
+                self.region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
+                    latitudinalMeters: 500, longitudinalMeters: 500
+                )
+            }
+        }
+    }
+
+    // 해딩 업데이트 - nonisolated 붙히면 안됨
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        
-        DispatchQueue.main.async {
-            self.heading = newHeading.trueHeading
+        Task {
+            await MainActor.run {
+                self.heading = newHeading.trueHeading
+            }
         }
     }
 
 }
+
 
 struct MapView: View {
     @Environment(\.colorScheme) var colorScheme

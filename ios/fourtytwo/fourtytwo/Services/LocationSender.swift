@@ -58,6 +58,10 @@ class LocationSender {
                     print("Error sending location: \(error)")
                 }
             }
+            
+            // 웹소켓 현재 위치 전송
+            WebSocketManager.shared.handleMove(newLatitude: latitude, newLongitude: longitude)
+            
         } else {
             print("Failed to get current location")
         }

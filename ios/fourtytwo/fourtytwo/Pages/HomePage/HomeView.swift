@@ -13,13 +13,16 @@ class HomeViewModel: ObservableObject {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self.message = response.data?.message ?? "아직 적은 글이 없어요."
-                    self.hasMultiple = response.data!.messageCnt > 1
+                    if let data = response.data {
+                        self.message = data.message ?? "아직 적은 글이 없어요."
+                        self.hasMultiple = data.messageCnt > 1
+                        
+                        self.reactionCounts["fire_circle"] = data.fire
+                        self.reactionCounts["heart_circle"] = data.heart
+                        self.reactionCounts["tear_circle"] = data.tear
+                        self.reactionCounts["thumbsUp_circle"] = data.thumbsUp
+                    }
                     
-                    self.reactionCounts["fire_circle"] = response.data?.fire
-                    self.reactionCounts["heart_circle"] = response.data?.heart
-                    self.reactionCounts["tear_circle"] = response.data?.tear
-                    self.reactionCounts["thumbsUp_circle"] = response.data?.thumbsUp
                 }
             case .failure(let error):
                 print(error.localizedDescription)

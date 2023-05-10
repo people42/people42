@@ -688,7 +688,6 @@
 				362553EB2A0B311800A2CD4A /* Useless */,
 				3606DC1A29EF83F90025F0FC /* CustomButton.swift */,
 				3606DC3F29F0F1C80025F0FC /* GifImage.swift */,
-				3606DE2529F12F300025F0FC /* GifUIkit.swift */,
 				36DA62F429F60BF6001191DB /* MyMassageCard.swift */,
 				36DA62FF29F638B6001191DB /* ReactionButton.swift */,
 				36680D2A29F64B78001EFD52 /* MessageCard.swift */,
@@ -1033,6 +1032,7 @@
 		362553EB2A0B311800A2CD4A /* Useless */ = {
 			isa = PBXGroup;
 			children = (
+				3606DE2529F12F300025F0FC /* GifUIkit.swift */,
 				36680D3229F6CB96001EFD52 /* TimelineView.swift */,
 				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
 			);
