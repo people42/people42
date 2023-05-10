@@ -1,19 +1,23 @@
 import { getMessageCnt } from "../../../../api";
 import { CommonBtn } from "../../../../components";
+import { socketAllMessageCntState } from "../../../../recoil/socket/atoms";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 type homeMainPreviewProps = {};
 
 function HomeMainPreview({}: homeMainPreviewProps) {
   const navigate = useNavigate();
-  const [messageCnt, setMessageCnt] = useState(0);
-
+  const [messageCnt, setMessageCnt] = useRecoilState(socketAllMessageCntState);
   useEffect(() => {
     getMessageCnt().then((res) => setMessageCnt(res.data.data.cnt));
   }, []);
 
+  useEffect(() => {
+    console.log(messageCnt);
+  }, [messageCnt]);
   return (
     <StyledHomeMainPreview>
       <h1>어쩌면 마주친 사이</h1>
