@@ -15,8 +15,8 @@ type inputProps = {
 };
 
 function MyMessageCardInput({ onClickCancel }: inputProps) {
-  const accessToken = useRecoilValue(userAccessTokenState);
   const [myMessageInputData, setMyMessageInputData] = useState<string>("");
+  const accessToken = useRecoilValue(userAccessTokenState);
   const setUserRefresh = useSetRecoilState(userState);
   const [socket, setSocket] = useRecoilState(socketState);
   const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
