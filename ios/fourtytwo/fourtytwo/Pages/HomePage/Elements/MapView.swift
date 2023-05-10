@@ -13,11 +13,11 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 36.355352726497806, longitude: 127.29817332461586),
-            latitudinalMeters: 1000, longitudinalMeters: 1000
+            latitudinalMeters: 500, longitudinalMeters: 500
         )
         super.init()
         locationManager.delegate = self
-        locationManager.distanceFilter = 5 // 위치가 5미터 이상 변경되면 업데이트
+        locationManager.distanceFilter = 10 // 위치가 10미터 이상 변경되면 업데이트
 
         Task {
             
@@ -33,7 +33,7 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     // 위치 업데이트 - nonisolated 붙히면 안됨
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
 
         Task {
@@ -49,7 +49,7 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     // 해딩 업데이트 - nonisolated 붙히면 안됨
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         Task {
             await MainActor.run {
                 self.heading = newHeading.trueHeading

@@ -217,8 +217,8 @@ extension PersonView {
     
     // 지도의 축척 조정
     private func calculateMapSpan(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> MKCoordinateSpan {
-        let latDelta = maxLat - minLat + 0.05 // 0.05를 추가하여 마커 주변에 여유 공간을 확보합니다.
-        let lonDelta = maxLon - minLon + 0.05
+        let latDelta = maxLat - minLat + 0.01 // 0.05를 추가하여 마커 주변에 여유 공간을 확보합니다.
+        let lonDelta = maxLon - minLon + 0.01
 
         return MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
     }

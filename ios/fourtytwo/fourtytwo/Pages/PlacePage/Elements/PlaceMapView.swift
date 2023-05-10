@@ -66,14 +66,14 @@ struct PlaceMapView: View {
         .frame(height: toggleHeight)
     }
 
-    private func randomPositionOnScreen(geometry: GeometryProxy, existingPositions: [CGPoint], minimumDistance: CGFloat = 40) -> CGPoint {
+    private func randomPositionOnScreen(geometry: GeometryProxy, existingPositions: [CGPoint], minimumDistance: CGFloat = 16) -> CGPoint {
         var newPosition: CGPoint
-        let padding: CGFloat = 32
+        let padding: CGFloat = 10
         
         repeat {
             
-            var randomX = CGFloat.random(in: padding..<geometry.size.width - padding)
-            var randomY = CGFloat.random(in: padding..<geometry.size.height - padding)
+            let randomX = CGFloat.random(in: padding..<geometry.size.width - padding)
+            let randomY = CGFloat.random(in: padding..<geometry.size.height - padding)
             newPosition = CGPoint(x: randomX, y: randomY)
             
         } while existingPositions.contains(where: { distanceBetween($0, newPosition) < minimumDistance })

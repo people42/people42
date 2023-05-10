@@ -86,6 +86,10 @@ struct PlaceView: View {
                     
                 }
                 
+            }
+            VStack {
+                Spacer()
+                
                 HStack {
                     // 이전 페이지 버튼
                     if currentPage > 0 {
@@ -110,8 +114,11 @@ struct PlaceView: View {
                         }
                         .disabled(isLoading) // 로딩 중이면 버튼을 비활성화합니다.
                     }
+                        
                 }
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(8)
+                .background(Color("BgPrimary").opacity(0.9).edgesIgnoringSafeArea(.bottom))
             }
             
             // 로딩 상태 표시

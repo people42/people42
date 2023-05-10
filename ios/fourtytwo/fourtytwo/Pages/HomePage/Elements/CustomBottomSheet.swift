@@ -48,7 +48,6 @@ struct CustomBottomSheet: View {
                     ZStack {
                         Color("BgPrimary")
                         .opacity(viewModel.getCurrentOpacity(geometry.size.height))
-//                        TimelineView()
                         PlaceTimelineView()
                     }
                     

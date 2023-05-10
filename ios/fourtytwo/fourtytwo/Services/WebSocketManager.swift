@@ -235,7 +235,8 @@ class WebSocketManager: NSObject, ObservableObject {
     // 메서드 Info 처리
     private func handleInfoMessage(_ json: [String: Any]) {
         guard let data = json["data"] as? [String: Any],
-              let nearUsers = data["nearUsers"] as? [[String: Any]] else {
+              let nearUsers = data["nearUsers"] as? [[String: Any]],
+              let farUsers = data["farUsers"] as? [[String: Any]] else {
             print("Invalid INFO message format")
             return
         }
@@ -271,21 +272,21 @@ class WebSocketManager: NSObject, ObservableObject {
         }
 
         
-//        if let farUsers = farUsers {
-//            for user in farUsers {
-//                guard let userIdx = user["userIdx"] as? Int,
-//                      let type = user["type"] as? String,
-//                      type != "guest" else {
-//                    continue // type이 "guest"인 경우 건너뜀
-//                }
-//
-//                // 유저 제거
-//                DispatchQueue.main.async {
-//                    self.nearUsers.removeValue(forKey: userIdx)
-//                }
-//
-//            }
-//        }
+
+        for user in farUsers {
+            guard let userIdx = user["userIdx"] as? Int,
+                  let type = user["type"] as? String,
+                  type != "guest" else {
+                continue // type이 "guest"인 경우 건너뜀
+            }
+
+            // 유저 제거
+            DispatchQueue.main.async {
+                self.nearUsers.removeValue(forKey: userIdx)
+            }
+
+        }
+
 
     }
 
