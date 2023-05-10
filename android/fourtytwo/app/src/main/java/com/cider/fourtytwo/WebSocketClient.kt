@@ -30,9 +30,9 @@ class WebSocketClient(private val userUrl: String) {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
                 println("웹소켓 Received message: $text")
-//                val gson = Gson()
-//                val jsonObject = gson.fromJson(text, JsonObject::class.java)
-//                val json = gson.toJson(jsonObject)
+                val gson = Gson()
+                val jsonObject = gson.fromJson(text, JsonObject::class.java)
+                val json = gson.toJson(jsonObject)
 //                val message = Gson().fromJson(text, Message::class.java)
 
                 // 변환된 데이터 클래스를 MainActivity로 전달
