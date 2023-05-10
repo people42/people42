@@ -71,7 +71,7 @@ struct LocationCard: View {
                                     .foregroundColor(Color.gray).opacity(0.3))
                             
                             HStack(spacing: 16) {
-                                ForEach(0..<locationCardData.old.count, id: \.self) { i in
+                                ForEach(0..<min(locationCardData.old.count, 7), id: \.self) { i in
                                     GifImage(locationCardData.old[i], isAnimated: false)
                                         .frame(width: 20, height: 18)
                                 }
@@ -90,7 +90,7 @@ struct LocationCard: View {
                                     .foregroundColor(Color.gray).opacity(0.3))
                             
                             HStack(spacing: 16) {
-                                ForEach(0..<locationCardData.new.count, id: \.self) { i in
+                                ForEach(0..<min(locationCardData.new.count, 7), id: \.self) { i in
                                     GifImage(locationCardData.new[i], isAnimated: false)
                                         .frame(width: 20, height: 18)
                                 }

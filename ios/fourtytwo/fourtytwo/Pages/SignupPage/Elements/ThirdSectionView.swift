@@ -104,30 +104,27 @@ struct ThirdSectionView: View {
 }
 
 struct AgreementDetailView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding var showAgreementDetail: Bool
-    
+
     var body: some View {
-        VStack {
-            PolicyWebView()
+        NavigationView {
+            VStack {
+                WebView(url: "https://www.people42.com/policy?nav=false")
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationBarTitle("이용약관 및 개인정보 처리 방침", displayMode: .inline)
+            .navigationBarItems(trailing:
+                Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("닫기").foregroundColor(Color("Text"))
+                }
+            )
         }
     }
 }
 
-struct WebView: UIViewRepresentable {
-    let url: String
-    
-    func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
-    }
-    
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        guard let url = URL(string: url) else {
-            return
-        }
-        let request = URLRequest(url: url)
-        uiView.load(request)
-    }
-}
 
 struct ThirdSectionView_Previews: PreviewProvider {
     static var previews: some View {

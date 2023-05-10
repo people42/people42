@@ -156,6 +156,13 @@ class WebSocketManager: NSObject, ObservableObject {
         sendMessage(method: "MOVE", data: updatedUserData)
     }
     
+    // PONG 메시지 처리 메서드
+    func handlePong() {
+        print("Pong send")
+        sendMessage(method: "PING", data: [:])
+    }
+    
+    
     // 웹소켓에서 메시지를 수신하는 메서드
     private func receiveMessage() {
         guard isConnected else {
@@ -172,18 +179,22 @@ class WebSocketManager: NSObject, ObservableObject {
                 case .string(let text):
                     print("Received text: \(text)")
                     self?.handleMessage(message: text)
+                    self?.receiveMessage() // 메시지를 성공적으로 수신했을 때만 재귀 호출
                 case .data(let data):
                     print("Received data: \(data)")
+                    self?.receiveMessage() // 메시지를 성공적으로 수신했을 때만 재귀 호출
                 @unknown default:
                     print("Unknown message received")
                 }
                 
             case .failure(let error):
                 print("Error receiving message: \(error.localizedDescription)")
+                // 에러 발생 시 재연결 시도
+                self?.reconnect()
             }
-            self?.receiveMessage()
         }
     }
+
     
     // 근처 유저 목록
     var nearUsers: [Int: [String: Any]] = [:]
@@ -208,6 +219,8 @@ class WebSocketManager: NSObject, ObservableObject {
             handleChangeStatusMessage(json)
         case "MESSAGE_CHANGED":
             handleMessageChangedMessage(json)
+        case "PING":
+            handlePingMessage()
         default:
             print("Unhandled method: \(method)")
         }
@@ -248,7 +261,7 @@ class WebSocketManager: NSObject, ObservableObject {
             }
             
         }
-        print("!!!!!!!!!!!!!!!!!!!!!!!")
+        print("!!!!!!!!!!!!!!!!!!!!!!!-INIT 결과")
         print(self.nearUsers) // 수정된 위치 정보 출력
     }
 
@@ -337,6 +350,13 @@ class WebSocketManager: NSObject, ObservableObject {
         }
         
         print("User \(userIdx) message changed to \(message)")
+    }
+    
+    // 메서드 PING 처리
+    private func handlePingMessage() {
+        
+        print("ping recived")
+        handlePong()
     }
 }
 

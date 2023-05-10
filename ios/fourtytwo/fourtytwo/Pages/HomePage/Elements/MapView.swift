@@ -17,6 +17,9 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         )
         super.init()
         locationManager.delegate = self
+//        locationManager.distanceFilter = kCLDistanceFilterNone // 위치가 조금이라도 변경되면 업데이트
+        locationManager.distanceFilter = 5 // 위치가 5미터 이상 변경되면 업데이트
+
         // 위치
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
@@ -28,8 +31,10 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     // 위치 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.currentLocation = location
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        
+        DispatchQueue.main.async {
+            print("위치 업데이트!")
+            self.currentLocation = location
             self.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
                 latitudinalMeters: 500, longitudinalMeters: 500
@@ -37,12 +42,14 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
 
-    // 헤딩 업데이트
+    // 해딩 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        
+        DispatchQueue.main.async {
             self.heading = newHeading.trueHeading
         }
     }
+
 }
 
 struct MapView: View {
@@ -60,7 +67,7 @@ struct MapView: View {
 
     var body: some View {
         ZStack {
-            OverView(region: $locationManager.region, currentLocation: $locationManager.currentLocation, nearUsers: $webSocketManager.nearUsers, heading: locationManager.heading)
+            OverView(region: $locationManager.region, nearUsers: $webSocketManager.nearUsers)
                 .clipShape(Circle())
                 .frame(height: 480)
                 .overlay(
@@ -104,7 +111,6 @@ struct MapView: View {
         let maxOpacity: Double = 0.1
         let numberOfCircles = 2
 
-        // swiftlint:disable:next
         return ForEach(0..<numberOfCircles) { index in
             Circle()
                 .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)

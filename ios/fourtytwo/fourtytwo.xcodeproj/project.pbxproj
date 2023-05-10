@@ -685,6 +685,7 @@
 		3606DC1929EF82A50025F0FC /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				362553EB2A0B311800A2CD4A /* Useless */,
 				3606DC1A29EF83F90025F0FC /* CustomButton.swift */,
 				3606DC3F29F0F1C80025F0FC /* GifImage.swift */,
 				3606DE2529F12F300025F0FC /* GifUIkit.swift */,
@@ -1029,6 +1030,15 @@
 			path = Elements;
 			sourceTree = "<group>";
 		};
+		362553EB2A0B311800A2CD4A /* Useless */ = {
+			isa = PBXGroup;
+			children = (
+				36680D3229F6CB96001EFD52 /* TimelineView.swift */,
+				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
+			);
+			path = Useless;
+			sourceTree = "<group>";
+		};
 		365B964529FE50A500647950 /* AppState */ = {
 			isa = PBXGroup;
 			children = (
@@ -1058,13 +1068,11 @@
 		36680D3129F6CB72001EFD52 /* Elements */ = {
 			isa = PBXGroup;
 			children = (
-				36680D3229F6CB96001EFD52 /* TimelineView.swift */,
 				362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */,
 				360D52B829F8D14400F67940 /* NavBar.swift */,
 				360D52CD29F95C6B00F67940 /* MapView.swift */,
-				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
-				362553D82A043F3300A2CD4A /* WrappedMap.swift */,
 				362553E62A0A63E300A2CD4A /* OverView.swift */,
+				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";

@@ -3,10 +3,7 @@ import MapKit
 
 struct OverView: View {
     @Binding var region: MKCoordinateRegion
-    @Binding var currentLocation: CLLocation?
     @Binding var nearUsers: [Int: [String: Any]]
-
-    var heading: CLLocationDirection
 
     var body: some View {
         Map(coordinateRegion: $region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
@@ -70,7 +67,7 @@ struct MessageView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
-        } else if message != previousMessage {
+        } else if message != previousMessage && message != "" {
             Text(message)
                 .font(.system(size: 12))
                 .padding(.horizontal, 8)
