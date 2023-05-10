@@ -20,6 +20,8 @@ import {
   socketNearUserState,
   socketState,
 } from "./recoil/socket/atoms";
+import { socketGuestAddState } from "./recoil/socket/selectors";
+import { socketGuestRemoveState } from "./recoil/socket/selectors";
 import {
   socketNewMessageChangeState,
   socketPongSendState,
@@ -55,6 +57,12 @@ import { ThemeProvider } from "styled-components";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function App() {
+  useEffect(() => {
+    const askiiLogo =
+      " \n ___   ___    _______     \n|\\  \\ |\\  \\  /  ___  \\    \n\\ \\  \\\\_\\  \\/__/|_/  /|   \n \\ \\______  \\__|//  / /   \n  \\|_____|  \\  /  /_/__  \n         \\ \\__\\|\\________\\\n          \\|__| \\|_______|\n \n어쩌면 마주친 사이\n \n23. 4. 10. ~ 23. 5. 18.\n대전 3반 10팀\n장운창 윤성운 임희상 정민우 김진희 전동인\n ";
+    console.log(askiiLogo);
+  }, []);
+
   const setUserRefresh = useSetRecoilState(userState);
   const [socket, setSocket] = useRecoilState(socketState);
   const [userLocation, setUserLocation] = useRecoilState<TLocation | null>(
@@ -210,6 +218,8 @@ function App() {
   const setUserChange = useSetRecoilState(socketUserChangeState);
   const setUserRemove = useSetRecoilState(socketUserRemoveState);
   const setNewMessage = useSetRecoilState(socketNewMessageChangeState);
+  const setGuestAdd = useSetRecoilState(socketGuestAddState);
+  const setGuestRemove = useSetRecoilState(socketGuestRemoveState);
 
   const socketOnMessage = (data: TSocketReceive) => {
     switch (data.method) {
@@ -223,12 +233,18 @@ function App() {
           const newUser: Map<number, TSocketNearUser> = new Map();
           newUser.set(data.data.userIdx, data.data);
           setUserChange(newUser);
+        } else {
+          setGuestAdd(0);
         }
         break;
       case "CLOSE":
-        const newCloseUser: Map<number, TSocketNearUser> = new Map();
-        newCloseUser.set(data.data.userIdx, data.data);
-        setUserRemove(newCloseUser);
+        if (data.data.type == "user") {
+          const newCloseUser: Map<number, TSocketNearUser> = new Map();
+          newCloseUser.set(data.data.userIdx, data.data);
+          setUserRemove(newCloseUser);
+        } else {
+          setGuestRemove(0);
+        }
         break;
       case "CHANGE_STATUS":
         const newChangeUser: Map<number, TSocketNearUser> = new Map();
