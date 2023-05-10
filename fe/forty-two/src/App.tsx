@@ -3,7 +3,6 @@ import { postFCMToken, postLocation } from "./api";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
-import appIcon from "./assets/images/badge/appIcon.png";
 import { NotificationCard } from "./components";
 import {
   isLocationPermittedState,
@@ -16,6 +15,7 @@ import {
 } from "./recoil/notification/atoms";
 import { updateNotificationState } from "./recoil/notification/selector";
 import {
+  socketAllMessageCntState,
   socketGuestCntState,
   socketNearUserState,
   socketState,
@@ -210,6 +210,7 @@ function App() {
   const setUserChange = useSetRecoilState(socketUserChangeState);
   const setUserRemove = useSetRecoilState(socketUserRemoveState);
   const setNewMessage = useSetRecoilState(socketNewMessageChangeState);
+  const [messageCnt, setMessageCnt] = useRecoilState(socketAllMessageCntState);
 
   const socketOnMessage = (data: TSocketReceive) => {
     switch (data.method) {
