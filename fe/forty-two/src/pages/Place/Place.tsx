@@ -94,7 +94,7 @@ function Place() {
               </div>
             ) : null}
             <PlaceMessageList></PlaceMessageList>
-            {placeData ? (
+            {placeData && placeData.messagesInfo.length == 10 ? (
               <div className="list-page" onClick={() => setPage(page + 1)}>
                 <TbArrowBigDown></TbArrowBigDown> 더 많은 메시지
               </div>
