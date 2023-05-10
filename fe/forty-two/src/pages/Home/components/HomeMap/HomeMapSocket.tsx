@@ -1,9 +1,12 @@
+import { emojiNameList } from "../../../../assets/emojiList";
 import {
   socketGuestCntState,
   socketNearUserState,
   socketNewMessageState,
 } from "../../../../recoil/socket/atoms";
+import HomeMapSocketGuest from "./HomeMapSocketGuest";
 import HomeMapSocketWriting from "./HomeMapSocketWriting";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -41,6 +44,58 @@ function HomeMapSocket({}: homeMapSocketProps) {
     setNearUserList(userList);
   }, [nearUser]);
 
+  const [guestList, setGuestList] = useState<JSX.Element[]>();
+
+  useEffect(() => {
+    if (guestCnt && !guestList) {
+      const initialGuestList = [];
+      for (let i = 0; i < guestCnt; i++) {
+        initialGuestList.push(
+          <HomeMapSocketGuest
+            emoji={_.sample(emojiNameList) ?? "ghost"}
+            right={Math.floor(Math.random() * 101)}
+            bottom={Math.floor(Math.random() * 101)}
+            key={`home-map-guest-${Math.floor(Math.random() * 90000) + 10000}`}
+          />
+        );
+      }
+      setGuestList(initialGuestList);
+    } else if (guestCnt && guestList) {
+      if (guestList.length > guestCnt) {
+        handleDecrementGuest();
+      } else if (guestList.length < guestCnt) {
+        handleIncrementGuest();
+      }
+    } else if (guestCnt == 0) {
+      setGuestList(undefined);
+    }
+  }, [guestCnt]);
+
+  // guestCnt가 1 증가하면 guestList에 HomeMapSocketGuest를 하나 추가합니다.
+  const handleIncrementGuest = () => {
+    if (guestList) {
+      const newGuestList = [
+        ...guestList,
+        <HomeMapSocketGuest
+          emoji={_.sample(emojiNameList) ?? "ghost"}
+          right={Math.floor(Math.random() * 101)}
+          bottom={Math.floor(Math.random() * 101)}
+          key={`home-map-guest-${Math.floor(Math.random() * 90000) + 10000}`}
+        />,
+      ];
+      setGuestList(newGuestList);
+    }
+  };
+
+  // guestCnt가 1 감소하면 guestList에서 맨 앞에 있는 HomeMapSocketGuest를 하나 제거합니다.
+  const handleDecrementGuest = () => {
+    if (guestList) {
+      const newGuestList = [...guestList];
+      newGuestList.shift();
+      setGuestList(newGuestList);
+    }
+  };
+
   useEffect(() => {
     setKey(key + 1);
   }, [newMessage]);
@@ -49,6 +104,7 @@ function HomeMapSocket({}: homeMapSocketProps) {
     <StyledHomeMapSocket>
       <div className="home-map-near">
         {nearUserList}
+        {guestList}
         {newMessage ? (
           <div
             key={key}
