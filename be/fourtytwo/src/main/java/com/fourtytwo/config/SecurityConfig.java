@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/feedback/**").permitAll()
                 .antMatchers("/api/v1/socket/**").permitAll() // 웹소켓 경로에 대한 접근을 허용
                 .and()
                 .exceptionHandling()
