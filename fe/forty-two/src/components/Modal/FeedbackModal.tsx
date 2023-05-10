@@ -96,6 +96,7 @@ const StyledNavModal = styled.div`
     &-body {
       ${({ theme }) => theme.text.body2}
       &-textarea {
+        border: none;
         padding: 8px;
         box-sizing: border-box;
         width: 100%;
@@ -104,6 +105,12 @@ const StyledNavModal = styled.div`
         ${({ theme }) => theme.text.body2}
         color: ${({ theme }) => theme.color.text.primary};
         background-color: ${({ theme }) => theme.color.background.primary};
+        :focus {
+          outline: 3px;
+          outline-color: ${({ theme }) => theme.color.brand.blue + "30"};
+          outline-style: solid;
+        }
+        margin-bottom: 8px;
       }
     }
   }
