@@ -3,12 +3,8 @@ import { postFCMToken, postLocation } from "./api";
 import { getAccessToken } from "./api/auth";
 import "./assets/fonts/pretendard/pretendard-subset.css";
 import "./assets/fonts/pretendard/pretendard.css";
+import appIcon from "./assets/images/badge/appIcon.png";
 import { NotificationCard } from "./components";
-import AppleAccountCheck from "./pages/AppleAccountCheck/AppleAccountCheck";
-import DeepLink from "./pages/DeepLink/DeepLink";
-import Logout from "./pages/Logout/Logout";
-import Withdrawal from "./pages/Withdrawal/Withdrawal";
-import { Home, Place, Policy, SignIn, SignUp, User } from "./pages/index";
 import {
   isLocationPermittedState,
   locationInfoState,
@@ -22,12 +18,9 @@ import { updateNotificationState } from "./recoil/notification/selector";
 import {
   socketGuestCntState,
   socketNearUserState,
-  socketNewMessageState,
   socketState,
 } from "./recoil/socket/atoms";
 import {
-  socketGuestAddState,
-  socketGuestRemoveState,
   socketNewMessageChangeState,
   socketPongSendState,
   socketUserChangeState,
@@ -37,6 +30,7 @@ import { themeState } from "./recoil/theme/atoms";
 import { isLoginState, userState } from "./recoil/user/atoms";
 import { userLogoutState } from "./recoil/user/selectors";
 import "./reset.css";
+import browserRouter from "./router";
 import { GlobalStyle } from "./styles/globalStyle";
 import { lightStyles, darkStyles } from "./styles/theme";
 import {
@@ -44,14 +38,9 @@ import {
   getUserLocation,
   handleClose,
   handleMove,
-  sendMessage,
-  sendPong,
   setSessionRefreshToken,
-  socketChangeStatusReceive,
-  socketFarReceive,
   socketInfoReceive,
   socketInit,
-  socketNearReceive,
 } from "./utils";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { initializeApp } from "firebase/app";
@@ -59,54 +48,11 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { useEffect, useState } from "react";
 import { isDesktop } from "react-device-detect";
 import { NavermapsProvider } from "react-naver-maps";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ThemeProvider } from "styled-components";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/place",
-    element: <Place />,
-  },
-  {
-    path: "/user/:user_id",
-    element: <User />,
-  },
-  {
-    path: "/policy",
-    element: <Policy />,
-  },
-  {
-    path: "/signin/apple",
-    element: <AppleAccountCheck />,
-  },
-  {
-    path: "/signin",
-    element: <SignIn />,
-  },
-  {
-    path: "/signup",
-    element: <SignUp />,
-  },
-  {
-    path: "/logout",
-    element: <Logout />,
-  },
-  {
-    path: "/withdrawal/:platform",
-    element: <Withdrawal />,
-  },
-  {
-    path: "/mobile",
-    element: <DeepLink />,
-  },
-]);
 
 function App() {
   const setUserRefresh = useSetRecoilState(userState);
@@ -295,6 +241,17 @@ function App() {
           message: data.data.message,
           nickname: data.data.nickname,
         });
+        const notification = new Notification(
+          "근처에 새로운 메시지가 있어요!",
+          {
+            icon: appIcon,
+            body: data.data.message,
+          }
+        );
+
+        notification.onclick = function () {
+          window.open("https://www.people42.com");
+        };
         break;
       case "PING":
         setPongSend(socket);
@@ -447,7 +404,7 @@ function App() {
         <NavermapsProvider ncpClientId={NAVER_MAP_CLIENT_ID}>
           <Meta></Meta>
           <NotificationCard></NotificationCard>
-          <RouterProvider router={router} />
+          <RouterProvider router={browserRouter} />
         </NavermapsProvider>
       </GoogleOAuthProvider>
     </ThemeProvider>
