@@ -8,7 +8,7 @@ import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 interface homeTimeLineGroupProps {
-  props: TFeed["new"];
+  props: TFeed["new"] | null;
   idx: number;
 }
 
