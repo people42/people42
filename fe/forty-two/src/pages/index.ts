@@ -8,3 +8,4 @@ export { default as DeepLink } from "./DeepLink/DeepLink";
 export { default as Logout } from "./Logout/Logout";
 export { default as Withdrawal } from "./Withdrawal/Withdrawal";
 export { default as AppleAccountCheck } from "./AppleAccountCheck/AppleAccountCheck";
+export { default as LocationManage } from "./LocationManage/LocationManage";
