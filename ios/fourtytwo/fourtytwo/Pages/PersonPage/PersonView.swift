@@ -87,19 +87,19 @@ struct PersonView: View {
                         .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
+                .actionSheet(isPresented: $showActionSheet) {
+                    ActionSheet(title: Text("해당 유저를 차단하시겠습니까?\n차단된 유저와 서로의 게시물을 볼 수 없게 됩니다."),
+                                buttons: [
+                                    .destructive(Text("차단")) {
+                                        showBlockUserSheet = true
+                                    },
+                                    .cancel(Text("취소")) { }
+                                ])
+                }
             }
         }
         .onAppear {
             getPersonPlaces()
-        }
-        .actionSheet(isPresented: $showActionSheet) {
-            ActionSheet(title: Text("해당 유저를 차단하시겠습니까?\n차단된 유저와 서로의 게시물을 볼 수 없게 됩니다."),
-                        buttons: [
-                            .destructive(Text("차단")) {
-                                showBlockUserSheet = true
-                            },
-                            .cancel(Text("취소")) { }
-                        ])
         }
         .sheet(isPresented: $showBlockUserSheet) {
             if let nickname = personPlaces?.nickname, let userIdx = userIdx {

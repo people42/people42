@@ -145,7 +145,7 @@
 		360D52C729F939B400F67940 /* AlertCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52C629F939B400F67940 /* AlertCard.swift */; };
 		360D52CA29F941FF00F67940 /* NavLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52C929F941FF00F67940 /* NavLink.swift */; };
 		360D52CC29F944EE00F67940 /* PolicyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52CB29F944EE00F67940 /* PolicyWebView.swift */; };
-		360D52CE29F95C6B00F67940 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52CD29F95C6B00F67940 /* MapView.swift */; };
+		360D52CE29F95C6B00F67940 /* OverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52CD29F95C6B00F67940 /* OverView.swift */; };
 		360D52D029FA078D00F67940 /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52CF29FA078D00F67940 /* AccountService.swift */; };
 		360D52D229FA153B00F67940 /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D129FA153B00F67940 /* FeedService.swift */; };
 		360D52D429FA4A0D00F67940 /* CustomBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */; };
@@ -277,8 +277,9 @@
 		362553DF2A08AD9E00A2CD4A /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */; };
 		362553E12A08D99F00A2CD4A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E02A08D99F00A2CD4A /* SceneDelegate.swift */; };
 		362553E32A08DA7E00A2CD4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E22A08DA7E00A2CD4A /* AppDelegate.swift */; };
-		362553E72A0A63E300A2CD4A /* OverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E62A0A63E300A2CD4A /* OverView.swift */; };
+		362553E72A0A63E300A2CD4A /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E62A0A63E300A2CD4A /* MapView.swift */; };
 		362553E92A0A956A00A2CD4A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553E82A0A956A00A2CD4A /* NotificationService.swift */; };
+		362553ED2A0BA17600A2CD4A /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362553EC2A0BA17600A2CD4A /* ActivityIndicator.swift */; };
 		365B964429FDA47E00647950 /* PlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964329FDA47E00647950 /* PlaceView.swift */; };
 		365B964729FE50E600647950 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964629FE50E600647950 /* ViewState.swift */; };
 		365B964B29FFCCAB00647950 /* PlaceMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365B964A29FFCCAB00647950 /* PlaceMapView.swift */; };
@@ -461,7 +462,7 @@
 		360D52C629F939B400F67940 /* AlertCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCard.swift; sourceTree = "<group>"; };
 		360D52C929F941FF00F67940 /* NavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavLink.swift; sourceTree = "<group>"; };
 		360D52CB29F944EE00F67940 /* PolicyWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyWebView.swift; sourceTree = "<group>"; };
-		360D52CD29F95C6B00F67940 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		360D52CD29F95C6B00F67940 /* OverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverView.swift; sourceTree = "<group>"; };
 		360D52CF29FA078D00F67940 /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
 		360D52D129FA153B00F67940 /* FeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomSheet.swift; sourceTree = "<group>"; };
@@ -592,8 +593,9 @@
 		362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
 		362553E02A08D99F00A2CD4A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		362553E22A08DA7E00A2CD4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		362553E62A0A63E300A2CD4A /* OverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverView.swift; sourceTree = "<group>"; };
+		362553E62A0A63E300A2CD4A /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		362553E82A0A956A00A2CD4A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		362553EC2A0BA17600A2CD4A /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		365B964329FDA47E00647950 /* PlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceView.swift; sourceTree = "<group>"; };
 		365B964629FE50E600647950 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		365B964A29FFCCAB00647950 /* PlaceMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceMapView.swift; sourceTree = "<group>"; };
@@ -696,6 +698,7 @@
 				362553CF2A0395EF00A2CD4A /* TopAlignedTextEditor.swift */,
 				362553D62A03D73D00A2CD4A /* RefreshableModifier.swift */,
 				362553DA2A05026600A2CD4A /* LocationCard.swift */,
+				362553EC2A0BA17600A2CD4A /* ActivityIndicator.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1070,8 +1073,8 @@
 			children = (
 				362553DC2A051F1800A2CD4A /* PlaceTimelineView.swift */,
 				360D52B829F8D14400F67940 /* NavBar.swift */,
-				360D52CD29F95C6B00F67940 /* MapView.swift */,
-				362553E62A0A63E300A2CD4A /* OverView.swift */,
+				360D52CD29F95C6B00F67940 /* OverView.swift */,
+				362553E62A0A63E300A2CD4A /* MapView.swift */,
 				360D52D329FA4A0D00F67940 /* CustomBottomSheet.swift */,
 			);
 			path = Elements;
@@ -1597,10 +1600,11 @@
 				3606DC0829EE87910025F0FC /* FirstSectionView.swift in Sources */,
 				360D52CC29F944EE00F67940 /* PolicyWebView.swift in Sources */,
 				3606DC1329EECD650025F0FC /* Color.swift in Sources */,
+				362553ED2A0BA17600A2CD4A /* ActivityIndicator.swift in Sources */,
 				3606DE2E29F263C50025F0FC /* UserService.swift in Sources */,
 				360D52BC29F8D1D900F67940 /* SystemView.swift in Sources */,
 				36680D2B29F64B78001EFD52 /* MessageCard.swift in Sources */,
-				360D52CE29F95C6B00F67940 /* MapView.swift in Sources */,
+				360D52CE29F95C6B00F67940 /* OverView.swift in Sources */,
 				360D52AD29F77ED700F67940 /* ContentView.swift in Sources */,
 				360D52C029F8D2DB00F67940 /* AlertView.swift in Sources */,
 				362553CC2A0369B300A2CD4A /* BlockView.swift in Sources */,
@@ -1626,7 +1630,7 @@
 				360D52C729F939B400F67940 /* AlertCard.swift in Sources */,
 				362553DB2A05026600A2CD4A /* LocationCard.swift in Sources */,
 				360D52B329F81BA800F67940 /* LocationManager.swift in Sources */,
-				362553E72A0A63E300A2CD4A /* OverView.swift in Sources */,
+				362553E72A0A63E300A2CD4A /* MapView.swift in Sources */,
 				36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */,
 				3606DC1529EED8640025F0FC /* SegmentedProgressBar.swift in Sources */,
 				362553DF2A08AD9E00A2CD4A /* WebSocketManager.swift in Sources */,
@@ -1791,7 +1795,7 @@
 				CODE_SIGN_ENTITLEMENTS = fourtytwo/fourtytwo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"fourtytwo/Preview Content\"";
 				DEVELOPMENT_TEAM = U8PNX9PT5S;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1839,7 +1843,7 @@
 				CODE_SIGN_ENTITLEMENTS = fourtytwo/fourtytwo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"fourtytwo/Preview Content\"";
 				DEVELOPMENT_TEAM = U8PNX9PT5S;
 				ENABLE_HARDENED_RUNTIME = YES;

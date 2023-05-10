@@ -108,20 +108,18 @@ struct AgreementDetailView: View {
     @Binding var showAgreementDetail: Bool
 
     var body: some View {
-        NavigationView {
-            VStack {
-                WebView(url: "https://www.people42.com/policy?nav=false")
-            }
-            .navigationBarBackButtonHidden(true)
-            .navigationBarTitle("이용약관 및 개인정보 처리 방침", displayMode: .inline)
-            .navigationBarItems(trailing:
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("닫기").foregroundColor(Color("Text"))
-                }
-            )
+        VStack {
+            WebView(url: "https://www.people42.com/policy?nav=false")
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitle("이용약관 및 개인정보 처리 방침", displayMode: .inline)
+        .navigationBarItems(trailing:
+            Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("닫기").foregroundColor(Color("Text"))
+            }
+        )
     }
 }
 

@@ -61,101 +61,87 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
 
 struct MapView: View {
-    @Environment(\.colorScheme) var colorScheme
-    
     @StateObject private var locationManager = MapManager()
     
     @ObservedObject var webSocketManager = WebSocketManager.shared
-    
-    // WebSocketManager의 isConnected와 바인딩된 @State 변수
-    @State private var isConnect: Bool = WebSocketManager.shared.isConnected
-
-    @State private var metersPerCircle: Double = 100
-    
 
     var body: some View {
-        ZStack {
-            OverView(region: $locationManager.region, nearUsers: $webSocketManager.nearUsers)
-                .clipShape(Circle())
-                .frame(height: 480)
-                .overlay(
-                    RadialGradient(gradient: Gradient(colors: [
-                        Color.clear, Color("BgPrimary").opacity(0), Color("BgPrimary").opacity(1)]), center: .center, startRadius: 100, endRadius: 190)
-                        .clipShape(Circle())
-                        .frame(height: 480)
-                )
-                .scaleEffect(CGSize(width: 1.1, height: 1.1))
-                .overlay(northArrow.opacity(isConnect ? 0 : 1), alignment: .top)
-            
-            circles
-            
-            modeIndicator
-                .padding(.top, 40)
-                .padding(.trailing, 20)
-                .frame(height: 480)
-
-        }
-        .onTapGesture {
-            withAnimation(.easeInOut(duration: 1.2)) {
-                isConnect.toggle()
-                if isConnect {
-                    WebSocketManager.shared.connect()
-                } else {
-                    WebSocketManager.shared.disconnect()
+        Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
+            MapAnnotation(coordinate: nearUser.coordinate) {
+                VStack {
+                    if let status = nearUser.status {
+                        MessageView(status: status, message: nearUser.message)
+                        
+                        if let emoji = nearUser.emoji {
+                            GifImage(emoji)
+                                .frame(width: 30, height: 30)
+                        }
+                    }
                 }
+                .frame(height: 60)
             }
         }
     }
 
-    private var northArrow: some View {
-        Text("N")
-            .font(.system(size: 24, weight: .bold))
-            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .red.opacity(0.8))
-            .offset(x: 0, y: 40) // 상단에 위치하도록 조정
-    }
-    
-    private var circles: some View {
-        let minOpacity: Double = 0.2
-        let maxOpacity: Double = 0.1
-        let numberOfCircles = 2
-
-        return ForEach(0..<numberOfCircles) { index in
-            Circle()
-                .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)
-                .frame(width: CGFloat(metersPerCircle * Double(index + 1) * 2), height: CGFloat(metersPerCircle * Double(index + 1) * 2))
-                .scaledToFit()
-        }
-    }
-    
-    private var modeIndicator: some View {
-        VStack {
-            HStack {
-                Spacer()
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(isConnect ? Color.green : Color.gray, lineWidth: 2)
-                        .frame(width: 48, height: 30)
-
-                    Text(isConnect ? "ON" : "OFF")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(isConnect ? .green : .gray)
-                }
+    private var annotationData: [CustomPointAnnotation] {
+        webSocketManager.nearUsers.compactMap { (id, data) in
+            guard let latitude = data["latitude"] as? CLLocationDegrees,
+                  let longitude = data["longitude"] as? CLLocationDegrees,
+                  let nickname = data["nickname"] as? String,
+                  let emoji = data["emoji"] as? String,
+                  let status = data["status"] as? String,
+                  let message = data["message"] as? String else {
+                return nil
             }
-            Spacer()
+
+            return CustomPointAnnotation(
+                id: id,
+                coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                title: nickname,
+                emoji: emoji,
+                status: status,
+                message: message
+            )
         }
     }
-    
 }
 
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mapManager = MapManager()
-        mapManager.region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 36.355352726497806, longitude: 127.29817332461586),
-            latitudinalMeters: 1000, longitudinalMeters: 1000
-        )
-        return MapView().environmentObject(mapManager)
-            .background(Color("BgPrimary"))
+struct CustomPointAnnotation: Identifiable {
+    var id: Int
+    var coordinate: CLLocationCoordinate2D
+    var title: String
+    var emoji: String
+    var status: String
+    var message: String
+}
+
+struct MessageView: View {
+    var status: String
+    var message: String
+    @State private var previousMessage: String = ""
+
+    var body: some View {
+        if status == "writing" {
+            Text("...")
+                .font(.system(size: 12))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
+        } else if message != previousMessage && message != "" {
+            Text(message)
+                .font(.system(size: 12))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        self.previousMessage = message
+                    }
+                }
+        } else {
+            Spacer()
+                .frame(height: 30)
+        }
     }
 }
 

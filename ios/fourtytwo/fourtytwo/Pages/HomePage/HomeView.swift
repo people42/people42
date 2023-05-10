@@ -38,37 +38,35 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                MapView()
-                    .offset(y: 16)
+        ZStack {
+            OverView()
+                .offset(y: 16)
+            
+            VStack {
+                NavBar()
                 
-                VStack {
-                    NavBar()
-                    
-                    NavigationLink(destination: PlaceView(), isActive: $placeViewState.navigateToPlaceView) {
-                        EmptyView()
-                    }
-                    
-                    NavigationLink(destination: MyMindView()) {
-                        MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
-                    }
-                    .background(Color.clear)
-                    
-                    Spacer()
+                NavigationLink(destination: PlaceView(), isActive: $placeViewState.navigateToPlaceView) {
+                    EmptyView()
                 }
                 
-                CustomBottomSheet()
+                NavigationLink(destination: MyMindView()) {
+                    MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
+                }
+                .background(Color.clear)
+                
+                Spacer()
             }
-            .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
-            .onAppear {
+            
+            CustomBottomSheet()
+        }
+        .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
+        .onAppear {
+            viewModel.getMyinfo()
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            if newScenePhase == .active {
+                // foreground로 전환될 때 데이터를 새로 고칩니다.
                 viewModel.getMyinfo()
-            }
-            .onChange(of: scenePhase) { newScenePhase in
-                if newScenePhase == .active {
-                    // foreground로 전환될 때 데이터를 새로 고칩니다.
-                    viewModel.getMyinfo()
-                }
             }
         }
     }

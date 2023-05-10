@@ -33,55 +33,102 @@ struct PlaceView: View {
 
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.scenePhase) private var scenePhase
+    
+    @State var currentPage = 0
+    
+    @State private var showAlert = false
+    @State private var alertText = ""
+    
+    @State private var isLoading = false // 로딩 상태를 추적하는 상태 변수
 
     var body: some View {
-        VStack {
-            if let location = viewModel.location {
-                PlaceMapView(viewModel: viewModel, location: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), toggleHeight: $toggleHeight)
-            }
+        ZStack {
+            VStack {
+                if let location = viewModel.location {
+                    PlaceMapView(viewModel: viewModel, location: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), toggleHeight: $toggleHeight)
+                }
 
 
-            GeometryReader { geometry in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if viewModel.messageInfoList.count < 1 {
-                            Spacer()
-                                .frame(height: geometry.size.height / 2 - 90)
-                            HStack {
+                GeometryReader { geometry in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                        
+                            
+                            if viewModel.messageInfoList.count < 1 {
                                 Spacer()
-                                Text("아직 인연이 없어요")
-                                Spacer()
-                            }
-                            Spacer()
-                        } else {
-                            ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
-                                NavigationLink(destination: PersonView(location: CLLocationCoordinate2D(latitude: viewModel.location?.latitude ?? 0, longitude: viewModel.location?.longitude ?? 0), userIdx: viewModel.messageInfoList[index].userIdx)) {
-                                    HStack(alignment: .center, spacing: 8) {
-                                        MessageCard(messageInfo: viewModel.messageInfoList[index])
-                                    }
+                                    .frame(height: geometry.size.height / 2 - 90)
+                                HStack {
+                                    Spacer()
+                                    Text("아직 인연이 없어요")
+                                    Spacer()
                                 }
-                                .padding(.bottom, 16)
+                                Spacer()
+                            } else {
+                                ForEach(viewModel.messageInfoList.indices, id: \.self) { index in
+                                    NavigationLink(destination: PersonView(location: CLLocationCoordinate2D(latitude: viewModel.location?.latitude ?? 0, longitude: viewModel.location?.longitude ?? 0), userIdx: viewModel.messageInfoList[index].userIdx)) {
+                                        HStack(alignment: .center, spacing: 8) {
+                                            MessageCard(messageInfo: viewModel.messageInfoList[index])
+                                        }
+                                    }
+                                    .padding(.bottom, 16)
+                                }
                             }
                         }
+                        .padding(.top, 16)
+                        .padding()
                     }
-                    .padding(.top, 16)
-                    .padding()
+                    .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
+                        getPlaceFeed(currentPage)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            refreshing = false
+                        }
+                    }))
+                    
                 }
-                .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
-                    getPlaceFeed()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        refreshing = false
+                
+                HStack {
+                    // 이전 페이지 버튼
+                    if currentPage > 0 {
+                        Button(action: {
+                            currentPage -= 1
+                            getPlaceFeed(currentPage)
+                        }) {
+                            Text("이전 페이지")
+                        }
+                        .disabled(isLoading) // 로딩 중이면 버튼을 비활성화합니다.
                     }
-                }))
+                    
+                    Spacer()
+                    
+                    // 다음 페이지 버튼
+                    if viewModel.messageInfoList.count == 10 {
+                        Button(action: {
+                            currentPage += 1
+                            getPlaceFeed(currentPage)
+                        }) {
+                            Text("다음 페이지")
+                        }
+                        .disabled(isLoading) // 로딩 중이면 버튼을 비활성화합니다.
+                    }
+                }
+                .padding()
             }
+            
+            // 로딩 상태 표시
+            if isLoading {
+                Color.black.opacity(0.4)
+                    .edgesIgnoringSafeArea(.all)
+                ActivityIndicator(style: .large)
+            }
+
         }
         .onAppear {
-            getPlaceFeed()
+            getPlaceFeed(currentPage)
         }
         .onChange(of: scenePhase) { newScenePhase in
             if newScenePhase == .active {
                 // foreground로 전환될 때 데이터를 새로 고칩니다.
-                getPlaceFeed()
+                getPlaceFeed(currentPage)
             }
         }
         .background(Color.backgroundPrimary.edgesIgnoringSafeArea(.all))
@@ -102,18 +149,23 @@ struct PlaceView: View {
                     .fontWeight(.semibold)
             }
         }
+        .alert(isPresented: $showAlert) {
+             Alert(title: Text("알림"), message: Text(alertText), dismissButton: .default(Text("확인")))
+        }
 
     }
 }
 
 // 전역변수 참조 함수 따로 관리
 extension PlaceView {
-    func getPlaceFeed() {
+    func getPlaceFeed(_ pageCnt: Int) {
+        
+        isLoading = true
         
         let queryData: [String: Any] = [
             "placeIdx": placeViewState.selectedPlaceID!,
             "time": viewModel.removeMicroseconds(placeViewState.placeDate!),
-            "page": 0,
+            "page": pageCnt,
             "size": 10
         ]
         
@@ -130,7 +182,7 @@ extension PlaceView {
                         viewModel.location = (placeFeeds.placeWithTimeAndGpsInfo.placeLatitude, placeFeeds.placeWithTimeAndGpsInfo.placeLongitude)
                         
                         // 메세지 데이터 수납
-                        viewModel.messageInfoList = placeFeeds.messagesInfo.map { placeFeed in
+                        let messages = placeFeeds.messagesInfo.map { placeFeed in
 
                             // placeFeed를 MessageInfo로 변환
                             return MessageInfo(
@@ -149,9 +201,25 @@ extension PlaceView {
                             )
                             
                         }
+                        
+                        if messages.isEmpty {
+                            // 요청한 페이지가 비어 있음
+                            if currentPage > 0 {
+                                currentPage -= 1
+                            }
+                            showAlert = true
+                            alertText = "다음 페이지가 존재하지 않습니다."
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                showAlert = false
+                            }
+                        } else {
+                            viewModel.messageInfoList = messages
+                        }
                     }
+                    
+                    isLoading = false
                 }
- 
 
             case .failure(let error):
                 print("Error fetching recent feeds: \(error)")
@@ -160,19 +228,4 @@ extension PlaceView {
     }
 }
 
-struct PlaceView_Previews: PreviewProvider {
-    static var previews: some View {
-        let dummyMessageInfoList: [MessageInfo] = [
-            MessageInfo(profileImage: "robot", stack: 1, nickname: "사용자1", contents: "안녕하세요!", placeIdx: nil, placeName: "장소1", hour: "오늘 15시쯤", hasMultiple: false, cardColor: .red, messageIdx: 1, emotion: "happy", userIdx: 1),
-            MessageInfo(profileImage: "alien", stack: 1, nickname: "사용자2", contents: "여기 정말 좋네요!", placeIdx: nil, placeName: "장소1", hour: "오늘 16시쯤", hasMultiple: false, cardColor: .blue, messageIdx: 2, emotion: "happy", userIdx: 1)
-        ]
-        
-        let viewModel = PlaceViewModel()
-        viewModel.messageInfoList = dummyMessageInfoList
-        viewModel.placeName = "더미 장소"
-        
-        return PlaceView()
-            .environmentObject(PlaceViewState())
-    }
-}
 

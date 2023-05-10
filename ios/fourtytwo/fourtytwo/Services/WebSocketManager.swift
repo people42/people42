@@ -20,6 +20,9 @@ class WebSocketManager: NSObject, ObservableObject {
     // 추가: 웹소켓 연결 시도 횟수를 추적하는 속성
     private var reconnectAttempts = 0
     
+    // 근처 유저 목록
+    @Published var nearUsers: [Int: [String: Any]] = [:]
+    
     // 현재 유저 데이터
     func getCurrentUserData() -> [String: Any]? {
         guard let location = locationManager.currentLocation else {
@@ -91,7 +94,9 @@ class WebSocketManager: NSObject, ObservableObject {
     func disconnect() {
         selfClose = true
         task?.cancel(with: .goingAway, reason: nil)
-        nearUsers = [:]
+        DispatchQueue.main.async {
+            self.nearUsers = [:]
+        }
     }
     
     // 웹소켓을 통해 메시지를 보내는 메서드
@@ -199,9 +204,6 @@ class WebSocketManager: NSObject, ObservableObject {
         }
     }
 
-    
-    // 근처 유저 목록
-    var nearUsers: [Int: [String: Any]] = [:]
 
     // 응답 메시지 처리
     func handleMessage(message: String) {
@@ -285,8 +287,6 @@ class WebSocketManager: NSObject, ObservableObject {
 //            }
 //        }
 
-        print("!!!!!!!!!!!!!!!!!!!!!!!-INIT 결과")
-        print(self.nearUsers) // 수정된 위치 정보 출력
     }
 
 
