@@ -7,7 +7,7 @@ import FeedbackModal from "../Modal/FeedbackModal";
 import NavModal from "../Modal/NavModal";
 import { useState } from "react";
 import { TbBellFilled, TbMailFast, TbSettingsFilled } from "react-icons/tb";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
@@ -26,10 +26,17 @@ function NavBar() {
   const navigate = useNavigate();
   const isLogin = useRecoilValue(isLoginState);
 
+  const location = useLocation();
+
   return (
     <StyledNavBar>
       <div>
-        <div className="logo" onClick={() => navigate("/")}>
+        <div
+          className="logo"
+          onClick={() =>
+            location.pathname === "/" ? navigate("/xxx") : navigate("/")
+          }
+        >
           <img src={animatedLogo} alt="42-logo" aria-label="home link button" />
         </div>
         <div className="nav-icons">

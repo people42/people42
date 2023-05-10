@@ -2,6 +2,7 @@ import {
   AppleAccountCheck,
   DeepLink,
   Home,
+  LocationManage,
   Logout,
   Place,
   Policy,
@@ -52,6 +53,10 @@ const browserRouter = createBrowserRouter([
   {
     path: "/mobile",
     element: <DeepLink />,
+  },
+  {
+    path: "/xxx",
+    element: <LocationManage />,
   },
 ]);
 
