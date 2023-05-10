@@ -66,7 +66,7 @@ public class WebSocketService extends TextWebSocketHandler {
             if (message != null) {
                 session.getAttributes().put("message", message.getContent());
             } else {
-                session.getAttributes().put("message", null);
+                session.getAttributes().putIfAbsent("message", null);
             }
             session.getAttributes().put("emoji", user.getEmoji());
         } else {
@@ -121,6 +121,11 @@ public class WebSocketService extends TextWebSocketHandler {
     }
 
     private void handleClosedSessions(WebSocketSession session) throws Exception {
+
+        if (!locations.containsKey(session) || locations.get(session).isEmpty()) {
+            return;
+        }
+
         Double userLatitude = locations.get(session).get(0);
         Double userLongitude = locations.get(session).get(1);
         Set<WebSocketSession> nearUsers = (Set<WebSocketSession>) session.getAttributes().get("nearUsers");
