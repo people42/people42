@@ -17,16 +17,20 @@ function NavModalSetting({}: navModalSettingProps) {
   return (
     <StyledNavModalSetting>
       <p>{userNickname}</p>
+      <NavModalSettingRow onClick={() => navigate("/account")}>
+        회원정보 설정
+      </NavModalSettingRow>
+      <NavModalSettingRow onClick={() => navigate("/account/set/nickname")}>
+        닉네임 변경
+      </NavModalSettingRow>
+      <NavModalSettingRow onClick={() => navigate("/account/set/emoji")}>
+        이모지 변경
+      </NavModalSettingRow>
       <NavModalSettingRow onClick={() => navigate("/policy")}>
         이용약관 및 개인정보처리방침
       </NavModalSettingRow>
       <NavModalSettingRow onClick={() => navigate("/logout")}>
         로그아웃
-      </NavModalSettingRow>
-      <NavModalSettingRow
-        onClick={() => navigate(`/withdrawal/${userPlatform}`)}
-      >
-        회원탈퇴
       </NavModalSettingRow>
     </StyledNavModalSetting>
   );

@@ -1,9 +1,11 @@
 import {
+  Account,
   AppleAccountCheck,
   DeepLink,
   Home,
   LocationManage,
   Logout,
+  NotFound,
   Place,
   Policy,
   SignIn,
@@ -11,6 +13,7 @@ import {
   User,
   Withdrawal,
 } from "./pages";
+import { AccountSet } from "./pages/Account/components";
 import { createBrowserRouter } from "react-router-dom";
 
 const browserRouter = createBrowserRouter([
@@ -55,8 +58,20 @@ const browserRouter = createBrowserRouter([
     element: <DeepLink />,
   },
   {
+    path: "/account",
+    element: <Account />,
+  },
+  {
+    path: "/account/set/:type",
+    element: <AccountSet />,
+  },
+  {
     path: "/xxx",
     element: <LocationManage />,
+  },
+  {
+    path: "/*",
+    element: <NotFound />,
   },
 ]);
 

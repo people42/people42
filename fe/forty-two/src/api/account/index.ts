@@ -77,3 +77,21 @@ export async function postFCMToken(accessToken: string, token: string) {
     "ACCESS-TOKEN": accessToken,
   }).post("account/fcm_token", { token: token });
 }
+
+/**
+ * [PUT] "account/nickname" 닉네임 변경
+ */
+export async function putNickname(accessToken: string, nickname: string) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).put("account/nickname", { nickname: nickname });
+}
+
+/**
+ * [PUT] "account/emoji" 이모지 변경
+ */
+export async function putEmoji(accessToken: string, emoji: string) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).put("account/emoji", { emoji: emoji });
+}
