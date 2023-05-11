@@ -649,8 +649,12 @@ public class UserService {
 
     public void updateNickname(String accessToken, NicknameReqDto nicknameReqDto) {
         User user = checkUser(accessToken);
+        String originalNickname = user.getNickname();
         user.setNickname(nicknameReqDto.getNickname());
         userRepository.save(user);
+
+        redisTemplate.opsForSet().remove("nicknames", originalNickname);
+        redisTemplate.opsForSet().add("nicknames", nicknameReqDto.getNickname());
     }
 
 }
