@@ -51,8 +51,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="fortytwo"/>
-<!--                <data android:scheme="fortytwo" android:host="signin" />-->
+<!--                <data android:scheme="fortytwo"/>-->
+                <data android:scheme="fortytwo" android:host="path" />
             </intent-filter>
         </activity>
         <activity
