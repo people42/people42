@@ -5,10 +5,7 @@ import com.fourtytwo.dto.fcm.FcmTokenReqDto;
 import com.fourtytwo.dto.message.MessageDeleteReqDto;
 import com.fourtytwo.dto.message.MyMessageHistoryResDto;
 import com.fourtytwo.dto.report.ReportReqDto;
-import com.fourtytwo.dto.user.AppleCodeReqDto;
-import com.fourtytwo.dto.user.ChangeEmojiReqDto;
-import com.fourtytwo.dto.user.MessageReqDto;
-import com.fourtytwo.dto.user.MyInfoResDto;
+import com.fourtytwo.dto.user.*;
 import com.fourtytwo.service.*;
 import com.google.api.Http;
 import lombok.AllArgsConstructor;
@@ -135,6 +132,13 @@ public class AccountController {
     public ResponseEntity<ApiResponse<Object>> updateFcmToken(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                               @Valid @RequestBody FcmTokenReqDto fcmTokenReqDto) {
         fcmService.updateFcmToken(accessToken, fcmTokenReqDto.getToken());
+        return ApiResponse.ok(null);
+    }
+
+    @PutMapping("/nickname")
+    public ResponseEntity<ApiResponse<Object>> updateNickname(@RequestHeader("ACCESS-TOKEN") String accessToken,
+                                                              @Valid @RequestBody NicknameReqDto nicknameReqDto) {
+        userService.updateNickname(accessToken, nicknameReqDto);
         return ApiResponse.ok(null);
     }
 
