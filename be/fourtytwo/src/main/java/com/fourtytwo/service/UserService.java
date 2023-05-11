@@ -146,7 +146,6 @@ public class UserService {
         ResponseEntity<String> response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, String.class);
 
         String responseBody = response.getBody();
-        System.out.println("애플 응답"+responseBody);
         JSONObject jsonObject = new JSONObject(responseBody);
 
         if (tokenType.equals("id")) {
@@ -269,7 +268,6 @@ public class UserService {
             }
         }
         if (foundUser != null && foundUser.getEmail() != null) {
-            System.out.println(foundUser.getEmail());
         }
 
         if (userRepository.findByNickname(signupRequestDto.getNickname()) != null) {
@@ -453,7 +451,6 @@ public class UserService {
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
-            System.out.println("애플응답 : "+ response.getBody());
             userRepository.delete(user);
 
             // refresh token 삭제

@@ -63,7 +63,6 @@ public class GpsService {
         LocalDateTime current = LocalDateTime.now();
         Integer mappedTime = toTotalMinutes(current);
 
-        System.out.println("1 "+foundPlace);
         if (foundPlace == null) {
             List<Map<String, Object>> popularPlaces = getPopularPlaces(gps.getLatitude(), gps.getLongitude());
             Map<String, Object> targetPlace;
@@ -87,7 +86,6 @@ public class GpsService {
                 foundPlace = placeRepository.save(newPlace);
             }
         }
-        System.out.println("2 "+foundPlace);
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
         SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
@@ -116,8 +114,6 @@ public class GpsService {
                     .build();
         }
 
-        System.out.println("3 "+nearSet);
-        System.out.println("4 "+nearLongSet);
         if (!nearSet.isEmpty() && !nearLongSet.isEmpty()) {
             nearSet.retainAll(nearLongSet);
             if (!nearSet.isEmpty()) {
