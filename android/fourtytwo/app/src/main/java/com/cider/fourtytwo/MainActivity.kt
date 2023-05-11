@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val myLocation = map?.myLocation
             if (myLocation != null) {
                 val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f)
                 map?.animateCamera(cameraUpdate)
             }
         }
