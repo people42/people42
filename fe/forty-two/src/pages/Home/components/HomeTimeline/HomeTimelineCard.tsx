@@ -82,7 +82,8 @@ function HomeTimelineCard({ props, idx, onClick }: homeTimelineCardProps) {
           {props?.recentUsersInfo.firstTimeUserEmojis.length > 0 ? (
             <>
               <div className="home-timeline-emoji-title">
-                처음 만난 {props?.recentUsersInfo.firstTimeUserEmojis.length}명
+                오늘 처음 만난{" "}
+                {props?.recentUsersInfo.firstTimeUserEmojis.length}명
               </div>
               <div className="home-timeline-emoji">
                 {props.recentUsersInfo.firstTimeUserEmojis.map((value, idx) => {
