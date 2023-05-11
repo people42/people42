@@ -647,4 +647,10 @@ public class UserService {
 
     }
 
+    public void updateNickname(String accessToken, NicknameReqDto nicknameReqDto) {
+        User user = checkUser(accessToken);
+        user.setNickname(nicknameReqDto.getNickname());
+        userRepository.save(user);
+    }
+
 }
