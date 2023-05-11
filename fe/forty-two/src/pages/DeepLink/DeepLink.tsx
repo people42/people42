@@ -12,6 +12,8 @@ type deepLinkProps = {};
 function DeepLink({}: deepLinkProps) {
   const navigate = useNavigate();
   const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
+  const ANDROID_URL = import.meta.env.VITE_ANDROID_URL;
+  const IOS_URL = import.meta.env.VITE_IOS_URL;
 
   useEffect(() => {
     if (isMobile) {
@@ -58,12 +60,7 @@ function DeepLink({}: deepLinkProps) {
           : "앱 다운로드를 위해 App Store로 이동합니다."
       )
     ) {
-      window.open(
-        isAndroid
-          ? "https://play.google.com/store/apps/details?id=xxx"
-          : "https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604",
-        ""
-      );
+      location.href = isAndroid ? ANDROID_URL : IOS_URL;
     }
   };
 

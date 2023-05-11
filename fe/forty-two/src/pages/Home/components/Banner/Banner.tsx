@@ -26,6 +26,8 @@ function Banner({}: bannerProps) {
     }
   });
 
+  const BASE_APP_URL = import.meta.env.VITE_BASE_APP_URL;
+
   return (
     <StyledBanner>
       {showBanner ? (
@@ -51,7 +53,7 @@ function Banner({}: bannerProps) {
                   className="banner-body-qr"
                   style={{ height: `${isQrOpen ? "160px" : "0px"}` }}
                 >
-                  <QRCodeSVG value="https://testflight.apple.com/join/YP7D30sc"></QRCodeSVG>
+                  <QRCodeSVG value={`${BASE_APP_URL}mobile`}></QRCodeSVG>
                 </div>
               </div>
             </div>
@@ -86,7 +88,7 @@ const StyledBanner = styled.div`
   }
   .banner {
     display: flex;
-    align-items: start;
+    align-items: center;
     overflow: hidden;
     &-icon {
       width: 96px;
@@ -118,6 +120,10 @@ const StyledBanner = styled.div`
         align-items: center;
         width: 160px;
         overflow: hidden;
+        ${({ theme }) =>
+          theme.isDark
+            ? "mix-blend-mode: lighten; filter: invert(1);"
+            : "mix-blend-mode: darken;"}
       }
     }
   }
