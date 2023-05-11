@@ -42,7 +42,7 @@ function DeepLink({}: deepLinkProps) {
             style={{ filter: "opacity(0.2)" }}
           ></img>
           <p className="deeplink-info">곧 출시 예정</p>
-          <p className="deeplink-info">PC에서 이용할 수 있습니다</p>
+          <p className="deeplink-info">지금은 PC에서 이용할 수 있습니다</p>
         </>
       ) : (
         <>
@@ -53,7 +53,6 @@ function DeepLink({}: deepLinkProps) {
             className="deeplink-badge"
             src={appStoreBadge}
           ></img>
-          <p className="deeplink-info">베타 버전 배포중</p>
         </>
       )}
 
