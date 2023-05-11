@@ -1,9 +1,4 @@
-import {
-  getAccessToken,
-  getMyInfo,
-  getNewFeed,
-  getRecentFeed,
-} from "../../../../api";
+import { getAccessToken, getNewFeed } from "../../../../api";
 import { FloatIconBtn } from "../../../../components";
 import Spinner from "../../../../components/Spinner/Spinner";
 import { userState } from "../../../../recoil/user/atoms";
@@ -11,11 +6,10 @@ import {
   userAccessTokenState,
   userLogoutState,
 } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
 import HomeTimelineGroup from "./HomeTimelineGroup";
 import { useEffect, useState } from "react";
 import { TbReload } from "react-icons/tb";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 function HomeTimeline() {
@@ -25,7 +19,22 @@ function HomeTimeline() {
     TFeed["new"][] | [null] | undefined
   >();
   const [reloadCnt, setReloadCnt] = useState<number>(0);
+  const [sumMessageCnt, setSumMessageCnt] = useState<number>(0);
   const user = useRecoilValue(userLogoutState);
+
+  useEffect(() => {
+    if (recentFeedList) {
+      let total = 0;
+      for (let idx = 0; idx < recentFeedList.length; idx++) {
+        const firstTimeUserEmojis =
+          recentFeedList[idx]?.recentUsersInfo?.firstTimeUserEmojis;
+        if (Array.isArray(firstTimeUserEmojis)) {
+          total += firstTimeUserEmojis.length;
+        }
+      }
+      setSumMessageCnt(total);
+    }
+  }, [recentFeedList]);
 
   const getFeed = () => {
     setRecentFeedList(undefined);
@@ -84,6 +93,17 @@ function HomeTimeline() {
           <Spinner></Spinner>
         </div>
       )}
+      {recentFeedList ? (
+        <>
+          <div className="feed-report">최근 24시간 동안</div>
+          <div className="feed-report">
+            {recentFeedList.length}개의 장소에서
+          </div>
+          <div className="feed-report">
+            {sumMessageCnt}명의 생각과 스쳤습니다.
+          </div>
+        </>
+      ) : null}
     </StyledHomeTimeline>
   );
 }
@@ -122,5 +142,14 @@ const StyledHomeTimeline = styled.section`
     margin-left: 191px;
     width: 24px;
     height: 72px;
+  }
+  .feed-report {
+    ${({ theme }) => theme.text.subtitle2}
+    color: ${({ theme }) => theme.color.text.secondary};
+    margin-left: 156px;
+    animation: floatingRight 0.3s both;
+    display: flex;
+    justify-content: start;
+    width: 100%;
   }
 `;
