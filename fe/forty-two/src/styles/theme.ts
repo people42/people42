@@ -24,7 +24,7 @@ const text = {
   caption:
     "font-family: 'Pretendard'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 17px; letter-spacing: 0.004em;",
   overline:
-    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 10px; line-height: 14px; letter-spacing: 0.015em; text-transform: uppercase;",
+    "font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-size: 12px; line-height: 14px; letter-spacing: 0.015em; text-transform: uppercase;",
 };
 
 const lightColor = {

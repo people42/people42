@@ -1,7 +1,6 @@
 import appStoreBadge from "../../assets/images/badge/Download_on_the_App_Store_Badge_KR_RGB_blk_100317.svg";
 import appIcon from "../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../assets/images/badge/google-play-badge.png";
-import logoBgBlue from "../../assets/images/logo/logo.svg";
 import { LogoBg } from "../../components";
 import { useEffect } from "react";
 import { isMobile, isAndroid } from "react-device-detect";
@@ -12,20 +11,61 @@ type deepLinkProps = {};
 
 function DeepLink({}: deepLinkProps) {
   const navigate = useNavigate();
+  const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
 
   useEffect(() => {
     if (isMobile) {
       if (isAndroid) {
-        console.log("안드로이드");
       } else {
-        confirm("베타 테스트에 참여하시겠습니까?")
-          ? (location.href = "https://testflight.apple.com/join/YP7D30sc")
-          : null;
+        exeDeepLink();
+        checkInstallApp();
       }
     } else {
       navigate("/");
     }
   }, []);
+
+  function exeDeepLink() {
+    location.href = APP_SCHEME;
+  }
+
+  function checkInstallApp() {
+    function clearTimers() {
+      clearInterval(check);
+      clearTimeout(timer);
+    }
+
+    function isHideWeb() {
+      // @ts-ignore
+      if (document.webkitHidden || document.hidden) {
+        clearTimers();
+      }
+    }
+    const check = setInterval(isHideWeb, 200);
+
+    const timer = setTimeout(function () {
+      redirectStore();
+    }, 500);
+  }
+
+  const redirectStore = () => {
+    const ua = navigator.userAgent.toLowerCase();
+
+    if (
+      window.confirm(
+        isAndroid
+          ? "앱 다운로드를 위해 Google Play Store로 이동합니다."
+          : "앱 다운로드를 위해 App Store로 이동합니다."
+      )
+    ) {
+      window.open(
+        isAndroid
+          ? "https://play.google.com/store/apps/details?id=xxx"
+          : "https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604",
+        ""
+      );
+    }
+  };
 
   return (
     <StyledDeepLink>
@@ -48,7 +88,8 @@ function DeepLink({}: deepLinkProps) {
         <>
           <img
             onClick={() => {
-              location.href = "https://testflight.apple.com/join/YP7D30sc";
+              exeDeepLink();
+              checkInstallApp();
             }}
             className="deeplink-badge"
             src={appStoreBadge}

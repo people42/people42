@@ -40,7 +40,7 @@ export default NavModalSetting;
 
 const StyledNavModalSetting = styled.ul`
   & > p {
-    ${({ theme }) => theme.text.subtitle2}
+    ${({ theme }) => theme.text.header6}
     color: ${({ theme }) => theme.color.brand.blue};
     padding-inline: 8px;
     padding-bottom: 8px;
