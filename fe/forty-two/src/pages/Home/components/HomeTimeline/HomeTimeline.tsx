@@ -28,8 +28,13 @@ function HomeTimeline() {
       for (let idx = 0; idx < recentFeedList.length; idx++) {
         const firstTimeUserEmojis =
           recentFeedList[idx]?.recentUsersInfo?.firstTimeUserEmojis;
+        const repeatUserEmojis =
+          recentFeedList[idx]?.recentUsersInfo?.repeatUserEmojis;
         if (Array.isArray(firstTimeUserEmojis)) {
           total += firstTimeUserEmojis.length;
+        }
+        if (Array.isArray(repeatUserEmojis)) {
+          total += repeatUserEmojis.length;
         }
       }
       setSumMessageCnt(total);
@@ -93,7 +98,7 @@ function HomeTimeline() {
           <Spinner></Spinner>
         </div>
       )}
-      {recentFeedList ? (
+      {recentFeedList && recentFeedList[0] ? (
         <>
           <div className="feed-report">최근 24시간 동안</div>
           <div className="feed-report">
@@ -101,6 +106,10 @@ function HomeTimeline() {
           </div>
           <div className="feed-report">
             {sumMessageCnt}명의 생각과 스쳤습니다.
+          </div>
+          <div className="feed-report feed-report-alert">
+            <div>다른 유저의 메시지가 안보이시나요?</div>
+            <div>스침 생성까지 최대 1분이 소요됩니다.</div>
           </div>
         </>
       ) : null}
@@ -145,11 +154,20 @@ const StyledHomeTimeline = styled.section`
   }
   .feed-report {
     ${({ theme }) => theme.text.subtitle2}
-    color: ${({ theme }) => theme.color.text.secondary};
+    font-weight: 800;
+    color: ${({ theme }) => theme.color.brand.blue};
     margin-left: 156px;
     animation: floatingRight 0.3s both;
     display: flex;
+    flex-direction: column;
     justify-content: start;
     width: 100%;
+    &-alert {
+      margin-top: 8px;
+      ${({ theme }) => theme.text.overline}
+      & > div {
+        color: ${({ theme }) => theme.color.text.secondary};
+      }
+    }
   }
 `;

@@ -2,7 +2,8 @@ import appStoreBadge from "../../assets/images/badge/Download_on_the_App_Store_B
 import appIcon from "../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../assets/images/badge/google-play-badge.png";
 import { LogoBg } from "../../components";
-import { useEffect } from "react";
+import Spinner from "../../components/Spinner/Spinner";
+import { useEffect, useState } from "react";
 import { isMobile, isAndroid } from "react-device-detect";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
@@ -14,6 +15,8 @@ function DeepLink({}: deepLinkProps) {
   const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
   const ANDROID_URL = import.meta.env.VITE_ANDROID_URL;
   const IOS_URL = import.meta.env.VITE_IOS_URL;
+
+  const [isAppLoad, setIsAppLoad] = useState(true);
 
   useEffect(() => {
     if (isMobile) {
@@ -61,6 +64,8 @@ function DeepLink({}: deepLinkProps) {
       )
     ) {
       location.href = isAndroid ? ANDROID_URL : IOS_URL;
+    } else {
+      setIsAppLoad(false);
     }
   };
 
@@ -69,31 +74,37 @@ function DeepLink({}: deepLinkProps) {
       <h2 className="deeplink-title">어쩌면</h2>
       <h2 className="deeplink-title">마주친</h2>
       <img className="deeplink-icon" src={appIcon}></img>
-      <p className="deeplink-description">나도 모르게 스쳐간 인연과</p>
-      <p className="deeplink-description">생각을 공유해보세요</p>
-      {isAndroid ? (
-        <>
-          <img
-            className="deeplink-badge"
-            src={playStoreBadge}
-            style={{ filter: "opacity(0.2)" }}
-          ></img>
-          <p className="deeplink-info">곧 출시 예정</p>
-          <p className="deeplink-info">지금은 PC에서 이용할 수 있습니다</p>
-        </>
+      {isAppLoad ? (
+        <div className="deeplink-loading">앱 불러오는 중</div>
       ) : (
         <>
-          <img
-            onClick={() => {
-              exeDeepLink();
-              checkInstallApp();
-            }}
-            className="deeplink-badge"
-            src={appStoreBadge}
-          ></img>
+          <p className="deeplink-description">나도 모르게 스쳐간 인연과</p>
+          <p className="deeplink-description">생각을 공유해보세요</p>
+          {isAndroid ? (
+            <>
+              <img
+                className="deeplink-badge"
+                src={playStoreBadge}
+                style={{ filter: "opacity(0.2)" }}
+              ></img>
+              <p className="deeplink-info">곧 출시 예정</p>
+              <p className="deeplink-info">지금은 PC에서 이용할 수 있습니다</p>
+            </>
+          ) : (
+            <>
+              <img
+                onClick={() => {
+                  setIsAppLoad(true);
+                  exeDeepLink();
+                  checkInstallApp();
+                }}
+                className="deeplink-badge"
+                src={appStoreBadge}
+              ></img>
+            </>
+          )}
         </>
       )}
-
       <LogoBg isBlue={false}></LogoBg>
     </StyledDeepLink>
   );
@@ -122,12 +133,20 @@ const StyledDeepLink = styled.div`
       width: 210px;
       margin-block: 24px 36px;
     }
+    &-loading {
+      width: 100%;
+      height: 210px;
+      display: flex;
+      justify-content: center;
+      ${({ theme }) => theme.text.header6}
+    }
     &-description {
       animation: floatingUp 0.3s both;
-      animation-delay: 0.6s;
       ${({ theme }) => theme.text.header6}
     }
     &-badge {
+      animation: floatingUp 0.3s both;
+      animation-delay: 0.3s;
       width: 200px;
       margin-block: 48px 8px;
     }
