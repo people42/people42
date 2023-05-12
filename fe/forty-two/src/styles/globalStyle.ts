@@ -3,6 +3,20 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes springOut {
+      0% {
+        filter: opacity(1);
+        transform: translateY(100%) scale(100%, 100%);
+      }
+      50% {
+        filter: opacity(1);
+        transform: translateY(120%) scale(100%, 60%);
+      }
+      100% {
+        filter: opacity(0);
+        transform: translateY(100%) scale(0%, 110%);
+      }
+    }
     @keyframes newMessageBubble {
       0% {
         filter: opacity(0);

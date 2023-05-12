@@ -144,9 +144,6 @@ function App() {
     }
     // 사용자 위치 5분마다 업데이트
     let postLocationInterval = setInterval(() => {
-      if (isLocationPermitted === true && isDesktop) {
-        updateCurrentLocation();
-      }
       if (socket && user?.accessToken && userLocation) {
         handleMove(socket, {
           latitude: userLocation.latitude,
@@ -154,7 +151,7 @@ function App() {
           status: "watching",
         });
       }
-    }, 300000);
+    }, 10000);
 
     return () => {
       clearInterval(postLocationInterval);

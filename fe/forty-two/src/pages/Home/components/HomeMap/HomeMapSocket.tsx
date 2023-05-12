@@ -4,11 +4,12 @@ import {
   socketNearUserState,
   socketNewMessageState,
 } from "../../../../recoil/socket/atoms";
+import { socketNewMessageChangeState } from "../../../../recoil/socket/selectors";
 import HomeMapSocketGuest from "./HomeMapSocketGuest";
 import HomeMapSocketWriting from "./HomeMapSocketWriting";
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type homeMapSocketProps = {};
@@ -21,6 +22,7 @@ function HomeMapSocket({}: homeMapSocketProps) {
   const newMessage = useRecoilValue(socketNewMessageState);
   const [key, setKey] = useState<number>(0);
   const S3_URL = import.meta.env.VITE_S3_URL;
+  const setNewMessage = useSetRecoilState(socketNewMessageChangeState);
 
   useEffect(() => {
     let userList: any[] = [];
@@ -99,6 +101,10 @@ function HomeMapSocket({}: homeMapSocketProps) {
   useEffect(() => {
     setKey(key + 1);
   }, [newMessage]);
+
+  useEffect(() => {
+    setNewMessage(null);
+  }, []);
 
   return (
     <StyledHomeMapSocket>
