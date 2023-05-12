@@ -340,6 +340,7 @@ function App() {
         setIsNotificationPermitted(true);
         const messaging = getMessaging(app);
         onMessage(messaging, (payload) => {
+          console.log(payload);
           // 유저 접속해있을 때 수신된 메시지
           setNewNotification({
             isShow: true,
