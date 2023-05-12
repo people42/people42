@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+<!--    tools:context=".NicknameFragment">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="22dp"
+        android:padding="@dimen/signup_padding">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/signuptab_true"
+            android:layout_marginHorizontal="5dp"
+            android:elevation="5dp"
+            />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/signuptab"
+            app:tint="@color/main_blue"
+            android:layout_marginHorizontal="5dp"
+            android:elevation="5dp"
+            />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/signuptab"
+            android:layout_marginHorizontal="5dp"
+            app:tint="@color/main_blue"
+            android:elevation="5dp"
+            />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_marginTop="384dp"
+            android:src="@drawable/logoicon_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/signup_border"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/signupborder"
+            android:layout_marginTop="185dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="40dp"
+            android:elevation="5dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/nickname_explain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="80dp"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="7.0"
+            android:shadowDy="7.0"
+            android:shadowRadius="7.0"
+            android:text="@string/choose_nickname"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/pick_nickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="42dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextSwitcher
+                android:id="@+id/nickname_adj"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="5dp"
+                android:paddingTop="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/nicknameborder"
+                android:gravity="center"
+                android:text="형용사"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
+
+            <TextSwitcher
+                android:id="@+id/nickname_noun"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="5dp"
+                android:paddingTop="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/nicknameborder"
+                android:gravity="center"
+                android:minHeight="120dp"
+                android:text="명사"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:inAnimation="@anim/nav_default_enter_anim"
+                android:outAnimation="@anim/nav_default_exit_anim"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="202dp"
+            android:gravity="center"
+            android:text="다시 뽑을래요"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pick_nickname" />
+
+        <ImageView
+            android:id="@+id/resetImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/baseline_autorenew_24"
+            app:layout_constraintStart_toStartOf="@id/nickname_button"
+            app:layout_constraintTop_toBottomOf="@id/textView"
+            android:background="@drawable/round"
+            android:elevation="5dp"/>
+
+        <com.skydoves.elasticviews.ElasticButton
+            android:id="@+id/nickname_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="90dp"
+            android:text="완료"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:backgroundTint="@color/main_blue"
+            app:button_duration="250"
+            app:button_scale="0.87"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

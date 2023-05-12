@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">48dp</dimen>
+    <dimen name="circle_shape">1000dp</dimen>
+    <dimen name="circle_shape2">1100dp</dimen>
+    <dimen name="circle_shape3">1200dp</dimen>
+</resources>

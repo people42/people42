@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true"
+            android:paddingHorizontal="48dp"
+            android:layout_marginTop="20dp"
+            >
+
+            <TextView
+                android:id="@+id/privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="개인정보처리방침 및 이용약관"
+                android:paddingVertical="13dp"
+                />
+<!--            <TextView-->
+<!--                android:id="@+id/privacy_policy_webview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="400dp"-->
+<!--                android:text="@string/terms"-->
+<!--                android:visibility="gone"/>-->
+
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="@color/text_shadow"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/termsConditions"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:text="이용약관"-->
+<!--                android:paddingVertical="13dp"-->
+<!--                />-->
+<!--            <TextView-->
+<!--                android:id="@+id/termsConditionsWebview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="400dp"-->
+<!--                android:text="@string/terms"-->
+<!--                android:visibility="gone"/>-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_shadow"/>
+            <TextView
+                android:id="@+id/signout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="로그아웃"
+                android:paddingVertical="13dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_shadow"/>
+
+            <TextView
+                android:id="@+id/withdrawal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="회원탈퇴"
+                android:textColor="@color/red"
+                android:paddingVertical="13dp"
+                />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
