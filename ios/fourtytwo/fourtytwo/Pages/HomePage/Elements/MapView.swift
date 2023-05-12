@@ -62,27 +62,65 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
 struct MapView: View {
     @StateObject private var locationManager = MapManager()
-    
     @ObservedObject var webSocketManager = WebSocketManager.shared
+    @State private var showToast: Bool = false
+    @State private var toastMessage: String = ""
+    @State private var previousUserIds: Set<Int> = []
 
     var body: some View {
-        Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
-            MapAnnotation(coordinate: nearUser.coordinate) {
-                VStack {
-                    if let status = nearUser.status {
-                        MessageView(status: status, message: nearUser.message)
-                        
-                        if let emoji = nearUser.emoji {
-                            GifImage(emoji)
-                                .frame(width: 30, height: 30)
+        ZStack {
+            Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
+                MapAnnotation(coordinate: nearUser.coordinate) {
+                    VStack {
+                        if let status = nearUser.status {
+                            MessageView(status: status, message: nearUser.message)
+                            
+                            if let emoji = nearUser.emoji {
+                                GifImage(emoji)
+                                    .frame(width: 30, height: 30)
+                                    .scaleEffect(self.showToast ? 0.5 : 1.0)
+                                    .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5))
+                            }
                         }
                     }
+                    .frame(height: 60)
                 }
-                .frame(height: 60)
+            }
+            if showToast {
+                Text(toastMessage)
+                    .font(.customCaption)
+                    .padding(4)
+                    .background(Color.black.opacity(0.3))
+                    .foregroundColor(Color("Text"))
+                    .cornerRadius(10)
+                    .transition(.slide)
+                    .onAppear(perform: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                showToast = false
+                            }
+                        }
+                    })
+                    .offset(y: -100)
             }
         }
+        .onChange(of: Set(webSocketManager.nearUsers.keys), perform: { newValue in
+            let oldUserSet = previousUserIds
+            let newUserSet = newValue
+//            if let removedUser = oldUserSet.subtracting(newUserSet).first,
+//               let nickname = webSocketManager.nearUsers[removedUser]?["nickname"] as? String {
+//                showToast = true
+//                toastMessage = "\(nickname) 님이 멀어졌어요."
+//            }
+            if let addedUser = newUserSet.subtracting(oldUserSet).first,
+               let nickname = webSocketManager.nearUsers[addedUser]?["nickname"] as? String {
+                showToast = true
+                toastMessage = "\(nickname) 님이 근처에 나타났어요."
+            }
+            previousUserIds = newValue
+        })
     }
-
+    
     private var annotationData: [CustomPointAnnotation] {
         webSocketManager.nearUsers.compactMap { (id, data) in
             guard let latitude = data["latitude"] as? CLLocationDegrees,
@@ -105,6 +143,7 @@ struct MapView: View {
         }
     }
 }
+
 
 struct CustomPointAnnotation: Identifiable {
     var id: Int

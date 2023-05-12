@@ -16,7 +16,7 @@ class LocationSender {
     func startSendingLocations() {
         
         // 60초마다 sendLocationToServer() 메서드를 호출하는 타이머를 생성합니다.
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
 //            print("timer 전송으로 가동중")
             self.sendLocationToServer()
         }

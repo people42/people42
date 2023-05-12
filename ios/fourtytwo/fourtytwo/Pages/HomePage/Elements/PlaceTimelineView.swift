@@ -46,6 +46,10 @@ struct PlaceTimelineView: View {
             }
             .onAppear {
                 getLocationCardsData()
+
+                Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+                    getLocationCardsData()
+                }
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {
