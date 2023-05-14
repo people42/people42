@@ -6,7 +6,6 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -19,7 +18,6 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -44,9 +42,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -102,7 +101,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             setEmoji(myEmoji, myHistory)
             setEmoji(myEmoji, messageEmojiView)
         }
-
 // 메세지 보내기
         val newMessageButton = findViewById<Button>(R.id.main_think_cloud_button)
         val myOpinion = findViewById<TextView>(R.id.my_opinion_text)
@@ -158,9 +156,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this, MyMessagesActivity::class.java)
             startActivity(intent)
         }
-
-// 피드
-
 // 레이더 애니메이션
         val scaleAnimation = ScaleAnimation(
             0f, // 시작 X 스케일
@@ -195,7 +190,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val myLocation = map?.myLocation
             if (myLocation != null) {
                 val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f)
                 map?.animateCamera(cameraUpdate)
             }
         }
@@ -480,41 +475,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
         backPressedTime = System.currentTimeMillis()
     }
-
-    // Declare the launcher at the top of your Activity/Fragment:
-//    private val requestPermissionLauncher = registerForActivityResult(
-//        ActivityResultContracts.RequestPermission()
-//    ) { isGranted: Boolean ->
-//        if (isGranted) {
-//            // FCM SDK (and your app) can post notifications.
-//        } else {
-//            // TODO: Inform user that that your app will not show notifications.
-//            val snackBar = Snackbar.make(findViewById(R.id.main_root_layout), "소중한 사이의 생각 알림을 받을 수 없어요", Snackbar.LENGTH_INDEFINITE)
-//            snackBar.setAction("확인") {}
-//            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
-//            snackBar.show()
-//        }
-//    }
-//
-//    private fun askNotificationPermission() {
-//        // This is only necessary for API level >= 33 (TIRAMISU)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-//                PackageManager.PERMISSION_GRANTED
-//            ) {
-//                // FCM SDK (and your app) can post notifications.
-//            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-//                // TODO: display an educational UI explaining to the user the features that will be enabled
-//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-//                //       If the user selects "No thanks," allow the user to continue without notifications.
-//            } else {
-//                // Directly ask for the permission
-//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-//            }
-//        }
-//    }
-    // [END ask_post_notifications]
     /**
      * Saves the state of the map when the activity is paused.
      */
@@ -538,6 +498,38 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         updateLocationUI()
         // Get the current location of the device and set the position of the map.
         getDeviceLocation()
+
+        //웹소켓
+        lifecycleScope.launch {
+            val userIdx = userDataStore.get_userIdx.first()
+            val webSocketClient = WebSocketClient("wss://www.people42.com/be42/socket?type=user&user_idx=$userIdx")
+            // Connect to the WebSocket server
+            Log.i(TAG, "웹소켓: start 할거임")
+            webSocketClient.start()
+            // Send a message to the server
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationProviderClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        if (location != null) {
+                            val json = JSONObject().apply {
+                                put("method", "INIT")
+                                put("latitude", location.latitude)
+                                put("longitude", location.longitude)
+                                put("status", "watching")
+                            }
+                            webSocketClient.sendMessage(json.toString())
+                        }
+                    }
+            }
+            // Receive messages from the server
+//            GlobalScope.launch {
+//                webSocketClient.receiveMessages().collect { message ->
+//                    println("Received message: $message")
+//                }
+//            }
+        }
+
+
     }
     /**
      * Gets the current location of the device, and positions the map's camera.
@@ -643,7 +635,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
     companion object {
-        private const val DEFAULT_ZOOM = 15
+        private const val DEFAULT_ZOOM = 19
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
         // Keys for storing activity state.
         private const val KEY_CAMERA_POSITION = "camera_position"

@@ -31,6 +31,17 @@ class UserDataStore (private val context : Context){
     private var idToken = stringPreferencesKey("idToken")
 
     val mDataStore = context.dataStore
+    val get_userIdx : Flow<String> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[user_idx].toString() ?: ""
+        }
     val get_email : Flow<String> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
