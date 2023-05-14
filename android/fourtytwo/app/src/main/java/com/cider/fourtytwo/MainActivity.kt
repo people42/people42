@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.location.Location
 import android.location.LocationManager
@@ -25,12 +26,17 @@ import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -50,6 +56,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -91,6 +99,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lastKnownLocation: Location? = null
     // 소켓
     private lateinit var webSocket: WebSocket
+    var markerList =  ArrayList<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // 화면이 구성될 때, 메인 테마로 변경
@@ -101,7 +110,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         supportActionBar?.setLogo(R.drawable.logo_first)
         supportActionBar?.title = null      // 타이틀 삭제
         supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         userDataStore = UserDataStore(this)
@@ -109,6 +117,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 // 데이터 가져오기
         val myHistory = findViewById<ImageView>(R.id.my_opinion_emoji)
         val messageEmojiView = findViewById<ImageView>(R.id.main_guide_emoji)
+        val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
+        val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
         lifecycleScope.launch {
             val token = userDataStore.get_access_token.first()
             // 24시간 피드 가져오기
@@ -134,6 +144,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 lifecycleScope.launch {
                     setMessage(userDataStore.get_access_token.first(), content)
                     newMessage.text.clear()
+                    if (userDataStore.get_webSocket.first()){
+                        // 메세지 보내는 거 형식 뭐지;; 1
+                        val json = JSONObject().apply {
+                            put("method", "MESSAGE_CHANGED")
+                            put("status", "watching")
+                        }
+                        sendMessage(json.toString())
+                    }
                 }
             }
         }
@@ -148,11 +166,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     lifecycleScope.launch {
                         setMessage(userDataStore.get_access_token.first(), content)
                         newMessage.text.clear()
+                        if (userDataStore.get_webSocket.first()) {
+                            // 메세지 보내는 거 형식 뭐지;; 2
+                            val json = JSONObject().apply {
+                                put("method", "MESSAGE_CHANGED")
+                                put("status", "watching")
+                            }
+                            sendMessage(json.toString())
+                        }
                     }
                 }
                 true
             } else {
                 false
+            }
+        }
+        newMessage.setOnFocusChangeListener { view, b ->
+            //Variable 'b' represent whether this view has focus.
+            //If b is true, that means "This view is having focus"
+            lifecycleScope.launch {
+                if (userDataStore.get_webSocket.first()) {
+                    if (b) {
+                        val json = JSONObject().apply {
+                            put("method", "CHANGE_STATUS")
+                            put("status", "writing")
+                        }
+                        sendMessage(json.toString())
+                    } else {
+                        val json = JSONObject().apply {
+                            put("method", "CHANGE_STATUS")
+                            put("status", "watching")
+                        }
+                        sendMessage(json.toString())
+                    }
+                }
             }
         }
 // 내 메세지 누르면 메세지 작성 폼 뜨기
@@ -175,23 +222,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this, MyMessagesActivity::class.java)
             startActivity(intent)
         }
-// 레이더 애니메이션
-//        val scaleAnimation = ScaleAnimation(
-//            0f, // 시작 X 스케일
-//            1f, // 끝 X 스케일
-//            0f, // 시작 Y 스케일
-//            1f, // 끝 Y 스케일
-//            Animation.RELATIVE_TO_SELF, // X 스케일 기준
-//            0.5f, // X 스케일 기준 위치 (0 ~ 1)
-//            Animation.RELATIVE_TO_SELF, // Y 스케일 기준
-//            0.5f // Y 스케일 기준 위치 (0 ~ 1)
-//        ).apply {
-//            duration = 4000 // 애니메이션 시간 (ms)
-//            repeatMode = Animation.RESTART // 애니메이션 반복 모드
-//            repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
-//        }
-//        val blueRing = findViewById<ImageView>(R.id.blue_ring)
-//        blueRing.startAnimation(scaleAnimation)
 // 지도
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
@@ -226,6 +256,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 mylocation.put("longitude", location.longitude)
                                 lifecycleScope.launch {
                                     setLocation(userDataStore.get_access_token.first(), mylocation)
+                                    if (userDataStore.get_webSocket.first()){
+                                        val json = JSONObject().apply {
+                                            put("method", "Move")
+                                            put("latitude", location.latitude)
+                                            put("longitude", location.longitude)
+                                            put("status", "watching")
+                                        }
+                                        sendMessage(json.toString())
+                                    }
                                 }
 //                                getDeviceLocation()
                             }
@@ -236,9 +275,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         handler.post(runnable)
-        val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
-        val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
+
+//소켓
         soketToggleOff.setOnClickListener {
+            lifecycleScope.launch {
+                userDataStore.setWebSocket(true)
+            }
             // 레이더 애니메이션
             val scaleAnimation = ScaleAnimation(
                 0f, // 시작 X 스케일
@@ -263,6 +305,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             socket()
         }
         soketToggleOn.setOnClickListener {
+            lifecycleScope.launch {
+                userDataStore.setWebSocket(false)
+            }
             // 레이더 애니메이션 끄기
             val blueRing = findViewById<ImageView>(R.id.blue_ring)
             blueRing.clearAnimation()
@@ -278,7 +323,44 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             stop()
             // 모든 마커 삭제
             map?.clear()
+            markerList.clear()
         }
+
+//피드
+        val bottomSheet = findViewById<CardView>(R.id.bottom_sheet)
+        // 현재 접힌 상태에서의 BottomSheet 귀퉁이의 둥글기 저장
+        val cornerRadius = bottomSheet.radius
+        //
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            val expandText = findViewById<ImageView>(R.id.feed_expand_arrow)
+            val expandArrow = findViewById<TextView>(R.id.feed_expand_text)
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // 상태가 변함에 따라서 할일들을 적어줍니다.
+                if (newState == STATE_EXPANDED) {
+                    expandText.visibility = GONE
+                    expandArrow.visibility = GONE
+                } else {
+                    expandText.visibility = VISIBLE
+                    expandArrow.visibility = VISIBLE
+                }
+            }
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                // slideOffset 접힘 -> 펼쳐짐: 0.0 ~ 1.0
+                if (slideOffset >= 0) {
+                    // 둥글기는 펼칠수록 줄어들도록
+                    bottomSheet.radius = cornerRadius - (cornerRadius * slideOffset)
+                    // 화살표는 완전히 펼치면 180도 돌아가게
+                    expandText.rotation =  (1 - slideOffset) * 180F
+                    // 글자는 조금더 빨리 사라지도록
+                    expandArrow.alpha = 1 - slideOffset * 2.3F
+                    // 내용의 투명도도 같이 조절...
+                    findViewById<FrameLayout>(R.id.feed_expand_content).alpha = Math.min(slideOffset * 2F, 1F)
+                }
+            }
+        })
+
     }
     fun socket(){
         lifecycleScope.launch {
@@ -324,7 +406,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
                 super.onOpen(webSocket, response)
-                Log.i(TAG, "웹소켓: open")
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
@@ -379,7 +460,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.i(TAG, "웹소켓: sendMessage $message")
         webSocket.send(message)
     }
-    var markerList =  ArrayList<Marker>()
     fun info(near:ArrayList<NearFarUsers>, far:ArrayList<NearFarUsers>){
         // 이모지 추가
         if (near.isNotEmpty()){
@@ -532,9 +612,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         sendMessage(json.toString())
     }
-//========================================================
-//========================================================
-//========================================================
     private fun setLocation(header : String, params : HashMap<String, Double>?){
         api.setLocation(header, params).enqueue(object : Callback<SetLocationResponse> {
             override fun onResponse(call: Call<SetLocationResponse>, response: Response<SetLocationResponse>) {
@@ -582,6 +659,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         api.getNowMessage(header).enqueue(object : Callback<NowMessageResponse> {
             override fun onResponse(call: Call<NowMessageResponse>, response: Response<NowMessageResponse>) {
                 Log.d(TAG, "onResponse: getNowMessage $response")
+                Log.d(TAG, "onResponse: getNowMessage ${response.body()?.data}")
                 if (response.code() == 200) {
                     // 메세지가 있으면
                     if(response.body()?.data?.messageCnt!! > 0) {
@@ -814,6 +892,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         getLocationPermission()
         updateLocationUI()
         getDeviceLocation()
+        lifecycleScope.launch {
+            val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
+            val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
+            if (userDataStore.get_webSocket.first()) {
+                // 레이더 애니메이션
+                val scaleAnimation = ScaleAnimation(
+                    0f, // 시작 X 스케일
+                    1f, // 끝 X 스케일
+                    0f, // 시작 Y 스케일
+                    1f, // 끝 Y 스케일
+                    Animation.RELATIVE_TO_SELF, // X 스케일 기준
+                    0.5f, // X 스케일 기준 위치 (0 ~ 1)
+                    Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+                    0.5f // Y 스케일 기준 위치 (0 ~ 1)
+                ).apply {
+                    duration = 4000 // 애니메이션 시간 (ms)
+                    repeatMode = Animation.RESTART // 애니메이션 반복 모드
+                    repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+                }
+                val blueRing = findViewById<ImageView>(R.id.blue_ring)
+                blueRing.startAnimation(scaleAnimation)
+                // 토글 버튼 이미지 바꾸기
+                soketToggleOff.visibility = GONE
+                soketToggleOn.visibility = VISIBLE
+                //소켓 연결
+                socket()
+            } else {
+                soketToggleOff.visibility = VISIBLE
+                soketToggleOn.visibility = GONE
+            }
+        }
     }
     /**
      * Gets the current location of the device, and positions the map's camera.
@@ -940,5 +1049,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // 새로운 위도와 경도 반환
         return Pair(newLatitude, newLongitude)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        lifecycleScope.launch {
+            if (userDataStore.get_webSocket.first()){
+                //소켓 연결 닫겠다고 백서버에 전달
+                val json = JSONObject().apply {
+                    put("method", "CLOSE")
+                }
+                sendMessage(json.toString())
+                // 소켓 닫음
+                stop()
+                // 모든 마커 삭제
+                map?.clear()
+                markerList.clear()
+            }
+        }
     }
 }

@@ -32,6 +32,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class MyMessagesActivity : AppCompatActivity(){
@@ -117,7 +118,7 @@ class MyMessagesActivity : AppCompatActivity(){
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
     }
     fun getHistory(header : String) {
-        val currentDate = LocalDate.now()
+        val currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"))
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = currentDate.format(formatter)
         api.getHistory(header, formattedDate).enqueue(object : Callback<HistoryResponse> {
@@ -128,10 +129,6 @@ class MyMessagesActivity : AppCompatActivity(){
                     Log.d(TAG, "getHistory onResponse: $result")
                     val history = findViewById<RecyclerView>(R.id.history_recyclerView)
                     val historyAdapter = MyMessagesAdapter(this@MyMessagesActivity, result)
-
-//                    val itemTouchHelper = ItemTouchHelper(SwipeController(historyAdapter))
-                    // itemTouchHelper에 RecyclerView 부착
-//                    itemTouchHelper.attachToRecyclerView(history)
 
                     history.adapter = historyAdapter
                     history.layoutManager = LinearLayoutManager(this@MyMessagesActivity, LinearLayoutManager.VERTICAL, false)
@@ -163,9 +160,6 @@ class MyMessagesActivity : AppCompatActivity(){
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                 if (response.code() == 200) {
                     Log.i(TAG, "onResponse: 메세지 삭제 성공")
-//                    lifecycleScope.launch {
-//                        getHistory(userDataStore.get_access_token.first())
-//                    }
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 401: 토큰 만료")
                     deleteToken(messageIdx)

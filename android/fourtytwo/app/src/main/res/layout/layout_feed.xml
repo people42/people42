@@ -11,7 +11,7 @@
     android:orientation="vertical"
     app:cardBackgroundColor="@color/white"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="80dp"
+    app:behavior_peekHeight="70dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <LinearLayout
@@ -20,11 +20,14 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
         <ImageView
+            android:id="@+id/feed_expand_arrow"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="10dp"
+            android:rotation="180"
             android:src="@drawable/baseline_expand_less_24"/>
         <TextView
+            android:id="@+id/feed_expand_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -32,6 +35,7 @@
             android:textColor="#aaaaaa"
             android:text="오늘 스쳐온 장소 보기"/>
         <FrameLayout
+            android:id="@+id/feed_expand_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/message_margin_horizontal"

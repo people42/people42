@@ -11,14 +11,11 @@ import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 class UserDataStore (private val context : Context){
-
 //    private val context = App.context()
-
     companion object {
         private val Context.dataStore : DataStore<Preferences> by preferencesDataStore("user_pref")
     }
 //    private val mDataStore : DataStore<Preferences> = context.dataStore
-
 //    private val Context.dataStore by preferencesDataStore(name = "dataStore")
 
     private var user_idx = intPreferencesKey("user_idx")
@@ -29,8 +26,20 @@ class UserDataStore (private val context : Context){
     private var nickname = stringPreferencesKey("nickname")
     private var accessToken = stringPreferencesKey("accessToken")
     private var idToken = stringPreferencesKey("idToken")
+    private var webSocket = booleanPreferencesKey("webSocket")
 
     val mDataStore = context.dataStore
+    val get_webSocket : Flow<Boolean> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[webSocket] ?: false
+        }
     val get_userIdx : Flow<String> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -108,6 +117,11 @@ class UserDataStore (private val context : Context){
         .map {preferences ->
             preferences[refreshToken].toString() ?: ""
         }
+    suspend fun setWebSocket(webSocketstate: Boolean){
+        mDataStore.edit {preferences ->
+            preferences[webSocket] = webSocketstate
+        }
+    }
 
     suspend fun setUserEmail(user_email: String): String {
         mDataStore.edit {preferences ->
