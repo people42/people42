@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.Signup
+package com.cider.fourtytwo.signup
 
 import android.content.ContentValues.TAG
 import android.os.Bundle

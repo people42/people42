@@ -1,9 +1,6 @@
-package com.cider.fourtytwo.Signup
+package com.cider.fourtytwo.signup
 
-import android.content.ContentValues.TAG
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +8,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.databinding.FragmentEmojiBinding

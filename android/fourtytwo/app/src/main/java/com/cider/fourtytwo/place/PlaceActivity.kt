@@ -43,16 +43,13 @@ class PlaceActivity : AppCompatActivity() {
     private lateinit var userDataStore: UserDataStore
     //피드
     private lateinit var placeAdapter: PlaceAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // 화면이 구성될 때, 스플래시 테마에서 메인 테마로 변경
         setTheme(R.style.Theme_Fourtytwo)
-
         // 넘겨받은 데이터
         val placeIdx : Int = intent.getIntExtra("placeIdx", 17)
         val time : String? = intent.getStringExtra("time")
         val placeName : String? = intent.getStringExtra("placeName")
-
         // 로고 장착
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayUseLogoEnabled(true)
@@ -187,7 +184,6 @@ class PlaceActivity : AppCompatActivity() {
                         layoutParams.topMargin = rand(300, 600)
                         frameLayout.addView(imageView, layoutParams)
                     }
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
                     getToken(placeIdx, time)

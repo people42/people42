@@ -11,36 +11,53 @@
     android:orientation="vertical"
     app:cardBackgroundColor="@color/white"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="210dp"
+    app:behavior_peekHeight="80dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/message_margin_horizontal"
-        android:paddingTop="9dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/baseline_expand_less_24"/>
         <TextView
-            android:id="@+id/noFeed"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="오늘 스친 사람이 없어요"
-            android:layout_marginTop="90dp"
-            android:gravity="center"/>
-        <View
-            android:id="@+id/cardLine"
-            android:layout_marginLeft="7dp"
-            android:background="@color/line_blue"
-            android:layout_width="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="15dp"
+            android:textColor="#aaaaaa"
+            android:text="오늘 스쳐온 장소 보기"/>
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/feed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/recyclerview_feed">
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_marginHorizontal="@dimen/message_margin_horizontal"
+            android:paddingTop="9dp">
+            <TextView
+                android:id="@+id/noFeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="오늘 스친 사람이 없어요"
+                android:layout_marginTop="90dp"
+                android:gravity="center"/>
+            <View
+                android:id="@+id/cardLine"
+                android:layout_marginLeft="7dp"
+                android:background="@color/line_blue"
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/feed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/recyclerview_feed">
+            </androidx.recyclerview.widget.RecyclerView>
 
-    </FrameLayout>
-
+        </FrameLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

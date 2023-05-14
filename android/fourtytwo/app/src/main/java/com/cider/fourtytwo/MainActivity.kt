@@ -5,9 +5,15 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Icon
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,6 +31,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.feed.FeedAdapter
 import com.cider.fourtytwo.feed.RecentFeedData
@@ -40,16 +49,24 @@ import com.cider.fourtytwo.signIn.UserResponse
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.GlobalScope
+import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.math.*
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -72,6 +89,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private var lastKnownLocation: Location? = null
+    // 소켓
+    private lateinit var webSocket: WebSocket
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // 화면이 구성될 때, 메인 테마로 변경
@@ -157,22 +176,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
 // 레이더 애니메이션
-        val scaleAnimation = ScaleAnimation(
-            0f, // 시작 X 스케일
-            1f, // 끝 X 스케일
-            0f, // 시작 Y 스케일
-            1f, // 끝 Y 스케일
-            Animation.RELATIVE_TO_SELF, // X 스케일 기준
-            0.5f, // X 스케일 기준 위치 (0 ~ 1)
-            Animation.RELATIVE_TO_SELF, // Y 스케일 기준
-            0.5f // Y 스케일 기준 위치 (0 ~ 1)
-        ).apply {
-            duration = 4000 // 애니메이션 시간 (ms)
-            repeatMode = Animation.RESTART // 애니메이션 반복 모드
-            repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
-        }
-        val blueRing = findViewById<ImageView>(R.id.blue_ring)
-        blueRing.startAnimation(scaleAnimation)
+//        val scaleAnimation = ScaleAnimation(
+//            0f, // 시작 X 스케일
+//            1f, // 끝 X 스케일
+//            0f, // 시작 Y 스케일
+//            1f, // 끝 Y 스케일
+//            Animation.RELATIVE_TO_SELF, // X 스케일 기준
+//            0.5f, // X 스케일 기준 위치 (0 ~ 1)
+//            Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+//            0.5f // Y 스케일 기준 위치 (0 ~ 1)
+//        ).apply {
+//            duration = 4000 // 애니메이션 시간 (ms)
+//            repeatMode = Animation.RESTART // 애니메이션 반복 모드
+//            repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+//        }
+//        val blueRing = findViewById<ImageView>(R.id.blue_ring)
+//        blueRing.startAnimation(scaleAnimation)
 // 지도
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
@@ -190,7 +209,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val myLocation = map?.myLocation
             if (myLocation != null) {
                 val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f)
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM.toFloat())
                 map?.animateCamera(cameraUpdate)
             }
         }
@@ -208,14 +227,314 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 lifecycleScope.launch {
                                     setLocation(userDataStore.get_access_token.first(), mylocation)
                                 }
+//                                getDeviceLocation()
                             }
                         }
                 }
                 handler.postDelayed(this, 60000)
+//                map?.isMyLocationEnabled = true
             }
         }
         handler.post(runnable)
+        val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
+        val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
+        soketToggleOff.setOnClickListener {
+            // 레이더 애니메이션
+            val scaleAnimation = ScaleAnimation(
+                0f, // 시작 X 스케일
+                1f, // 끝 X 스케일
+                0f, // 시작 Y 스케일
+                1f, // 끝 Y 스케일
+                Animation.RELATIVE_TO_SELF, // X 스케일 기준
+                0.5f, // X 스케일 기준 위치 (0 ~ 1)
+                Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+                0.5f // Y 스케일 기준 위치 (0 ~ 1)
+            ).apply {
+                duration = 4000 // 애니메이션 시간 (ms)
+                repeatMode = Animation.RESTART // 애니메이션 반복 모드
+                repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+            }
+            val blueRing = findViewById<ImageView>(R.id.blue_ring)
+            blueRing.startAnimation(scaleAnimation)
+            // 토글 버튼 이미지 바꾸기
+            soketToggleOff.visibility = GONE
+            soketToggleOn.visibility = VISIBLE
+            //소켓 연결
+            socket()
+        }
+        soketToggleOn.setOnClickListener {
+            // 레이더 애니메이션 끄기
+            val blueRing = findViewById<ImageView>(R.id.blue_ring)
+            blueRing.clearAnimation()
+            // 토글 버튼 이미지 바꾸기
+            soketToggleOff.visibility = VISIBLE
+            soketToggleOn.visibility = GONE
+            //소켓 연결 닫겠다고 백서버에 전달
+            val json = JSONObject().apply {
+                put("method", "CLOSE")
+            }
+            sendMessage(json.toString())
+            // 소켓 닫음
+            stop()
+            // 모든 마커 삭제
+            map?.clear()
+        }
     }
+    fun socket(){
+        lifecycleScope.launch {
+            val locationManager = this@MainActivity.getSystemService(LOCATION_SERVICE) as LocationManager
+            val userIdx = userDataStore.get_userIdx.first()
+            // Connect to the WebSocket server
+            start("wss://www.people42.com/be42/socket?type=user&user_idx=$userIdx")
+            // Send a message to the server
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Toast.makeText(applicationContext, "위치 정보를 켜주세요", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                } else {
+                    fusedLocationProviderClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            if (location != null) {
+                                val json = JSONObject().apply {
+                                    put("method", "INIT")
+                                    put("latitude", location.latitude)
+                                    put("longitude", location.longitude)
+                                    put("status", "watching")
+                                }
+                                sendMessage(json.toString())
+                            }
+                        }
+                }
+            } else {
+                // 위치 권한 요청
+                getLocationPermission()
+            }
+        }
+    }
+    fun start(userUrl:String) {
+        Log.i(TAG, "웹소켓: $userUrl")
+        val client = OkHttpClient.Builder()
+            .readTimeout(0, TimeUnit.MILLISECONDS)
+            .build()
+
+        val request = Request.Builder()
+            .url(userUrl)
+            .build()
+
+        webSocket = client.newWebSocket(request, object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+                super.onOpen(webSocket, response)
+                Log.i(TAG, "웹소켓: open")
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                super.onMessage(webSocket, text)
+                println("웹소켓 Received message: $text")
+
+                val response = Gson().fromJson(text, WebSocketInfo::class.java)
+
+                when (response.method) {
+                    "INFO" -> {
+                        info(response.data.nearUsers, response.data.farUsers)
+                    }
+                    "NEAR" -> {
+                        addMarker(response.data)
+                    }
+                    "CHANGE_STATUS" -> changeStatus(response.data)
+                    "MESSAGE_CHANGED" -> messageChanged(response.data)
+                    "CLOSE" -> {
+                        deleteMarker(response.data)
+                    }
+                    "PING" -> pong()
+                    else -> Log.e(TAG, "웹소켓 : 알 수 없는 method입니다.", )
+                }
+
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                super.onMessage(webSocket, bytes)
+                println("Received bytes: ${bytes.hex()}")
+                Log.i(TAG, "웹소켓: onMessage")
+
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosing(webSocket, code, reason)
+                webSocket.close(1000, null)
+                println("Closing: $code / $reason")
+                Log.i(TAG, "웹소켓: onClosing")
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+                super.onFailure(webSocket, t, response)
+                println("Error: ${t.message}")
+            }
+        })
+    }
+    fun stop() {
+        Log.i(TAG, "웹소켓: stop")
+        webSocket.close(1000, null)
+    }
+    fun sendMessage(message: String) {
+        Log.i(TAG, "웹소켓: sendMessage $message")
+        webSocket.send(message)
+    }
+    var markerList =  ArrayList<Marker>()
+    fun info(near:ArrayList<NearFarUsers>, far:ArrayList<NearFarUsers>){
+        // 이모지 추가
+        if (near.isNotEmpty()){
+            runOnUiThread {
+                val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                mapFragment.getMapAsync{ googleMap ->
+            // 가까운 유저
+                for (user in near) {
+                    // 이미지 로딩 라이브러리(Glide)를 사용하여 URL에서 이미지를 로드
+                    Glide.with(this@MainActivity)
+                        .asBitmap()
+                        .load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${user.emoji}.gif")
+                        .override(100, 100)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                // 로드한 이미지로 마커 아이콘 생성
+                                val markerIcon =
+                                    BitmapDescriptorFactory.fromBitmap(resource)
+                                // 위치 랜덤하게 변경
+                                    val location = getRandomLocation(user.latitude, user.longitude, 30.0)
+                                    val newLocation = LatLng(location.first, location.second)
+                                Log.d(TAG, "onResourceReady: ${user.latitude}, ${location.first}")
+                                Log.d(TAG, "onResourceReady: ${user.longitude}, ${location.second}")
+//                                val newLocation = LatLng(user.latitude, user.longitude)
+                                // 마커 추가
+                                val markerOptions = MarkerOptions()
+                                    .position(newLocation) // 마커 위치
+                                    .icon(markerIcon) // 마커 아이콘
+                                    .title(user.nickname)
+                                val marker = googleMap.addMarker(markerOptions)
+                                if (marker != null) {
+                                    markerList.add(marker)
+                                }
+                            }
+                        })
+                }}
+            }
+        }
+        if(far.isNotEmpty()){
+            for (user in far) {
+                val farMarkers = markerList.filter { it.title == user.nickname }
+                for (marker in farMarkers) {
+                    marker.remove()
+                    markerList.remove(marker)
+                    Log.d(TAG, "웹소켓 : 멀어진 마커 지움$markerList")
+                }
+            }
+        }
+    }
+    fun addMarker(user : InfoData){
+        runOnUiThread {
+            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync{ googleMap ->
+                // 이미지 로딩 라이브러리(Glide)를 사용하여 URL에서 이미지를 로드
+                Glide.with(this@MainActivity)
+                    .asBitmap()
+                    .load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${user.emoji}.gif")
+                    .override(100, 100)
+                    .into(object : SimpleTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            // 로드한 이미지로 마커 아이콘 생성
+                            val markerIcon =
+                                BitmapDescriptorFactory.fromBitmap(resource)
+                            // 위치 랜덤하게 변경
+                            val location = getRandomLocation(user.latitude, user.longitude, 30.0)
+                            val newLocation = LatLng(location.first, location.second)
+                            // 마커 추가
+                            val markerOptions = MarkerOptions()
+                                .position(newLocation) // 마커 위치
+                                .icon(markerIcon) // 마커 아이콘
+                                .title(user.nickname)
+                            val marker = googleMap.addMarker(markerOptions)
+                            if (marker != null) {
+                                markerList.add(marker)
+                            }
+                        }
+                    })
+                }
+        }
+    }
+    fun changeStatus(user: InfoData){
+        // 쓰는 중 이모지로 변경
+        runOnUiThread {
+            val farMarkers = markerList.lastOrNull { it.title == user.nickname }
+            if (user.status == "writing"){
+                if (farMarkers != null) {
+                    val drawableList = listOf(
+                        "left_speech_bubble",
+                        "right_anger_bubble",
+                        "thought_balloon",
+                        "speech_balloon"
+                    )
+                    val randomIndex = Random().nextInt(drawableList.size)
+                    val resourceId =
+                        resources.getIdentifier(drawableList[randomIndex], "drawable", packageName)
+                    val bitmap = BitmapFactory.decodeResource(resources, resourceId)
+                    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 130, 130, false)
+                    val markerIcon = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
+                    farMarkers.setIcon(markerIcon)
+                }
+            } else{
+                if (farMarkers != null) {
+                    Glide.with(this@MainActivity)
+                        .asBitmap()
+                        .load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${user.emoji}.gif")
+                        .override(100, 100)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                // 로드한 이미지로 마커 아이콘 생성
+                                val markerIcon =
+                                    BitmapDescriptorFactory.fromBitmap(resource)
+
+                                farMarkers.setIcon(markerIcon)
+                            }
+                        })
+                }
+            }
+        }
+    }
+    fun messageChanged(user: InfoData){
+        //이모지로 변경 + title 달아주기?
+        runOnUiThread {
+            val farMarkers = markerList.filter { it.title == user.nickname }
+            for (marker in farMarkers) {
+                marker.snippet = user.message
+            }}
+    }
+    fun deleteMarker(user: InfoData){
+        // 마커 삭제
+        runOnUiThread {
+        val farMarkers = markerList.filter { it.title == user.nickname }
+        for (marker in farMarkers) {
+            marker.remove()
+            markerList.remove(marker)
+        }}
+    }
+    fun pong(){
+        val json = JSONObject().apply {
+            put("method", "PONG")
+//            put("status", "watching")
+        }
+        sendMessage(json.toString())
+    }
+//========================================================
+//========================================================
+//========================================================
     private fun setLocation(header : String, params : HashMap<String, Double>?){
         api.setLocation(header, params).enqueue(object : Callback<SetLocationResponse> {
             override fun onResponse(call: Call<SetLocationResponse>, response: Response<SetLocationResponse>) {
@@ -492,44 +811,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        // Prompt the user for permission.
         getLocationPermission()
-        // Turn on the My Location layer and the related control on the map.
         updateLocationUI()
-        // Get the current location of the device and set the position of the map.
         getDeviceLocation()
-
-        //웹소켓
-        lifecycleScope.launch {
-            val userIdx = userDataStore.get_userIdx.first()
-            val webSocketClient = WebSocketClient("wss://www.people42.com/be42/socket?type=user&user_idx=$userIdx")
-            // Connect to the WebSocket server
-            Log.i(TAG, "웹소켓: start 할거임")
-            webSocketClient.start()
-            // Send a message to the server
-            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                fusedLocationProviderClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        if (location != null) {
-                            val json = JSONObject().apply {
-                                put("method", "INIT")
-                                put("latitude", location.latitude)
-                                put("longitude", location.longitude)
-                                put("status", "watching")
-                            }
-                            webSocketClient.sendMessage(json.toString())
-                        }
-                    }
-            }
-            // Receive messages from the server
-//            GlobalScope.launch {
-//                webSocketClient.receiveMessages().collect { message ->
-//                    println("Received message: $message")
-//                }
-//            }
-        }
-
-
     }
     /**
      * Gets the current location of the device, and positions the map's camera.
@@ -604,15 +888,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         updateLocationUI()
     }
-
-    /**
-     * Prompts the user to select the current place from a list of likely places, and shows the
-     * current place on the map - provided the user has granted location permission.
-     */
-
-    /**
-     * Updates the map's UI settings based on whether the user has granted location permission.
-     */
     @SuppressLint("MissingPermission")
     private fun updateLocationUI() {
         if (map == null) {
@@ -637,8 +912,33 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val DEFAULT_ZOOM = 19
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-        // Keys for storing activity state.
         private const val KEY_CAMERA_POSITION = "camera_position"
         private const val KEY_LOCATION = "location"
+    }
+
+    // 반지금 radius m내의 랜덤 위경도로 변경
+    fun getRandomLocation(latitude: Double, longitude: Double, radius: Double): Pair<Double, Double> {
+        // 반경(m)으로 지구 상의 1도의 거리(km) 계산
+        val kmPerDegree = 111.319
+
+        // 반경(m)을 km로 변환
+        val kmRadius = radius / 1000.0
+
+        // 랜덤한 각도(라디안) 생성
+        val angle = 2.0 * Math.PI * Math.random()
+
+        // 랜덤한 거리(0~1 사이) 생성
+        val u = Math.random() + Math.random()
+
+        // 반경 내의 새로운 위도 계산
+        val latitudeOffset = (u * kmRadius / kmPerDegree) * cos(angle)
+        val newLatitude = latitude + latitudeOffset
+
+        // 반경 내의 새로운 경도 계산
+        val longitudeOffset = (u * kmRadius / kmPerDegree) * sin(angle)
+        val newLongitude = longitude + longitudeOffset
+
+        // 새로운 위도와 경도 반환
+        return Pair(newLatitude, newLongitude)
     }
 }

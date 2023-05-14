@@ -1,4 +1,4 @@
-package com.cider.fourtytwo.Signup
+package com.cider.fourtytwo.signup
 
 import android.os.Bundle
 import android.util.Log

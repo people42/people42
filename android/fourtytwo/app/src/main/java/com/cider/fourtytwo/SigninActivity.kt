@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.cider.fourtytwo.Signup.SignupActivity
+import com.cider.fourtytwo.signup.SignupActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySigninBinding
 import com.cider.fourtytwo.network.Api

@@ -1,15 +1,8 @@
-package com.cider.fourtytwo.Signup
+package com.cider.fourtytwo.signup
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.cider.fourtytwo.Signup.EmojiFragment
-import com.cider.fourtytwo.Signup.NicknameFragment
-import com.cider.fourtytwo.Signup.WelcomeFragment
 import com.cider.fourtytwo.databinding.ActivitySignupBinding
-import com.google.android.material.tabs.TabLayout
 
 class SignupActivity : AppCompatActivity() {
 

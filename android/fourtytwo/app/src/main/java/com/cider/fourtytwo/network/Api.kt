@@ -1,7 +1,7 @@
 package com.cider.fourtytwo.network
 
-import com.cider.fourtytwo.Signup.NicknameResponse
-import com.cider.fourtytwo.Signup.SignupForm
+import com.cider.fourtytwo.signup.NicknameResponse
+import com.cider.fourtytwo.signup.SignupForm
 import com.cider.fourtytwo.feed.RecentFeedResponse
 import com.cider.fourtytwo.map.SetLocationResponse
 import com.cider.fourtytwo.myHistory.HistoryResponse
