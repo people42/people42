@@ -174,6 +174,8 @@ class PlaceActivity : AppCompatActivity() {
                     val mapFragment = supportFragmentManager.findFragmentById(R.id.place_map) as SupportMapFragment
                     mapFragment.getMapAsync { googleMap ->
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(result.placeWithTimeAndGpsInfo.placeLatitude, result.placeWithTimeAndGpsInfo.placeLongitude), 15f))
+                        googleMap?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
+                        googleMap?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
                     }
                     // 마커 추가
                     val frameLayout = findViewById<FrameLayout>(R.id.place_frame)
