@@ -2,14 +2,12 @@ package com.cider.fourtytwo
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -33,11 +31,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.cider.fourtytwo.dataStore.UserDataStore
@@ -49,6 +42,9 @@ import com.cider.fourtytwo.myHistory.MyMessagesActivity
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.notification.NotiAdapter
+import com.cider.fourtytwo.notification.NotiItem
+import com.cider.fourtytwo.notification.NotiResponse
 import com.cider.fourtytwo.place.PlaceActivity
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
@@ -72,8 +68,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.*
 import kotlin.system.exitProcess
 
@@ -362,6 +356,54 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
 
     }
+    private fun getNotiCnt(header : String, menu:Menu){
+        api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
+            override fun onResponse(call: Call<NotiCntResponse>, response: Response<NotiCntResponse>) {
+                Log.d("getNoti 응답", response.toString())
+                if (response.code() == 200) {
+                    val notiCnt = response.body()!!.data.notificationCnt
+                    if (notiCnt > 0){
+                        val menuItem = menu.findItem(R.id.action_notifications)
+                        menuItem.setIcon(R.drawable.icon_notification_true)
+                    }
+                } else if (response.code() == 401){
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
+                    lifecycleScope.launch {
+                        val refreshToken = userDataStore.get_refresh_token.first()
+                        api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                response.body()?.let {
+                                    if (it.status == 200) {
+                                        Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                        response.body()?.data?.let {
+                                                it1 -> {
+                                                    lifecycleScope.launch {
+                                                        userDataStore.setUserData(it1)
+                                                        val token =
+                                                            userDataStore.get_access_token.first()
+                                                        getNotiCnt(token, menu)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Log.i(ContentValues.TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                    }
+                                }
+                            }
+                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                Log.d("토큰 전송 on failure: ", t.message.toString())
+                            }
+                        })
+                    }
+                } else {
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
+                Log.d("gerRecentFeed_onFailure", t.message.toString())
+            }
+        })
+    }
     fun socket(){
         lifecycleScope.launch {
             val locationManager = this@MainActivity.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -427,7 +469,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         deleteMarker(response.data)
                     }
                     "PING" -> pong()
-                    else -> Log.e(TAG, "웹소켓 : 알 수 없는 method입니다.", )
+                    else -> Log.e(TAG, "웹소켓 : 알 수 없는 method입니다.")
                 }
 
             }
@@ -845,19 +887,32 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 // 옵션 메뉴
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            getNotiCnt(token, menu)
+        }
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            R.id.action_notifications -> {
-//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-//                true
-//            }
+            R.id.action_notifications -> {
+                val intent = Intent(this, NotificationActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
+            }
+            android.R.id.home -> {
+                finish() //인텐트 종료
+                overridePendingTransition(0, 0) //인텐트 효과 없애기
+                val intent = intent //인텐트
+                startActivity(intent) //액티비티 열기
+                overridePendingTransition(0, 0) //인텐트 효과 없애기
+                return true
             }
             else -> super.onOptionsItemSelected(item)
         }
