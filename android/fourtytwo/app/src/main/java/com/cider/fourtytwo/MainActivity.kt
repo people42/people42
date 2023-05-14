@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -354,6 +355,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         })
+        var swipe = findViewById<SwipeRefreshLayout>(R.id.swipe)
+        swipe.setOnRefreshListener {
+            finish() //인텐트 종료
+            overridePendingTransition(0, 0) //인텐트 효과 없애기
+            val intent = intent //인텐트
+            startActivity(intent) //액티비티 열기
+            overridePendingTransition(0, 0) //인텐트 효과 없애기
+            swipe.isRefreshing = false
+        }
 
     }
     private fun getNotiCnt(header : String, menu:Menu){
@@ -905,14 +915,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
-            }
-            android.R.id.home -> {
-                finish() //인텐트 종료
-                overridePendingTransition(0, 0) //인텐트 효과 없애기
-                val intent = intent //인텐트
-                startActivity(intent) //액티비티 열기
-                overridePendingTransition(0, 0) //인텐트 효과 없애기
-                return true
             }
             else -> super.onOptionsItemSelected(item)
         }

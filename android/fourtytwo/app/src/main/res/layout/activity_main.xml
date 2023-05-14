@@ -5,60 +5,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
     android:background="#FFFFFF">
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!-- 맨 밑 배경 radar -->
-        <include layout="@layout/layout_radar"/>
-        <!-- 위 층 내 생각 -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <include
-                layout="@layout/layout_opinion"
-                android:id="@+id/layout_opinion"
-                />
-            <include
-                layout="@layout/layout_edit_opinion"
-                android:id="@+id/layout_edit_opinion"
-                android:visibility="gone"
-                />
-        </FrameLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <LinearLayout
+            <!-- 맨 밑 배경 radar -->
+            <include layout="@layout/layout_radar"/>
+            <!-- 위 층 내 생각 -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="110dp"
-                android:paddingHorizontal="31dp">
-                <ImageView
-                    android:id="@+id/main_radar_off"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/websocket_toggle"
-                    android:layout_marginEnd="15dp"
+                android:layout_height="wrap_content">
+                <include
+                    layout="@layout/layout_opinion"
+                    android:id="@+id/layout_opinion"
                     />
-                <ImageView
-                    android:id="@+id/main_radar_on"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/websocket_toggle_true"
-                    android:layout_marginEnd="15dp"
+                <include
+                    layout="@layout/layout_edit_opinion"
+                    android:id="@+id/layout_edit_opinion"
                     android:visibility="gone"
                     />
-                <TextView
-                    android:layout_width="wrap_content"
+            </FrameLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="주변 유저 탐색하기"/>
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="110dp"
+                    android:paddingHorizontal="31dp">
+                    <ImageView
+                        android:id="@+id/main_radar_off"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/websocket_toggle"
+                        android:layout_marginEnd="15dp"
+                        />
+                    <ImageView
+                        android:id="@+id/main_radar_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/websocket_toggle_true"
+                        android:layout_marginEnd="15dp"
+                        android:visibility="gone"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="주변 유저 탐색하기"/>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <!--  피드  -->
     <include layout="@layout/layout_feed"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
