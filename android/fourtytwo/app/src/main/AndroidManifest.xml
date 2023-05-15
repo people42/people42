@@ -54,14 +54,21 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- <data android:scheme="fortytwo"/> -->
                 <data
+                    android:scheme="fortytwo"
                     android:host="path"
-                    android:scheme="fortytwo" />
+                    />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="www.people42.com"
+                    android:pathPattern="/mobile" />
             </intent-filter>
         </activity>
         <activity
@@ -72,7 +79,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
 
         <service
             android:name=".MyFirebaseMessagingService"

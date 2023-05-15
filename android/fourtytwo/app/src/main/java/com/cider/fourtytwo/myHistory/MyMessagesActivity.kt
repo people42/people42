@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.MainActivity
+import com.cider.fourtytwo.NotificationActivity
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.SettingsActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
@@ -246,10 +247,11 @@ class MyMessagesActivity : AppCompatActivity(){
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            R.id.action_notifications -> {
-//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-//                true
-//            }
+            R.id.action_notifications -> {
+                val intent = Intent(this, NotificationActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)

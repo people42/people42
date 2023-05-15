@@ -14,33 +14,44 @@
             android:layout_height="match_parent">
             <!-- 맨 밑 배경 radar -->
             <include layout="@layout/layout_radar"/>
-            <!-- 위 층 내 생각 -->
-            <FrameLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <include
-                    layout="@layout/layout_opinion"
-                    android:id="@+id/layout_opinion"
-                    />
-                <include
-                    layout="@layout/layout_edit_opinion"
-                    android:id="@+id/layout_edit_opinion"
-                    android:visibility="gone"
-                    />
-            </FrameLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
+                android:layout_height="match_parent"
+                >
+                <!-- 위 층 내 생각 -->
+                <FrameLayout
+                    android:id="@+id/upper_my_opinion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    >
+                    <include
+                        layout="@layout/layout_opinion"
+                        android:id="@+id/layout_opinion"
+                        />
+                    <include
+                        layout="@layout/layout_edit_opinion"
+                        android:id="@+id/layout_edit_opinion"
+                        android:visibility="gone"
+                        />
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="110dp"
-                    android:paddingHorizontal="31dp">
+                    android:layout_below="@id/upper_my_opinion"
+                    android:layout_alignParentEnd="true"
+                    android:paddingHorizontal="15dp"
+                    android:paddingVertical="15dp"
+                    >
+                    <TextView
+                        android:id="@+id/socket_toggle_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="주변 유저 탐색하기"
+                        android:layout_marginEnd="10dp"
+                        />
                     <ImageView
                         android:id="@+id/main_radar_off"
                         android:layout_width="wrap_content"
@@ -56,12 +67,43 @@
                         android:layout_marginEnd="15dp"
                         android:visibility="gone"
                         />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="주변 유저 탐색하기"/>
+
                 </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    android:layout_marginBottom="110dp"-->
+<!--                    android:paddingHorizontal="31dp">-->
+<!--                    <ImageView-->
+<!--                        android:id="@+id/main_radar_off"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:src="@drawable/websocket_toggle"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        />-->
+<!--                    <ImageView-->
+<!--                        android:id="@+id/main_radar_on"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:src="@drawable/websocket_toggle_true"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        android:visibility="gone"-->
+<!--                        />-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="주변 유저 탐색하기"/>-->
+<!--                </LinearLayout>-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <!--  피드  -->

@@ -12,6 +12,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
@@ -231,11 +232,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
         // 가운데 클릭 시 내 위치로 이동
         findViewById<ImageView>(R.id.myLocation).setOnClickListener {
-            val myLocation = map?.myLocation
-            if (myLocation != null) {
-                val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM.toFloat())
-                map?.animateCamera(cameraUpdate)
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                val myLocation = map?.myLocation
+                if (myLocation != null) {
+                    val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
+                    val cameraUpdate =
+                        CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM.toFloat())
+                    map?.animateCamera(cameraUpdate)
+                }
+            }else {
+                Toast.makeText(applicationContext, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         // 1분에 한번씩 위치 전송
@@ -266,38 +272,49 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
                 }
                 handler.postDelayed(this, 60000)
-//                map?.isMyLocationEnabled = true
             }
         }
         handler.post(runnable)
 
-//소켓
+// 소켓
+        val socketText = findViewById<TextView>(R.id.socket_toggle_text)
+//        // 만약 소켓을 열어둔 채였다면 들어왔을 때 자동으로 열어주자
+//        lifecycleScope.launch {
+//            if (userDataStore.get_webSocket.first()){
+//
+//            }
+//        }
         soketToggleOff.setOnClickListener {
-            lifecycleScope.launch {
-                userDataStore.setWebSocket(true)
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                lifecycleScope.launch {
+                    userDataStore.setWebSocket(true)
+                }
+                // 레이더 애니메이션
+                val scaleAnimation = ScaleAnimation(
+                    0f, // 시작 X 스케일
+                    1f, // 끝 X 스케일
+                    0f, // 시작 Y 스케일
+                    1f, // 끝 Y 스케일
+                    Animation.RELATIVE_TO_SELF, // X 스케일 기준
+                    0.5f, // X 스케일 기준 위치 (0 ~ 1)
+                    Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+                    0.5f // Y 스케일 기준 위치 (0 ~ 1)
+                ).apply {
+                    duration = 4000 // 애니메이션 시간 (ms)
+                    repeatMode = Animation.RESTART // 애니메이션 반복 모드
+                    repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+                }
+                val blueRing = findViewById<ImageView>(R.id.blue_ring)
+                blueRing.startAnimation(scaleAnimation)
+                // 토글 버튼 이미지 바꾸기
+                socketText.visibility = GONE
+                soketToggleOff.visibility = GONE
+                soketToggleOn.visibility = VISIBLE
+                //소켓 연결
+                socket()
+            } else {
+                Toast.makeText(applicationContext, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
             }
-            // 레이더 애니메이션
-            val scaleAnimation = ScaleAnimation(
-                0f, // 시작 X 스케일
-                1f, // 끝 X 스케일
-                0f, // 시작 Y 스케일
-                1f, // 끝 Y 스케일
-                Animation.RELATIVE_TO_SELF, // X 스케일 기준
-                0.5f, // X 스케일 기준 위치 (0 ~ 1)
-                Animation.RELATIVE_TO_SELF, // Y 스케일 기준
-                0.5f // Y 스케일 기준 위치 (0 ~ 1)
-            ).apply {
-                duration = 4000 // 애니메이션 시간 (ms)
-                repeatMode = Animation.RESTART // 애니메이션 반복 모드
-                repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
-            }
-            val blueRing = findViewById<ImageView>(R.id.blue_ring)
-            blueRing.startAnimation(scaleAnimation)
-            // 토글 버튼 이미지 바꾸기
-            soketToggleOff.visibility = GONE
-            soketToggleOn.visibility = VISIBLE
-            //소켓 연결
-            socket()
         }
         soketToggleOn.setOnClickListener {
             lifecycleScope.launch {
@@ -307,6 +324,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val blueRing = findViewById<ImageView>(R.id.blue_ring)
             blueRing.clearAnimation()
             // 토글 버튼 이미지 바꾸기
+            socketText.visibility = VISIBLE
             soketToggleOff.visibility = VISIBLE
             soketToggleOn.visibility = GONE
             //소켓 연결 닫겠다고 백서버에 전달
@@ -325,20 +343,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val bottomSheet = findViewById<CardView>(R.id.bottom_sheet)
         // 현재 접힌 상태에서의 BottomSheet 귀퉁이의 둥글기 저장
         val cornerRadius = bottomSheet.radius
-        //
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
         bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
-            val expandText = findViewById<ImageView>(R.id.feed_expand_arrow)
-            val expandArrow = findViewById<TextView>(R.id.feed_expand_text)
+            val expandArrow = findViewById<ImageView>(R.id.feed_expand_arrow)
+            val expandText = findViewById<TextView>(R.id.feed_expand_text)
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                // 상태가 변함에 따라서 할일들을 적어줍니다.
+                // 상태가 변함에 따라서 할일
                 if (newState == STATE_EXPANDED) {
                     expandText.visibility = GONE
-                    expandArrow.visibility = GONE
                 } else {
                     expandText.visibility = VISIBLE
-                    expandArrow.visibility = VISIBLE
                 }
             }
             override fun onSlide(bottomSheetView: View, slideOffset: Float) {
@@ -347,9 +362,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     // 둥글기는 펼칠수록 줄어들도록
                     bottomSheet.radius = cornerRadius - (cornerRadius * slideOffset)
                     // 화살표는 완전히 펼치면 180도 돌아가게
-                    expandText.rotation =  (1 - slideOffset) * 180F
+//                    expandArrow.rotation =  (1 - slideOffset) * 180F
                     // 글자는 조금더 빨리 사라지도록
-                    expandArrow.alpha = 1 - slideOffset * 2.3F
+                    expandText.alpha = 1 - slideOffset * 2.3F
                     // 내용의 투명도도 같이 조절...
                     findViewById<FrameLayout>(R.id.feed_expand_content).alpha = Math.min(slideOffset * 2F, 1F)
                 }
@@ -426,6 +441,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     Toast.makeText(applicationContext, "위치 정보를 켜주세요", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 } else {
+                    map?.isMyLocationEnabled = true
                     fusedLocationProviderClient.lastLocation
                         .addOnSuccessListener { location: Location? ->
                             if (location != null) {
@@ -438,6 +454,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 sendMessage(json.toString())
                             }
                         }
+                    val myLocation = map?.myLocation
+                    if (myLocation != null) {
+                        val currentLatLng = LatLng(myLocation.latitude, myLocation.longitude)
+                        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM.toFloat())
+                        map?.animateCamera(cameraUpdate)
+                    }
                 }
             } else {
                 // 위치 권한 요청
@@ -919,15 +941,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    var backPressedTime : Long = 0
+private var backButtonPressedTime: Long = 0
+    private val backButtonThreshold: Long = 2000
     override fun onBackPressed() {
-        //2.5초이내에 한 번 더 뒤로가기 클릭 시
-        if (System.currentTimeMillis() - backPressedTime < 1500) {
-            super.getOnBackPressedDispatcher()
-            exitProcess(0)
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - backButtonPressedTime < backButtonThreshold) {
+            finishAffinity()
+        } else {
+            backButtonPressedTime = currentTime
+            Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다..", Toast.LENGTH_SHORT).show()
         }
-        Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
-        backPressedTime = System.currentTimeMillis()
     }
     /**
      * Saves the state of the map when the activity is paused.
@@ -952,6 +975,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         lifecycleScope.launch {
             val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
             val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
+            val soketText = findViewById<TextView>(R.id.socket_toggle_text)
             if (userDataStore.get_webSocket.first()) {
                 // 레이더 애니메이션
                 val scaleAnimation = ScaleAnimation(
@@ -972,6 +996,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 blueRing.startAnimation(scaleAnimation)
                 // 토글 버튼 이미지 바꾸기
                 soketToggleOff.visibility = GONE
+                soketText.visibility = GONE
                 soketToggleOn.visibility = VISIBLE
                 //소켓 연결
                 socket()
@@ -1030,8 +1055,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+//                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
         }
     }
 
@@ -1069,6 +1094,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false
                 lastKnownLocation = null
+                map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
+                map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
 //                getLocationPermission()
             }
         } catch (e: SecurityException) {

@@ -1,23 +1,30 @@
 package com.cider.fourtytwo
 
+import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.cider.fourtytwo.signup.SignupActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySigninBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
-import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
+import com.cider.fourtytwo.signIn.UserResponse
+import com.cider.fourtytwo.signup.SignupActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -33,6 +40,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import kotlin.system.exitProcess
 
 class SigninActivity : AppCompatActivity() {
     private var _binding: ActivitySigninBinding? = null
@@ -45,36 +53,101 @@ class SigninActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         userDataStore = UserDataStore(this)
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // 로그인 되어있는 유저인지 확인
-        if (account == null) {
-            Log.e("onStart Google account", "로그인 안 되어있음")
-        } else {
-            Log.e("onStart Google account", "로그인 완료된 상태")
-            // 토큰 보내고
-            lifecycleScope.launch {
-                val token = userDataStore.get_access_token.first()
-                FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                    if (!task.isSuccessful) {
-                        Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                        return@OnCompleteListener
-                    }
-                    // Get new FCM registration token
-                    val fcmtoken = task.result
-                    Log.d(TAG, "파이어베이스 $fcmtoken")
-                    setFcmToken(token, fcmtoken)
-                })
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+            val builder = AlertDialog.Builder(this)
+                .setTitle("42는 위치 기반 서비스로 위치 권한을 필요로 합니다.")
+                .setMessage("위치 권한을 허용하시겠습니까?")
+                .setNegativeButton("허용", positiveButtonClick)
+                .setPositiveButton("거부",negativeButtonClick)
+                .show()
+        }
+
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )} else {
+            // 로그인 되어있는 유저인지 확인
+            val account = GoogleSignIn.getLastSignedInAccount(this)
+            if (account == null) {
+                Log.e("onStart Google account", "로그인 안 되어있음")
+            } else {
+                Log.e("onStart Google account", "로그인 완료된 상태")
+                // 토큰 보내고
+                lifecycleScope.launch {
+                    val token = userDataStore.get_access_token.first()
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                            return@OnCompleteListener
+                        }
+                        // Get new FCM registration token
+                        val fcmtoken = task.result
+                        Log.d(TAG, "파이어베이스 $fcmtoken")
+                        setFcmToken(token, fcmtoken)
+                    })
+                }
+                // 메인으로 이동
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
-            // 메인으로 이동
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            }
+    }
+    val positiveButtonClick = { dialogInterface: DialogInterface, i: Int ->
+        val intent =
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        startActivity(intent)
+        dialogInterface.cancel()
+    }
+    val negativeButtonClick = { dialogInterface: DialogInterface, i: Int ->
+        dialogInterface.cancel()
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 권한이 허용되었을 때 처리할 내용
+                    // 로그인 되어있는 유저인지 확인
+                    val account = GoogleSignIn.getLastSignedInAccount(this)
+                    if (account == null) {
+                        Log.e("onStart Google account", "로그인 안 되어있음")
+                    } else {
+                        Log.e("onStart Google account", "로그인 완료된 상태")
+                        // 토큰 보내고
+                        lifecycleScope.launch {
+                            val token = userDataStore.get_access_token.first()
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                                    return@OnCompleteListener
+                                }
+                                // Get new FCM registration token
+                                val fcmtoken = task.result
+                                Log.d(TAG, "파이어베이스 $fcmtoken")
+                                setFcmToken(token, fcmtoken)
+                            })
+                        }
+                        // 메인으로 이동
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+                } else {
+                    // 권한이 거부되었을 때 처리할 내용
+//                    exitProcess(0)
+                }
+                return
+            }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(androidx.appcompat.R.style.Theme_AppCompat_Light_NoActionBar) // 화면이 구성될 때, 스플래시 -> 노액션바 테마로 변경
         super.onCreate(savedInstanceState)
         _binding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 // 구글 로그인
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.web_client_id)
