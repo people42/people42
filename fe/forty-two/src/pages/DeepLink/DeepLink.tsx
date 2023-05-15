@@ -22,6 +22,7 @@ function DeepLink({}: deepLinkProps) {
     if (isMobile) {
       if (isAndroid) {
         exeDeepLink();
+        setIsAppLoad(false);
         // checkInstallApp();
       } else {
         // exeDeepLink();
