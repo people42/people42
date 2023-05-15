@@ -27,7 +27,7 @@ function DeepLink({}: deepLinkProps) {
       } else {
         // exeDeepLink();
         setIsAppLoad(false);
-        // checkInstallApp();
+        checkInstallApp();
       }
     } else {
       navigate("/");
@@ -92,7 +92,7 @@ function DeepLink({}: deepLinkProps) {
                 style={{ filter: "opacity(0.2)" }}
               ></img>
               <p className="deeplink-info">곧 출시 예정</p>
-              <a href={`${S3_URL}/app/42.apk`} className="deeplink-link">
+              <a href={`${S3_URL}app/42.apk`} className="deeplink-link">
                 APK로 설치하기
               </a>
             </>
