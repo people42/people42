@@ -21,6 +21,7 @@ function DeepLink({}: deepLinkProps) {
   useEffect(() => {
     if (isMobile) {
       if (isAndroid) {
+        setIsAppLoad(false);
       } else {
         exeDeepLink();
         checkInstallApp();
@@ -88,7 +89,9 @@ function DeepLink({}: deepLinkProps) {
                 style={{ filter: "opacity(0.2)" }}
               ></img>
               <p className="deeplink-info">곧 출시 예정</p>
-              <p className="deeplink-info">지금은 PC에서 이용할 수 있습니다</p>
+              <a href={ANDROID_URL} className="deeplink-link">
+                APK로 설치하기
+              </a>
             </>
           ) : (
             <>
@@ -145,16 +148,14 @@ const StyledDeepLink = styled.div`
       ${({ theme }) => theme.text.header6}
     }
     &-badge {
-      animation: floatingUp 0.3s both;
       animation-delay: 0.3s;
       width: 200px;
       margin-block: 48px 8px;
     }
     &-info {
-      animation: floatingUp 0.3s both;
-      animation-delay: 1s;
       ${({ theme }) => theme.text.subtitle2}
       color: ${({ theme }) => theme.color.text.secondary};
+      margin-bottom: 16px;
     }
   }
 `;
