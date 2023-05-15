@@ -1,11 +1,12 @@
 package com.cider.fourtytwo.network
 
-import com.cider.fourtytwo.Signup.NicknameResponse
-import com.cider.fourtytwo.Signup.SignupForm
+import com.cider.fourtytwo.signup.NicknameResponse
+import com.cider.fourtytwo.signup.SignupForm
 import com.cider.fourtytwo.feed.RecentFeedResponse
 import com.cider.fourtytwo.map.SetLocationResponse
 import com.cider.fourtytwo.myHistory.HistoryResponse
 import com.cider.fourtytwo.network.Model.*
+import com.cider.fourtytwo.notification.NotiResponse
 import com.cider.fourtytwo.person.PersonPlaceResponse
 import com.cider.fourtytwo.person.PersonResponse
 import com.cider.fourtytwo.place.PlaceResponse
@@ -67,7 +68,7 @@ interface Api {
     fun getPersonFeed(@Header("ACCESS-TOKEN") accessToken: String,
                       @Query("userIdx") userIdx : Int
     ) : Call<PersonResponse>
-// 사람 장소 피드 조회
+    // 사람 장소 피드 조회
     @GET("api/v1/feed/user/place")
     fun getPersonPlaceFeed(@Header("ACCESS-TOKEN") accessToken: String,
                       @Query("userIdx") userIdx : Int,
@@ -76,10 +77,15 @@ interface Api {
     // FCM 토큰 갱신
     @POST("api/v1/account/fcm_token")
     fun setFcmToken(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, String>) : Call<MessageResponse>
-
     // 감정표현
     @POST("api/v1/feed/emotion")
     fun setEmotion(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Any>) : Call<MessageResponse>
+    // 내 알림 기록 조회
+    @GET("api/v1/notification/history")
+    fun getNoti(@Header("ACCESS-TOKEN") accessToken: String) : Call<NotiResponse>
+    // 알림 수 조회
+    @GET("api/v1/notification")
+    fun getNotiCnt(@Header("ACCESS-TOKEN") accessToken: String) : Call<NotiCntResponse>
 
     //차단
     @POST("api/v1/account/block")
