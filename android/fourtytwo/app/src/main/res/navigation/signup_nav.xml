@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signup_nav"
+    app:startDestination="@id/nicknameFragment">
+
+    <fragment
+        android:id="@+id/nicknameFragment"
+        android:name="com.cider.fourtytwo.Signup.NicknameFragment"
+        android:label="NicknameFragment" >
+        <argument
+            android:name="myNickname"
+            app:argType="string"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_nicknameFragment_to_emojiFragment"
+            app:destination="@id/emojiFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emojiFragment"
+        android:name="com.cider.fourtytwo.Signup.EmojiFragment"
+        android:label="EmojiFragment" >
+        <argument
+            android:name="myNickname"
+            app:argType="string"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_emojiFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.cider.fourtytwo.Signup.WelcomeFragment"
+        android:label="WelcomeFragment" >
+        <action
+            android:id="@+id/action_welcomeFragment_to_guideFragment"
+            app:destination="@id/guideFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="com.cider.fourtytwo.Signup.GuideFragment"
+        android:label="fragment_guide"
+        tools:layout="@layout/fragment_guide">
+        <action
+            android:id="@+id/action_guideFragment_to_MainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.cider.fourtytwo.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+</navigation>

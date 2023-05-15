@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- 맨 밑 배경 radar -->
+        <include layout="@layout/layout_radar"/>
+        <!-- 위 층 내 생각 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include
+                layout="@layout/layout_opinion"
+                android:id="@+id/layout_opinion"
+                />
+            <include
+                layout="@layout/layout_edit_opinion"
+                android:id="@+id/layout_edit_opinion"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+    </FrameLayout>
+    <!--  피드  -->
+    <include layout="@layout/layout_feed"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

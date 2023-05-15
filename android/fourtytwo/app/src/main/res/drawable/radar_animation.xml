@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<shape xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:shape="oval">-->
+<!--    <stroke android:color="#A1A1FF" android:width="20dp"/>-->
+<!--    <solid android:color="#00000000"/>-->
+<!--</shape>-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- Drop Shadow Stack -->
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#4DA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#4AA1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#47A1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#45A1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#42A1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#40A1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#3DA1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <!--    <item>-->
+    <!--        <shape-->
+    <!--            android:shape="oval">-->
+    <!--            <padding-->
+    <!--                android:bottom="@dimen/mapradius"-->
+    <!--                android:left="@dimen/mapradius"-->
+    <!--                android:right="@dimen/mapradius"-->
+    <!--                android:top="@dimen/mapradius" />-->
+
+    <!--            <stroke android:color="#3BA1A1FF"-->
+    <!--                android:width="20dp"/>-->
+    <!--        </shape>-->
+    <!--    </item>-->
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#38A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#36A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#33A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#30A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#2EA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#2BA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#29A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#26A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#24A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#21A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#1FA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#1CA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#1AA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#17A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#14A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#12A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#0FA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#0DA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#0BA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#0AA1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#09A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#06A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:shape="oval">
+            <padding
+                android:bottom="@dimen/mapradius"
+                android:left="@dimen/mapradius"
+                android:right="@dimen/mapradius"
+                android:top="@dimen/mapradius" />
+
+            <stroke android:color="#03A1A1FF"
+                android:width="20dp"/>
+        </shape>
+    </item>
+
+    <!-- Background -->
+    <item>
+        <shape
+            android:shape="oval">
+            <solid android:color="#00ff0000"/>
+        </shape>
+    </item>
+
+</layer-list>
