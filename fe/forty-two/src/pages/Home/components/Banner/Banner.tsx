@@ -40,7 +40,7 @@ function Banner({}: bannerProps) {
                 <h2>모바일 앱으로 더 많은 생각 만나기</h2>
                 <div className="banner-body-badge">
                   <img
-                    style={{ filter: "opacity(0.2)" }}
+                    onClick={() => setIsQrOpen(isQrOpen ? null : "android")}
                     src={playStoreBadge}
                   ></img>
                   <img
@@ -102,12 +102,12 @@ const StyledBanner = styled.div`
         align-items: center;
         height: 40px;
         margin-top: 8px;
+        cursor: pointer;
         & > img:first-child {
           height: 40px;
           margin-right: 8px;
         }
         & > img:last-child {
-          cursor: pointer;
           height: 30px;
           margin-right: 8px;
         }
