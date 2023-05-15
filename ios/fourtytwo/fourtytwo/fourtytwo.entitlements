@@ -8,6 +8,15 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:www.people42.com</string>
+		<string>applinks:www.people42.com/mobile</string>
+		<string>applinks:*.people42.com</string>
+		<string>applinks:*.people42.com/mobile</string>
+		<string>applinks:people42.com</string>
+		<string>applinks:people42.com/mobile</string>
+	</array>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
 	<key>com.apple.security.files.user-selected.read-only</key>

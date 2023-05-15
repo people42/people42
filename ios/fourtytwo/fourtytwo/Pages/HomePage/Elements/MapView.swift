@@ -72,16 +72,12 @@ struct MapView: View {
             Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
                 MapAnnotation(coordinate: nearUser.coordinate) {
                     VStack {
-                        if let status = nearUser.status {
-                            MessageView(status: status, message: nearUser.message)
-                            
-                            if let emoji = nearUser.emoji {
-                                GifImage(emoji)
-                                    .frame(width: 30, height: 30)
-                                    .scaleEffect(self.showToast ? 0.5 : 1.0)
-                                    .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5))
-                            }
-                        }
+                        MessageView(status: nearUser.status, message: nearUser.message)
+                        
+                        GifImage(nearUser.emoji)
+                            .frame(width: 30, height: 30)
+                            .scaleEffect(self.showToast ? 0.5 : 1.0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5))
                     }
                     .frame(height: 60)
                 }
