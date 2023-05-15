@@ -304,7 +304,7 @@ function App() {
       setSocket(null);
       initSocket();
     }
-  }, [isLogin, userLocation]);
+  }, [isLogin]);
 
   //////////////////////////
   // firebase
