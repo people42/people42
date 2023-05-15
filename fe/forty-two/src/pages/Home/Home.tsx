@@ -4,7 +4,7 @@ import { userLoginState } from "../../recoil/user/selectors";
 import { Banner, HomeMain } from "./components";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { isAndroid, isMobile } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -16,7 +16,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    isAndroid ? navigate("/mobile") : null;
+    isMobile ? navigate("/mobile") : null;
   }, []);
 
   useEffect(() => {
