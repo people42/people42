@@ -23,8 +23,8 @@ function DeepLink({}: deepLinkProps) {
       if (isAndroid) {
         setIsAppLoad(false);
       } else {
-        exeDeepLink();
-        checkInstallApp();
+        // exeDeepLink();
+        // checkInstallApp();
       }
     } else {
       navigate("/");
