@@ -1,0 +1,20 @@
+version: "3"
+services:
+  be:
+    build: ./be/fourtytwo
+    container_name: be42
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=Asia/Seoul
+    image: 15.164.102.222:1588/return/be
+  fe:
+    build: ./fe/forty-two
+    container_name: fe42
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      - TZ=Asia/Seoul
+    image: 15.164.102.222:1588/return/fe
