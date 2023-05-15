@@ -26,6 +26,7 @@ function DeepLink({}: deepLinkProps) {
         // checkInstallApp();
       } else {
         // exeDeepLink();
+        setIsAppLoad(false);
         // checkInstallApp();
       }
     } else {
