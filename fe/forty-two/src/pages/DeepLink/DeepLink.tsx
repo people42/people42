@@ -22,11 +22,11 @@ function DeepLink({}: deepLinkProps) {
       if (isAndroid) {
         exeDeepLink();
         setIsAppLoad(false);
-        checkInstallApp();
+        // checkInstallApp();
       } else {
         exeDeepLink();
         setIsAppLoad(false);
-        checkInstallApp();
+        // checkInstallApp();
       }
     } else {
       navigate("/");
