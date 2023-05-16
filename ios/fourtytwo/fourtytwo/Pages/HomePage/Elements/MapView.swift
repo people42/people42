@@ -66,22 +66,28 @@ struct MapView: View {
     @State private var showToast: Bool = false
     @State private var toastMessage: String = ""
     @State private var previousUserIds: Set<Int> = []
+    @State private var selectedUser: CustomPointAnnotation? = nil
 
     var body: some View {
         ZStack {
             Map(coordinateRegion: $locationManager.region, interactionModes: [.pan, .zoom], showsUserLocation: true, annotationItems: annotationData) { nearUser in
                 MapAnnotation(coordinate: nearUser.coordinate) {
                     VStack {
-                        MessageView(status: nearUser.status, message: nearUser.message)
-                        
+                        MessageView(status: nearUser.status, nickname: nearUser.nickname, message: nearUser.message, selectedUser: $selectedUser)
+
                         GifImage(nearUser.emoji)
                             .frame(width: 30, height: 30)
                             .scaleEffect(self.showToast ? 0.5 : 1.0)
                             .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5))
+                            .onTapGesture {
+                                self.selectedUser = nearUser
+                            }
                     }
                     .frame(height: 60)
                 }
             }
+            
+            
             if showToast {
                 Text(toastMessage)
                     .font(.customCaption)
@@ -156,7 +162,7 @@ struct MapView: View {
             return CustomPointAnnotation(
                 id: id,
                 coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-                title: nickname,
+                nickname: nickname,
                 emoji: emoji,
                 status: status,
                 message: message
@@ -169,7 +175,7 @@ struct MapView: View {
 struct CustomPointAnnotation: Identifiable {
     var id: Int
     var coordinate: CLLocationCoordinate2D
-    var title: String
+    var nickname: String
     var emoji: String
     var status: String
     var message: String
@@ -177,32 +183,55 @@ struct CustomPointAnnotation: Identifiable {
 
 struct MessageView: View {
     var status: String
+    var nickname: String
     var message: String
     @State private var previousMessage: String = ""
+    @Binding var selectedUser: CustomPointAnnotation?
 
     var body: some View {
         let displayMessage = message.count > 20 ? String(message.prefix(20)) + "..." : message
-
+        
         if status == "writing" {
             Text("...")
                 .font(.system(size: 12))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
+                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.5))
         } else if message != previousMessage && message != "" {
-            Text(displayMessage)
-                .font(.system(size: 12))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        self.previousMessage = message
-                    }
+            VStack(alignment: .leading) {
+                Text(nickname)
+                    .font(.system(size: 10, weight: .black))
+                Text(displayMessage)
+                    .font(.system(size: 12))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.black).opacity(0.5))
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.previousMessage = message
                 }
+            }
+            
+        } else if let selectedUserNick = selectedUser?.nickname, selectedUserNick == nickname {
+            VStack(alignment: .leading) {
+                Text(nickname)
+                    .font(.system(size: 10, weight: .black))
+                Text(displayMessage)
+                    .font(.system(size: 12))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.black).opacity(0.5))
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    self.selectedUser = nil
+                }
+            }
+            
         } else {
             Spacer()
-                .frame(height: 30)
+                .frame(height: 42)
         }
     }
 }
