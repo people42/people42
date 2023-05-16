@@ -1,4 +1,4 @@
-# 자율프로젝트 10팀 낭만을 찾아서
+# 낭만을 찾아서 팀 - 사이
 
 ![](./assets/OG_image.png)
 
@@ -14,7 +14,7 @@
 
 1. 2023 04 10 (월) ~ 2023 05 19 (금)
 
-1. 자율프로젝트 - 사이
+2. 자율프로젝트 - 사이
 
 ## :scroll: 개요
 
@@ -48,7 +48,7 @@
 
 **Back-end : Spring Boot**
 
-```Plain Text
+```Plain
 - Springboot 2.7.10
 - Spring Data JPA
 - Spring Security
@@ -61,25 +61,25 @@
 
 **Front-end : 웹(React)**
 
-```Plain Text
+```Plain
 - 적어주세요
 ```
 
 **Front-end : Android (Kotlin)**
 
-```Plain Text
+```Plain
 - 적어주세요
 ```
 
 **Front-end : IOS (Swift)**
 
-```Plain Text
+```Plain
 - 적어주세요
 ```
 
 **CI/CD**
 
-```Plain Text
+```Plain
 - Git Webhook
 - Jenkins
 - Docker
@@ -182,15 +182,19 @@ GIT HUB
 
 ### 기능명세서
 
-[기능명세서]()
+[기능명세서](https://stupendous-thyme-e20.notion.site/947ce8102b0943c68886b3a4568d360e?v=2a266aa334904b91a528e862060d797d)
 
-![]() <br>
-<br>
+![](./assets/function.png) <br><br>
 
 ### 아키텍쳐 설계
 
-![](./assets/architecture.png)
-<br><br>
+- 라이브 아키텍쳐
+  ![](./assets/architecture.png)
+  <br><br>
+
+- 개발 아키텍쳐
+  ![](./assets/architecture-dev.png)
+  <br><br>
 
 ### E-R Diagram
 
