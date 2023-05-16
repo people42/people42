@@ -11,7 +11,10 @@ import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
@@ -29,6 +32,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +53,29 @@ public class GpsService {
     private final RedisTemplate<String, String> brushTemplate;
     private final String kakaoRestApiKey;
     private final String googleMapKey;
+    private final RedissonClient redissonClient;
+
+    public PlaceWithTimeResDto lockRenewGps(String accessToken, GpsReqDto gps) {
+        RLock lock = redissonClient.getLock(accessToken);
+
+        try {
+            boolean isLocked = lock.tryLock(1, 1, TimeUnit.SECONDS);
+            if (!isLocked) {
+                // 락 획득에 실패했으므로 예외 처리
+                throw new DataAccessException("너무 많은 요청을 보냈습니다.") {
+                };
+            }
+
+            return renewGps(accessToken, gps);
+
+        } catch (InterruptedException e) {
+            // 쓰레드가 인터럽트 될 경우의 예외 처리
+            throw new RuntimeException(e);
+        } finally {
+            // 락 해제
+            lock.unlock();
+        }
+    };
 
     public PlaceWithTimeResDto renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
