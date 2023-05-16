@@ -115,7 +115,7 @@ struct MyMessageCard: View {
                             .offset(x: i == 0 ? -8 : CGFloat(i) * 42, y: ((i % 2) != 0) ? 10 : 0)
                     }
                 }
-                .offset(x: 20, y: -70)
+                .offset(x: 20, y: -50)
             )
 
             
