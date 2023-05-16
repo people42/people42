@@ -86,6 +86,12 @@ interface Api {
     // 알림 수 조회
     @GET("api/v1/notification")
     fun getNotiCnt(@Header("ACCESS-TOKEN") accessToken: String) : Call<NotiCntResponse>
+    // 이모지 변경
+    @PUT("api/v1/account/emoji")
+    fun setEmoji(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, String>) : Call<MessageResponse>
+    // 닉네임 변경
+    @PUT("api/v1/account/nickname")
+    fun setNickname(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, String>) : Call<MessageResponse>
 
     //차단
     @POST("api/v1/account/block")

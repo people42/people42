@@ -2,6 +2,7 @@ package com.cider.fourtytwo
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -31,7 +32,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -55,7 +55,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -109,7 +109,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         userDataStore = UserDataStore(this)
-
 // 데이터 가져오기
         val myHistory = findViewById<ImageView>(R.id.my_opinion_emoji)
         val messageEmojiView = findViewById<ImageView>(R.id.main_guide_emoji)
@@ -140,20 +139,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 lifecycleScope.launch {
                     setMessage(userDataStore.get_access_token.first(), content)
                     newMessage.text.clear()
-                    if (userDataStore.get_webSocket.first()){
-                        // 메세지 보내는 거 형식 뭐지;; 1
-                        val json = JSONObject().apply {
-                            put("method", "MESSAGE_CHANGED")
-                            put("status", "watching")
-                        }
-                        sendMessage(json.toString())
-                    }
                 }
             }
         }
+        // 텍스트 작성 중 enter키 눌렀을 때도 메세지 전송 로직 실행
         newMessage.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // 실행할 메소드 호출
                 val content = newText.toString()
                 myOpinion.text = content
                 if (content == " ") {
@@ -162,14 +153,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     lifecycleScope.launch {
                         setMessage(userDataStore.get_access_token.first(), content)
                         newMessage.text.clear()
-                        if (userDataStore.get_webSocket.first()) {
-                            // 메세지 보내는 거 형식 뭐지;; 2
-                            val json = JSONObject().apply {
-                                put("method", "MESSAGE_CHANGED")
-                                put("status", "watching")
-                            }
-                            sendMessage(json.toString())
-                        }
                     }
                 }
                 true
@@ -267,7 +250,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                         sendMessage(json.toString())
                                     }
                                 }
-//                                getDeviceLocation()
                             }
                         }
                 }
@@ -278,39 +260,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 // 소켓
         val socketText = findViewById<TextView>(R.id.socket_toggle_text)
-//        // 만약 소켓을 열어둔 채였다면 들어왔을 때 자동으로 열어주자
-//        lifecycleScope.launch {
-//            if (userDataStore.get_webSocket.first()){
-//
-//            }
-//        }
         soketToggleOff.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                lifecycleScope.launch {
-                    userDataStore.setWebSocket(true)
-                }
-                // 레이더 애니메이션
-                val scaleAnimation = ScaleAnimation(
-                    0f, // 시작 X 스케일
-                    1f, // 끝 X 스케일
-                    0f, // 시작 Y 스케일
-                    1f, // 끝 Y 스케일
-                    Animation.RELATIVE_TO_SELF, // X 스케일 기준
-                    0.5f, // X 스케일 기준 위치 (0 ~ 1)
-                    Animation.RELATIVE_TO_SELF, // Y 스케일 기준
-                    0.5f // Y 스케일 기준 위치 (0 ~ 1)
-                ).apply {
-                    duration = 4000 // 애니메이션 시간 (ms)
-                    repeatMode = Animation.RESTART // 애니메이션 반복 모드
-                    repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
-                }
-                val blueRing = findViewById<ImageView>(R.id.blue_ring)
-                blueRing.startAnimation(scaleAnimation)
-                // 토글 버튼 이미지 바꾸기
-                socketText.visibility = GONE
-                soketToggleOff.visibility = GONE
-                soketToggleOn.visibility = VISIBLE
-                //소켓 연결
                 socket()
             } else {
                 Toast.makeText(applicationContext, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
@@ -346,14 +297,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
         bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
-            val expandArrow = findViewById<ImageView>(R.id.feed_expand_arrow)
             val expandText = findViewById<TextView>(R.id.feed_expand_text)
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // 상태가 변함에 따라서 할일
-                if (newState == STATE_EXPANDED) {
+                if (newState == STATE_HALF_EXPANDED) {
                     expandText.visibility = GONE
-                } else {
+                } else if (newState == STATE_COLLAPSED) {
                     expandText.visibility = VISIBLE
+                    lifecycleScope.launch {
+                        val token = userDataStore.get_access_token.first()
+                        // 24시간 피드 가져오기
+                        feedList = getRecentFeed(token)
+                    }
                 }
             }
             override fun onSlide(bottomSheetView: View, slideOffset: Float) {
@@ -370,16 +325,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         })
-        var swipe = findViewById<SwipeRefreshLayout>(R.id.swipe)
-        swipe.setOnRefreshListener {
-            finish() //인텐트 종료
-            overridePendingTransition(0, 0) //인텐트 효과 없애기
-            val intent = intent //인텐트
-            startActivity(intent) //액티비티 열기
-            overridePendingTransition(0, 0) //인텐트 효과 없애기
-            swipe.isRefreshing = false
-        }
-
+// 당겨서 새로고침
+//        var swipe = findViewById<SwipeRefreshLayout>(R.id.swipe)
+//        swipe.setOnRefreshListener {
+//            finish() //인텐트 종료
+//            overridePendingTransition(0, 0) //인텐트 효과 없애기
+//            val intent = intent //인텐트
+//            startActivity(intent) //액티비티 열기
+//            overridePendingTransition(0, 0) //인텐트 효과 없애기
+//            swipe.isRefreshing = false
+//        }
     }
     private fun getNotiCnt(header : String, menu:Menu){
         api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
@@ -389,7 +344,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val notiCnt = response.body()!!.data.notificationCnt
                     if (notiCnt > 0){
                         val menuItem = menu.findItem(R.id.action_notifications)
-                        menuItem.setIcon(R.drawable.icon_notification_true)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
@@ -433,14 +388,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         lifecycleScope.launch {
             val locationManager = this@MainActivity.getSystemService(LOCATION_SERVICE) as LocationManager
             val userIdx = userDataStore.get_userIdx.first()
-            // Connect to the WebSocket server
-            start("wss://www.people42.com/be42/socket?type=user&user_idx=$userIdx")
-            // Send a message to the server
             if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     Toast.makeText(applicationContext, "위치 정보를 켜주세요", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 } else {
+                    // Connect to the WebSocket server
+                    start("wss://www.people42.com/be42/socket?type=user&user_idx=$userIdx")
+                    lifecycleScope.launch {
+                        userDataStore.setWebSocket(true)
+                    }
+                    // 레이더 애니메이션
+                    val scaleAnimation = ScaleAnimation(
+                        0f, // 시작 X 스케일
+                        1f, // 끝 X 스케일
+                        0f, // 시작 Y 스케일
+                        1f, // 끝 Y 스케일
+                        Animation.RELATIVE_TO_SELF, // X 스케일 기준
+                        0.5f, // X 스케일 기준 위치 (0 ~ 1)
+                        Animation.RELATIVE_TO_SELF, // Y 스케일 기준
+                        0.5f // Y 스케일 기준 위치 (0 ~ 1)
+                    ).apply {
+                        duration = 4000 // 애니메이션 시간 (ms)
+                        repeatMode = Animation.RESTART // 애니메이션 반복 모드
+                        repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
+                    }
+                    val blueRing = findViewById<ImageView>(R.id.blue_ring)
+                    blueRing.startAnimation(scaleAnimation)
+                    // 토글 버튼 이미지 바꾸기
+                    val socketText = findViewById<TextView>(R.id.socket_toggle_text)
+                    val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
+                    val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
+                    socketText.visibility = GONE
+                    soketToggleOff.visibility = GONE
+                    soketToggleOn.visibility = VISIBLE
                     map?.isMyLocationEnabled = true
                     fusedLocationProviderClient.lastLocation
                         .addOnSuccessListener { location: Location? ->
@@ -461,9 +442,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         map?.animateCamera(cameraUpdate)
                     }
                 }
-            } else {
-                // 위치 권한 요청
-                getLocationPermission()
             }
         }
     }
@@ -556,16 +534,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 val markerIcon =
                                     BitmapDescriptorFactory.fromBitmap(resource)
                                 // 위치 랜덤하게 변경
-                                    val location = getRandomLocation(user.latitude, user.longitude, 30.0)
-                                    val newLocation = LatLng(location.first, location.second)
-                                Log.d(TAG, "onResourceReady: ${user.latitude}, ${location.first}")
-                                Log.d(TAG, "onResourceReady: ${user.longitude}, ${location.second}")
-//                                val newLocation = LatLng(user.latitude, user.longitude)
+                                val location = getRandomLocation(user.latitude, user.longitude, 30.0)
+                                val newLocation = LatLng(location.first, location.second)
                                 // 마커 추가
                                 val markerOptions = MarkerOptions()
-                                    .position(newLocation) // 마커 위치
-                                    .icon(markerIcon) // 마커 아이콘
+                                    .position(newLocation)
+                                    .icon(markerIcon)
                                     .title(user.nickname)
+                                    .snippet(user.message)
                                 val marker = googleMap.addMarker(markerOptions)
                                 if (marker != null) {
                                     markerList.add(marker)
@@ -621,9 +597,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
     fun changeStatus(user: InfoData){
-        // 쓰는 중 이모지로 변경
         runOnUiThread {
             val farMarkers = markerList.lastOrNull { it.title == user.nickname }
+            // 쓰는 중이면 말풍선 이모지로 변경
             if (user.status == "writing"){
                 if (farMarkers != null) {
                     val drawableList = listOf(
@@ -639,7 +615,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 130, 130, false)
                     val markerIcon = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
                     farMarkers.setIcon(markerIcon)
+                    farMarkers.snippet="생각중..."
+                    farMarkers.showInfoWindow()
                 }
+            // 보는 중이면 사람 이모지로 변경
             } else{
                 if (farMarkers != null) {
                     Glide.with(this@MainActivity)
@@ -651,11 +630,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 resource: Bitmap,
                                 transition: Transition<in Bitmap>?
                             ) {
-                                // 로드한 이미지로 마커 아이콘 생성
-                                val markerIcon =
-                                    BitmapDescriptorFactory.fromBitmap(resource)
-
+                                val markerIcon = BitmapDescriptorFactory.fromBitmap(resource)
                                 farMarkers.setIcon(markerIcon)
+                                // 메세지 바뀌었으면 3초간 띄워주기
+                                if (farMarkers.snippet == user.message){
+                                    farMarkers.snippet = user.message
+                                    farMarkers.showInfoWindow()
+                                    val handler = Handler()
+                                    handler.postDelayed({
+                                        farMarkers.hideInfoWindow()
+                                    }, 3000)}
+                                // 메세지 안 바뀌었으면 말풍선 숨기기
+                                else{
+                                    farMarkers.hideInfoWindow()
+                                }
                             }
                         })
                 }
@@ -665,10 +653,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     fun messageChanged(user: InfoData){
         //이모지로 변경 + title 달아주기?
         runOnUiThread {
-            val farMarkers = markerList.filter { it.title == user.nickname }
-            for (marker in farMarkers) {
-                marker.snippet = user.message
-            }}
+            val farMarkers = markerList.lastOrNull { it.title == user.nickname }
+            if (farMarkers != null) {
+                farMarkers.snippet = user.message
+            }
+        }
     }
     fun deleteMarker(user: InfoData){
         // 마커 삭제
@@ -704,6 +693,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
     private fun setMessage(Header: String, myMessage: String){
+        lifecycleScope.launch {
+            if (userDataStore.get_webSocket.first()) {
+                val changeStatus = JSONObject().apply {
+                    put("method", "CHANGE_STATUS")
+                    put("status", "watching")
+                }
+                sendMessage(changeStatus.toString())
+            }
+        }
         val params = HashMap<String, String>()
         params.put("message", myMessage)
         Log.i(TAG, "setMessage: $params")
@@ -713,6 +711,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     Log.i(TAG, "메세지 전송 200: 잘 보내졌다네")
                     findViewById<View>(R.id.layout_opinion).visibility = VISIBLE
                     findViewById<View>(R.id.layout_edit_opinion).visibility = GONE
+                    // 새로 작성한 메세지 소켓에 전송
+                    lifecycleScope.launch {
+                        if (userDataStore.get_webSocket.first()) {
+                            val json = JSONObject().apply {
+                                put("method", "MESSAGE_CHANGED")
+                                put("status", "watching")
+                            }
+                            sendMessage(json.toString())
+                        }
+                    }
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 401: 토큰 만료")
                     getToken(myMessage, null)
@@ -891,8 +899,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             response.body()?.data?.let {
                                 it1 -> saveUserInfo(it1, type, double)
                             }
+                        } else if (it.status == 404 || it.status == 401) {
+                            Toast.makeText(this@MainActivity, "로그아웃 후, 다시 로그인 해주세요", Toast.LENGTH_SHORT).show()
+                        } else if (it.status == 500) {
+                            Toast.makeText(this@MainActivity, "서비스 점검중입니다. 잠시 서비스 이용이 중단됩니다. 양해 부탁드립니다!", Toast.LENGTH_SHORT).show()
                         } else {
-                            Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
+                        Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
                         }
                     }
                 }
@@ -949,7 +961,7 @@ private var backButtonPressedTime: Long = 0
             finishAffinity()
         } else {
             backButtonPressedTime = currentTime
-            Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다..", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
         }
     }
     /**
@@ -972,10 +984,18 @@ private var backButtonPressedTime: Long = 0
         getLocationPermission()
         updateLocationUI()
         getDeviceLocation()
+        // 마커 클릭해도 이동하지 말기
+        map.setOnMarkerClickListener { marker ->
+//            if (marker.isInfoWindowShown){ marker.showInfoWindow() }
+//            else{ marker.hideInfoWindow() }
+            true // 이벤트 처리 완료
+        }
+        // 소켓 디폴트 설정이 true면 소켓 on 상태로 전환
         lifecycleScope.launch {
             val soketToggleOff = findViewById<ImageView>(R.id.main_radar_off)
             val soketToggleOn = findViewById<ImageView>(R.id.main_radar_on)
             val soketText = findViewById<TextView>(R.id.socket_toggle_text)
+            val blueRing = findViewById<ImageView>(R.id.blue_ring)
             if (userDataStore.get_webSocket.first()) {
                 // 레이더 애니메이션
                 val scaleAnimation = ScaleAnimation(
@@ -992,7 +1012,6 @@ private var backButtonPressedTime: Long = 0
                     repeatMode = Animation.RESTART // 애니메이션 반복 모드
                     repeatCount = Animation.INFINITE // 애니메이션 반복 횟수
                 }
-                val blueRing = findViewById<ImageView>(R.id.blue_ring)
                 blueRing.startAnimation(scaleAnimation)
                 // 토글 버튼 이미지 바꾸기
                 soketToggleOff.visibility = GONE
@@ -1002,7 +1021,9 @@ private var backButtonPressedTime: Long = 0
                 socket()
             } else {
                 soketToggleOff.visibility = VISIBLE
+                soketText.visibility = VISIBLE
                 soketToggleOn.visibility = GONE
+                blueRing.clearAnimation()
             }
         }
     }
@@ -1045,18 +1066,10 @@ private var backButtonPressedTime: Long = 0
      * Prompts the user for permission to use the device location.
      */
     private fun getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true
-        } else {
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-//                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
         }
     }
 
@@ -1096,7 +1109,6 @@ private var backButtonPressedTime: Long = 0
                 lastKnownLocation = null
                 map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
                 map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
-//                getLocationPermission()
             }
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)

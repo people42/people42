@@ -38,6 +38,7 @@
         android:background="@drawable/round_box"
         android:gravity="center_vertical"
         android:paddingHorizontal="@dimen/message_padding_horizontal"
+        android:paddingVertical="25dp"
         android:layout_marginTop="@dimen/opinion_margin_top"
         android:layout_marginHorizontal="@dimen/reaction_padding_right"
         android:layout_marginBottom="6dp"

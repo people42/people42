@@ -22,6 +22,12 @@
         tools:replace="android:icon"
         tools:targetApi="33">
         <activity
+            android:name=".setting.ChangeEmojiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".setting.ChangeNicknameActivity"
+            android:exported="false" />
+        <activity
             android:name=".NotificationActivity"
             android:exported="false" />
         <activity
@@ -31,16 +37,14 @@
             android:name=".place.PlaceActivity"
             android:exported="true" />
         <activity
-            android:name=".WebViewActivity"
+            android:name=".setting.WebViewActivity"
             android:exported="false" />
         <activity
             android:name=".myHistory.MyMessagesActivity"
             android:exported="true" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${map_key}" />
-
         <activity
             android:name=".SettingsActivity"
             android:exported="true" />
@@ -54,21 +58,24 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="fortytwo"
                     android:host="path"
-                    />
+                    android:scheme="fortytwo" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="https"
                     android:host="www.people42.com"
-                    android:pathPattern="/mobile" />
+                    android:pathPattern="/mobile"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -80,7 +87,6 @@
             android:exported="true"
             android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustPan" />
-
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
@@ -88,20 +94,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!--
- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more.
-        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_stat_name" />
-        <!--
- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more.
-        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/main_blue" />
     </application>
-
 </manifest>

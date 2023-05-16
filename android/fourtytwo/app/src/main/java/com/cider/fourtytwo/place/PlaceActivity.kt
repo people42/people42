@@ -10,7 +10,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,7 @@ import com.cider.fourtytwo.signIn.UserResponse
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -69,6 +72,22 @@ class PlaceActivity : AppCompatActivity() {
                 getPlaceFeed(token, placeIdx, time)
             }
         }
+        val bottomSheet = findViewById<CardView>(R.id.place_bottom_sheet)
+        val cornerRadius = bottomSheet.radius
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                }
+            }
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                // slideOffset 접힘 -> 펼쳐짐: 0.0 ~ 1.0
+                if (slideOffset >= 0) {
+                    // 둥글기는 펼칠수록 줄어들도록
+                    bottomSheet.radius = cornerRadius - (cornerRadius * slideOffset)
+                }
+            }
+        })
     }
     private fun setReport(header:String, messageIdx:Int, id:Int){
         val params = HashMap<String, Any>()
@@ -125,7 +144,7 @@ class PlaceActivity : AppCompatActivity() {
                     placeAdapter = PlaceAdapter(this@PlaceActivity, feedList)
                     feed.adapter = placeAdapter
                     feed.layoutManager = LinearLayoutManager(this@PlaceActivity, LinearLayoutManager.VERTICAL, false)
-                    placeAdapter.setOnPlaceClickListener(object  : PlaceAdapter.OnPlaceClickListener{
+                    placeAdapter.setOnPlaceClickListener(object : PlaceAdapter.OnPlaceClickListener{
                         override fun onPlaceClick(
                             view: View,
                             position: Int,
@@ -321,8 +340,9 @@ class PlaceActivity : AppCompatActivity() {
                 true
             }
             android.R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
+                onBackPressed()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -336,7 +356,7 @@ class PlaceActivity : AppCompatActivity() {
                     val notiCnt = response.body()!!.data.notificationCnt
                     if (notiCnt > 0){
                         val menuItem = menu.findItem(R.id.action_notifications)
-                        menuItem.setIcon(R.drawable.icon_notification_true)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
