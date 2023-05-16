@@ -1,12 +1,12 @@
-# 자율프로젝트 10팀 낭만을 찾아서
+# 낭만을 찾아서 팀 - 사이
 
 ![](./assets/OG_image.png)
 
 ## 42
 
-- (대충 위치기반 SNS라는 설명)
+- 근거리 위치 기반 익명 SNS 서비스입니다.
 
-- (대충 소켓을 이용했다는 설명)
+- 실시간으로도 주변 유저를 만나볼 수 있습니다.
 
 ### 42 링크 : https://www.people42.com
 
@@ -14,23 +14,33 @@
 
 1. 2023 04 10 (월) ~ 2023 05 19 (금)
 
-1. 자율프로젝트 - 사이
+2. 자율프로젝트 - 사이
 
 ## :scroll: 개요
 
-### (대충 서비스 소개 한줄요약)
+### 가까운 사람들과 생각을 공유하고 인연을 확인하세요.
 
-(대충 서비스 사용 권유하는듯한 광고용 소개멘트)
+"사이"는 근거리 위치 기반 익명 SNS 서비스입니다.
+
+내 생각을 등록하면 주변 사람들과 스침을 기록해줍니다.
+
+내 생각도 기록하고 지나가는 인연들의 생각을 확인해보세요!
 
 ## :musical_score: 주요기능
 
-### 1. (대충 위치기반 설명용 타이틀)
+### 1. 위치 기반 서비스
 
-(대충 위치기반 자세한 설명)
+- 내 주변에서 스쳤던 사람들의 생각을 조회할 수 있습니다.
 
-### 2. (대충 소켓 설명용 타이틀)
+- 어떤 사람과 어디서 몇 번 스쳤는지도 확인할 수 있습니다.
 
-(대충 소켓 자세한 설명)
+- 맘에 드는 메시지는 감정을 표현할 수 있으며, 상대방에게 알림을 줍니다.
+
+### 2. 실시간 서비스
+
+- 실시간으로 주변 유저의 이모지를 확인해 볼 수 있습니다.
+
+- 메시지를 변경하면 변경한 메시지를 주변 유저들에게 알려줍니다.
 
 ## :hammer_and_wrench: 프로젝트에 사용된 기술
 
@@ -38,18 +48,20 @@
 
 **Back-end : Spring Boot**
 
-```Plain Text
+```Plain
 - Springboot 2.7.10
 - Spring Data JPA
 - Spring Security
+- QueryDSL
 - Redis
 - OAuth2
 - MariaDB
-- 적어주세요
+- WebSocket
 ```
 
 **Front-end : 웹(React)**
 
+<<<<<<< HEAD
 ```Plain Text
 - Vite(React + Typescript)
 - Recoil
@@ -61,23 +73,27 @@
 - SEO(Open Graph, Helmet)
 - Social Login(Google, Apple)
 - Deep Link
+=======
+```Plain
+- 적어주세요
+>>>>>>> 96b8ee69dad9e8644771effaa35b0c417575bb42
 ```
 
 **Front-end : Android (Kotlin)**
 
-```Plain Text
+```Plain
 - 적어주세요
 ```
 
 **Front-end : IOS (Swift)**
 
-```Plain Text
+```Plain
 - 적어주세요
 ```
 
 **CI/CD**
 
-```Plain Text
+```Plain
 - Git Webhook
 - Jenkins
 - Docker
@@ -180,15 +196,19 @@ GIT HUB
 
 ### 기능명세서
 
-[기능명세서]()
+[기능명세서](https://stupendous-thyme-e20.notion.site/947ce8102b0943c68886b3a4568d360e?v=2a266aa334904b91a528e862060d797d)
 
-![]() <br>
-<br>
+![](./assets/function.png) <br><br>
 
 ### 아키텍쳐 설계
 
-![](./assets/architecture.png)
-<br><br>
+- 라이브 아키텍쳐
+  ![](./assets/architecture.png)
+  <br><br>
+
+- 개발 아키텍쳐
+  ![](./assets/architecture-dev.png)
+  <br><br>
 
 ### E-R Diagram
 
