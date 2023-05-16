@@ -43,7 +43,10 @@ function HomeInfo({}: homeInfoProps) {
   return (
     <StyledHomeInfo>
       <TbX
-        onClick={() => setShowHomeInfo(false)}
+        onClick={() => {
+          localStorage.setItem("home-info", "x");
+          setShowHomeInfo(false);
+        }}
         color="white"
         className="home-info-close"
         size={32}
@@ -93,6 +96,8 @@ export default HomeInfo;
 const StyledHomeInfo = styled.div`
   z-index: 99;
   position: fixed;
+  left: 0px;
+  top: 0px;
   width: 100vw;
   height: 100vh;
   display: flex;
