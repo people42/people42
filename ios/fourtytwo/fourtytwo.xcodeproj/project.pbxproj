@@ -71,6 +71,7 @@
 		36A2E3D229EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
 		36A2E3D329EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
 		36A2E3D429EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
+		36B8A2052A13BC8900F5E4A9 /* NicknameChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */; };
 		36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BF9C3C29ED4F390011677E /* fourtytwoApp.swift */; };
 		36BF9C3F29ED4F390011677E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BF9C3E29ED4F390011677E /* LoginView.swift */; };
 		36BF9C4129ED4F3B0011677E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36BF9C4029ED4F3B0011677E /* Assets.xcassets */; };
@@ -166,6 +167,7 @@
 		36680D2E29F6C9D1001EFD52 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		36680D3229F6CB96001EFD52 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		36A2E3D129EE69180003F906 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameChangeView.swift; sourceTree = "<group>"; };
 		36BF9C3929ED4F390011677E /* fourtytwo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fourtytwo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36BF9C3C29ED4F390011677E /* fourtytwoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fourtytwoApp.swift; sourceTree = "<group>"; };
 		36BF9C3E29ED4F390011677E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 				360D52C929F941FF00F67940 /* NavLink.swift */,
 				360D52CB29F944EE00F67940 /* PolicyWebView.swift */,
 				360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */,
+				36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -695,6 +698,7 @@
 				362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */,
 				360D52D229FA153B00F67940 /* FeedService.swift in Sources */,
 				362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */,
+				36B8A2052A13BC8900F5E4A9 /* NicknameChangeView.swift in Sources */,
 				365B964429FDA47E00647950 /* PlaceView.swift in Sources */,
 				36680D2F29F6C9D1001EFD52 /* HomeView.swift in Sources */,
 				3606DC0829EE87910025F0FC /* FirstSectionView.swift in Sources */,

@@ -194,6 +194,7 @@ struct MessageView: View {
         if status == "writing" {
             Text("...")
                 .font(.system(size: 12))
+                .foregroundColor(.white)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.5))
@@ -201,8 +202,10 @@ struct MessageView: View {
             VStack(alignment: .leading) {
                 Text(nickname)
                     .font(.system(size: 10, weight: .black))
+                    .foregroundColor(.white)
                 Text(displayMessage)
                     .font(.system(size: 12))
+                    .foregroundColor(.white)
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -217,8 +220,10 @@ struct MessageView: View {
             VStack(alignment: .leading) {
                 Text(nickname)
                     .font(.system(size: 10, weight: .black))
+                    .foregroundColor(.white)
                 Text(displayMessage)
                     .font(.system(size: 12))
+                    .foregroundColor(.white)
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
