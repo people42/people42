@@ -14,6 +14,7 @@ function DeepLink({}: deepLinkProps) {
   const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
   const ANDROID_URL = import.meta.env.VITE_ANDROID_URL;
   const IOS_URL = import.meta.env.VITE_IOS_URL;
+  const S3_URL = import.meta.env.VITE_S3_URL;
 
   const [isAppLoad, setIsAppLoad] = useState(true);
 
@@ -92,6 +93,9 @@ function DeepLink({}: deepLinkProps) {
                 className="deeplink-badge"
                 src={playStoreBadge}
               ></img>
+              <a href={`${S3_URL}app/42.apk`} className="deeplink-link">
+                APK로 최신버전 먼저 설치하기
+              </a>
             </>
           ) : (
             <>
