@@ -1,7 +1,7 @@
 import { getAccessToken, postReport } from "../../../../api";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { formatMessageDate, setSessionRefreshToken } from "../../../../utils";
+import { formatMessageDate } from "../../../../utils";
 import { useState, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -34,7 +34,6 @@ function UserMapMessageCard({ data }: userMapMessageCardProps) {
                 );
               });
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });

@@ -3,7 +3,6 @@ import Spinner from "../../components/Spinner/Spinner";
 import { themeState } from "../../recoil/theme/atoms";
 import { signUpUserState } from "../../recoil/user/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
@@ -34,7 +33,6 @@ function AppleAccountCheck({}: appleAccountCheckProps) {
       postAppleUserInfo({ appleCode: code })
         .then((res) => {
           userLogin(res.data.data);
-          setSessionRefreshToken(res.data.data.refreshToken);
           navigate("/");
         })
         .catch((e) => {

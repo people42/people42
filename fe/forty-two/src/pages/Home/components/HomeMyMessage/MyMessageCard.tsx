@@ -6,7 +6,7 @@ import { updateNotificationState } from "../../../../recoil/notification/selecto
 import { socketState } from "../../../../recoil/socket/atoms";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { changeStatus, setSessionRefreshToken } from "../../../../utils";
+import { changeStatus } from "../../../../utils";
 import HomeMyMessageReaction from "./HomeMyMessageReaction";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -61,7 +61,6 @@ function MyMessageCard({
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });
