@@ -12,7 +12,6 @@ type deepLinkProps = {};
 function DeepLink({}: deepLinkProps) {
   const navigate = useNavigate();
   const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
-  const S3_URL = import.meta.env.VITE_S3_URL;
   const ANDROID_URL = import.meta.env.VITE_ANDROID_URL;
   const IOS_URL = import.meta.env.VITE_IOS_URL;
 
@@ -23,9 +22,9 @@ function DeepLink({}: deepLinkProps) {
       if (isAndroid) {
         exeDeepLink();
         setIsAppLoad(false);
-        // checkInstallApp();
+        checkInstallApp();
       } else {
-        // exeDeepLink();
+        exeDeepLink();
         setIsAppLoad(false);
         checkInstallApp();
       }
@@ -61,13 +60,11 @@ function DeepLink({}: deepLinkProps) {
     if (
       window.confirm(
         isAndroid
-          ? // ? "앱 다운로드를 위해 Google Play Store로 이동합니다."
-            "APK를 다운로드 하시겠습니까?"
+          ? "앱 다운로드를 위해 Google Play Store로 이동합니다."
           : "앱 다운로드를 위해 App Store로 이동합니다."
       )
     ) {
-      // location.href = isAndroid ? ANDROID_URL : IOS_URL;
-      location.href = isAndroid ? `${S3_URL}/app/42.apk` : IOS_URL;
+      location.href = isAndroid ? ANDROID_URL : IOS_URL;
     } else {
       setIsAppLoad(false);
     }
@@ -87,14 +84,14 @@ function DeepLink({}: deepLinkProps) {
           {isAndroid ? (
             <>
               <img
+                onClick={() => {
+                  setIsAppLoad(true);
+                  exeDeepLink();
+                  checkInstallApp();
+                }}
                 className="deeplink-badge"
                 src={playStoreBadge}
-                style={{ filter: "opacity(0.2)" }}
               ></img>
-              <p className="deeplink-info">곧 출시 예정</p>
-              <a href={`${S3_URL}app/42.apk`} className="deeplink-link">
-                APK로 설치하기
-              </a>
             </>
           ) : (
             <>
