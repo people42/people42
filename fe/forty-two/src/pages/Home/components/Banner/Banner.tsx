@@ -3,7 +3,7 @@ import appIcon from "../../../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../../../assets/images/badge/google-play-badge.png";
 import { Card } from "../../../../components";
 import { QRCodeSVG } from "qrcode.react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TbX } from "react-icons/tb";
 import styled from "styled-components";
 
