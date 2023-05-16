@@ -40,18 +40,18 @@ class LocationSender {
             let longitude = location.coordinate.longitude
             
             // 현재 위치를 콘솔에 출력합니다.
-            print("-------------------")
-            print("현재 위치")
-            print("lat : \(latitude)")
-            print("log : \(longitude)")
-            print("-------------------")
+//            print("-------------------")
+//            print("현재 위치")
+//            print("lat : \(latitude)")
+//            print("log : \(longitude)")
+//            print("-------------------")
 
             // 현재 위치를 서버에 전송합니다.
             LocationService.sendLocation(latitude: latitude, longitude: longitude) { result in
                 switch result {
                 case .success(let response):
                     if response.data != nil {
-                        print("위치전송 성공")
+//                        print("위치전송 성공")
                     }
 
                 case .failure(let error):

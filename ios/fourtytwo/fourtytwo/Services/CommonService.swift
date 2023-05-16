@@ -11,8 +11,9 @@ func getTimeStringFromISODate(_ isoString: String) -> String {
         let hour = calendar.component(.hour, from: date)
 
         // 현재 날짜와 비교하여 날짜가 어제인지 오늘인지 판단
-        let now = Date()
-        let components = calendar.dateComponents([.day, .hour], from: now, to: date)
+        let now = calendar.startOfDay(for: Date())
+        let dateStartOfDay = calendar.startOfDay(for: date)
+        let components = calendar.dateComponents([.day], from: now, to: dateStartOfDay)
 
         if components.day == 0 {
             return "오늘 \(hour)시쯤"
@@ -30,6 +31,7 @@ func getTimeStringFromISODate(_ isoString: String) -> String {
     }
     return "시간정보 없음"
 }
+
 
 func sendFCMTokenToServer() {
     Messaging.messaging().token { token, error in

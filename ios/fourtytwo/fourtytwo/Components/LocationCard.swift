@@ -110,7 +110,7 @@ struct LocationCard: View {
                                 .animation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true))
                                 .onAppear() {
                                     self.isHighlighted.toggle()
-                            }
+                                }
                         }
                         
                     }

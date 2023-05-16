@@ -37,24 +37,43 @@ struct HomeView: View {
     @EnvironmentObject var placeViewState: PlaceViewState
     @Environment(\.scenePhase) private var scenePhase
     
+    // WebSocketManager의 isConnected와 바인딩된 @State 변수
+    @State private var isConnect: Bool = WebSocketManager.shared.isConnected
+    
     var body: some View {
         ZStack {
-            OverView()
-                .offset(y: 16)
             
             VStack {
                 NavBar()
+                
+                ZStack {
+                    
+                    VStack {
+                        Spacer()
+                            .frame(height: 100)
+                        ZStack {
+                            OverView()
+                        }
+                        .clipShape(CustomCorners(corners: [.topRight, .topLeft], radius: 24))
+                    }
+                    
+                    VStack {
+                        NavigationLink(destination: MyMindView()) {
+                            MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
+                        }
+                        .background(Color.clear)
+                        
+                        modeIndicator
+                            .padding(.trailing, 20)
+                        
+                        Spacer()
+                    }
+                }
                 
                 NavigationLink(destination: PlaceView(), isActive: $placeViewState.navigateToPlaceView) {
                     EmptyView()
                 }
                 
-                NavigationLink(destination: MyMindView()) {
-                    MyMessageCard(cardType: .displayMessage(viewModel.message, viewModel.reactionCounts), hasMultiple: viewModel.hasMultiple, onSend: {})
-                }
-                .background(Color.clear)
-                
-                Spacer()
             }
             
             CustomBottomSheet()
@@ -72,3 +91,29 @@ struct HomeView: View {
     }
 }
 
+extension HomeView {
+    private var modeIndicator: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("근처 유저 보기")
+                    .font(.system(size: 12, weight: .bold))
+                Toggle("", isOn: $isConnect)
+                    .labelsHidden()  // Hide the label
+                    .toggleStyle(SwitchToggleStyle(tint: isConnect ? Color.green : Color.gray))
+                    .scaleEffect(0.8)
+                    .onChange(of: isConnect) { newValue in
+                        withAnimation(.easeInOut(duration: 1.2)) {
+                            if newValue {
+                                WebSocketManager.shared.connect()
+                            } else {
+                                WebSocketManager.shared.disconnect()
+                            }
+                        }
+                    }
+            }
+            Spacer()
+        }
+    }
+
+}

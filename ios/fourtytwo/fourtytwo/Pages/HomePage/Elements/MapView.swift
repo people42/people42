@@ -69,7 +69,7 @@ struct MapView: View {
 
     var body: some View {
         ZStack {
-            Map(coordinateRegion: $locationManager.region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
+            Map(coordinateRegion: $locationManager.region, interactionModes: [.pan, .zoom], showsUserLocation: true, annotationItems: annotationData) { nearUser in
                 MapAnnotation(coordinate: nearUser.coordinate) {
                     VStack {
                         MessageView(status: nearUser.status, message: nearUser.message)
@@ -97,7 +97,32 @@ struct MapView: View {
                             }
                         }
                     })
-                    .offset(y: -100)
+                    .offset(y: -200)
+            }
+            
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        withAnimation {
+                            guard let location = locationManager.currentLocation else { return }
+                            locationManager.region = MKCoordinateRegion(
+                                center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
+                                latitudinalMeters: 500, longitudinalMeters: 500
+                            )
+                        }
+                    }) {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .padding()
+                    }
+                }
+                Spacer()
+                    .frame(height: 60)
             }
         }
         .onChange(of: Set(webSocketManager.nearUsers.keys), perform: { newValue in
@@ -156,6 +181,8 @@ struct MessageView: View {
     @State private var previousMessage: String = ""
 
     var body: some View {
+        let displayMessage = message.count > 20 ? String(message.prefix(20)) + "..." : message
+
         if status == "writing" {
             Text("...")
                 .font(.system(size: 12))
@@ -163,7 +190,7 @@ struct MessageView: View {
                 .padding(.vertical, 4)
                 .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
         } else if message != previousMessage && message != "" {
-            Text(message)
+            Text(displayMessage)
                 .font(.system(size: 12))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)

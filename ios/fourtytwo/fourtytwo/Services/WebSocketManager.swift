@@ -180,13 +180,13 @@ class WebSocketManager: NSObject, ObservableObject {
             return
         }
         
-        print("소켓 리시버 장착")
+//        print("소켓 리시버 장착")
         task?.receive { [weak self] result in
             switch result {
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    print("Received text: \(text)")
+//                    print("Received text: \(text)")
                     self?.handleMessage(message: text)
                     self?.receiveMessage() // 메시지를 성공적으로 수신했을 때만 재귀 호출
                 case .data(let data):
@@ -323,7 +323,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers[userIdx] = updatedData
         }
         
-        print("User \(userIdx) updated or added")
+//        print("User \(userIdx) updated or added")
     }
 
 
@@ -340,7 +340,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers.removeValue(forKey: userIdx)
         }
         
-        print("User removed: \(userIdx)")
+//        print("User removed: \(userIdx)")
     }
     
     // 메서드 Change Status 처리
@@ -357,7 +357,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers[userIdx]?["status"] = status
         }
         
-        print("User \(userIdx) status changed to \(status)")
+//        print("User \(userIdx) status changed to \(status)")
     }
 
     // 메서드 Message Changed 처리
