@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/bottom_sheet"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
@@ -15,6 +15,7 @@
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <LinearLayout
+        android:id="@+id/disAllowIntercept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -35,7 +36,9 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="15dp"
             android:textColor="#aaaaaa"
-            android:text="오늘 스쳐온 장소 보기"/>
+            android:inAnimation="@anim/nav_default_enter_anim"
+            android:outAnimation="@anim/nav_default_exit_anim"
+        android:text="오늘 스쳐온 장소 보기"/>
         <FrameLayout
             android:id="@+id/feed_expand_content"
             android:layout_width="match_parent"

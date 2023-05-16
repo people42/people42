@@ -1,12 +1,12 @@
-package com.cider.fourtytwo
+package com.cider.fourtytwo.setting
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import com.cider.fourtytwo.R
+import com.cider.fourtytwo.SettingsActivity
 
 class WebViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

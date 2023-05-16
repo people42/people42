@@ -84,10 +84,10 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
             val builder = AlertDialog.Builder(context)
             builder.setTitle("이 사용자를 신고하거나 차단하시겠습니까?")
                 .setNegativeButton("신고") { dialog, id ->
-                    placeClickListener?.onPlaceLongClick(it, position, id, itemList[position].messageIdx, 0)
+                    placeClickListener.onPlaceLongClick(it, position, id, itemList[position].messageIdx, 0)
                 }
                 .setPositiveButton("차단") { dialog, id ->
-                    placeClickListener?.onPlaceLongClick(it, position, id, 0, itemList[position].userIdx)
+                    placeClickListener.onPlaceLongClick(it, position, id, 0, itemList[position].userIdx)
                     itemList.removeAt(position)
                     notifyItemRemoved(position)
                 }

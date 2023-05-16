@@ -25,16 +25,13 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -58,7 +55,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -112,7 +109,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         userDataStore = UserDataStore(this)
-
 // 데이터 가져오기
         val myHistory = findViewById<ImageView>(R.id.my_opinion_emoji)
         val messageEmojiView = findViewById<ImageView>(R.id.main_guide_emoji)
@@ -143,14 +139,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 lifecycleScope.launch {
                     setMessage(userDataStore.get_access_token.first(), content)
                     newMessage.text.clear()
-//                    if (userDataStore.get_webSocket.first()){
-//                        // 메세지 보내는 거 형식 뭐지;; 1
-//                        val json = JSONObject().apply {
-//                            put("method", "MESSAGE_CHANGED")
-//                            put("status", "watching")
-//                        }
-//                        sendMessage(json.toString())
-//                    }
                 }
             }
         }
@@ -165,14 +153,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     lifecycleScope.launch {
                         setMessage(userDataStore.get_access_token.first(), content)
                         newMessage.text.clear()
-//                        if (userDataStore.get_webSocket.first()) {
-//                            // 메세지 보내는 거 형식 뭐지;; 2
-//                            val json = JSONObject().apply {
-//                                put("method", "MESSAGE_CHANGED")
-//                                put("status", "watching")
-//                            }
-//                            sendMessage(json.toString())
-//                        }
                     }
                 }
                 true
@@ -270,7 +250,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                         sendMessage(json.toString())
                                     }
                                 }
-//                                getDeviceLocation()
                             }
                         }
                 }
@@ -318,14 +297,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
         bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
-            val expandArrow = findViewById<ImageView>(R.id.feed_expand_arrow)
             val expandText = findViewById<TextView>(R.id.feed_expand_text)
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // 상태가 변함에 따라서 할일
-                if (newState == STATE_EXPANDED) {
+                if (newState == STATE_HALF_EXPANDED) {
                     expandText.visibility = GONE
-                } else {
+                } else if (newState == STATE_COLLAPSED) {
                     expandText.visibility = VISIBLE
+                    lifecycleScope.launch {
+                        val token = userDataStore.get_access_token.first()
+                        // 24시간 피드 가져오기
+                        feedList = getRecentFeed(token)
+                    }
                 }
             }
             override fun onSlide(bottomSheetView: View, slideOffset: Float) {
@@ -342,15 +325,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         })
-        var swipe = findViewById<SwipeRefreshLayout>(R.id.swipe)
-        swipe.setOnRefreshListener {
-            finish() //인텐트 종료
-            overridePendingTransition(0, 0) //인텐트 효과 없애기
-            val intent = intent //인텐트
-            startActivity(intent) //액티비티 열기
-            overridePendingTransition(0, 0) //인텐트 효과 없애기
-            swipe.isRefreshing = false
-        }
+// 당겨서 새로고침
+//        var swipe = findViewById<SwipeRefreshLayout>(R.id.swipe)
+//        swipe.setOnRefreshListener {
+//            finish() //인텐트 종료
+//            overridePendingTransition(0, 0) //인텐트 효과 없애기
+//            val intent = intent //인텐트
+//            startActivity(intent) //액티비티 열기
+//            overridePendingTransition(0, 0) //인텐트 효과 없애기
+//            swipe.isRefreshing = false
+//        }
     }
     private fun getNotiCnt(header : String, menu:Menu){
         api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
@@ -709,11 +693,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
     private fun setMessage(Header: String, myMessage: String){
-        val changeStatus = JSONObject().apply {
-            put("method", "CHANGE_STATUS")
-            put("status", "watching")
+        lifecycleScope.launch {
+            if (userDataStore.get_webSocket.first()) {
+                val changeStatus = JSONObject().apply {
+                    put("method", "CHANGE_STATUS")
+                    put("status", "watching")
+                }
+                sendMessage(changeStatus.toString())
+            }
         }
-        sendMessage(changeStatus.toString())
         val params = HashMap<String, String>()
         params.put("message", myMessage)
         Log.i(TAG, "setMessage: $params")
@@ -973,7 +961,7 @@ private var backButtonPressedTime: Long = 0
             finishAffinity()
         } else {
             backButtonPressedTime = currentTime
-            Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다..", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "한번 더 클릭 시 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
         }
     }
     /**
@@ -1113,8 +1101,8 @@ private var backButtonPressedTime: Long = 0
             if (locationPermissionGranted) {
                 map?.isMyLocationEnabled = true
                 map?.uiSettings?.isMyLocationButtonEnabled = false // 내 위치 버튼 숨기기
-                map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
-                map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
+//                map?.uiSettings?.isZoomGesturesEnabled = false // 줌막기
+//                map?.uiSettings?.isScrollGesturesEnabled = false // 드래그 막기
             } else {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false

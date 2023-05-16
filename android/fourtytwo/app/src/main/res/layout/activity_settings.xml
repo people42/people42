@@ -16,6 +16,28 @@
             android:paddingHorizontal="48dp"
             android:layout_marginTop="20dp"
             >
+            <TextView
+                android:id="@+id/changeEmoji"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="이모지 변경하기"
+                android:paddingVertical="13dp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_shadow"/>
+            <TextView
+                android:id="@+id/changeNickname"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="닉네임 변경하기"
+                android:paddingVertical="13dp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_shadow"/>
 
             <TextView
                 android:id="@+id/privacy_policy"
@@ -24,30 +46,6 @@
                 android:text="개인정보처리방침 및 이용약관"
                 android:paddingVertical="13dp"
                 />
-<!--            <TextView-->
-<!--                android:id="@+id/privacy_policy_webview"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="400dp"-->
-<!--                android:text="@string/terms"-->
-<!--                android:visibility="gone"/>-->
-
-<!--            <View-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="1dp"-->
-<!--                android:background="@color/text_shadow"/>-->
-<!--            <TextView-->
-<!--                android:id="@+id/termsConditions"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="48dp"-->
-<!--                android:text="이용약관"-->
-<!--                android:paddingVertical="13dp"-->
-<!--                />-->
-<!--            <TextView-->
-<!--                android:id="@+id/termsConditionsWebview"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="400dp"-->
-<!--                android:text="@string/terms"-->
-<!--                android:visibility="gone"/>-->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

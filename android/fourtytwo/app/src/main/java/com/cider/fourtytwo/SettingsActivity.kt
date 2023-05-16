@@ -3,25 +3,25 @@ package com.cider.fourtytwo
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.media.metrics.LogSessionId
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySettingsBinding
 import com.cider.fourtytwo.network.Api
+import com.cider.fourtytwo.network.Model.MessageResponse
 import com.cider.fourtytwo.network.Model.NotiCntResponse
 import com.cider.fourtytwo.network.Model.SignOutResponse
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.setting.ChangeEmojiActivity
+import com.cider.fourtytwo.setting.ChangeNicknameActivity
+import com.cider.fourtytwo.setting.WebViewActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.HashMap
 
 class SettingsActivity : AppCompatActivity() {
     private val binding: ActivitySettingsBinding by lazy { ActivitySettingsBinding.inflate(layoutInflater) }
@@ -39,8 +40,13 @@ class SettingsActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Fourtytwo)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        userDataStore = UserDataStore(this)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+        supportActionBar?.title = "설정"
+        supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
+        supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
 
+        userDataStore = UserDataStore(this)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.web_client_id)
             .requestServerAuthCode(BuildConfig.web_client_id)
@@ -48,50 +54,19 @@ class SettingsActivity : AppCompatActivity() {
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayUseLogoEnabled(true)
-        supportActionBar?.title = "설정"
-        supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
-        supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
-
+        binding.changeEmoji.setOnClickListener {
+            val intent = Intent(this, ChangeEmojiActivity::class.java)
+            startActivity(intent)
+        }
+        binding.changeNickname.setOnClickListener {
+            val intent = Intent(this, ChangeNicknameActivity::class.java)
+            startActivity(intent)
+        }
         binding.privacyPolicy.setOnClickListener {
             val intent = Intent(this, WebViewActivity::class.java)
             startActivity(intent)
-//            if(binding.privacyPolicyWebview.visibility == VISIBLE) {
-//                binding.privacyPolicyWebview.visibility = GONE
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(0f)
-////                }
-//            } else {
-//                binding.privacyPolicyWebview.visibility = VISIBLE
-//                binding.termsConditionsWebview.visibility = GONE
-//                binding.layoutBtn01.animate().apply {
-//                    duration = 300
-//                    rotation(180f)
-//                }
-//            }
         }
-//        binding.termsConditions.setOnClickListener {
-//            if (binding.termsConditionsWebview.visibility == View.VISIBLE) {
-//                binding.termsConditionsWebview.visibility = View.GONE
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(0f)
-////                }
-//            } else {
-//                binding.termsConditionsWebview.visibility = View.VISIBLE
-//                binding.privacyPolicyWebview.visibility = GONE
-//
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(180f)
-////                }
-//            }
-//        }
         binding.signout.setOnClickListener{
-//            binding.privacyPolicyWebview.visibility = GONE
-//            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 signOut(userDataStore.get_access_token.first())
             }
@@ -102,8 +77,6 @@ class SettingsActivity : AppCompatActivity() {
                 })
         }
         binding.withdrawal.setOnClickListener{
-//            binding.privacyPolicyWebview.visibility = GONE
-//            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 withdrawal(userDataStore.get_access_token.first())
             }

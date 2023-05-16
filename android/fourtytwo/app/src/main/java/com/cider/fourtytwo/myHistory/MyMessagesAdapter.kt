@@ -64,6 +64,7 @@ class MyMessagesAdapter(private val context : Context, private val itemList : Ar
         }
         holder.deleteButton.setOnClickListener {
             historyClickListener?.onHistoryClick(it, position, itemList[position].messageIdx)
+            holder.deleteButton.visibility = GONE
             holder.itemView.clearAnimation()
             itemList.removeAt(position);
             notifyItemRemoved(position);
