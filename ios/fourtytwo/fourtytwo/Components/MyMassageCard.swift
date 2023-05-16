@@ -10,6 +10,7 @@ class MyMessageCardViewModel: ObservableObject {
             case .success:
                 // 전송 성공 시, comment를 초기화
                 self.comment = ""
+                WebSocketManager.shared.handleMessageChanged(newMessage: self.comment)
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -65,8 +66,8 @@ struct MyMessageCard: View {
                         .fill(Color.blue)
                     
                     GifImage(userstate.emoji ??  "", isAnimated: true)
-                        .frame(width: 80, height: 80)
-                        .position(x: 60, y: 0)
+                        .frame(width: 72, height: 72)
+                        .position(x: 52, y: 4)
                     
                     VStack(alignment: .leading) {
                         Spacer()
@@ -77,11 +78,10 @@ struct MyMessageCard: View {
                 }
                 
             }
-            .frame(height: 100)
+            .frame(height: 72)
         }
         .padding()
-        .padding(.top, 32)
-        .padding(.bottom, 8)
+        .padding(.top, 24)
         .onAppear {
             // 홈 화면이 뜰 때마다 UserState를 가져와 업데이트합니다.
             userstate.update()
@@ -110,12 +110,12 @@ struct MyMessageCard: View {
                 ZStack(alignment: .leading) {
                     ForEach(sortedReactionType.indices, id: \.self) { i in
                         Image(sortedReactionType[i])
-                            .scaleEffect(i==0 ? 1 : 0.7)
+                            .scaleEffect(i==0 ? 0.9 : 0.6)
                             .shadow(radius: 2, x: 2, y: 2)
                             .offset(x: i == 0 ? -8 : CGFloat(i) * 42, y: ((i % 2) != 0) ? 10 : 0)
                     }
                 }
-                .offset(x: 20, y: -70)
+                .offset(x: 20, y: -50)
             )
 
             
@@ -137,7 +137,7 @@ struct MyMessageCard: View {
                 Button(action: {
                     // 메시지 전송 버튼을 눌렀을 때의 동작
                     viewModel.send()
-                    WebSocketManager.shared.handleMessageChanged(newMessage: viewModel.comment)
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         onSend()
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)  // 키보드 닫힘

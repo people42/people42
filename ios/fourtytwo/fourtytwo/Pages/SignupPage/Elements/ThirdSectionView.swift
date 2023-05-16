@@ -78,6 +78,7 @@ struct ThirdSectionView: View {
         switch result {
         case .success(let responseMessage):
             if let userData = responseMessage.data {
+                
                 // 유저 정보 저장
                 APIManager.shared.userState.user_idx = userData.user_idx
                 APIManager.shared.userState.email = userData.email
@@ -87,6 +88,9 @@ struct ThirdSectionView: View {
                 
                 // 소켓 연결
 //                WebSocketManager.shared.connect()
+                
+                // FCMToken 전송
+                sendFCMTokenToServer()
                 
                 // 홈으로 이동
                 appState.currentView = .home
@@ -100,30 +104,25 @@ struct ThirdSectionView: View {
 }
 
 struct AgreementDetailView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding var showAgreementDetail: Bool
-    
+
     var body: some View {
         VStack {
-            PolicyWebView()
+            WebView(url: "https://www.people42.com/policy?nav=false")
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitle("이용약관 및 개인정보 처리 방침", displayMode: .inline)
+        .navigationBarItems(trailing:
+            Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("닫기").foregroundColor(Color("Text"))
+            }
+        )
     }
 }
 
-struct WebView: UIViewRepresentable {
-    let url: String
-    
-    func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
-    }
-    
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        guard let url = URL(string: url) else {
-            return
-        }
-        let request = URLRequest(url: url)
-        uiView.load(request)
-    }
-}
 
 struct ThirdSectionView_Previews: PreviewProvider {
     static var previews: some View {

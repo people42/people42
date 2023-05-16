@@ -16,7 +16,7 @@ class LocationSender {
     func startSendingLocations() {
         
         // 60초마다 sendLocationToServer() 메서드를 호출하는 타이머를 생성합니다.
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
 //            print("timer 전송으로 가동중")
             self.sendLocationToServer()
         }
@@ -40,24 +40,28 @@ class LocationSender {
             let longitude = location.coordinate.longitude
             
             // 현재 위치를 콘솔에 출력합니다.
-            print("-------------------")
-            print("현재 위치")
-            print("lat : \(latitude)")
-            print("log : \(longitude)")
-            print("-------------------")
+//            print("-------------------")
+//            print("현재 위치")
+//            print("lat : \(latitude)")
+//            print("log : \(longitude)")
+//            print("-------------------")
 
             // 현재 위치를 서버에 전송합니다.
             LocationService.sendLocation(latitude: latitude, longitude: longitude) { result in
                 switch result {
                 case .success(let response):
                     if response.data != nil {
-                        print("위치전송 성공")
+//                        print("위치전송 성공")
                     }
 
                 case .failure(let error):
                     print("Error sending location: \(error)")
                 }
             }
+            
+            // 웹소켓 현재 위치 전송
+            WebSocketManager.shared.handleMove(newLatitude: latitude, newLongitude: longitude)
+            
         } else {
             print("Failed to get current location")
         }

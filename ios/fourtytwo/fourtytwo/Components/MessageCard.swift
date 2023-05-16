@@ -1,5 +1,19 @@
 import SwiftUI
 
+struct MessageInfo {
+    let profileImage: String
+    let stack: Int
+    let nickname: String
+    let contents: String
+    let placeIdx: Int?
+    let placeName: String
+    let hour: String
+    let hasMultiple: Bool
+    let cardColor: CardColor
+    let messageIdx: Int
+    let emotion: String
+    let userIdx: Int
+}
 
 struct MessageCard: View {
     @Environment(\.colorScheme) var colorScheme
@@ -84,17 +98,13 @@ struct MessageCard: View {
 
                     
                     HStack {
-                        if let placeName = messageInfo.placeName {
-                            Text(placeName)
-                                .font(.customOverline)
-                        }
+                        Text(messageInfo.placeName)
+                            .font(.customOverline)
                         Spacer()
                     }
                     
-                    if let hour = messageInfo.hour {
-                        Text(getTimeStringFromISODate(hour))
-                            .font(.customOverline)
-                    }
+                    Text(getTimeStringFromISODate(messageInfo.hour))
+                        .font(.customOverline)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top)
@@ -128,14 +138,10 @@ struct MessageCard: View {
                 ])
         }
         .sheet(isPresented: $showReportMessageSheet) {
-            if let nickname = messageInfo.nickname, let messageIdx = messageInfo.messageIdx {
-                ReportView(nickname: nickname, messageIdx: messageIdx)
-            }
+            ReportView(nickname: messageInfo.nickname, messageIdx: messageInfo.messageIdx)
         }
         .sheet(isPresented: $showBlockUserSheet) {
-            if let nickname = messageInfo.nickname, let userIdx = messageInfo.userIdx {
-                BlockView(nickname: nickname, userIdx: userIdx)
-            }
+            BlockView(nickname: messageInfo.nickname, userIdx: messageInfo.userIdx)
         }
     }
 }

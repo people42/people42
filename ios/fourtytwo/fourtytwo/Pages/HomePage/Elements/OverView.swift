@@ -1,90 +1,45 @@
 import SwiftUI
-import MapKit
 
 struct OverView: View {
-    @Binding var region: MKCoordinateRegion
-    @Binding var currentLocation: CLLocation?
-    @Binding var nearUsers: [Int: [String: Any]]
+    @Environment(\.colorScheme) var colorScheme
 
-    var heading: CLLocationDirection
-
-    var body: some View {
-        Map(coordinateRegion: $region, interactionModes: [], showsUserLocation: true, annotationItems: annotationData) { nearUser in
-            MapAnnotation(coordinate: nearUser.coordinate) {
-                VStack {
-                    if let status = nearUser.status {
-                        MessageView(status: status, message: nearUser.message)
-                        
-                        if let emoji = nearUser.emoji {
-                            GifImage(emoji)
-                                .frame(width: 30, height: 30)
-                        }
-                    }
-                }
-                .frame(height: 60)
-            }
-        }
-    }
-
-    private var annotationData: [CustomPointAnnotation] {
-        nearUsers.compactMap { (id, data) in
-            guard let latitude = data["latitude"] as? CLLocationDegrees,
-                  let longitude = data["longitude"] as? CLLocationDegrees,
-                  let nickname = data["nickname"] as? String,
-                  let emoji = data["emoji"] as? String,
-                  let status = data["status"] as? String,
-                  let message = data["message"] as? String else {
-                return nil
-            }
-
-            return CustomPointAnnotation(
-                id: id,
-                coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-                title: nickname,
-                emoji: emoji,
-                status: status,
-                message: message
-            )
-        }
-    }
-}
-
-struct CustomPointAnnotation: Identifiable {
-    var id: Int
-    var coordinate: CLLocationCoordinate2D
-    var title: String
-    var emoji: String
-    var status: String
-    var message: String
-}
-
-struct MessageView: View {
-    var status: String
-    var message: String
-    @State private var previousMessage: String = ""
+    @State private var metersPerCircle: Double = 100
+    
 
     var body: some View {
-        if status == "writing" {
-            Text("...")
-                .font(.system(size: 12))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
-        } else if message != previousMessage {
-            Text(message)
-                .font(.system(size: 12))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        self.previousMessage = message
-                    }
-                }
-        } else {
-            Spacer()
-                .frame(height: 30)
+        ZStack {
+            MapView()
+//                .overlay(
+//                    RadialGradient(gradient: Gradient(colors: [
+//                        Color.clear, Color("BgPrimary").opacity(0), Color("BgPrimary").opacity(0.3), Color.clear]),
+//                        center: .center,
+//                        startRadius: 100,
+//                        endRadius: 190)
+//                    .clipShape(Circle())
+//                    .frame(height: 480)
+//                )
+
+//            .scaleEffect(CGSize(width: 1.1, height: 1.1))
+            
+            circles
+        
+        }
+
+    }
+    
+    private var circles: some View {
+        let minOpacity: Double = 0.2
+        let maxOpacity: Double = 0.1
+        let numberOfCircles = 2
+
+        return ForEach(0..<numberOfCircles) { index in
+            Circle()
+                .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)
+                .frame(width: CGFloat(metersPerCircle * Double(index + 1) * 2), height: CGFloat(metersPerCircle * Double(index + 1) * 2))
+                .scaledToFit()
         }
     }
+    
+    
 }
 

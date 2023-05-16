@@ -21,8 +21,8 @@ struct PlacePersonView: View {
             ScrollView {
                 VStack {
                     if let messagesInfo = messagesInfo {
-                        ForEach(messagesInfo, id: \.messageIdx) { messageInfo in
-                            PersonMessageCard(messageInfo: messageInfo)
+                        ForEach(messagesInfo.indices, id: \.self) { index in
+                            PersonMessageCard(messageInfo: messagesInfo[index])
                                 .padding(.bottom, 16)
                         }
                     } else {

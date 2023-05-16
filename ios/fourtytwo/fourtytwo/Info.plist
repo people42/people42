@@ -11,9 +11,21 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.536176312507-s1u2tei8qpgg1ttuj722e5thfpqtvgdf</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.cider.fourtytwo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fortytwo</string>
 			</array>
 		</dict>
 	</array>
