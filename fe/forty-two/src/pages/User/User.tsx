@@ -1,5 +1,5 @@
-import { getAccessToken, getUser } from "../../api";
-import { NavBar } from "../../components";
+import { getAccessToken, getUser, postBlock } from "../../api";
+import { CommonBtn, NavBar } from "../../components";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
 import { setSessionRefreshToken } from "../../utils";
@@ -38,6 +38,30 @@ function User() {
     }
   }, [params]);
 
+  const userBlock = () => {
+    if (accessToken && userData?.userIdx) {
+      postBlock(accessToken, userData?.userIdx)
+        .then((res) => {
+          alert(`${userData?.nickname}님을 차단했습니다.`);
+          navigate("/");
+        })
+        .catch((e) => {
+          if (e.response.status == 401) {
+            getAccessToken().then((res) => {
+              postBlock(res.data.data.accessToken, userData?.userIdx).then(
+                (res) => {
+                  alert(`${userData?.nickname}님을 차단했습니다.`);
+                  navigate("/");
+                }
+              );
+              setUserRefresh(res.data.data);
+              setSessionRefreshToken(res.data.data.refreshToken);
+            });
+          }
+        });
+    }
+  };
+
   const S3_URL = import.meta.env.VITE_S3_URL;
 
   return (
@@ -72,6 +96,9 @@ function User() {
             ></Skeleton>
           )}
         </div>
+        <CommonBtn onClick={() => userBlock()} btnType="primary">
+          차단
+        </CommonBtn>
       </div>
       <div className="user-map">
         <UserMap userData={userData}></UserMap>
@@ -93,8 +120,8 @@ const StyledUser = styled.main`
     max-width: 1024px;
     padding: 36px 36px 16px 36px;
     display: flex;
-    flex-direction: column;
-    align-items: start;
+    align-items: center;
+    justify-content: space-between;
     &-title {
       cursor: pointer;
       ${({ theme }) => theme.text.header6}
