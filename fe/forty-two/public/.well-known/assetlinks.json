@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.cider.fourtytwo",
+      "sha256_cert_fingerprints": [
+        "4F:13:51:BA:53:CB:F7:BB:C1:31:61:9D:EB:16:FD:AD:C2:FE:06:51:37:B5:EA:0C:13:05:88:13:4F:CB:FD:4A"
+      ]
+    }
+  }
+]
