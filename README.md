@@ -51,7 +51,16 @@
 **Front-end : 웹(React)**
 
 ```Plain Text
-- 적어주세요
+- Vite(React + Typescript)
+- Recoil
+- React-Router-Dom
+- Axios
+- Firebase Cloud Message(FCM)
+- Web-Socket
+- Styled-Components
+- SEO(Open Graph, Helmet)
+- Social Login(Google, Apple)
+- Deep Link
 ```
 
 **Front-end : Android (Kotlin)**
@@ -194,3 +203,31 @@ GIT HUB
 ## 서비스 화면
 
 (대충 웹, Android, IOS가 gif찍어달라는 내용)
+
+### Web
+
+회원가입 
+
+![web_signup](./assets/web/web_signup.gif)
+
+홈 피드 
+
+![web_message](./assets/web/web_message.gif)
+
+- FCM Notification 
+![web_notification](./assets/web/web_notification.gif)
+
+- Web Socket 
+![web_socket](./assets/web/web_socket.gif)
+
+장소별 피드 
+
+![web_feed](./assets/web/web_feed.gif)
+
+사용자별 피드 
+
+![web_user](./assets/web/web_user.gif)
+
+테마 
+
+![web_theme](./assets/web/web_theme.gif)
