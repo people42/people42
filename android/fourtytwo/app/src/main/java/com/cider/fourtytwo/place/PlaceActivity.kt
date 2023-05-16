@@ -321,8 +321,9 @@ class PlaceActivity : AppCompatActivity() {
                 true
             }
             android.R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
+                onBackPressed()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -336,7 +337,7 @@ class PlaceActivity : AppCompatActivity() {
                     val notiCnt = response.body()!!.data.notificationCnt
                     if (notiCnt > 0){
                         val menuItem = menu.findItem(R.id.action_notifications)
-                        menuItem.setIcon(R.drawable.icon_notification_true)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")

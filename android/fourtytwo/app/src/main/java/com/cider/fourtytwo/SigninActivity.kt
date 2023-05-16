@@ -52,6 +52,7 @@ class SigninActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        // 권한을 거절한 유저에게 필요성을 게시하고 권한 재요청 -> 0 : 설정창 열기, X : 그냥 지나감
         userDataStore = UserDataStore(this)
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
             val builder = AlertDialog.Builder(this)
@@ -60,14 +61,16 @@ class SigninActivity : AppCompatActivity() {
                 .setNegativeButton("허용", positiveButtonClick)
                 .setPositiveButton("거부",negativeButtonClick)
                 .show()
+            builder.create()
         }
-
+        // 권한 없으면 권한 요청 팝업
         if (ContextCompat.checkSelfPermission(this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )} else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
+        }
+        // 권한 있으면 자동 로그인
+        else {
             // 로그인 되어있는 유저인지 확인
             val account = GoogleSignIn.getLastSignedInAccount(this)
             if (account == null) {
@@ -92,11 +95,11 @@ class SigninActivity : AppCompatActivity() {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }
-            }
+        }
     }
+    // 다이얼로그 유저 확인에 쓰이는 함수
     val positiveButtonClick = { dialogInterface: DialogInterface, i: Int ->
-        val intent =
-            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         startActivity(intent)
         dialogInterface.cancel()
     }

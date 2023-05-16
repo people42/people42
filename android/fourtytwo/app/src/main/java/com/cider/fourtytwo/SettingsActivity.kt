@@ -220,7 +220,7 @@ class SettingsActivity : AppCompatActivity() {
                     val notiCnt = response.body()!!.data.notificationCnt
                     if (notiCnt > 0){
                         val menuItem = menu.findItem(R.id.action_notifications)
-                        menuItem.setIcon(R.drawable.icon_notification_true)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
