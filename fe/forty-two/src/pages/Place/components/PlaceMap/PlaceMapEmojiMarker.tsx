@@ -8,8 +8,8 @@ function PlaceMapEmojiMarker({ emoji, idx }: placeMapEmojiMarkerProps) {
   return (
     <StyledPlaceMapEmojiMarker
       style={{
-        right: `${Math.floor(Math.random() * 101)}%`,
-        bottom: `${Math.floor(Math.random() * 101)}%`,
+        right: `${(idx * 12341) % 100}%`,
+        bottom: `${(idx * 21432) % 100}%`,
       }}
     >
       <div

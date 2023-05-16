@@ -2,7 +2,6 @@ import { getAccessToken, getUser, postBlock } from "../../api";
 import { CommonBtn, NavBar } from "../../components";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
 import { UserMap } from "./components";
 import { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
@@ -31,7 +30,6 @@ function User() {
                   }).then((res) => setUserData(res.data.data))
                 : null;
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });
@@ -55,7 +53,6 @@ function User() {
                 }
               );
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });

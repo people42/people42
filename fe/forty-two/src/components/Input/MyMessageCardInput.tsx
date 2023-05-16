@@ -3,7 +3,7 @@ import { userLocationUpdateState } from "../../recoil/location/selectors";
 import { socketState } from "../../recoil/socket/atoms";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { handleMessageChanged, setSessionRefreshToken } from "../../utils";
+import { handleMessageChanged } from "../../utils";
 import CommonBtn from "../Button/CommonBtn";
 import Input from "./Input";
 import { useState } from "react";
@@ -41,7 +41,6 @@ function MyMessageCardInput({ onClickCancel }: inputProps) {
             if (e.response.status == 401) {
               getAccessToken().then((res) => {
                 setUserRefresh(res.data.data);
-                setSessionRefreshToken(res.data.data.refreshToken);
                 postMessage(res.data.data.accessToken, {
                   message: myMessageInputData,
                 }).then(() => {
