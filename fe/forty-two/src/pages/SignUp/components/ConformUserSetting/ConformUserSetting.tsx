@@ -2,7 +2,6 @@ import { postSignupApple, postSignupGoogle } from "../../../../api/auth";
 import { CommonBtn } from "../../../../components";
 import { signUpUserState } from "../../../../recoil/user/atoms";
 import { userLoginState } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
 import _ from "lodash";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -48,7 +47,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
             })
               .then((res) => {
                 userLogin(res.data.data);
-                setSessionRefreshToken(res.data.data.refreshToken);
                 navigate("/");
               })
               .catch((e) => {
@@ -66,7 +64,6 @@ function ConformUserSetting({ onClick }: conformUserSettingProps) {
             })
               .then((res) => {
                 userLogin(res.data.data);
-                setSessionRefreshToken(res.data.data.refreshToken);
                 navigate("/");
               })
               .catch((e) => {

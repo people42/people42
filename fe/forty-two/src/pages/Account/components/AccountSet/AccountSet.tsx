@@ -2,7 +2,6 @@ import { getAccessToken, putEmoji, putNickname } from "../../../../api";
 import { Card, CommonBtn, LogoBg } from "../../../../components";
 import { signUpUserState, userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
 import { EmojiSelector, NicknamePicker } from "../../../SignUp/components";
 import { useLocation, useNavigate } from "react-router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -27,7 +26,6 @@ function AccountSet({}: accountSetProps) {
         if (e.response.status == 401) {
           getAccessToken().then((res) => {
             setUserRefresh(res.data.data);
-            setSessionRefreshToken(res.data.data.refreshToken);
             putEmoji(res.data.data.accessToken, emoji).then((res) => {
               alert("이모지를 성공적으로 변경했습니다.");
               window.location.replace("/");
@@ -46,7 +44,6 @@ function AccountSet({}: accountSetProps) {
         if (e.response.status == 401) {
           getAccessToken().then((res) => {
             setUserRefresh(res.data.data);
-            setSessionRefreshToken(res.data.data.refreshToken);
             putNickname(res.data.data.accessToken, nickname).then((res) => {
               alert("닉네임을 성공적으로 변경했습니다.");
               window.location.replace("/");

@@ -23,14 +23,14 @@ function MessageCard({ props, idx, onClick }: messageCardProps) {
           backgroundImage: `url("${S3_URL}emoji/animate/${props.recentMessageInfo.emoji}.gif")`,
         }}
       ></div>
+      <span className="message-nickname">
+        {props.recentMessageInfo.brushCnt}번 스친{" "}
+        {props.recentMessageInfo.nickname}
+      </span>
       <ReactionBtn props={props}></ReactionBtn>
       <div className="message">
         <Card isShadowInner={false} onClick={onClick}>
           <div>
-            <p className="message-nickname">
-              {props.recentMessageInfo.brushCnt}번 스친{" "}
-              {props.recentMessageInfo.nickname}
-            </p>
             <p className="message-content">{props.recentMessageInfo.content}</p>
           </div>
         </Card>
@@ -110,11 +110,20 @@ const StyledMessageCard = styled.div<{
       }
     }
     &-nickname {
+      z-index: 2;
+      position: absolute;
+      margin-top: 8px;
+      margin-left: 40px;
       ${({ theme }) => theme.text.overline}
-      color: ${({ theme }) => theme.color.text.secondary};
-      margin-bottom: 4px;
+      color: ${(props) => props.theme.color.text[props.color]};
+      padding: 4px;
+      padding-inline: 24px;
+      background-color: ${(props) => props.theme.color.background.secondary};
+      border-radius: 8px;
+      ${({ theme }) => theme.shadow.iconShadow}
     }
     &-content {
+      margin-top: 8px;
       ${({ theme }) => theme.text.body2}
       color: ${({ theme }) => theme.color.text.primary};
     }

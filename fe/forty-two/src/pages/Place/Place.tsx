@@ -3,7 +3,7 @@ import { NavBar } from "../../components";
 import { placeState } from "../../recoil/place/atoms";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { formatMessageDate, setSessionRefreshToken } from "../../utils";
+import { formatMessageDate } from "../../utils";
 import { PlaceMap, PlaceMessageList } from "./components";
 import React, { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
@@ -50,7 +50,6 @@ function Place() {
                 ...placeInfo,
               }).then((res) => setPlaceData(res.data.data));
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });
