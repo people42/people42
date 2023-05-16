@@ -61,7 +61,6 @@
 
 **Front-end : 웹(React)**
 
-<<<<<<< HEAD
 ```Plain Text
 - Vite(React + Typescript)
 - Recoil
@@ -73,10 +72,6 @@
 - SEO(Open Graph, Helmet)
 - Social Login(Google, Apple)
 - Deep Link
-=======
-```Plain
-- 적어주세요
->>>>>>> 96b8ee69dad9e8644771effaa35b0c417575bb42
 ```
 
 **Front-end : Android (Kotlin)**
