@@ -1,17 +1,21 @@
 import Meta from "../../Meta";
 import { NavBar } from "../../components";
+import { homeInfoState } from "../../recoil/home/atoms";
 import { userLoginState } from "../../recoil/user/selectors";
 import { Banner, HomeMain } from "./components";
+import HomeInfo from "./components/HomeInfo/HomeInfo";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function Home() {
   const user = useRecoilValue<TUser | null>(userLoginState);
   const [userEmoji, setUserEmoji] = useState<string>("");
+  const [showHomeInfo, setShowHomeInfo] =
+    useRecoilState<boolean>(homeInfoState);
 
   const navigate = useNavigate();
 
@@ -43,6 +47,7 @@ function Home() {
       <Banner></Banner>
       <NavBar></NavBar>
       <HomeMain></HomeMain>
+      {showHomeInfo ? <HomeInfo /> : null}
     </StyledHome>
   );
 }

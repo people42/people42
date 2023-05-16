@@ -1,4 +1,5 @@
 import animatedLogo from "../../assets/images/logo/animatedLogo_w120.gif";
+import { homeInfoState } from "../../recoil/home/atoms";
 import { isLoginState } from "../../recoil/user/atoms";
 import IconBtn from "../Button/IconBtn";
 import NotificationNavBtn from "../Button/NotificationNavBtn";
@@ -6,9 +7,10 @@ import ThemeBtn from "../Button/ThemeBtn";
 import FeedbackModal from "../Modal/FeedbackModal";
 import NavModal from "../Modal/NavModal";
 import { useState } from "react";
-import { TbBellFilled, TbMailFast, TbSettingsFilled } from "react-icons/tb";
+import { BiInfoCircle } from "react-icons/bi";
+import { TbMailFast, TbSettingsFilled } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 type navBarProps = {};
@@ -27,6 +29,7 @@ function NavBar() {
   const isLogin = useRecoilValue(isLoginState);
 
   const location = useLocation();
+  const setShowHomeInfo = useSetRecoilState<boolean>(homeInfoState);
 
   return (
     <StyledNavBar>
@@ -42,6 +45,9 @@ function NavBar() {
         <div className="nav-icons">
           <IconBtn onClick={() => setIsFeedbackModalOn(true)}>
             <TbMailFast size={24} />
+          </IconBtn>
+          <IconBtn onClick={() => setShowHomeInfo(true)}>
+            <BiInfoCircle size={24} />
           </IconBtn>
           {isFeedbackModalOn ? (
             <>
