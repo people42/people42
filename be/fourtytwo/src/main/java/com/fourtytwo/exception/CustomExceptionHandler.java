@@ -2,6 +2,7 @@ package com.fourtytwo.exception;
 
 import com.fourtytwo.controller.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -97,5 +98,12 @@ public class CustomExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 409, null);
         return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
+    }
+
+    // 생성 또는 수정 시, DB에 중복되는 값이 있는 경우
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ApiResponse<?>> handleDataAccessException(DataAccessException e) {
+        ApiResponse<?> apiResponse = new ApiResponse<Object>(e.getMessage(), 429, null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.TOO_MANY_REQUESTS);
     }
 }
