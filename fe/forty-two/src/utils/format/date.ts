@@ -11,9 +11,14 @@ export function formatMessageDate(dateString: string) {
   if (diffTime >= 0) {
     // 오늘인 경우
     return `오늘 ${hour}시 쯤`;
-  } else {
-    // 그 외의 경우
+  } else if (diffTime <= 1) {
+    // 어제인 경우
     return `어제 ${hour}시 쯤`;
+  } else {
+    const month = date.toLocaleString("default", { month: "long" });
+    const day = date.getDate();
+    const hour = date.getHours();
+    return `${month} ${day}일 ${hour}시 쯤`;
   }
 }
 
