@@ -8,7 +8,7 @@
 
 <div style="display: flex; justify-content: flex-start; align-items: center;">
   <a href="https://www.people42.com">
-    <img src="./assets/People42.png" alt="Go to Website" style="height: 40px; width: auto;">
+    <img src="./assets/People42.png" alt="Go to Website" height= "20%">
   </a>
   <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&amp;itscg=30200">
     <img src="./assets/AppStore.png" alt="Download on the App Store" style="height: 40px; width: auto; padding-left: 8px; padding-right: 8px;">
