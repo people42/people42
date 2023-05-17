@@ -76,7 +76,7 @@ public class FeedService {
                 // 상대 유저와 몇 번 스쳤는지 조회
                 // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
-                List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrue(smallIdx, bigIdx);
+                List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
                 Set<BrushInfo> brushMemo = new HashSet<>();
                 for (Brush tmpBrush : brushes) {
                     Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
@@ -176,7 +176,28 @@ public class FeedService {
                 cnt++;
                 if (cnt > page * size) {
                     // 상대 유저와 몇 번 스쳤는지 조회
-                    Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
+                    // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
+
+                    List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
+                    Set<BrushInfo> brushMemo = new HashSet<>();
+                    for (Brush tmpBrush : brushes) {
+                        Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
+                        Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
+                        BrushInfo currentBrushInfo = new BrushInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getCreatedAt());
+                        boolean cntFlag = false;
+                        for (BrushInfo brushInfo : brushMemo) {
+                            if (brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
+                                    brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushInfo.getCreatedAt())) {
+                                cntFlag = true;
+                                break;
+                            }
+                        }
+                        if (cntFlag) {
+                            continue;
+                        }
+                        brushMemo.add(currentBrushInfo);
+                    }
+
                     Optional<Expression> expression = expressionRepository.findByMessageAndUserId(message, userIdx);
                     MessageResDto messageResDto = MessageResDto.builder()
                             .messageIdx(message.getId())
@@ -186,7 +207,7 @@ public class FeedService {
                             .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
                             .isInappropriate(message.getIsInappropriate())
-                            .brushCnt(count)
+                            .brushCnt((long) brushMemo.size())
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                             .build();
                     messageResDtos.add(messageResDto);
@@ -231,9 +252,25 @@ public class FeedService {
         Long bigIdx = userIdx > targetUserIdx ? userIdx : targetUserIdx;
         Long smallIdx = userIdx > targetUserIdx ? targetUserIdx : userIdx;
 
-        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2Id(smallIdx, bigIdx);
-
+        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
+        Set<BrushWithPlaceInfo> brushMemo = new HashSet<>();
         for (Brush brush : brushList) {
+            Long myMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
+            Long oppositeMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
+            BrushWithPlaceInfo currentBrushWithPlaceInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, brush.getPlace().getId() brush.getCreatedAt());
+            boolean flag = false;
+            for (BrushWithPlaceInfo brushInfo : brushMemo) {
+                if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
+                        brushInfo.oppositeMessageIdx.equals(currentBrushWithPlaceInfo.getOppositeMessageIdx()) &&
+                        brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushWithPlaceInfo.getCreatedAt())) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                continue;
+            }
+            brushMemo.add(currentBrushWithPlaceInfo);
             if (placeMap.containsKey(brush.getPlace())) {
                 placeMap.put(brush.getPlace(), placeMap.get(brush.getPlace())+1);
             } else {
@@ -247,7 +284,7 @@ public class FeedService {
         });
         return UserFeedResDto.builder()
                 .placeResDtos(placeResDtos)
-                .brushCnt(brushList.size())
+                .brushCnt(brushMemo.size())
                 .userIdx(targetUserIdx)
                 .nickname(tartgetUser.getNickname())
                 .emoji(tartgetUser.getEmoji())
@@ -265,6 +302,11 @@ public class FeedService {
 
         List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
+
+            if (!brush.getMessage1().getIsActive() || !brush.getMessage2().getIsActive()) {
+                continue;
+            }
+
             UserMessageResDto userMessageResDto = new UserMessageResDto();
             Message myMessage;
             Message oppositeMessage;
@@ -300,7 +342,7 @@ public class FeedService {
         }
         return UserPlaceFeedResDto.builder()
                 .messagesInfo(userMessageResDtos)
-                .brushCnt(brushMemo.size())
+                .brushCnt(userMessageResDtos.size())
                 .build();
     }
 
@@ -418,6 +460,15 @@ public class FeedService {
     private static class BrushInfo {
         private Long myMessageIdx;
         private Long oppositeMessageIdx;
+        private LocalDateTime createdAt;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private static class BrushWithPlaceInfo {
+        private Long myMessageIdx;
+        private Long oppositeMessageIdx;
+        private Long placeIdx;
         private LocalDateTime createdAt;
     }
 }
