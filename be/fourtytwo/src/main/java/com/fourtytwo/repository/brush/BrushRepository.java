@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BrushRepository extends JpaRepository<Brush, Long>, BrushRepositoryCustom {
 
-    List<Brush> findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(Long user1Idx, Long user2Idx, Long placeIdx);
+    List<Brush> findBrushesByUser1IdAndUser2IdAndPlaceIdAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(Long user1Idx, Long user2Idx, Long placeIdx);
 
     Long countByUser1IdAndUser2IdAndCreatedAtIsBefore(Long user1Idx, Long user2Idx, LocalDateTime time);
 
