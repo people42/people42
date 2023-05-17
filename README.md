@@ -118,7 +118,6 @@
 
 ```Plain
 - Android Studio
-- Kotlin
 - Android KTX
 - gms
 - WebSocket
@@ -128,6 +127,7 @@
 - glide
 - gson
 - Deep Link
+- Universal Link
 ```
 
 <br/>
@@ -1016,16 +1016,12 @@ GIT HUB
 - 움직이는 프로필 이미지를 선택할 수 있습니다.
 - 약관 동의 후, 회원가입을 진행할 수 있습니다.
 
+<!-- ![signin](/uploads/c25bca2ec74c5497c7be53be20ece529/signin.gif) -->
 <p align="left">
-![signin](/uploads/c25bca2ec74c5497c7be53be20ece529/signin.gif)
+<img width="30%" src="./assets/android/android_nickname.gif"/>
+<img width="30%" src="./assets/android/android_emoji.gif"/>
+<img width="30%" src="./assets/android/android_welcome.gif"/>
 </p>
-
-<br/>
-
-글 작성&삭제
-
-- 글을 작성할 수 있습니다.
-- 글을 삭제할 수 있습니다.
 
 <br/>
 
@@ -1036,6 +1032,7 @@ GIT HUB
 
 <p align="left">
 ![socket](/uploads/c117601bd6f3d79bfd6eb1c876c1e1c9/socket.gif)
+<img width="30%" src="./assets/android/android_map.gif"/>
 </p>
 
 <br/>
@@ -1045,34 +1042,60 @@ GIT HUB
 - 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
 - 해당 장소에 대한 스침을 확인할 수 있습니다.
 - 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
+<!-- ![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif) -->
 <p align="left">
-![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif)
+<img width="30%" src="./assets/android/android_feed.gif"/>
+<img width="30%" src="./assets/android/android_place.gif"/>
+<img width="30%" src="./assets/android/android_person.gif"/>
 </p>
+
 <br/>
 
-알림
+글 작성&삭제
 
-- 내 게시글에 달린 리액션을 알림으로 확인할 수 있습니다.
+- 글을 작성할 수 있습니다.
+- 글을 삭제할 수 있습니다.
 
+<p align="left">
+<img width="30%" src="./assets/android/android_write.gif"/>
+</p>
 <br/>
 
 신고&차단
 
-- 장소별 피드에서 메세지를 신고하거나 해당 유저를 차단할 수 있습니다.
-- 사용자별 피드에서 해당 유저를 차단할 수 있습니다.
+- 장소별 피드에서 메세지를 신고하거나 유저를 차단할 수 있습니다.
+- 사용자별 피드에서 메세지를 신고하거나 유저를 차단할 수 있습니다.
 - 차단된 유저와 서로 확인할 수 없게 됩니다.
+<p align="left">
+<img width="30%" src="./assets/android/android_block.gif"/>
+</p>
 
+<br/>
+알림
+
+- 내 게시글에 달린 리액션을 알림으로 확인할 수 있습니다.
+<p align="left">
+<img width="30%" src="./assets/android/android_noti.gif"/>
+</p>
 <br/>
 
 설정
 
-- 프로필 이미지를 변경할 수 있습니다.
+- 프로필 이미지와 닉네임을 변경할 수 있습니다.
 - 이용약관 및 개인정보처리방침을 확인할 수 있습니다.
+- 로그아웃, 회원탈퇴를 할 수 있습니다.
+<p align="left">
+<img width="30%" src="./assets/android/android_settings.gif"/>
+</p>
 
 <br/>
 
 유니버셜링크
 
 - 링크를 통해 바로 어플로 진입할 수 있습니다.
+<p align="left">
+<img width="30%" src="./assets/android/android_applink.gif"/>
+<img width="30%" src="./assets/android/android_universallink.gif"/>
+</p>
 
 <br/>
