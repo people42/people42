@@ -6,7 +6,7 @@
 
 ### 서비스 이용하기
 
-<div style="display: flex; justify-content: flex-start; align-items: center; height: 50%">
+<div style="display: flex; justify-content: flex-start; align-items: center; width: 50%">
   <a href="https://www.people42.com">
     <img src="./assets/People42.png" alt="Go to Website" width= "30%">
   </a>
