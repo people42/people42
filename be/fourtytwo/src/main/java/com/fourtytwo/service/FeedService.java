@@ -381,6 +381,7 @@ public class FeedService {
 
         for (Brush brush : recentBrushList) {
             System.out.println("brush 입장: " + brush.getId());
+            System.out.println("currentPlce: " + currentPlace.getName());
             Message message = null;
             Long bigIdx = null;
             Long smallIdx = null;
@@ -393,6 +394,8 @@ public class FeedService {
                 if (message == null || !message.getIsActive()) {
                     continue;
                 }
+
+                System.out.println("메시지 있나?");
 
                 // 차단된 유저의 메시지라면 넘기기
                 bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
@@ -412,7 +415,7 @@ public class FeedService {
                 if (firstBrush != null) {
                     // 상대 유저 조회
                     Long oppositeUserIdx = firstBrush.getUser1().getId().equals(userIdx) ? firstBrush.getUser2().getId() : firstBrush.getUser1().getId();
-                    System.out.println("상대 유저 idx");
+                    System.out.println("상대 유저 idx: " + oppositeUserIdx);
                     Optional<User> oppositeUser = userRepository.findById(oppositeUserIdx);
                     if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
                         currentPlace = Place.builder().id(-1L).build();
