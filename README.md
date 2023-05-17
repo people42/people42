@@ -117,7 +117,7 @@
 **Front-end : Android (Kotlin)**
 
 ```Plain
-- Android Studio 
+- Android Studio
 - Kotlin
 - Android KTX
 - gms
@@ -526,7 +526,7 @@ fourtytwo
 <br/>
 
 ```
- 
+
 fourtytwo
 │  AndroidManifest.xml
 ├─java
@@ -539,10 +539,10 @@ fourtytwo
 │              │  SettingsActivity.kt
 │              │  SigninActivity.kt
 │              │  WebViewActivity.kt
-│              │  
+│              │
 │              ├─dataStore
 │              │      UserDataStore.kt
-│              │      
+│              │
 │              ├─feed
 │              │      FeedAdapter.kt
 │              │      FeedItem.kt
@@ -550,30 +550,30 @@ fourtytwo
 │              │      RecentFeedData.kt
 │              │      RecentFeedResponse.kt
 │              │      RecentMessageInfo.kt
-│              │      
+│              │
 │              ├─map
 │              │      Radar.kt
 │              │      SetLocationData.kt
 │              │      SetLocationResponse.kt
-│              │      
+│              │
 │              ├─myHistory
 │              │      HistoryData.kt
 │              │      HistoryResponse.kt
 │              │      MyMessagesActivity.kt
 │              │      MyMessagesAdapter.kt
-│              │      
+│              │
 │              ├─network
 │              │  │  Api.kt
 │              │  │  RetrofitHeaderInstance.kt
 │              │  │  RetrofitInstance.kt
-│              │  │  
+│              │  │
 │              │  └─Model
 │              │          Header.kt
 │              │          MessageResponse.kt
 │              │          NowMessageData.kt
 │              │          NowMessageResponse.kt
 │              │          SignOutResponse.kt
-│              │          
+│              │
 │              ├─person
 │              │      PersonActivity.kt
 │              │      PersonAdapter.kt
@@ -583,7 +583,7 @@ fourtytwo
 │              │      PersonPlaceResponse.kt
 │              │      PersonResponse.kt
 │              │      PlaceResDtos.kt
-│              │      
+│              │
 │              ├─place
 │              │      MessagesInfo.kt
 │              │      PlaceActivity.kt
@@ -591,11 +591,11 @@ fourtytwo
 │              │      PlacecData.kt
 │              │      PlaceResponse.kt
 │              │      PlaceWithTimeAndGpsInfo.kt
-│              │      
+│              │
 │              ├─signIn
 │              │      UserInfo.kt
 │              │      UserResponse.kt
-│              │      
+│              │
 │              └─Signup
 │                      EmojiAdapter.kt
 │                      EmojiFragment.kt
@@ -606,7 +606,7 @@ fourtytwo
 │                      SignupActivity.kt
 │                      SignupForm.kt
 │                      WelcomeFragment.kt
-│                      
+│
 └─res
     ├─layout
     │      activity_main.xml
@@ -634,16 +634,16 @@ fourtytwo
     │      layout_radar.xml
     │      recyclerview_emoji.xml
     │      recyclerview_feed.xml
-    │      
+    │
     ├─menu
     │      menu_main.xml
-    │      
+    │
     ├─navigation
     │      signup_nav.xml
-    │      
+    │
     ├─raw
     │      robot.gif
-    │      
+    │
     ├─values
     │      arrays.xml
     │      colors.xml
@@ -651,24 +651,24 @@ fourtytwo
     │      ic_launcher_background.xml
     │      strings.xml
     │      themes.xml
-    │      
+    │
     ├─values-land
     │      dimens.xml
-    │      
+    │
     ├─values-night
     │      themes.xml
-    │      
+    │
     ├─values-w1240dp
     │      dimens.xml
-    │      
+    │
     ├─values-w600dp
     │      dimens.xml
-    │      
+    │
     └─xml
             backup_rules.xml
             data_extraction_rules.xml
             network_security_config.xml
-            
+
 ```
 
 <br/>
@@ -916,7 +916,7 @@ GIT HUB
 <p align="left">
 <img width="30%" src="./assets/ios/ios_socket.gif"/>
 <img width="30%" src="./assets/ios/ios_map.gif"/>
-<img width="30%" src="./assets/ios/ios_feed_place_1.gif"/>
+<img width="30%" src="./assets/ios/ios_home_feed.gif"/>
 </p>
 
 <br/>
@@ -936,7 +936,7 @@ GIT HUB
 - 해당 장소에 대한 스침을 확인할 수 있습니다.
 
 <p align="left">
-<img width="30%" src="./assets/ios/ios_feed_place_2.gif"/>
+<img width="30%" src="./assets/ios/ios_place_feed.gif"/>
 </p>
 
 <br/>
@@ -946,7 +946,7 @@ GIT HUB
 - 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
 
 <p align="left">
-<img width="30%" src="./assets/ios/ios_feed_user.gif"/>
+<img width="30%" src="./assets/ios/ios_user_feed.gif"/>
 </p>
 
 <br/>
@@ -1001,6 +1001,7 @@ GIT HUB
 <br/>
 
 ### Android
+
 <br/>
 
 회원가입
@@ -1034,6 +1035,7 @@ GIT HUB
 <br/>
 
 피드 (장소별 피드, 사용자별 피드)
+
 - 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
 - 해당 장소에 대한 스침을 확인할 수 있습니다.
 - 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
