@@ -8,13 +8,13 @@
 
 <div style="display: flex; justify-content: flex-start; align-items: center;">
   <a href="https://www.people42.com">
-    <img src="./assets/People42.png" alt="Go to Website" height= "20%">
+    <img src="./assets/People42.png" alt="Go to Website" width= "30%">
   </a>
   <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&amp;itscg=30200">
-    <img src="./assets/AppStore.png" alt="Download on the App Store" style="height: 40px; width: auto; padding-left: 8px; padding-right: 8px;">
+    <img src="./assets/AppStore.png" alt="Download on the App Store" width= "30%">
   </a>
   <a href='https://play.google.com/store/apps/details?id=com.cider.fourtytwo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-    <img alt='Get it on Google Play' src='./assets/PlayStore.png' style="height: 52px; width: auto;">
+    <img alt='Get it on Google Play' src='./assets/PlayStore.png' width= "30%">
   </a>
 </div>
 
