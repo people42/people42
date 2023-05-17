@@ -76,7 +76,7 @@ public class FeedService {
                 // 상대 유저와 몇 번 스쳤는지 조회
                 // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
-                List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
+                List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
                 List<BrushInfo> brushMemo = new ArrayList<>();
                 for (Brush tmpBrush : brushes) {
                     Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
@@ -178,7 +178,7 @@ public class FeedService {
                     // 상대 유저와 몇 번 스쳤는지 조회
                     // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
-                    List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
+                    List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
                     List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
                     for (Brush tmpBrush : brushes) {
                         Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
@@ -250,17 +250,16 @@ public class FeedService {
         List<PlaceResDto> placeResDtos = new ArrayList<>();
         HashMap<Place, Integer> placeMap = new HashMap<>();
 
-        Long bigIdx = userIdx > targetUserIdx ? userIdx : targetUserIdx;
-        Long smallIdx = userIdx > targetUserIdx ? targetUserIdx : userIdx;
+        Long bigIdx = Math.max(userIdx, targetUserIdx);
+        Long smallIdx = Math.min(userIdx, targetUserIdx);
 
-        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
+        List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
         List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
         for (Brush brush : brushList) {
-            Long myMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
-            Long oppositeMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
+            Long myMessageIdx = brush.getMessage1().getUser().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
+            Long oppositeMessageIdx = brush.getMessage1().getUser().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
             BrushWithPlaceInfo currentBrushWithPlaceInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, brush.getPlace().getId(), brush.getCreatedAt());
 
-            System.out.println("상대 메시지 idx: " + currentBrushWithPlaceInfo.getOppositeMessageIdx());
             boolean flag = false;
             for (BrushWithPlaceInfo brushInfo : brushMemo) {
                 if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
@@ -273,7 +272,6 @@ public class FeedService {
             if (flag) {
                 continue;
             }
-            System.out.println("add");
             brushMemo.add(currentBrushWithPlaceInfo);
             if (placeMap.containsKey(brush.getPlace())) {
                 placeMap.put(brush.getPlace(), placeMap.get(brush.getPlace())+1);
@@ -286,12 +284,6 @@ public class FeedService {
                     .placeLongitude(place.getLongitude()).placeLatitude(place.getLatitude()).brushCnt(cnt).build();
             placeResDtos.add(placeResDto);
         });
-
-        System.out.println("start!!");
-        for (BrushWithPlaceInfo brushWithPlaceInfo : brushMemo) {
-            System.out.println(brushWithPlaceInfo.getOppositeMessageIdx());
-        }
-        System.out.println("end!!");
 
         return UserFeedResDto.builder()
                 .placeResDtos(placeResDtos)
