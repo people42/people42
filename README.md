@@ -8,13 +8,13 @@
 
 <div style="display: flex; justify-content: flex-start; align-items: center;">
   <a href="https://www.people42.com">
-    <img src="./assets/People42.png" alt="Go to Website" style="border-radius: 13px; height: 55px; width: auto;">
+    <img src="./assets/People42.png" alt="Go to Website" style="border-radius: 13px; height: 60px; width: auto;">
   </a>
   <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&amp;itscg=30200">
-    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1683676800" alt="Download on the App Store" style="border-radius: 13px; height: 55px; width: auto; padding-left: 20px; padding-right: 8px;">
+    <img src="./assets/AppStore.png" alt="Download on the App Store" style="border-radius: 13px; height: 60px; width: auto; padding-left: 8px; padding-right: 8px;">
   </a>
   <a href='https://play.google.com/store/apps/details?id=com.cider.fourtytwo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-    <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="height: 80px; width: auto;">
+    <img alt='Get it on Google Play' src='./assets/PlayStore.png' style="height: 80px; width: auto;">
   </a>
 </div>
 
