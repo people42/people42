@@ -259,6 +259,8 @@ public class FeedService {
             Long myMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
             Long oppositeMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
             BrushWithPlaceInfo currentBrushWithPlaceInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, brush.getPlace().getId(), brush.getCreatedAt());
+
+            System.out.println("상대 메시지 idx: " + currentBrushWithPlaceInfo.getOppositeMessageIdx());
             boolean flag = false;
             for (BrushWithPlaceInfo brushInfo : brushMemo) {
                 if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
@@ -271,6 +273,7 @@ public class FeedService {
             if (flag) {
                 continue;
             }
+            System.out.println("add");
             brushMemo.add(currentBrushWithPlaceInfo);
             if (placeMap.containsKey(brush.getPlace())) {
                 placeMap.put(brush.getPlace(), placeMap.get(brush.getPlace())+1);
@@ -283,6 +286,13 @@ public class FeedService {
                     .placeLongitude(place.getLongitude()).placeLatitude(place.getLatitude()).brushCnt(cnt).build();
             placeResDtos.add(placeResDto);
         });
+
+        System.out.println("start!!");
+        for (BrushWithPlaceInfo brushWithPlaceInfo : brushMemo) {
+            System.out.println(brushWithPlaceInfo.getOppositeMessageIdx());
+        }
+        System.out.println("end!!");
+
         return UserFeedResDto.builder()
                 .placeResDtos(placeResDtos)
                 .brushCnt(brushMemo.size())
@@ -315,9 +325,6 @@ public class FeedService {
                 oppositeMessage = brush.getMessage1();
             }
 
-            System.out.println("message: " + oppositeMessage.getContent());
-            System.out.println("createdAt: " + brush.getCreatedAt());
-
             BrushInfo currentBrushInfo = new BrushInfo(myMessage.getId(), oppositeMessage.getId(), brush.getCreatedAt());
             boolean flag = false;
             for (BrushInfo brushInfo : brushMemo) {
@@ -332,8 +339,6 @@ public class FeedService {
             }
             brushMemo.add(currentBrushInfo);
 
-            System.out.println("add");
-
             userMessageResDto.setMessageIdx(oppositeMessage.getId());
             userMessageResDto.setContent(oppositeMessage.getContent());
             userMessageResDto.setTime(brush.getCreatedAt().withNano(0));
@@ -342,20 +347,6 @@ public class FeedService {
             userMessageResDto.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             userMessageResDtos.add(userMessageResDto);
         }
-
-        System.out.println("===start===");
-        for (UserMessageResDto userMessageResDto : userMessageResDtos) {
-            System.out.println(userMessageResDto.getMessageIdx() + ", " + userMessageResDto.getContent());
-        }
-        System.out.println("===end===");
-
-        System.out.println("===start===");
-        for (BrushInfo brushInfo : brushMemo) {
-            System.out.println(brushInfo.getMyMessageIdx());
-        }
-        System.out.println("===end===");
-
-        System.out.println("size: " + userMessageResDtos.size());
 
         return UserPlaceFeedResDto.builder()
                 .messagesInfo(userMessageResDtos)
