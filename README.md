@@ -522,21 +522,16 @@ fourtytwo
 ```
 
 <br/>
-
 ### Android
-
 <br/>
-```Plain
+
+```
+ 
 fourtytwo
 │  AndroidManifest.xml
-│  ic_launcher-playstore.png
-│  maintree.txt
-│  
 ├─java
 │  └─com
 │      └─cider
-│          │  tree.txt
-│          │  
 │          └─fourtytwo
 │              │  App.kt
 │              │  MainActivity.kt
@@ -613,84 +608,6 @@ fourtytwo
 │                      WelcomeFragment.kt
 │                      
 └─res
-    ├─drawable
-    │      baseline_add_24.xml
-    │      baseline_arrow_back_ios_new_24.xml
-    │      baseline_autorenew_24.xml
-    │      baseline_clear_24.xml
-    │      baseline_notifications_24.xml
-    │      baseline_settings_24.xml
-    │      center_location.xml
-    │      circle_shape.xml
-    │      delete_24.xml
-    │      dot.xml
-    │      ic_launcher_background.xml
-    │      ic_menu_camera.xml
-    │      ic_menu_gallery.xml
-    │      ic_menu_slideshow.xml
-    │      my_location_button.xml
-    │      nicknameborder.xml
-    │      person_background.xml
-    │      radar_animation.xml
-    │      radar_circle.xml
-    │      radar_circle3.xml
-    │      reaction.xml
-    │      reaction_select_box.xml
-    │      round.xml
-    │      round_box.xml
-    │      side_nav_bar.xml
-    │      signinborder.xml
-    │      signupborder.xml
-    │      signuptab.xml
-    │      signuptab_true.xml
-    │      think_cloud.xml
-    │      
-    ├─drawable-hdpi
-    │      ic_stat_name.png
-    │      
-    ├─drawable-mdpi
-    │      ic_stat_name.png
-    │      
-    ├─drawable-v24
-    │  │  appicon.png
-    │  │  apple48dp.png
-    │  │  btn_google_light_normal_xxhdpi.9.png
-    │  │  fire.png
-    │  │  google48dp.png
-    │  │  heart.png
-    │  │  icon_notification_false.png
-    │  │  icon_notification_true.png
-    │  │  icon_setting.png
-    │  │  ic_launcher_foreground.xml
-    │  │  login_apple.png
-    │  │  login_google.png
-    │  │  logoicon_gray.png
-    │  │  logoicon_white.png
-    │  │  logo_blue.png
-    │  │  logo_first.png
-    │  │  logo_icon.png
-    │  │  logo_icon_cut.png
-    │  │  radar.png
-    │  │  robot.png
-    │  │  splash.png
-    │  │  tear.png
-    │  │  thumbsup.png
-    │  │  
-    │  └─reaction
-    │          fire.png
-    │          heart.png
-    │          tear.png
-    │          thumbsUp.png
-    │          
-    ├─drawable-xhdpi
-    │      ic_stat_name.png
-    │      
-    ├─drawable-xxhdpi
-    │      ic_stat_name.png
-    │      
-    ├─drawable-xxxhdpi
-    │      ic_stat_name.png
-    │      
     ├─layout
     │      activity_main.xml
     │      activity_maps.xml
@@ -720,35 +637,6 @@ fourtytwo
     │      
     ├─menu
     │      menu_main.xml
-    │      
-    ├─mipmap-anydpi-v26
-    │      ic_launcher.xml
-    │      ic_launcher_round.xml
-    │      
-    ├─mipmap-hdpi
-    │      ic_launcher.png
-    │      ic_launcher_foreground.png
-    │      ic_launcher_round.png
-    │      
-    ├─mipmap-mdpi
-    │      ic_launcher.png
-    │      ic_launcher_foreground.png
-    │      ic_launcher_round.png
-    │      
-    ├─mipmap-xhdpi
-    │      ic_launcher.png
-    │      ic_launcher_foreground.png
-    │      ic_launcher_round.png
-    │      
-    ├─mipmap-xxhdpi
-    │      ic_launcher.png
-    │      ic_launcher_foreground.png
-    │      ic_launcher_round.png
-    │      
-    ├─mipmap-xxxhdpi
-    │      ic_launcher.png
-    │      ic_launcher_foreground.png
-    │      ic_launcher_round.png
     │      
     ├─navigation
     │      signup_nav.xml
@@ -780,6 +668,7 @@ fourtytwo
             backup_rules.xml
             data_extraction_rules.xml
             network_security_config.xml
+            
 ```
 
 <br/>
@@ -1137,16 +1026,20 @@ GIT HUB
 
 - 실시간으로 근처 유저의 입장과 활동을 확인할 수 있습니다.
 - 지도를 조작할 수 있습니다.
+
+<p align="left">
 ![socket](/uploads/c117601bd6f3d79bfd6eb1c876c1e1c9/socket.gif)
+</p>
+
 <br/>
 
 피드 (장소별 피드, 사용자별 피드)
 - 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
 - 해당 장소에 대한 스침을 확인할 수 있습니다.
 - 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
-
+<p align="left">
 ![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif)
-
+</p>
 <br/>
 
 알림
