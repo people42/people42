@@ -44,7 +44,7 @@ interface Api {
     @POST("api/v1/background")
     fun setLocation(@Header("ACCESS-TOKEN") accessToken: String, @Body params: HashMap<String, Double>?) : Call<SetLocationResponse>
     // 최근 피드 조회
-    @GET("api/v1/feed/recent")
+    @GET("api/v1/feed/new")
     fun getRecentFeed(@Header("ACCESS-TOKEN") accessToken: String) : Call<RecentFeedResponse>
     // 회원 탈퇴
     @DELETE("api/v1/account/withdrawal")

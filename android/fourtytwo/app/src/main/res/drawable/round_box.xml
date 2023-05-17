@@ -3,10 +3,5 @@
     android:shape="rectangle">
     <corners
         android:radius="@dimen/box_radius"/>
-<!--    <padding-->
-<!--        android:top="35dp"-->
-<!--        android:bottom="35dp"-->
-<!--        android:left="5dp"-->
-<!--        android:right="5dp"/>-->
     <solid android:color="@color/main_blue"/>
 </shape>

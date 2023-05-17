@@ -15,7 +15,6 @@
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <LinearLayout
-        android:id="@+id/disAllowIntercept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -27,7 +26,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/signuptab"
-            android:backgroundTint="#A6acacac"
+            android:backgroundTint="#A6ACACAC"
             />
         <TextView
             android:id="@+id/feed_expand_text"
@@ -38,7 +37,7 @@
             android:textColor="#aaaaaa"
             android:inAnimation="@anim/nav_default_enter_anim"
             android:outAnimation="@anim/nav_default_exit_anim"
-        android:text="오늘 스쳐온 장소 보기"/>
+            android:text="오늘 스쳐온 장소 보기"/>
         <FrameLayout
             android:id="@+id/feed_expand_content"
             android:layout_width="match_parent"
@@ -56,6 +55,7 @@
                 android:id="@+id/cardLine"
                 android:layout_marginLeft="7dp"
                 android:background="@color/line_blue"
+                android:backgroundTint="#A6ACACAC"
                 android:layout_width="3dp"
                 android:layout_height="match_parent"
                 android:visibility="gone"
@@ -64,9 +64,8 @@
                 android:id="@+id/feed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/recyclerview_feed">
+                tools:listitem="@layout/recyclerview_newfeed">
             </androidx.recyclerview.widget.RecyclerView>
-
         </FrameLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

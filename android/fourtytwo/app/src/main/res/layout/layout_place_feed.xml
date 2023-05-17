@@ -14,18 +14,9 @@
     app:behavior_peekHeight="320dp"
     app:cardCornerRadius="36dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/place_feed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/message_margin_horizontal"
-        android:paddingTop="9dp">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/place_feed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/recyclerview_feed">
-        </androidx.recyclerview.widget.RecyclerView>
-
-    </FrameLayout>
-
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/recyclerview_feed"/>
 </androidx.cardview.widget.CardView>

@@ -26,7 +26,6 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerVertical="true"
                     >
-
                     <include
                         layout="@layout/layout_opinion"
                         android:id="@+id/layout_opinion"

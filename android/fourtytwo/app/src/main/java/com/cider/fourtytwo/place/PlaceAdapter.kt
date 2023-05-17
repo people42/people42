@@ -43,6 +43,26 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         holder.nickname.text = itemList[position].nickname
         holder.content.text = itemList[position].content
         ViewCompat.setBackgroundTintList(holder.feedMessage, ColorStateList.valueOf(Color.RED))
+
+        val shadowRadius = 5f
+        val shadowDx = 0f
+        val shadowDy = 0f
+
+        val colorList = HashMap<String, Int>()
+        colorList["red"] = R.color.red
+        colorList["orange"] = R.color.orange
+        colorList["yellow"] = R.color.yellow
+        colorList["green"] = R.color.green
+        colorList["sky"] = R.color.sky
+        colorList["blue"] = R.color.blue
+        colorList["purple"] = R.color.purple
+        colorList["pink"] = R.color.pink
+        colorList[myColor]?.let {
+            // 컬러 리소스에서 실제 컬러로 변환
+            val shadowColor = holder.brushCnt.context.resources.getColor(it)
+            holder.brushCnt.setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
+            holder.nickname.setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
+        }
         // 내 말풍선 색
         holder.feedMessage.backgroundTintList = when (myColor) {
             "red" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
@@ -52,6 +72,7 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
             "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
             "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
             "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
+            "pink" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pink))
             else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
         }
         if (brush > 1){
@@ -63,6 +84,7 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
                 "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
                 "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
                 "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
+                "pink" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pink))
                 else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
             }
             holder.shadow2.backgroundTintList = when (myColor) {
@@ -73,6 +95,7 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
                 "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
                 "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
                 "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
+                "pink" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pink))
                 else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
             }
         } else {
@@ -99,8 +122,6 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         holder.itemView.setOnClickListener {
             placeClickListener.onPlaceClick(it, position, itemList[position].userIdx, itemList[position].nickname)
         }
-        // 파란 점 안 보이게
-        holder.blueDot.visibility = GONE
         // 눌러놨던 공감버튼 표시
         if (item.emotion != null) {
             when (item.emotion) {
@@ -160,12 +181,9 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         var brushCnt = itemView.findViewById<TextView>(R.id.feedbrushCnt)
         var nickname = itemView.findViewById<TextView>(R.id.feedNickname)
         var content: TextView = itemView.findViewById(R.id.feedContent)
-        var place: TextView = itemView.findViewById(R.id.feedLocation)
-        var time: TextView = itemView.findViewById(R.id.feedTime)
         var feedMessage = itemView.findViewById<RelativeLayout>(R.id.feed_message)
         var shadow1 = itemView.findViewById<ImageView>(R.id.feed_message_shadow1)
         var shadow2 = itemView.findViewById<ImageView>(R.id.feed_message_shadow2)
-        var blueDot = itemView.findViewById<ImageView>(R.id.blue_dot)
         var messageReation = itemView.findViewById<LinearLayout>(R.id.message_reation)
         var selectPlus = itemView.findViewById<ImageView>(R.id.select_plus)
         var messageReactionSelect = itemView.findViewById<LinearLayout>(R.id.message_reaction_select)

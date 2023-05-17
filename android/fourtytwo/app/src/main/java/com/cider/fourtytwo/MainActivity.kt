@@ -347,7 +347,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
+                    Log.i(ContentValues.TAG, "getNotiCnt 401: 토큰 만료")
                     lifecycleScope.launch {
                         val refreshToken = userDataStore.get_refresh_token.first()
                         api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
@@ -376,7 +376,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         })
                     }
                 } else {
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
+                    Log.i(ContentValues.TAG, "getNotiCnt 코드: ${response.code()}")
                 }
             }
             override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
@@ -806,8 +806,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
     }
-    private fun getRecentFeed(header : String) : List<RecentFeedData> {
-        var feedList : List<RecentFeedData> = ArrayList()
+    private fun getRecentFeed(header : String) : ArrayList<RecentFeedData> {
+        var feedList : ArrayList<RecentFeedData> = ArrayList()
         api.getRecentFeed(header).enqueue(object : Callback<RecentFeedResponse> {
             override fun onResponse(call: Call<RecentFeedResponse>, response: Response<RecentFeedResponse>) {
                 Log.d("getRecentFeed 응답", response.toString())
@@ -829,12 +829,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 intent.putExtra("time", feedList[position].placeWithTimeInfo.time)
                                 intent.putExtra("placeName", feedList[position].placeWithTimeInfo.placeName)
                                 startActivity(intent)
-                            }
-                            override fun onEmotionClick(v: View, position: Int, emotion: String, messageIdx : Int) {
-                                val params = HashMap<String, Any>()
-                                params.put("emotion", emotion)
-                                params.put("messageIdx", messageIdx)
-                                setEmotion(params)
                             }
                         })
                     }
