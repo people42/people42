@@ -380,6 +380,7 @@ public class FeedService {
         Brush firstBrush = null;
 
         for (Brush brush : recentBrushList) {
+            System.out.println("brush 입장: " + brush.getId());
             Message message = null;
             Long bigIdx = null;
             Long smallIdx = null;
@@ -406,14 +407,18 @@ public class FeedService {
             // 새로운 장소인 경우
             if (brush.getId().equals(-1L) || !currentPlace.getId().equals(brush.getPlace().getId())) {
 
+                System.out.println("새로운 장소에서의 brush: " + brush.getId());
+
                 if (firstBrush != null) {
                     // 상대 유저 조회
                     Long oppositeUserIdx = firstBrush.getUser1().getId().equals(userIdx) ? firstBrush.getUser2().getId() : firstBrush.getUser1().getId();
+                    System.out.println("상대 유저 idx");
                     Optional<User> oppositeUser = userRepository.findById(oppositeUserIdx);
                     if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
                         currentPlace = Place.builder().id(-1L).build();
                         continue;
                     }
+                    System.out.println("상대 유저가 활성화 된 경우 출력");
 
                     // Dto 저장
                     NewFeedResDto newFeedResDto = new NewFeedResDto();
@@ -430,12 +435,21 @@ public class FeedService {
                             .build());
                     newFeedResDtos.add(newFeedResDto);
 
+                    System.out.println("--start----");
+                    System.out.println("저장된 장소: " + currentPlace.getName());
+                    System.out.println("저장된 유저들: ");
+                    for (Long idx : userIdxSet) {
+                        System.out.println(idx);
+                    }
+                    System.out.println("--end----");
+
                     firstTimeUserEmojis = new ArrayList<>();
                     repeatUserEmojis = new ArrayList<>();
                     userIdxSet = new HashSet<>();
                 }
 
                 if (brush.getId().equals(-1L)) {
+                    System.out.println("brush id가 -1인 경우 출력");
                     break;
                 }
 
