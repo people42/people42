@@ -138,14 +138,13 @@ public class FeedService {
         boolean flag = false;
         int cnt = 0;
         Set<Long> messageSet = new HashSet<>();
+        Map<Long, Long> userCntMap = new HashMap<>();
 
         for (Brush brush : brushList) {
-            System.out.println("brush id: " + brush.getId());
             // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
             if (brush.getPlace().getId().equals(placeIdx)
                     && brush.getCreatedAt().withNano(0).equals(time)) {
                 flag = true;
-                System.out.println("flag 시작");
             }
 
             if (flag) {
@@ -175,37 +174,37 @@ public class FeedService {
                 messageSet.add(message.getId());
 
                 cnt++;
-                System.out.println("cnt++");
                 if (cnt > page * size) {
                     // 상대 유저와 몇 번 스쳤는지 조회
                     // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
-                    System.out.println("통과한 brush: " + brush.getId());
-
-                    List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
-                    List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
-                    System.out.println("====start====");
-                    for (Brush tmpBrush : brushes) {
-                        System.out.println("둘만의 brush: " + tmpBrush.getId());
-                        Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
-                        Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
-                        BrushWithPlaceInfo currentBrushInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getPlace().getId(), tmpBrush.getCreatedAt());
-                        boolean cntFlag = false;
-                        for (BrushWithPlaceInfo brushInfo : brushMemo) {
-                            if (brushInfo.getPlaceIdx().equals(tmpBrush.getPlace().getId()) &&
-                                    brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
-                                    brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushInfo.getCreatedAt())) {
-                                cntFlag = true;
-                                break;
+                    Long brushCnt;
+                    if (userCntMap.containsKey(message.getUser().getId())) {
+                        brushCnt = userCntMap.get(message.getUser().getId());
+                    } else {
+                        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
+                        List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
+                        for (Brush tmpBrush : brushes) {
+                            Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
+                            Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
+                            BrushWithPlaceInfo currentBrushInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getPlace().getId(), tmpBrush.getCreatedAt());
+                            boolean cntFlag = false;
+                            for (BrushWithPlaceInfo brushInfo : brushMemo) {
+                                if (brushInfo.getPlaceIdx().equals(tmpBrush.getPlace().getId()) &&
+                                        brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
+                                        brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushInfo.getCreatedAt())) {
+                                    cntFlag = true;
+                                    break;
+                                }
                             }
+                            if (cntFlag) {
+                                continue;
+                            }
+                            brushMemo.add(currentBrushInfo);
                         }
-                        if (cntFlag) {
-                            continue;
-                        }
-                        System.out.println("add");
-                        brushMemo.add(currentBrushInfo);
+                        brushCnt = (long) brushMemo.size();
+                        userCntMap.put(message.getUser().getId(), brushCnt);
                     }
-                    System.out.println("====finish====");
 
                     Optional<Expression> expression = expressionRepository.findByMessageAndUserId(message, userIdx);
                     MessageResDto messageResDto = MessageResDto.builder()
@@ -216,7 +215,7 @@ public class FeedService {
                             .emoji(message.getUser().getEmoji())
                             .color(message.getUser().getColor())
                             .isInappropriate(message.getIsInappropriate())
-                            .brushCnt((long) brushMemo.size())
+                            .brushCnt(brushCnt)
                             .emotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null))
                             .build();
                     messageResDtos.add(messageResDto);
@@ -380,8 +379,6 @@ public class FeedService {
         Brush firstBrush = null;
 
         for (Brush brush : recentBrushList) {
-            System.out.println("brush 입장: " + brush.getId());
-            System.out.println("currentPlce: " + currentPlace.getName());
             Message message = null;
             Long bigIdx = null;
             Long smallIdx = null;
@@ -394,8 +391,6 @@ public class FeedService {
                 if (message == null || !message.getIsActive()) {
                     continue;
                 }
-
-                System.out.println("메시지 있나?");
 
                 // 차단된 유저의 메시지라면 넘기기
                 bigIdx = userIdx > message.getUser().getId() ? userIdx : message.getUser().getId();
@@ -410,18 +405,14 @@ public class FeedService {
             // 새로운 장소인 경우
             if (brush.getId().equals(-1L) || !currentPlace.getId().equals(brush.getPlace().getId())) {
 
-                System.out.println("새로운 장소에서의 brush: " + brush.getId());
-
                 if (firstBrush != null) {
                     // 상대 유저 조회
                     Long oppositeUserIdx = firstBrush.getUser1().getId().equals(userIdx) ? firstBrush.getUser2().getId() : firstBrush.getUser1().getId();
-                    System.out.println("상대 유저 idx: " + oppositeUserIdx);
                     Optional<User> oppositeUser = userRepository.findById(oppositeUserIdx);
                     if (oppositeUser.isEmpty() || !oppositeUser.get().getIsActive()) {
                         currentPlace = Place.builder().id(-1L).build();
                         continue;
                     }
-                    System.out.println("상대 유저가 활성화 된 경우 출력");
 
                     // Dto 저장
                     NewFeedResDto newFeedResDto = new NewFeedResDto();
@@ -438,21 +429,12 @@ public class FeedService {
                             .build());
                     newFeedResDtos.add(newFeedResDto);
 
-                    System.out.println("--start----");
-                    System.out.println("저장된 장소: " + currentPlace.getName());
-                    System.out.println("저장된 유저들: ");
-                    for (Long idx : userIdxSet) {
-                        System.out.println(idx);
-                    }
-                    System.out.println("--end----");
-
                     firstTimeUserEmojis = new ArrayList<>();
                     repeatUserEmojis = new ArrayList<>();
                     userIdxSet = new HashSet<>();
                 }
 
                 if (brush.getId().equals(-1L)) {
-                    System.out.println("brush id가 -1인 경우 출력");
                     break;
                 }
 
