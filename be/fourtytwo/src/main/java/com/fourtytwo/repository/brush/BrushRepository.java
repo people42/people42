@@ -12,5 +12,5 @@ public interface BrushRepository extends JpaRepository<Brush, Long>, BrushReposi
 
     Long countByUser1IdAndUser2IdAndCreatedAtIsBefore(Long user1Idx, Long user2Idx, LocalDateTime time);
 
-    List<Brush> findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(Long user1Idx, Long user2Idx);
+    List<Brush> findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(Long user1Idx, Long user2Idx);
 }
