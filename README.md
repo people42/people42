@@ -175,9 +175,8 @@
 
 <br/>
 
-### Back
-
-<br/>
+<details>
+<summary>Back</summary>
 
 ```Plain
 fourtytwo
@@ -343,11 +342,12 @@ fourtytwo
                └─ FourtytwoApplicationTests.java
 ```
 
-<br/>
-
-### WEB
+</details>
 
 <br/>
+
+<details>
+<summary>WEB</summary>
 
 ```Plain
 forty-two
@@ -415,11 +415,12 @@ forty-two
 └─ vite.config.ts
 ```
 
-<br/>
-
-### iOS
+</details>
 
 <br/>
+
+<details>
+<summary>iOS</summary>
 
 ```Plain
 fourtytwo
@@ -521,14 +522,14 @@ fourtytwo
 └── fourtytwo.entitlements
 ```
 
-<br/>
-
-### Android
+</details>
 
 <br/>
+
+<details>
+<summary>Android</summary>
 
 ```
-
 fourtytwo
 │  AndroidManifest.xml
 ├─java
@@ -670,8 +671,11 @@ fourtytwo
             backup_rules.xml
             data_extraction_rules.xml
             network_security_config.xml
-
 ```
+
+</details>
+
+<br/>
 
 <br/>
 
