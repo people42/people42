@@ -117,7 +117,17 @@
 **Front-end : Android (Kotlin)**
 
 ```Plain
-- 적어주세요
+- Android Studio 
+- Kotlin
+- Android KTX
+- gms
+- WebSocket
+- Firebase Cloud Message(FCM)
+- datastore-preferences
+- retrofit
+- glide
+- gson
+- Deep Link
 ```
 
 <br/>
@@ -340,7 +350,69 @@ fourtytwo
 <br/>
 
 ```Plain
-
+forty-two
+├─ public
+│  ├─ .well-known
+│  │  ├─ apple-app-site-association
+│  │  └─ assetlinks.json
+│  ├─ apple-app-site-association
+│  ├─ favicon.png
+│  ├─ manifest.json
+│  └─ robots.txt
+├─ src
+│  ├─ api
+│  │  ├─ ...
+│  │  └─ index.ts
+│  ├─ assets
+│  │  ├─ fonts
+│  │  ├─ images
+│  │  └─ ...
+│  ├─ components
+│  │  ├─ GlobalComponent
+│  │  │  └─ GlobalComponent.tsx
+│  │  ├─ ...
+│  │  └─ index.ts
+│  ├─ pages
+│  │  ├─ Page
+│  │  │  ├─ Page.tsx
+│  │  │  └─ components
+│  │  │     ├─ LocalComponent
+│  │  │     │  └─ LocalComponent.tsx
+│  │  │     ├─ ...
+│  │  │     └─ index.ts
+│  │  ├─ ...
+│  │  └─ index.ts
+│  ├─ recoil
+│  │  ├─ Recoil
+│  │  │  ├─ atoms.ts
+│  │  │  └─ selectors.ts
+│  │  └─ ...
+│  ├─ styles
+│  │  ├─ globalStyles.ts
+│  │  └─ theme.ts
+│  ├─ types
+│  │  ├─ type.d.ts
+│  │  └─ ...
+│  ├─ utils
+│  │  ├─ util
+│  │  │  ├─ util.ts
+│  │  │  └─ ...
+│  │  └─ index.ts
+│  ├─ App.tsx
+│  ├─ costom.d.ts
+│  ├─ main.tsx
+│  ├─ Meta.tsx
+│  ├─ reset.css
+│  ├─ router.tsx
+│  └─ vite-env.d.ts
+├─ .env
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ registerServiceWorker.js
+├─ tsconfig.json
+├─ tsconfig.node.json
+└─ vite.config.ts
 ```
 
 <br/>
@@ -454,9 +526,260 @@ fourtytwo
 ### Android
 
 <br/>
-
 ```Plain
-
+fourtytwo
+│  AndroidManifest.xml
+│  ic_launcher-playstore.png
+│  maintree.txt
+│  
+├─java
+│  └─com
+│      └─cider
+│          │  tree.txt
+│          │  
+│          └─fourtytwo
+│              │  App.kt
+│              │  MainActivity.kt
+│              │  MyFirebaseMessagingService.kt
+│              │  SettingsActivity.kt
+│              │  SigninActivity.kt
+│              │  WebViewActivity.kt
+│              │  
+│              ├─dataStore
+│              │      UserDataStore.kt
+│              │      
+│              ├─feed
+│              │      FeedAdapter.kt
+│              │      FeedItem.kt
+│              │      PlaceWithTimeInfo.kt
+│              │      RecentFeedData.kt
+│              │      RecentFeedResponse.kt
+│              │      RecentMessageInfo.kt
+│              │      
+│              ├─map
+│              │      Radar.kt
+│              │      SetLocationData.kt
+│              │      SetLocationResponse.kt
+│              │      
+│              ├─myHistory
+│              │      HistoryData.kt
+│              │      HistoryResponse.kt
+│              │      MyMessagesActivity.kt
+│              │      MyMessagesAdapter.kt
+│              │      
+│              ├─network
+│              │  │  Api.kt
+│              │  │  RetrofitHeaderInstance.kt
+│              │  │  RetrofitInstance.kt
+│              │  │  
+│              │  └─Model
+│              │          Header.kt
+│              │          MessageResponse.kt
+│              │          NowMessageData.kt
+│              │          NowMessageResponse.kt
+│              │          SignOutResponse.kt
+│              │          
+│              ├─person
+│              │      PersonActivity.kt
+│              │      PersonAdapter.kt
+│              │      PersonData.kt
+│              │      PersonPlaceData.kt
+│              │      PersonPlaceInfo.kt
+│              │      PersonPlaceResponse.kt
+│              │      PersonResponse.kt
+│              │      PlaceResDtos.kt
+│              │      
+│              ├─place
+│              │      MessagesInfo.kt
+│              │      PlaceActivity.kt
+│              │      PlaceAdapter.kt
+│              │      PlacecData.kt
+│              │      PlaceResponse.kt
+│              │      PlaceWithTimeAndGpsInfo.kt
+│              │      
+│              ├─signIn
+│              │      UserInfo.kt
+│              │      UserResponse.kt
+│              │      
+│              └─Signup
+│                      EmojiAdapter.kt
+│                      EmojiFragment.kt
+│                      GuideFragment.kt
+│                      NicknameData.kt
+│                      NicknameFragment.kt
+│                      NicknameResponse.kt
+│                      SignupActivity.kt
+│                      SignupForm.kt
+│                      WelcomeFragment.kt
+│                      
+└─res
+    ├─drawable
+    │      baseline_add_24.xml
+    │      baseline_arrow_back_ios_new_24.xml
+    │      baseline_autorenew_24.xml
+    │      baseline_clear_24.xml
+    │      baseline_notifications_24.xml
+    │      baseline_settings_24.xml
+    │      center_location.xml
+    │      circle_shape.xml
+    │      delete_24.xml
+    │      dot.xml
+    │      ic_launcher_background.xml
+    │      ic_menu_camera.xml
+    │      ic_menu_gallery.xml
+    │      ic_menu_slideshow.xml
+    │      my_location_button.xml
+    │      nicknameborder.xml
+    │      person_background.xml
+    │      radar_animation.xml
+    │      radar_circle.xml
+    │      radar_circle3.xml
+    │      reaction.xml
+    │      reaction_select_box.xml
+    │      round.xml
+    │      round_box.xml
+    │      side_nav_bar.xml
+    │      signinborder.xml
+    │      signupborder.xml
+    │      signuptab.xml
+    │      signuptab_true.xml
+    │      think_cloud.xml
+    │      
+    ├─drawable-hdpi
+    │      ic_stat_name.png
+    │      
+    ├─drawable-mdpi
+    │      ic_stat_name.png
+    │      
+    ├─drawable-v24
+    │  │  appicon.png
+    │  │  apple48dp.png
+    │  │  btn_google_light_normal_xxhdpi.9.png
+    │  │  fire.png
+    │  │  google48dp.png
+    │  │  heart.png
+    │  │  icon_notification_false.png
+    │  │  icon_notification_true.png
+    │  │  icon_setting.png
+    │  │  ic_launcher_foreground.xml
+    │  │  login_apple.png
+    │  │  login_google.png
+    │  │  logoicon_gray.png
+    │  │  logoicon_white.png
+    │  │  logo_blue.png
+    │  │  logo_first.png
+    │  │  logo_icon.png
+    │  │  logo_icon_cut.png
+    │  │  radar.png
+    │  │  robot.png
+    │  │  splash.png
+    │  │  tear.png
+    │  │  thumbsup.png
+    │  │  
+    │  └─reaction
+    │          fire.png
+    │          heart.png
+    │          tear.png
+    │          thumbsUp.png
+    │          
+    ├─drawable-xhdpi
+    │      ic_stat_name.png
+    │      
+    ├─drawable-xxhdpi
+    │      ic_stat_name.png
+    │      
+    ├─drawable-xxxhdpi
+    │      ic_stat_name.png
+    │      
+    ├─layout
+    │      activity_main.xml
+    │      activity_maps.xml
+    │      activity_my_messages.xml
+    │      activity_person.xml
+    │      activity_place.xml
+    │      activity_settings.xml
+    │      activity_signin.xml
+    │      activity_signup.xml
+    │      activity_splash.xml
+    │      activity_web_view.xml
+    │      fragment_emoji.xml
+    │      fragment_guide.xml
+    │      fragment_nickname.xml
+    │      fragment_welcome.xml
+    │      layout_edit_opinion.xml
+    │      layout_feed.xml
+    │      layout_last_message.xml
+    │      layout_opinion.xml
+    │      layout_person_feed.xml
+    │      layout_person_map.xml
+    │      layout_place_feed.xml
+    │      layout_place_map.xml
+    │      layout_radar.xml
+    │      recyclerview_emoji.xml
+    │      recyclerview_feed.xml
+    │      
+    ├─menu
+    │      menu_main.xml
+    │      
+    ├─mipmap-anydpi-v26
+    │      ic_launcher.xml
+    │      ic_launcher_round.xml
+    │      
+    ├─mipmap-hdpi
+    │      ic_launcher.png
+    │      ic_launcher_foreground.png
+    │      ic_launcher_round.png
+    │      
+    ├─mipmap-mdpi
+    │      ic_launcher.png
+    │      ic_launcher_foreground.png
+    │      ic_launcher_round.png
+    │      
+    ├─mipmap-xhdpi
+    │      ic_launcher.png
+    │      ic_launcher_foreground.png
+    │      ic_launcher_round.png
+    │      
+    ├─mipmap-xxhdpi
+    │      ic_launcher.png
+    │      ic_launcher_foreground.png
+    │      ic_launcher_round.png
+    │      
+    ├─mipmap-xxxhdpi
+    │      ic_launcher.png
+    │      ic_launcher_foreground.png
+    │      ic_launcher_round.png
+    │      
+    ├─navigation
+    │      signup_nav.xml
+    │      
+    ├─raw
+    │      robot.gif
+    │      
+    ├─values
+    │      arrays.xml
+    │      colors.xml
+    │      dimens.xml
+    │      ic_launcher_background.xml
+    │      strings.xml
+    │      themes.xml
+    │      
+    ├─values-land
+    │      dimens.xml
+    │      
+    ├─values-night
+    │      themes.xml
+    │      
+    ├─values-w1240dp
+    │      dimens.xml
+    │      
+    ├─values-w600dp
+    │      dimens.xml
+    │      
+    └─xml
+            backup_rules.xml
+            data_extraction_rules.xml
+            network_security_config.xml
 ```
 
 <br/>
@@ -789,5 +1112,66 @@ GIT HUB
 <br/>
 
 ### Android
+<br/>
+
+회원가입
+
+- 랜덤으로 고유한 닉네임을 선택할 수 있습니다.
+- 움직이는 프로필 이미지를 선택할 수 있습니다.
+- 약관 동의 후, 회원가입을 진행할 수 있습니다.
+
+<p align="left">
+![signin](/uploads/c25bca2ec74c5497c7be53be20ece529/signin.gif)
+</p>
+
+<br/>
+
+글 작성&삭제
+
+- 글을 작성할 수 있습니다.
+- 글을 삭제할 수 있습니다.
+
+<br/>
+
+홈
+
+- 실시간으로 근처 유저의 입장과 활동을 확인할 수 있습니다.
+- 지도를 조작할 수 있습니다.
+![socket](/uploads/c117601bd6f3d79bfd6eb1c876c1e1c9/socket.gif)
+<br/>
+
+피드 (장소별 피드, 사용자별 피드)
+- 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
+- 해당 장소에 대한 스침을 확인할 수 있습니다.
+- 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
+
+![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif)
+
+<br/>
+
+알림
+
+- 내 게시글에 달린 리액션을 알림으로 확인할 수 있습니다.
+
+<br/>
+
+신고&차단
+
+- 장소별 피드에서 메세지를 신고하거나 해당 유저를 차단할 수 있습니다.
+- 사용자별 피드에서 해당 유저를 차단할 수 있습니다.
+- 차단된 유저와 서로 확인할 수 없게 됩니다.
+
+<br/>
+
+설정
+
+- 프로필 이미지를 변경할 수 있습니다.
+- 이용약관 및 개인정보처리방침을 확인할 수 있습니다.
+
+<br/>
+
+유니버셜링크
+
+- 링크를 통해 바로 어플로 진입할 수 있습니다.
 
 <br/>
