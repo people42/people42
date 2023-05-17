@@ -140,10 +140,12 @@ public class FeedService {
         Set<Long> messageSet = new HashSet<>();
 
         for (Brush brush : brushList) {
+            System.out.println("brush id: " + brush.getId());
             // 요청받은 장소와 시간에 해당하는 스침을 조회하면 flag = true로 변경
             if (brush.getPlace().getId().equals(placeIdx)
                     && brush.getCreatedAt().withNano(0).equals(time)) {
                 flag = true;
+                System.out.println("flag 시작");
             }
 
             if (flag) {
@@ -172,21 +174,25 @@ public class FeedService {
                 }
                 messageSet.add(message.getId());
 
-
                 cnt++;
+                System.out.println("cnt++");
                 if (cnt > page * size) {
                     // 상대 유저와 몇 번 스쳤는지 조회
                     // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
+                    System.out.println("통과한 brush: " + brush.getId());
+
                     List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx);
                     List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
+                    System.out.println("====start====");
                     for (Brush tmpBrush : brushes) {
+                        System.out.println("둘만의 brush: " + tmpBrush.getId());
                         Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
                         Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
                         BrushWithPlaceInfo currentBrushInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getPlace().getId(), tmpBrush.getCreatedAt());
                         boolean cntFlag = false;
                         for (BrushWithPlaceInfo brushInfo : brushMemo) {
-                            if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
+                            if (brushInfo.getPlaceIdx().equals(tmpBrush.getPlace().getId()) &&
                                     brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
                                     brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushInfo.getCreatedAt())) {
                                 cntFlag = true;
@@ -196,8 +202,10 @@ public class FeedService {
                         if (cntFlag) {
                             continue;
                         }
+                        System.out.println("add");
                         brushMemo.add(currentBrushInfo);
                     }
+                    System.out.println("====finish====");
 
                     Optional<Expression> expression = expressionRepository.findByMessageAndUserId(message, userIdx);
                     MessageResDto messageResDto = MessageResDto.builder()
