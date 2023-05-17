@@ -77,7 +77,7 @@ public class FeedService {
                 // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
                 List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
-                Set<BrushInfo> brushMemo = new HashSet<>();
+                List<BrushInfo> brushMemo = new ArrayList<>();
                 for (Brush tmpBrush : brushes) {
                     Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
                     Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
@@ -179,14 +179,15 @@ public class FeedService {
                     // Long count = brushRepository.findBrushCntByUserIdxs(brush.getUser1().getId(), brush.getUser2().getId());
 
                     List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
-                    Set<BrushInfo> brushMemo = new HashSet<>();
+                    List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
                     for (Brush tmpBrush : brushes) {
                         Long myMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage1().getId() : tmpBrush.getMessage2().getId();
                         Long oppositeMessageIdx = tmpBrush.getUser1().getId().equals(userIdx) ? tmpBrush.getMessage2().getId() : tmpBrush.getMessage1().getId();
-                        BrushInfo currentBrushInfo = new BrushInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getCreatedAt());
+                        BrushWithPlaceInfo currentBrushInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, tmpBrush.getPlace().getId(), tmpBrush.getCreatedAt());
                         boolean cntFlag = false;
-                        for (BrushInfo brushInfo : brushMemo) {
-                            if (brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
+                        for (BrushWithPlaceInfo brushInfo : brushMemo) {
+                            if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
+                                    brushInfo.oppositeMessageIdx.equals(currentBrushInfo.getOppositeMessageIdx()) &&
                                     brushInfo.getCreatedAt().minusHours(2L).isBefore(currentBrushInfo.getCreatedAt())) {
                                 cntFlag = true;
                                 break;
@@ -253,7 +254,7 @@ public class FeedService {
         Long smallIdx = userIdx > targetUserIdx ? targetUserIdx : userIdx;
 
         List<Brush> brushList = brushRepository.findBrushesByUser1IdAndUser2IdAndUser1_IsActiveTrueAndUser2_IsActiveTrueAndMessage1_IsActiveTrueAndMessage2_IsActiveTrue(smallIdx, bigIdx);
-        Set<BrushWithPlaceInfo> brushMemo = new HashSet<>();
+        List<BrushWithPlaceInfo> brushMemo = new ArrayList<>();
         for (Brush brush : brushList) {
             Long myMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
             Long oppositeMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
@@ -295,7 +296,7 @@ public class FeedService {
 
         Long userIdx = checkUserByAccessToken(accessToken);
         List<UserMessageResDto> userMessageResDtos = new ArrayList<>();
-        Set<BrushInfo> brushMemo = new HashSet<>();
+        List<BrushInfo> brushMemo = new ArrayList<>();
 
         Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
         Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
