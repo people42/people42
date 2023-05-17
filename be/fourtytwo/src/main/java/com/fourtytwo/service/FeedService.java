@@ -301,12 +301,8 @@ public class FeedService {
         Long bigIdx = userIdx > targetIdx ? userIdx : targetIdx;
         Long smallIdx = userIdx > targetIdx ? targetIdx : userIdx;
 
-        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
+        List<Brush> brushes = brushRepository.findBrushesByUser1IdAndUser2IdAndPlaceIdAndMessage1_IsActiveTrueAndMessage2_IsActiveTrueOrderByCreatedAtDesc(smallIdx, bigIdx, placeIdx);
         for (Brush brush : brushes) {
-
-            if (!brush.getMessage1().getIsActive() || !brush.getMessage2().getIsActive()) {
-                continue;
-            }
 
             UserMessageResDto userMessageResDto = new UserMessageResDto();
             Message myMessage;
@@ -341,6 +337,13 @@ public class FeedService {
             userMessageResDto.setEmotion(expression.map(Expression::getEmotion).map(Emotion::getName).orElse(null));
             userMessageResDtos.add(userMessageResDto);
         }
+
+        for (UserMessageResDto userMessageResDto : userMessageResDtos) {
+            System.out.println("===start===");
+            System.out.println(userMessageResDto.getContent());
+            System.out.println("===end===");
+        }
+
         return UserPlaceFeedResDto.builder()
                 .messagesInfo(userMessageResDtos)
                 .brushCnt(userMessageResDtos.size())
