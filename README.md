@@ -8,19 +8,23 @@
 
 <div style="display: flex; justify-content: flex-start; align-items: center;">
   <a href="https://www.people42.com">
-    <img src="./assets/People42.png" alt="Download on the App Store" style="border-radius: 13px; width: 200px; height: 60px;">
+    <img src="./assets/People42.png" alt="Go to Website" style="border-radius: 13px; height: 55px; width: auto;">
   </a>
   <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&amp;itscg=30200">
-    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1683676800" alt="Download on the App Store" style="border-radius: 13px; width: 200px; height: 60px; padding-left: 14px;">
+    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1683676800" alt="Download on the App Store" style="border-radius: 13px; height: 55px; width: auto; padding-left: 20px; padding-right: 8px;">
   </a>
   <a href='https://play.google.com/store/apps/details?id=com.cider.fourtytwo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-    <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="height: 90px;">
+    <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="height: 80px; width: auto;">
   </a>
 </div>
 
 </br>
 
 ### 소개 영상 보기 : [유튜브 바로가기](https://www.youtube.com/watch?v=j9oudzDFZMk)
+
+<br/>
+
+---
 
 <br/>
 
@@ -33,8 +37,6 @@
 2학기 자율프로젝트 - 사이
 
 <br/>
-
----
 
 <br/>
 
@@ -75,8 +77,6 @@
   - 내 글에 대한 반응을 알림으로 알 수 있습니다.
 
 <br/>
-
----
 
 ## :hammer_and_wrench: 주요기술
 
@@ -129,11 +129,13 @@
 - UIKit
 - CoreLocation
 - Alamofire
+- BackgroundTasks
+- MapKit
 - Firebase Cloud Message(FCM)
-- URLSessionWebSocket
+- URLSessionWebSocketTasks
 - Deep Link
 - Universal Link
-- Toolkit
+- KeychaninSwidft
 ```
 
 <br/>
@@ -157,17 +159,305 @@
 
 <br/>
 
----
+<br/>
+
+## ✔ 프로젝트 구조
 
 <br/>
 
-## ✔ 프로젝트 파일 구조
+### Back
 
 <br/>
 
+```Plain
+fourtytwo
+├─ .gitignore
+├─ .gitkeep
+├─ gradle
+│  └─ wrapper
+│     ├─ gradle-wrapper.jar
+│     └─ gradle-wrapper.properties
+├─ gradlew
+├─ gradlew.bat
+└─ src
+   ├─ main
+   │  ├─ java
+   │  │  └─ com
+   │  │     └─ fourtytwo
+   │  │        ├─ auth
+   │  │        │  ├─ JwtTokenProvider.java
+   │  │        │  ├─ PrincipalDetails.java
+   │  │        │  ├─ PrincipalDetailsService.java
+   │  │        │  └─ RefreshTokenProvider.java
+   │  │        ├─ config
+   │  │        │  ├─ AppleConfig.java
+   │  │        │  ├─ CorsConfig.java
+   │  │        │  ├─ GoogleMapConfig.java
+   │  │        │  ├─ JwtConfig.java
+   │  │        │  ├─ KakaoConfig.java
+   │  │        │  ├─ MariaDbConfig.java
+   │  │        │  ├─ QueryDslConfig.java
+   │  │        │  ├─ RedisConfig.java
+   │  │        │  ├─ SecurityConfig.java
+   │  │        │  ├─ WebMvcConfig.java
+   │  │        │  └─ WebSocketConfig.java
+   │  │        ├─ controller
+   │  │        │  ├─ AccountController.java
+   │  │        │  ├─ ApiResponse.java
+   │  │        │  ├─ BrushController.java
+   │  │        │  ├─ FeedbackController.java
+   │  │        │  ├─ FeedController.java
+   │  │        │  ├─ NotificationController.java
+   │  │        │  ├─ SocketController.java
+   │  │        │  └─ UserController.java
+   │  │        ├─ dto
+   │  │        │  ├─ block
+   │  │        │  │  └─ BlockReqDto.java
+   │  │        │  ├─ brush
+   │  │        │  │  └─ BrushResDto.java
+   │  │        │  ├─ fcm
+   │  │        │  │  └─ FcmTokenReqDto.java
+   │  │        │  ├─ feed
+   │  │        │  │  ├─ ExpressReqDto.java
+   │  │        │  │  ├─ NewFeedResDto.java
+   │  │        │  │  ├─ PlaceFeedResDto.java
+   │  │        │  │  ├─ RecentFeedResDto.java
+   │  │        │  │  ├─ RecentUsersInfoResDto.java
+   │  │        │  │  ├─ UserFeedResDto.java
+   │  │        │  │  └─ UserPlaceFeedResDto.java
+   │  │        │  ├─ feedback
+   │  │        │  │  └─ FeedbackReqDto.java
+   │  │        │  ├─ message
+   │  │        │  │  ├─ MessageDeleteReqDto.java
+   │  │        │  │  ├─ MessageResDto.java
+   │  │        │  │  ├─ MyMessageHistoryResDto.java
+   │  │        │  │  ├─ TotalMessagesCntResDto.java
+   │  │        │  │  └─ UserMessageResDto.java
+   │  │        │  ├─ notification
+   │  │        │  │  ├─ NotificationCntResDto.java
+   │  │        │  │  └─ NotificationHistoryResDto.java
+   │  │        │  ├─ place
+   │  │        │  │  ├─ GpsReqDto.java
+   │  │        │  │  ├─ PlaceResDto.java
+   │  │        │  │  ├─ PlaceWithTimeAndGpsResDto.java
+   │  │        │  │  └─ PlaceWithTimeResDto.java
+   │  │        │  ├─ report
+   │  │        │  │  └─ ReportReqDto.java
+   │  │        │  ├─ socket
+   │  │        │  │  ├─ MessageDto.java
+   │  │        │  │  ├─ MethodType.java
+   │  │        │  │  └─ SessionInfoDto.java
+   │  │        │  └─ user
+   │  │        │     ├─ AccessTokenResDto.java
+   │  │        │     ├─ AndroidGoogleRequestDto.java
+   │  │        │     ├─ AndroidGoogleResponseDto.java
+   │  │        │     ├─ AppleCodeReqDto.java
+   │  │        │     ├─ AppleOAuthResponseDto.java
+   │  │        │     ├─ ChangeEmojiReqDto.java
+   │  │        │     ├─ GoogleOAuthResponseDto.java
+   │  │        │     ├─ LoginRequestDto.java
+   │  │        │     ├─ LoginResponseDto.java
+   │  │        │     ├─ MessageReqDto.java
+   │  │        │     ├─ MyInfoResDto.java
+   │  │        │     ├─ NicknameReqDto.java
+   │  │        │     ├─ NicknameResDto.java
+   │  │        │     └─ SignupRequestDto.java
+   │  │        ├─ entity
+   │  │        │  ├─ BaseEntity.java
+   │  │        │  ├─ Block.java
+   │  │        │  ├─ Brush.java
+   │  │        │  ├─ Emotion.java
+   │  │        │  ├─ Expression.java
+   │  │        │  ├─ Feedback.java
+   │  │        │  ├─ Message.java
+   │  │        │  ├─ Place.java
+   │  │        │  ├─ Report.java
+   │  │        │  └─ User.java
+   │  │        ├─ exception
+   │  │        │  ├─ CustomAccessDeniedHandler.java
+   │  │        │  ├─ CustomAuthenticationEntryPoint.java
+   │  │        │  └─ CustomExceptionHandler.java
+   │  │        ├─ filter
+   │  │        │  └─ JwtAuthenticationFilter.java
+   │  │        ├─ FourtytwoApplication.java
+   │  │        ├─ repository
+   │  │        │  ├─ alert
+   │  │        │  │  ├─ ReportRepository.java
+   │  │        │  │  ├─ ReportRepositoryCustom.java
+   │  │        │  │  └─ ReportRepositoryImpl.java
+   │  │        │  ├─ block
+   │  │        │  │  └─ BlockRepository.java
+   │  │        │  ├─ brush
+   │  │        │  │  ├─ BrushRepository.java
+   │  │        │  │  ├─ BrushRepositoryCustom.java
+   │  │        │  │  └─ BrushRepositoryImpl.java
+   │  │        │  ├─ emotion
+   │  │        │  │  └─ EmotionRepository.java
+   │  │        │  ├─ expression
+   │  │        │  │  └─ ExpressionRepository.java
+   │  │        │  ├─ feedback
+   │  │        │  │  └─ FeedbackRepository.java
+   │  │        │  ├─ message
+   │  │        │  │  ├─ MessageRepository.java
+   │  │        │  │  ├─ MessageRepositoryCustom.java
+   │  │        │  │  └─ MessageRepositoryImpl.java
+   │  │        │  ├─ place
+   │  │        │  │  ├─ PlaceRepository.java
+   │  │        │  │  ├─ PlaceRepositoryCustom.java
+   │  │        │  │  └─ PlaceRepositoryImpl.java
+   │  │        │  └─ user
+   │  │        │     ├─ UserRepository.java
+   │  │        │     ├─ UserRepositoryCustom.java
+   │  │        │     └─ UserRepositoryImpl.java
+   │  │        └─ service
+   │  │           ├─ BlockService.java
+   │  │           ├─ ExpressService.java
+   │  │           ├─ FcmService.java
+   │  │           ├─ FeedbackService.java
+   │  │           ├─ FeedService.java
+   │  │           ├─ GpsService.java
+   │  │           ├─ MessageService.java
+   │  │           ├─ NotificationService.java
+   │  │           ├─ ReportService.java
+   │  │           ├─ UserService.java
+   │  │           └─ WebSocketService.java
+   │  └─ resources
+   │     ├─ application.properties
+   │     └─ word_set.json
+   └─ test
+      └─ java
+         └─ com
+            └─ fourtytwo
+               ├─ AccountControllerTest.java
+               ├─ FeedControllerTest.java
+               └─ FourtytwoApplicationTests.java
+```
+
 <br/>
 
----
+### WEB
+
+<br/>
+
+```Plain
+
+```
+
+<br/>
+
+### iOS
+
+<br/>
+
+```Plain
+fourtytwo
+├── fourtytwoApp.swift
+├── ContentView.swift
+├── Info.plist
+├── Supports
+│   ├── AppDelegate.swift
+│   ├── SceneDelegate.swift
+│   ├── KeychainSwiftDistrib.swift
+│   └── GoogleService-Info.plist
+├── AppState
+│   ├── AuthState.swift
+│   └── ViewState.swift
+├── Design
+│   ├── Assets.xcassets
+│   ├── Color.swift
+│   ├── Font.swift
+│   └── Fonts
+│       └── Roboto-Medium.ttf
+├── Services
+│   ├── APIManager.swift
+│   ├── AccountService.swift
+│   ├── CommonService.swift
+│   ├── FeedService.swift
+│   ├── LocationManager.swift
+│   ├── LocationSender.swift
+│   ├── LocationService.swift
+│   ├── NotificationService.swift
+│   ├── UserService.swift
+│   └── WebSocketManager.swift
+├── Components
+│   ├── ActivityIndicator.swift
+│   ├── BlockView.swift
+│   ├── CustomButton.swift
+│   ├── GifImage.swift
+│   ├── LocationCard.swift
+│   ├── MessageCard.swift
+│   ├── MyMassageCard.swift
+│   ├── ReactionButton.swift
+│   ├── RefreshableModifier.swift
+│   ├── ReportView.swift
+│   ├── TopAlignedTextEditor.swift
+│   └── Useless
+│       ├── GifUIkit.swift
+│       ├── TimelineView.swift
+│       └── WrappedMap.swift
+├── Pages
+│   ├── AlertPage
+│   │   ├── AlertView.swift
+│   │   └── Elements
+│   │       └── AlertCard.swift
+│   ├── HomePage
+│   │   ├── Elements
+│   │   │   ├── CustomBottomSheet.swift
+│   │   │   ├── MapView.swift
+│   │   │   ├── NavBar.swift
+│   │   │   ├── OverView.swift
+│   │   │   └── PlaceTimelineView.swift
+│   │   └── HomeView.swift
+│   ├── LoginPage
+│   │   ├── Elements
+│   │   │   ├── AppleSigninButton.swift
+│   │   │   └── GoogleSigninButton.swift
+│   │   └── LoginView.swift
+│   ├── MyMindPage
+│   │   ├── Elements
+│   │   │   ├── DragToDeleteView.swift
+│   │   │   └── MyMassageHistory.swift
+│   │   └── MyMindView.swift
+│   ├── PersonPage
+│   │   ├── Elements
+│   │   │   ├── PersonMessageCard.swift
+│   │   │   └── PlacePersonView.swift
+│   │   └── PersonView.swift
+│   ├── PlacePage
+│   │   ├── Elements
+│   │   │   └── PlaceMapView.swift
+│   │   └── PlaceView.swift
+│   ├── SignupPage
+│   │   ├── Elements
+│   │   │   ├── FirstSectionView.swift
+│   │   │   ├── SecondSectionView.swift
+│   │   │   ├── SegmentedProgressBar.swift
+│   │   │   └── ThirdSectionView.swift
+│   │   └── SignupView.swift
+│   ├── SplashPage
+│   │   └── SplashView.swift
+│   └── SystemPage
+│       ├── Elements
+│       │   ├── EmojiSwapView.swift
+│       │   ├── NavLink.swift
+│       │   ├── NicknameChangeView.swift
+│       │   └── PolicyWebView.swift
+│       └── SystemView.swift
+├── Preview Content
+│   └── Preview Assets.xcassets
+│       └── Contents.json
+└── fourtytwo.entitlements
+```
+
+<br/>
+
+### Android
+
+<br/>
+
+```Plain
+
+```
 
 <br/>
 
@@ -214,10 +504,6 @@
 
 <br/>
 
----
-
-<br/>
-
 ## ✔ 팀원 역할
 
 <br/>
@@ -232,8 +518,6 @@
 | [김진희](https://github.com/robotdiary) | robotdiary   | Android | AndroidStudio / Kotlin             |
 
 <br/>
-
----
 
 ## :triangular_flag_on_post: Project Info
 
@@ -286,6 +570,8 @@ GIT HUB
 
 [Figma Link](https://www.figma.com/file/L3CelmgNIWFyPxj8kOer0Z/Untitled?type=design&node-id=234%3A4145&t=Xta8lvodXhF1Ulea-1)
 
+![](./assets/Figma.png)
+
 <br>
 
 ### 기능명세서
@@ -314,9 +600,9 @@ GIT HUB
 ### API 명세서
 
 [API 명세서 LINK](https://stupendous-thyme-e20.notion.site/API-811a407d9fea4e1ab3b86bc83ee70c62)
-<br><br>
 
----
+![](./assets/Api_ex.png)
+<br><br>
 
 ## 서비스 화면
 
@@ -324,7 +610,13 @@ GIT HUB
 
 ### Web
 
+<br/>
+
 회원가입
+
+- 랜덤으로 고유한 닉네임을 선택할 수 있습니다.
+- 움직이는 프로필 이미지를 선택할 수 있습니다.
+- 약관 동의 후, 회원가입을 진행할 수 있습니다.
 
 ![web_signup](./assets/web/web_signup.gif)
 
@@ -332,19 +624,24 @@ GIT HUB
 
 홈 피드
 
+- 글을 작성/삭제할 수 있습니다.
+- 실시간으로 근처 유저의 입장과 활동을 확인할 수 있습니다.
+- 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
+
 ![web_message](./assets/web/web_message.gif)
+![web_socket](./assets/web/web_socket.gif)
 
-- FCM Notification
+알림
 
-  ![web_notification](./assets/web/web_notification.gif)
+- 내 게시글에 달린 리액션을 알림으로 확인할 수 있습니다.
 
-- Web Socket
-
-  ![web_socket](./assets/web/web_socket.gif)
+![web_notification](./assets/web/web_notification.gif)
 
 <br/>
 
 장소별 피드
+
+- 해당 장소에 대한 스침을 확인할 수 있습니다.
 
 ![web_feed](./assets/web/web_feed.gif)
 
@@ -352,17 +649,20 @@ GIT HUB
 
 사용자별 피드
 
+- 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
+- 사람별 피드에서 메세지를 신고하거나 해당 유저를 차단할 수 있습니다.
+
 ![web_user](./assets/web/web_user.gif)
 
 <br/>
 
 테마
 
+- 라이트/다크 모드를 변경할 수 있습니다.
+
 ![web_theme](./assets/web/web_theme.gif)
 
 <br/>
-
----
 
 <br/>
 
@@ -431,7 +731,7 @@ GIT HUB
 
 사용자별 피드
 
-- 해당 사용자와의 스쳤던 장소와 내용을 확인할 수 있습니다.
+- 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
 
 <p align="left">
 <img width="30%" src="./assets/ios/ios_feed_user.gif"/>
@@ -488,4 +788,6 @@ GIT HUB
 
 <br/>
 
----
+### Android
+
+<br/>
