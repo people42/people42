@@ -2,6 +2,7 @@ package com.fourtytwo.repository.brush;
 
 import com.fourtytwo.entity.Brush;
 import com.fourtytwo.entity.QBrush;
+import com.fourtytwo.entity.QUser;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,6 +22,7 @@ public class BrushRepositoryImpl implements BrushRepositoryCustom {
     }
 
     QBrush brush = QBrush.brush;
+    QUser user = QUser.user;
 
     // 유저 idx로 해당 유저의 24시간 이내 모든 스침 조회
     @Override
@@ -48,7 +50,12 @@ public class BrushRepositoryImpl implements BrushRepositoryCustom {
         return queryFactory
                 .select(brush.count())
                 .from(brush)
-                .where(brush.user1.id.eq(smallIdx).and(brush.user2.id.eq(bigIdx)))
+                .join(user)
+                .on(brush.user1.eq(user).or(brush.user2.eq(user)))
+                .where(brush.user1.id.eq(smallIdx)
+                        .and(brush.user2.id.eq(bigIdx))
+                        .and(user.isActive.eq(true))
+                        .and(user.isActive.eq(true)))
                 .groupBy(brush.user1.id, brush.user2.id)
                 .fetchOne();
     }

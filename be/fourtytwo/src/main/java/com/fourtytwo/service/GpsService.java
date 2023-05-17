@@ -56,7 +56,7 @@ public class GpsService {
     private final RedissonClient redissonClient;
 
     public PlaceWithTimeResDto lockRenewGps(String accessToken, GpsReqDto gps) {
-        RLock lock = redissonClient.getLock(accessToken);
+        RLock lock = redissonClient.getLock("renewGpsKey");
 
         try {
             boolean isLocked = lock.tryLock(1, 1, TimeUnit.SECONDS);
