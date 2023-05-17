@@ -1,202 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/message_padding_horizontal"
     android:minHeight="@dimen/message_height"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
     android:layout_marginTop="18dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-    <!--  파란 점 + 컨텐츠  -->
+    <!--  말풍선 그림자  -->
     <ImageView
-        android:id="@+id/blue_dot"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:background="@drawable/dot"/>
-    <FrameLayout
+        android:id="@+id/feed_message_shadow2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/message_padding_horizontal"
+        android:background="@drawable/round_box"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="23dp"
+        android:backgroundTint="#26FFF500"/>
+    <ImageView
+        android:id="@+id/feed_message_shadow1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_box"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#4DFFF500"/>
+    <RelativeLayout
+        android:id="@+id/feed_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/message_height"
+        android:background="@drawable/round_box"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp"
+        android:paddingVertical="17dp"
+        android:paddingHorizontal="@dimen/message_margin_horizontal"
+        android:layout_marginTop="17dp"
+        android:gravity="center"
         >
-        <!--  말풍선 그림자  -->
-        <ImageView
-            android:id="@+id/feed_message_shadow2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/round_box"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="23dp"
-            android:backgroundTint="#26FFF500"/>
-        <ImageView
-            android:id="@+id/feed_message_shadow1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/round_box"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="#4DFFF500"/>
-        <RelativeLayout
-            android:id="@+id/feed_message"
+        <TextView
+            android:id="@+id/feedContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/message_height"
-            android:background="@drawable/round_box"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="20dp"
-            android:paddingTop="17dp"
-            android:paddingHorizontal="@dimen/message_margin_horizontal"
-            android:layout_marginTop="17dp"
-            >
-            <TextView
-                android:id="@+id/feedContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_marginVertical="4dp"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                />
-            <TextView
-                android:id="@+id/feedLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/feedTime"
-                android:textStyle="bold"
-                />
-            <TextView
-                android:id="@+id/feedTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:textColor="@color/monotone_dark"
-                />
-        </RelativeLayout>
-        <!--  한 층 위 : 이모지+리액션  -->
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            />
+    </RelativeLayout>
+    <!--  한 층 위 : 이모지+리액션  -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="20dp"
+        >
+        <!--  이모지, 스침, 닉네임  -->
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="20dp"
+            android:id="@+id/feed_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             >
-            <!--  이모지, 스침, 닉네임  -->
+            <ImageView
+                android:id="@+id/feedEmoji"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:elevation="7dp"
+                />
             <RelativeLayout
-                android:id="@+id/feed_user"
+                android:id="@+id/feed_user_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toEndOf="@id/feedEmoji"
+                android:background="@drawable/round_box"
+                android:backgroundTint="@color/white"
+                android:layout_marginStart="24dp"
+                android:layout_marginVertical="5dp"
+                android:layout_marginEnd="5dp"
+                android:elevation="5dp"
+                android:paddingVertical="5dp"
+                android:paddingStart="11dp"
+                android:paddingEnd="5dp"
                 >
-                <ImageView
-                    android:id="@+id/feedEmoji"
-                    android:layout_width="@dimen/feed_emoji_height"
-                    android:layout_height="@dimen/feed_emoji_height"
-                    android:elevation="5dp"
-                    />
                 <TextView
                     android:id="@+id/feedbrushCnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:layout_toRightOf="@id/feedEmoji"
+                    android:layout_marginStart="10dp"
+                    android:textSize="14sp"
                     />
                 <TextView
                     android:id="@+id/feedNickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@id/feedbrushCnt"
                     android:textStyle="bold"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="14sp"
                     />
             </RelativeLayout>
-            <LinearLayout
-                android:id="@+id/message_reation"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:orientation="horizontal"
-                android:background="@drawable/reaction_select_box"
-                android:elevation="3dp"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="4dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="6dp"
-                >
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_plus"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/baseline_add_24"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300"
-                />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/message_reaction_select"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:orientation="horizontal"
-                android:background="@drawable/reaction_select_box"
-                android:elevation="3dp"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="4dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="6dp"
-                android:visibility="gone"
-                >
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_heart"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/heart"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300" />
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_fire"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/fire"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300" />
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_tear"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/tear"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300" />
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_thumbsup"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/thumbsup"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300" />
-                <com.skydoves.elasticviews.ElasticImageView
-                    android:id="@+id/select_cancel"
-                    android:layout_width="@dimen/reaction_heart"
-                    android:layout_height="@dimen/reaction_heart"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/baseline_clear_24"
-                    app:imageView_scale="0.7"
-                    android:layout_marginHorizontal="4dp"
-                    app:imageView_duration="300" />
-            </LinearLayout>
         </RelativeLayout>
-    </FrameLayout>
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/message_reation"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="@drawable/reaction_select_box"
+            android:elevation="3dp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="6dp"
+            >
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_plus"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_add_24"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300"
+            />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/message_reaction_select"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="@drawable/reaction_select_box"
+            android:elevation="3dp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="6dp"
+            android:visibility="gone"
+            >
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_heart"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/heart"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300" />
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_fire"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/fire"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300" />
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_tear"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/tear"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300" />
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_thumbsup"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/thumbsup"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300" />
+            <com.skydoves.elasticviews.ElasticImageView
+                android:id="@+id/select_cancel"
+                android:layout_width="@dimen/reaction_heart"
+                android:layout_height="@dimen/reaction_heart"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_clear_24"
+                app:imageView_scale="0.7"
+                android:layout_marginHorizontal="4dp"
+                app:imageView_duration="300" />
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
 
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/message_height"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="18dp"
+    >
+    <!--  파란 점 -->
+    <ImageView
+        android:id="@+id/new_blue_dot"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:background="@drawable/dot"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/round_box"
+        android:backgroundTint="@color/white"
+        android:elevation="3dp"
+        android:padding="32dp"
+        android:layout_marginStart="@dimen/message_padding_horizontal"
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="3dp"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/new_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="장소 근처"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <TextView
+                android:id="@+id/new_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘 8시 쯤"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/new_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="즐거운 돌고래 등"
+            android:layout_marginVertical="4dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            />
+        <TextView
+            android:id="@+id/new_brushCnt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3명과 스쳤습니다."
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:layout_marginBottom="15dp"
+            />
+        <TextView
+            android:id="@+id/new_again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다시 만난 3명"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/new_recyclerAgain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/recyclerview_emoji"/>
+        <TextView
+            android:id="@+id/new_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="처음 만난 3명"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/new_recyclerFirst"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/recyclerview_emoji"/>
+    </LinearLayout>
+</LinearLayout>
+
+

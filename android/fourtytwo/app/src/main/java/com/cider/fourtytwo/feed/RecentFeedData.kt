@@ -1,6 +1,6 @@
 package com.cider.fourtytwo.feed
 
 data class RecentFeedData(
-    val recentMessageInfo : RecentMessageInfo,
+    val recentUsersInfo : RecentMessageInfo,
     val placeWithTimeInfo : PlaceWithTimeInfo,
 )
