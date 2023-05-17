@@ -257,7 +257,7 @@ public class FeedService {
         for (Brush brush : brushList) {
             Long myMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage1().getId() : brush.getMessage2().getId();
             Long oppositeMessageIdx = brush.getUser1().getId().equals(userIdx) ? brush.getMessage2().getId() : brush.getMessage1().getId();
-            BrushWithPlaceInfo currentBrushWithPlaceInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, brush.getPlace().getId() brush.getCreatedAt());
+            BrushWithPlaceInfo currentBrushWithPlaceInfo = new BrushWithPlaceInfo(myMessageIdx, oppositeMessageIdx, brush.getPlace().getId(), brush.getCreatedAt());
             boolean flag = false;
             for (BrushWithPlaceInfo brushInfo : brushMemo) {
                 if (brushInfo.getPlaceIdx().equals(brush.getPlace().getId()) &&
