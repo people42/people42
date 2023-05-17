@@ -43,8 +43,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                                         .and(brush.user1.id.ne(userIdx))
                                         .and(message.isActive.eq(true))
                                         .and(brush.user1.isActive.eq(true))
-                                        .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
-                        ).or(message.eq(
+//                                        .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
+                                )).or(message.eq(
                                 JPAExpressions
                                         .selectFrom(message)
                                         .join(brush)
@@ -53,8 +53,8 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                                                 .and(brush.user2.id.ne(userIdx))
                                                 .and(message.isActive.eq(true))
                                                 .and(brush.user2.isActive.eq(true))
-                                                .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
-                                )
+//                                                .and(message.createdAt.after(LocalDateTime.now().minusDays(1L))))
+                                        ))
                         )
                 )
                 .fetchOne();
