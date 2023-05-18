@@ -60,7 +60,7 @@ public class GpsService {
         RLock lock = redissonClient.getLock("renewGpsKey");
 
         try {
-            boolean isLocked = lock.tryLock(1, 1, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(1, 2, TimeUnit.SECONDS);
             if (!isLocked) {
                 // 락 획득에 실패했으므로 예외 처리
                 throw new DataAccessException("너무 많은 요청을 보냈습니다.") {
@@ -100,15 +100,8 @@ public class GpsService {
                 String placeName = (String) targetPlace.get("name");
                 Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
                 Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
-
-                System.out.println("gps.lat: " + gps.getLatitude() + " / gps.lng: " + gps.getLongitude());
-                System.out.println("placeLat: " + placeLat + " / placeLng: " + placeLng);
-                System.out.println(gps.getLatitude() < placeLat - 0.005);
-                System.out.println(gps.getLatitude() > placeLat + 0.005);
-                System.out.println(gps.getLongitude() < placeLng - 0.005);
-                System.out.println(gps.getLongitude() > placeLng + 0.005);
-                if (gps.getLatitude() < placeLat - 0.005 || gps.getLatitude() > placeLat + 0.005 ||
-                        gps.getLongitude() < placeLng - 0.005 || gps.getLongitude() > placeLng + 0.005) {
+                if (gps.getLatitude() > placeLat - 0.005 && gps.getLatitude() < placeLat + 0.005 &&
+                        gps.getLongitude() > placeLng - 0.005 && gps.getLongitude() < placeLng + 0.005) {
                     Place newPlace = new Place();
                     newPlace.setName(placeName);
                     newPlace.setLatitude(placeLat);
