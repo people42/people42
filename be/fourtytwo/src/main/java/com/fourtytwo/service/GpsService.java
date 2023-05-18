@@ -116,7 +116,7 @@ public class GpsService {
             if (flag) {
                 targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
                 Place newPlace = new Place();
-                newPlace.setName((String) targetPlace.get("place_name"));
+                newPlace.setName((String) targetPlace.get("address_name"));
                 newPlace.setLatitude(gps.getLatitude());
                 newPlace.setLongitude(gps.getLongitude());
                 foundPlace = placeRepository.save(newPlace);
@@ -299,9 +299,6 @@ public class GpsService {
         List<Map<String, Object>> documents = objectMapper.convertValue(responseMap.get("documents"), listTypeRef);
 
         if (!documents.isEmpty()) {
-            System.out.println(documents.get(0).get("road_address"));
-            System.out.println(documents.get(0).get("road_address") == null);
-            System.out.println(documents.get(0).get("road_address").equals("null"));
             if (documents.get(0).get("road_address") == null) {
                 return (Map<String, Object>) documents.get(0).get("address");
             } else {
