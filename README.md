@@ -1,6 +1,7 @@
 # 낭만을 찾아서 팀 - 사이
 
 ![](./assets/logo_header.png)
+![img](http://drive.google.com/uc?export=view&id=1mqkiCKWHAWHaPSUWpkarMcz7dHhftqM3)
 
 <br/>
 
@@ -1031,7 +1032,8 @@ GIT HUB
 - 지도를 조작할 수 있습니다.
 
 <p align="left">
-![socket](/uploads/c117601bd6f3d79bfd6eb1c876c1e1c9/socket.gif)
+<!-- ![socket](/uploads/c117601bd6f3d79bfd6eb1c876c1e1c9/socket.gif) -->
+<img width="30%" src="./assets/android/android_socket.gif"/>
 <img width="30%" src="./assets/android/android_map.gif"/>
 </p>
 
