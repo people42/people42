@@ -1,3 +1,10 @@
+import com.github.jk1.license.render.ReportRenderer
+import com.github.jk1.license.render.InventoryHtmlReportRenderer
+import com.github.jk1.license.render.InventoryMarkdownReportRenderer
+import com.github.jk1.license.filter.DependencyFilter
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -5,6 +12,13 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id("androidx.navigation.safeargs.kotlin")
     id 'com.google.gms.google-services'
+    id("com.github.jk1.dependency-license-report") version "2.0"
+}
+licenseReport {
+    outputDir = "$projectDir/build"
+//    renderers = [new InventoryHtmlReportRenderer("report.html", "Backend")]
+    renderers = [new InventoryMarkdownReportRenderer()]
+    filters = [new LicenseBundleNormalizer(), new ExcludeTransitiveDependenciesFilter()]
 }
 
 def Properties properties = new Properties()
@@ -18,7 +32,7 @@ android {
         applicationId "com.cider.fourtytwo"
         minSdk 26
         targetSdk 33
-        versionCode 9
+        versionCode 10
         versionName "1"
         buildConfigField "String", "map_key", properties["map_key"]
         buildConfigField "String", "web_client_id", properties["web_client_id"]
