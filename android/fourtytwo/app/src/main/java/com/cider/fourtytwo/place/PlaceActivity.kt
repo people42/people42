@@ -112,7 +112,7 @@ class PlaceActivity : AppCompatActivity() {
     }
     private fun setBlock(header:String, userIdx:Int, id:Int){
         val params = HashMap<String, Int>()
-        params["messageIdx"] = userIdx
+        params["userIdx"] = userIdx
         api.setBlock(header, params).enqueue(object : Callback<MessageResponse> {
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                 response.body()?.let {

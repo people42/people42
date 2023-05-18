@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.cider.fourtytwo.R
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.typeOf
 
@@ -86,17 +87,25 @@ class FeedAdapter(private val context: Context, private val itemList : List<Rece
         val repeatUserEmojis: RecyclerView = itemView.findViewById(R.id.new_recyclerAgain)
     }
     fun isTodayOrYesterday(text: String): String {
-        val timeString = text.substring(0, 16)
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
-        val dateTime = LocalDateTime.parse(timeString, formatter).toLocalDate()
-        val today = LocalDate.now()
-        val yesterday = today.minusDays(1)
-        var returnString = text.substring(8, 13)
+        val timeString = text.substring(0, 16)  // "yyyy-MM-dd'T'HH:mm"
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm") // 문자열 -> 시간
+        val dateTime = LocalDateTime.parse(timeString, formatter).toLocalDate() // 바꿔라
+        val today = LocalDate.now(ZoneId.of("Asia/Seoul")) // 오늘 시간
+        val yesterday = today.minusDays(1) // 어제
+        var returnString = "${timeString.substring(8, 10)}일 ${timeString.substring(12, 14)}시" // "
         if (dateTime == today) {
             returnString = "오늘 ${text.substring(11, 13)}시 쯤"
         } else if (dateTime == yesterday) {
             returnString = "어제 ${text.substring(11, 13)}시 쯤"
         }
         return returnString
+    }
+    fun timeEdit(inputDate : String): String? {
+        val timeString = inputDate.substring(0, 16)
+        val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        val dateTime = LocalDateTime.parse(timeString, formatterInput)
+        val formatterOutput = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
+        val outputDate = formatterOutput.format(dateTime)
+        return outputDate // 2023년 05월 03일 00시 47분
     }
 }

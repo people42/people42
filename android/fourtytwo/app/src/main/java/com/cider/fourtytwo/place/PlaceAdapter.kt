@@ -30,11 +30,15 @@ import java.time.format.DateTimeFormatter
 
 class PlaceAdapter(private val context: Context, val itemList : ArrayList<MessagesInfo>) :
     RecyclerView.Adapter<PlaceAdapter.FeedViewHolder>() {
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_feed, parent, false)
         return FeedViewHolder(view)
     }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
+
         Glide.with(context).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${itemList.get(position).emoji}.gif").into(holder.emoji)
         val brush = itemList[position].brushCnt
         val item = itemList[position]
@@ -113,6 +117,7 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
                     placeClickListener.onPlaceLongClick(it, position, id, 0, itemList[position].userIdx)
                     itemList.removeAt(position)
                     notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, itemList.size)
                 }
                 .setNeutralButton("취소") { dialog, id ->
                 }
@@ -177,6 +182,10 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
         return itemList.size
     }
     inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//        var isClicked = false
+//        init {
+//            isClicked = false
+//        }
         var emoji = itemView.findViewById<ImageView>(R.id.feedEmoji)
         var brushCnt = itemView.findViewById<TextView>(R.id.feedbrushCnt)
         var nickname = itemView.findViewById<TextView>(R.id.feedNickname)
@@ -202,13 +211,5 @@ class PlaceAdapter(private val context: Context, val itemList : ArrayList<Messag
     private lateinit var placeClickListener: OnPlaceClickListener
     fun setOnPlaceClickListener(onHistoryClickListener: OnPlaceClickListener) {
         this.placeClickListener = onHistoryClickListener
-    }
-    fun timeEdit(inputDate : String): String? {
-        val timeString = inputDate.substring(0, 16)
-        val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
-        val dateTime = LocalDateTime.parse(timeString, formatterInput)
-        val formatterOutput = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
-        val outputDate = formatterOutput.format(dateTime)
-        return outputDate // 2023년 05월 03일 00시 47분
     }
 }

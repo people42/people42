@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -13,7 +14,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
@@ -24,6 +24,7 @@ import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -44,9 +45,6 @@ import com.cider.fourtytwo.myHistory.MyMessagesActivity
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.*
 import com.cider.fourtytwo.network.RetrofitInstance
-import com.cider.fourtytwo.notification.NotiAdapter
-import com.cider.fourtytwo.notification.NotiItem
-import com.cider.fourtytwo.notification.NotiResponse
 import com.cider.fourtytwo.place.PlaceActivity
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
@@ -71,7 +69,6 @@ import retrofit2.Response
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.*
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
@@ -129,10 +126,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val newMessageButton = findViewById<Button>(R.id.main_think_cloud_button)
         val myOpinion = findViewById<TextView>(R.id.my_opinion_text)
         val newMessage = findViewById<EditText>(R.id.main_guide_text)
+        val emojiBox = findViewById<RelativeLayout>(R.id.home_emoji_box)
         val newText = newMessage.text
         newMessageButton.setOnClickListener {
             val content = newText.toString()
             myOpinion.text = content
+            emojiBox.visibility = GONE
             if (content == " ") {
                 Toast.makeText(this, "당신의 스쳐가는 생각을 남겨주세요", Toast.LENGTH_SHORT).show()
             }else{
@@ -140,6 +139,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     setMessage(userDataStore.get_access_token.first(), content)
                     newMessage.text.clear()
                 }
+                hideKeyboard()
             }
         }
         // 텍스트 작성 중 enter키 눌렀을 때도 메세지 전송 로직 실행
@@ -147,6 +147,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val content = newText.toString()
                 myOpinion.text = content
+                emojiBox.visibility = GONE
                 if (content == " ") {
                     Toast.makeText(this, "당신의 스쳐가는 생각을 남겨주세요", Toast.LENGTH_SHORT).show()
                 }else{
@@ -154,6 +155,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         setMessage(userDataStore.get_access_token.first(), content)
                         newMessage.text.clear()
                     }
+                    hideKeyboard()
                 }
                 true
             } else {
@@ -617,6 +619,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     farMarkers.setIcon(markerIcon)
                     farMarkers.snippet="생각중..."
                     farMarkers.showInfoWindow()
+                    val handler = Handler()
+                    handler.postDelayed({
+                        farMarkers.hideInfoWindow()
+                    }, 3000)
                 }
             // 보는 중이면 사람 이모지로 변경
             } else{
@@ -640,10 +646,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                     handler.postDelayed({
                                         farMarkers.hideInfoWindow()
                                     }, 3000)}
-                                // 메세지 안 바뀌었으면 말풍선 숨기기
-                                else{
-                                    farMarkers.hideInfoWindow()
-                                }
+//                                // 메세지 안 바뀌었으면 말풍선 숨기기
+//                                else{
+//                                    farMarkers.hideInfoWindow()
+//                                }
                             }
                         })
                 }
@@ -656,6 +662,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val farMarkers = markerList.lastOrNull { it.title == user.nickname }
             if (farMarkers != null) {
                 farMarkers.snippet = user.message
+//                farMarkers.showInfoWindow()
             }
         }
     }
@@ -671,7 +678,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     fun pong(){
         val json = JSONObject().apply {
             put("method", "PONG")
-//            put("status", "watching")
         }
         sendMessage(json.toString())
     }
@@ -693,22 +699,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
     private fun setMessage(Header: String, myMessage: String){
-        lifecycleScope.launch {
-            if (userDataStore.get_webSocket.first()) {
-                val changeStatus = JSONObject().apply {
-                    put("method", "CHANGE_STATUS")
-                    put("status", "watching")
-                }
-                sendMessage(changeStatus.toString())
-            }
-        }
         val params = HashMap<String, String>()
-        params.put("message", myMessage)
-        Log.i(TAG, "setMessage: $params")
+        params["message"] = myMessage
         api.setMessage(Header, params).enqueue(object : Callback<MessageResponse> {
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                 if (response.code() == 200) {
-                    Log.i(TAG, "메세지 전송 200: 잘 보내졌다네")
                     findViewById<View>(R.id.layout_opinion).visibility = VISIBLE
                     findViewById<View>(R.id.layout_edit_opinion).visibility = GONE
                     // 새로 작성한 메세지 소켓에 전송
@@ -722,7 +717,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
                     }
                 } else if (response.code() == 401){
-                    Log.i(TAG, "메세지 전송 401: 토큰 만료")
                     getToken(myMessage, null)
                 } else {
                     Log.i(TAG, "메세지 전송 기타: ${response.code()}")
@@ -740,8 +734,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun getNowMessage(header : String) {
         api.getNowMessage(header).enqueue(object : Callback<NowMessageResponse> {
             override fun onResponse(call: Call<NowMessageResponse>, response: Response<NowMessageResponse>) {
-                Log.d(TAG, "onResponse: getNowMessage $response")
-                Log.d(TAG, "onResponse: getNowMessage ${response.body()?.data}")
                 if (response.code() == 200) {
                     // 메세지가 있으면
                     if(response.body()?.data?.messageCnt!! > 0) {
@@ -795,7 +787,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
                     }
                 } else if (response.code() == 401){
-                    Log.i(TAG, "NowMessage_onResponse 401: 토큰 만료")
                     getToken(" ", null)
                 } else {
                     Log.i(TAG, "NowMessage_onResponse 기타 코드: ${response.code()}")
@@ -810,7 +801,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         var feedList : ArrayList<RecentFeedData> = ArrayList()
         api.getRecentFeed(header).enqueue(object : Callback<RecentFeedResponse> {
             override fun onResponse(call: Call<RecentFeedResponse>, response: Response<RecentFeedResponse>) {
-                Log.d("getRecentFeed 응답", response.toString())
                 if (response.code() == 200) {
                     feedList = response.body()!!.data
                     if (feedList.isNotEmpty()){
@@ -832,9 +822,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             }
                         })
                     }
-                    Log.i(TAG, "getRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){
-                    Log.i(TAG, "getRecentFeed_onResponse 401: 토큰 만료")
                     getToken(" ", null)
                 } else {
                     Log.i(TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
@@ -858,13 +846,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "공감 완료")
                         } else if (response.code() == 401){
                             api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
                                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                                     response.body()?.let {
                                         if (it.status == 200) {
-                                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
                                             response.body()?.data?.let {
                                                 it1 -> lifecycleScope.launch {
                                                     userDataStore.setUserData(it1)
@@ -889,7 +875,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
                             response.body()?.data?.let {
                                 it1 -> saveUserInfo(it1, type, double)
                             }
@@ -912,7 +897,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         lifecycleScope.launch {
             userDataStore.setUserData(payload)
             val token = userDataStore.get_access_token.first()
-            Log.d(TAG, "saveUserInfo: $type")
             if (type == " "){
                 getRecentFeed(token)
                 getNowMessage(token)
@@ -1157,5 +1141,9 @@ private var backButtonPressedTime: Long = 0
                 markerList.clear()
             }
         }
+    }
+    fun hideKeyboard() {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }
