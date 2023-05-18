@@ -16,6 +16,6 @@ public class BrushController {
     @PostMapping("")
     public ResponseEntity<ApiResponse<PlaceWithTimeResDto>> renewGps(@RequestHeader("ACCESS-TOKEN") String accessToken,
                                                                      @RequestBody GpsReqDto gps) {
-        return ApiResponse.ok(gpsService.renewGps(accessToken, gps));
+        return ApiResponse.ok(gpsService.lockRenewGps(accessToken, gps));
     }
 }

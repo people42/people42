@@ -10,8 +10,12 @@ import com.fourtytwo.repository.brush.BrushRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
@@ -29,6 +33,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +54,29 @@ public class GpsService {
     private final RedisTemplate<String, String> brushTemplate;
     private final String kakaoRestApiKey;
     private final String googleMapKey;
+    private final RedissonClient redissonClient;
+
+    public PlaceWithTimeResDto lockRenewGps(String accessToken, GpsReqDto gps) {
+        RLock lock = redissonClient.getLock("renewGpsKey");
+
+        try {
+            boolean isLocked = lock.tryLock(1, 2, TimeUnit.SECONDS);
+            if (!isLocked) {
+                // 락 획득에 실패했으므로 예외 처리
+                throw new DataAccessException("너무 많은 요청을 보냈습니다.") {
+                };
+            }
+
+            return renewGps(accessToken, gps);
+
+        } catch (InterruptedException e) {
+            // 쓰레드가 인터럽트 될 경우의 예외 처리
+            throw new RuntimeException(e);
+        } finally {
+            // 락 해제
+            lock.unlock();
+        }
+    };
 
     public PlaceWithTimeResDto renewGps(String accessToken, GpsReqDto gps) {
         Long userIdx = userService.checkUserByAccessToken(accessToken);
@@ -62,30 +90,39 @@ public class GpsService {
 
         LocalDateTime current = LocalDateTime.now();
         Integer mappedTime = toTotalMinutes(current);
+        boolean flag = false;
 
         if (foundPlace == null) {
             List<Map<String, Object>> popularPlaces = getPopularPlaces(gps.getLatitude(), gps.getLongitude());
             Map<String, Object> targetPlace;
-            if (popularPlaces.isEmpty()) {
-                targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
-                Place newPlace = new Place();
-                newPlace.setName((String) targetPlace.get("place_name"));
-                newPlace.setLatitude(Double.parseDouble((String) targetPlace.get("y")));
-                newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
-                foundPlace = placeRepository.save(newPlace);
-            } else {
+            if (!popularPlaces.isEmpty()) {
                 targetPlace = popularPlaces.get(0);
                 String placeName = (String) targetPlace.get("name");
                 Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
                 Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
-
+                if (gps.getLatitude() > placeLat - 0.005 && gps.getLatitude() < placeLat + 0.005 &&
+                        gps.getLongitude() > placeLng - 0.005 && gps.getLongitude() < placeLng + 0.005) {
+                    Place newPlace = new Place();
+                    newPlace.setName(placeName);
+                    newPlace.setLatitude(placeLat);
+                    newPlace.setLongitude(placeLng);
+                    foundPlace = placeRepository.save(newPlace);
+                } else {
+                    flag = true;
+                }
+            } else {
+                flag = true;
+            }
+            if (flag) {
+                targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
                 Place newPlace = new Place();
-                newPlace.setName(placeName);
-                newPlace.setLatitude(placeLat);
-                newPlace.setLongitude(placeLng);
+                newPlace.setName((String) targetPlace.get("address_name"));
+                newPlace.setLatitude(gps.getLatitude());
+                newPlace.setLongitude(gps.getLongitude());
                 foundPlace = placeRepository.save(newPlace);
             }
         }
+
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
         SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
@@ -262,7 +299,11 @@ public class GpsService {
         List<Map<String, Object>> documents = objectMapper.convertValue(responseMap.get("documents"), listTypeRef);
 
         if (!documents.isEmpty()) {
-            return (Map<String, Object>) documents.get(0).get("road_address");
+            if (documents.get(0).get("road_address") == null) {
+                return (Map<String, Object>) documents.get(0).get("address");
+            } else {
+                return (Map<String, Object>) documents.get(0).get("road_address");
+            }
         } else {
             throw new RuntimeException("No road address found for given coordinates");
         }
