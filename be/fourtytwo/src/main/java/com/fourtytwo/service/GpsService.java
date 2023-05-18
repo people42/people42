@@ -10,6 +10,7 @@ import com.fourtytwo.repository.brush.BrushRepository;
 import com.fourtytwo.repository.message.MessageRepository;
 import com.fourtytwo.repository.place.PlaceRepository;
 import com.fourtytwo.repository.user.UserRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -89,30 +90,40 @@ public class GpsService {
 
         LocalDateTime current = LocalDateTime.now();
         Integer mappedTime = toTotalMinutes(current);
+        boolean flag = false;
 
         if (foundPlace == null) {
             List<Map<String, Object>> popularPlaces = getPopularPlaces(gps.getLatitude(), gps.getLongitude());
             Map<String, Object> targetPlace;
-            if (popularPlaces.isEmpty()) {
+            if (!popularPlaces.isEmpty()) {
+                targetPlace = popularPlaces.get(0);
+                String placeName = (String) targetPlace.get("name");
+                Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
+                Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
+
+                if (gps.getLatitude() < placeLat - 0.005 || gps.getLatitude() > placeLat + 0.005 ||
+                        gps.getLongitude() < placeLng - 0.005 || gps.getLongitude() > placeLng + 0.005) {
+                    Place newPlace = new Place();
+                    newPlace.setName(placeName);
+                    newPlace.setLatitude(placeLat);
+                    newPlace.setLongitude(placeLng);
+                    foundPlace = placeRepository.save(newPlace);
+                } else {
+                    flag = true;
+                }
+            } else {
+                flag = true;
+            }
+            if (flag) {
                 targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
                 Place newPlace = new Place();
                 newPlace.setName((String) targetPlace.get("place_name"));
                 newPlace.setLatitude(Double.parseDouble((String) targetPlace.get("y")));
                 newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
                 foundPlace = placeRepository.save(newPlace);
-            } else {
-                targetPlace = popularPlaces.get(0);
-                String placeName = (String) targetPlace.get("name");
-                Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
-                Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
-
-                Place newPlace = new Place();
-                newPlace.setName(placeName);
-                newPlace.setLatitude(placeLat);
-                newPlace.setLongitude(placeLng);
-                foundPlace = placeRepository.save(newPlace);
             }
         }
+        
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
         SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
