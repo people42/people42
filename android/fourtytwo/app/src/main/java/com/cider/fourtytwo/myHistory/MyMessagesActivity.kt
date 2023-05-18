@@ -2,6 +2,7 @@ package com.cider.fourtytwo.myHistory
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -58,8 +60,6 @@ class MyMessagesActivity : AppCompatActivity(){
         lifecycleScope.launch {
             // 이모지
             val myEmojiView = findViewById<ImageView>(R.id.main_guide_emoji)
-            Log.d(TAG, "onCreate: $myEmojiView")
-            Log.d(TAG, "onCreate: $myEmojiView")
             setEmoji(userDataStore.get_emoji.first(), myEmojiView)
             // 히스토리
             val token = userDataStore.get_access_token.first()
@@ -77,6 +77,7 @@ class MyMessagesActivity : AppCompatActivity(){
                     setMessage(userDataStore.get_access_token.first(), content)
                     newMessage.text.clear()
                 }
+                hideKeyboard()
             }
         }
         newMessage.setOnEditorActionListener { _, actionId, _ ->
@@ -89,6 +90,7 @@ class MyMessagesActivity : AppCompatActivity(){
                         setMessage(userDataStore.get_access_token.first(), content)
                         newMessage.text.clear()
                     }
+                    hideKeyboard()
                 }
                 true
             } else {
@@ -106,7 +108,6 @@ class MyMessagesActivity : AppCompatActivity(){
                         getHistory(userDataStore.get_access_token.first())
                     }
                 } else if (response.code() == 401){
-                    Log.i(TAG, "메세지 전송 401: 토큰 만료")
                     getToken(myMessage)
                 } else {
                     Log.i(TAG, "메세지 전송 기타: ${response.code()}")
@@ -128,8 +129,6 @@ class MyMessagesActivity : AppCompatActivity(){
             override fun onResponse(call: Call<HistoryResponse>, response: Response<HistoryResponse>) {
                 if (response.code() == 200) {
                     val result = response.body()?.data!!
-                    Log.d(TAG, "getHistory onResponse: ${response.body()}")
-                    Log.d(TAG, "getHistory onResponse: $result")
                     val history = findViewById<RecyclerView>(R.id.history_recyclerView)
                     val historyAdapter = MyMessagesAdapter(this@MyMessagesActivity, result)
 
@@ -137,7 +136,6 @@ class MyMessagesActivity : AppCompatActivity(){
                     history.layoutManager = LinearLayoutManager(this@MyMessagesActivity, LinearLayoutManager.VERTICAL, false)
                     historyAdapter.setOnHistoryClickListener(object : MyMessagesAdapter.OnHistoryClickListener{
                         override fun onHistoryClick(view: View, position: Int, messageIdx: Int) {
-                            Log.d(TAG, "onRightClick: 액티비티 눌림")
                             lifecycleScope.launch {
                                 val token = userDataStore.get_access_token.first()
                                 deleteMessage(token, messageIdx)
@@ -145,7 +143,6 @@ class MyMessagesActivity : AppCompatActivity(){
                         }
                     })
                 } else if (response.code() == 401){
-                    Log.i(TAG, "401: 토큰 만료")
                     getToken(" ")
                 } else {
                     Log.i(TAG, "기타: $response")
@@ -161,10 +158,7 @@ class MyMessagesActivity : AppCompatActivity(){
         params["messageIdx"] = messageIdx
         api.deleteMessage(header, params).enqueue(object : Callback<MessageResponse> {
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
-                if (response.code() == 200) {
-                    Log.i(TAG, "onResponse: 메세지 삭제 성공")
-                } else if (response.code() == 401){
-                    Log.i(TAG, "메세지 전송 401: 토큰 만료")
+                if (response.code() == 401){
                     deleteToken(messageIdx)
                 } else {
                     Log.i(TAG, "메세지 전송 기타: ${response.code()}")
@@ -182,7 +176,6 @@ class MyMessagesActivity : AppCompatActivity(){
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
                                 response.body()?.data?.let {
                                     it1 -> saveUserInfo(it1, myMessage)
                             }
@@ -204,7 +197,6 @@ class MyMessagesActivity : AppCompatActivity(){
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "토큰 전송 200: 유저 정보 저장")
                             response.body()?.data?.let {
                                     it1 -> deleteUserInfo(it1, messageIdx)
                             }
@@ -268,7 +260,6 @@ class MyMessagesActivity : AppCompatActivity(){
     private fun getNotiCnt(header : String, menu:Menu){
         api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
             override fun onResponse(call: Call<NotiCntResponse>, response: Response<NotiCntResponse>) {
-                Log.d("getNoti 응답", response.toString())
                 if (response.code() == 200) {
                     val notiCnt = response.body()!!.data.notificationCnt
                     if (notiCnt > 0){
@@ -276,14 +267,12 @@ class MyMessagesActivity : AppCompatActivity(){
                         menuItem.setIcon(R.drawable.baseline_notifications_true24)
                     }
                 } else if (response.code() == 401){
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
                     lifecycleScope.launch {
                         val refreshToken = userDataStore.get_refresh_token.first()
                         api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
                             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                                 response.body()?.let {
                                     if (it.status == 200) {
-                                        Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
                                         response.body()?.data?.let {
                                                 it1 -> {
                                             lifecycleScope.launch {
@@ -304,13 +293,15 @@ class MyMessagesActivity : AppCompatActivity(){
                             }
                         })
                     }
-                } else {
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
                 }
             }
             override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
                 Log.d("gerRecentFeed_onFailure", t.message.toString())
             }
         })
+    }
+    fun hideKeyboard() {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }

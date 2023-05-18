@@ -122,6 +122,8 @@ struct SystemView: View {
     var body: some View {
         VStack {
             VStack(alignment: .leading, spacing: 32) {
+                NavLink(title: "닉네임 변경", page: NicknameChangeView())
+                
                 NavLink(title: "이모지 변경", page: EmojiSwapView())
                 
 //                NavLink(title: "알림 및 소리", page: Text("알림 및 소리"))

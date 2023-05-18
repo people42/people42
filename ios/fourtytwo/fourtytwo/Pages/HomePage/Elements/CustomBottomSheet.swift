@@ -36,6 +36,16 @@ class CustomBottomSheetViewModel: ObservableObject {
 
         return reverse ? 1 - opacity : opacity
     }
+    
+    func toggleSheet(_ height: CGFloat) {
+        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.8)) {
+            if offsetY == upperY {
+                offsetY = height - lowerY
+            } else {
+                offsetY = upperY
+            }
+        }
+    }
 
 }
 
@@ -76,6 +86,9 @@ struct CustomBottomSheet: View {
                                 .opacity(viewModel.getCurrentOpacity(geometry.size.height, reverse: true))
                         }
                         .frame(height: 16)
+                    }
+                    .onTapGesture {
+                        viewModel.toggleSheet(geometry.size.height)
                     }
                     .background(Color("BgSecondary"))
                     .clipShape(CustomCorners(corners: [.topRight, .topLeft], radius: 32))

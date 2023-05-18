@@ -31,12 +31,12 @@ struct ReactionButton: View {
             if showReactions {
                 Capsule()
                     .frame(width: size + CGFloat(reactions.count) * size, height: size)
-                    .foregroundColor(Color("BgPrimary"))
+                    .foregroundColor(Color("BgSecondary"))
                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
             } else {
                 Circle()
                     .frame(width: size, height: size)
-                    .foregroundColor(Color("BgPrimary"))
+                    .foregroundColor(Color("BgSecondary"))
                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
             }
             HStack(spacing: 10) {

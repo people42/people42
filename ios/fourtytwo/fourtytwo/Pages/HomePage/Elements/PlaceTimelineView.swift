@@ -1,17 +1,47 @@
 import SwiftUI
 
-struct PlaceTimelineView: View {
-    @EnvironmentObject var placeViewState: PlaceViewState
+class PlaceTimelineViewModel: ObservableObject {
+    @Published var locationCardsData: [LocationCardData] = []
     
-    @Environment(\.scenePhase) private var scenePhase
-    
-    @State var locationCardsData: [LocationCardData] = []
-    @State private var refreshing: Bool = false
+    func getLocationCardsData() {
+        FeedService.getNewFeed { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let newFeeds = response.data {
+                        let newLocationCardsData = newFeeds.map { newFeed in
+                            return LocationCardData(
+                                time: newFeed.placeWithTimeInfo.time,
+                                nickname: newFeed.recentUsersInfo.nickname,
+                                userCnt: newFeed.recentUsersInfo.userCnt,
+                                placeIdx: newFeed.placeWithTimeInfo.placeIdx,
+                                placeName: newFeed.placeWithTimeInfo.placeName,
+                                old: newFeed.recentUsersInfo.repeatUserEmojis,
+                                new: newFeed.recentUsersInfo.firstTimeUserEmojis
+                            )
+                        }
+                        
+                        if self.locationCardsData != newLocationCardsData {
+                            self.locationCardsData = newLocationCardsData
+                        }
+                    }
+                }
+            case .failure(let error):
+                print("Error fetching recent feeds: \(error)")
+            }
+        }
+    }
+}
 
+struct PlaceTimelineView: View {
+    @StateObject private var viewModel = PlaceTimelineViewModel()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var refreshing: Bool = false
+    
     var body: some View {
         ZStack {
             HStack {
-                if !locationCardsData.isEmpty {
+                if !viewModel.locationCardsData.isEmpty {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 2, height: UIScreen.main.bounds.height)
@@ -22,7 +52,7 @@ struct PlaceTimelineView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    if locationCardsData.isEmpty {
+                    if viewModel.locationCardsData.isEmpty {
                         VStack {
                             Spacer()
                             HStack {
@@ -34,33 +64,33 @@ struct PlaceTimelineView: View {
                         }
                         .frame(height: UIScreen.main.bounds.height - 200)
                     } else {
-                        ForEach(locationCardsData.indices, id: \.self) { index in
+                        ForEach(viewModel.locationCardsData.indices, id: \.self) { index in
                             HStack(alignment: .center, spacing: 8) {
                                 ZStack(alignment: .center) {
                                     TimelinePoint()
                                 }
-                                LocationCard(locationCardData: locationCardsData[index])
+                                LocationCard(locationCardData: viewModel.locationCardsData[index])
                             }
-                            .padding(.bottom, index == locationCardsData.count - 1 ? 200 : 16)
+                            .padding(.bottom, index == viewModel.locationCardsData.count - 1 ? 200 : 16)
                         }
                     }
                 }
                 .padding()
             }
+            .id(UUID())
             .onAppear {
-                getLocationCardsData()
-
-                Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-                    getLocationCardsData()
+                viewModel.getLocationCardsData()
+                Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
+                    viewModel.getLocationCardsData()
                 }
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {
-                    getLocationCardsData()
+                    viewModel.getLocationCardsData()
                 }
             }
             .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
-                getLocationCardsData()
+                viewModel.getLocationCardsData()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     refreshing = false
                 }
@@ -69,39 +99,6 @@ struct PlaceTimelineView: View {
     }
 }
 
-extension PlaceTimelineView {
-    private func getLocationCardsData() {
-        FeedService.getNewFeed { result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    
-                    if let newFeeds = response.data {
-                        self.locationCardsData = []
-                        self.locationCardsData = newFeeds.map { newFeed in
-                            
-                            // RecentFeed를 MessageInfo로 변환
-                            return LocationCardData(
-                                time: newFeed.placeWithTimeInfo.time,
-                                nickname: newFeed.recentUsersInfo.nickname,
-                                userCnt: newFeed.recentUsersInfo.userCnt,
-                                placeIdx: newFeed.placeWithTimeInfo.placeIdx,
-                                placeName: newFeed.placeWithTimeInfo.placeName,
-                                old: newFeed.recentUsersInfo.repeatUserEmojis,
-                                new: newFeed.recentUsersInfo.firstTimeUserEmojis
-                            )
-                            
-                        }
-                    }
-                }
- 
-
-            case .failure(let error):
-                print("Error fetching recent feeds: \(error)")
-            }
-        }
-    }
-}
 
 struct PlaceTimelineView_Previews: PreviewProvider {
     static var previews: some View {
