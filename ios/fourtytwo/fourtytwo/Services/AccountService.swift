@@ -41,6 +41,11 @@ struct AccountService {
         APIManager.shared.request(endpoint: "/account/history", method: .get, parameters: data, responseType: ResponseMessage<[MyHistory]>.self, completion: completion)
     }
     
+    // 나의 닉네임 변경
+    static func changeNickname(data: [String : Any], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
+        APIManager.shared.request(endpoint: "/account/nickname", method: .put, parameters: data, responseType: ResponseMessage<Empty>.self, completion: completion)
+    }
+    
     // 나의 프로필 이모지 변경
     static func changeEmoji(data: [String : Any], completion: @escaping (Result<ResponseMessage<Empty>, AFError>) -> Void) {
         APIManager.shared.request(endpoint: "/account/emoji", method: .put, parameters: data, responseType: ResponseMessage<Empty>.self, completion: completion)

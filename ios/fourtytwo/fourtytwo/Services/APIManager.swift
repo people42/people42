@@ -20,6 +20,10 @@ class APIManager {
 
     // UserState 인스턴스를 참조하는 프로퍼티 추가
     @Published var userState = UserState()
+    
+    // SignUpState 인스턴스 참조 프로퍼티
+    @Published var appState = AppState()
+    @Published var signUpState = SignUpState()
 
     // 기본 HTTP 헤더 설정
     private var headers: HTTPHeaders = []
@@ -69,6 +73,30 @@ class APIManager {
                 }
                 completion(.success(()))
             case .failure(let error):
+                print("Refresh token also expired. Log out the user.")
+                
+                // 로그아웃
+                UserService.logout() { result in
+                    switch result {
+                    case .success(_):
+                        print("서버 토큰 삭제")
+                    case .failure(let error):
+                        print("Error: \(error.localizedDescription)")
+                    }
+                }
+                
+                APIManager.shared.userState.accessToken = ""
+                APIManager.shared.userState.refreshToken = ""
+                APIManager.shared.userState.user_idx = nil
+                APIManager.shared.userState.email = nil
+                APIManager.shared.userState.nickname = nil
+                APIManager.shared.userState.emoji = nil
+                // 로그인 화면으로 이동
+                APIManager.shared.appState.currentView = .login
+                // 로그인 타입 - 논
+                APIManager.shared.signUpState.loginType = .none
+                
+                
                 completion(.failure(error))
             }
         }

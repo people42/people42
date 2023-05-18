@@ -121,7 +121,7 @@ struct EmojiSwapView: View {
                 }
             }
             ToolbarItem(placement: .principal) {
-                Text("설정")
+                Text("이모지 변경")
                     .font(.system(size: 18))
                     .fontWeight(.semibold)
             }

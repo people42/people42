@@ -71,6 +71,7 @@
 		36A2E3D229EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
 		36A2E3D329EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
 		36A2E3D429EE69180003F906 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A2E3D129EE69180003F906 /* SplashView.swift */; };
+		36B8A2052A13BC8900F5E4A9 /* NicknameChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */; };
 		36BF9C3D29ED4F390011677E /* fourtytwoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BF9C3C29ED4F390011677E /* fourtytwoApp.swift */; };
 		36BF9C3F29ED4F390011677E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BF9C3E29ED4F390011677E /* LoginView.swift */; };
 		36BF9C4129ED4F3B0011677E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36BF9C4029ED4F3B0011677E /* Assets.xcassets */; };
@@ -166,6 +167,7 @@
 		36680D2E29F6C9D1001EFD52 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		36680D3229F6CB96001EFD52 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		36A2E3D129EE69180003F906 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameChangeView.swift; sourceTree = "<group>"; };
 		36BF9C3929ED4F390011677E /* fourtytwo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fourtytwo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36BF9C3C29ED4F390011677E /* fourtytwoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fourtytwoApp.swift; sourceTree = "<group>"; };
 		36BF9C3E29ED4F390011677E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -177,7 +179,7 @@
 		36BF9C5429ED4F3B0011677E /* fourtytwoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = fourtytwoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		36BF9C5829ED4F3B0011677E /* fourtytwoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fourtytwoUITests.swift; sourceTree = "<group>"; };
 		36BF9C5A29ED4F3B0011677E /* fourtytwoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fourtytwoUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		36BF9C6C29ED9AE50011677E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		36BF9C6C29ED9AE50011677E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36BF9C6E29EDA98A0011677E /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		36BF9C7229EE41B80011677E /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
 		36DA62F429F60BF6001191DB /* MyMassageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMassageCard.swift; sourceTree = "<group>"; };
@@ -236,9 +238,10 @@
 		3606DC1829EF6BC40025F0FC /* Design */ = {
 			isa = PBXGroup;
 			children = (
-				36BF9C6D29EDA9410011677E /* Fonts */,
+				36BF9C4029ED4F3B0011677E /* Assets.xcassets */,
 				3606DC1229EECD650025F0FC /* Color.swift */,
 				3606DC1629EF68640025F0FC /* Font.swift */,
+				36BF9C6D29EDA9410011677E /* Fonts */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -270,8 +273,8 @@
 				360D52CF29FA078D00F67940 /* AccountService.swift */,
 				360D52D129FA153B00F67940 /* FeedService.swift */,
 				362553E82A0A956A00A2CD4A /* NotificationService.swift */,
-				360D52B629F81C9B00F67940 /* LocationService.swift */,
 				360D52B229F81BA800F67940 /* LocationManager.swift */,
+				360D52B629F81C9B00F67940 /* LocationService.swift */,
 				360D52B429F81C1600F67940 /* LocationSender.swift */,
 				362553C92A02B6CE00A2CD4A /* CommonService.swift */,
 				362553DE2A08AD9E00A2CD4A /* WebSocketManager.swift */,
@@ -312,6 +315,7 @@
 				360D52C929F941FF00F67940 /* NavLink.swift */,
 				360D52CB29F944EE00F67940 /* PolicyWebView.swift */,
 				360D52DB29FC1FF400F67940 /* EmojiSwapView.swift */,
+				36B8A2042A13BC8900F5E4A9 /* NicknameChangeView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -475,20 +479,16 @@
 		36BF9C3B29ED4F390011677E /* fourtytwo */ = {
 			isa = PBXGroup;
 			children = (
-				365B964529FE50A500647950 /* AppState */,
 				36BF9C3C29ED4F390011677E /* fourtytwoApp.swift */,
 				360D52AC29F77ED700F67940 /* ContentView.swift */,
-				362553E22A08DA7E00A2CD4A /* AppDelegate.swift */,
-				362553E02A08D99F00A2CD4A /* SceneDelegate.swift */,
+				36BF9C6C29ED9AE50011677E /* Info.plist */,
+				365B964529FE50A500647950 /* AppState */,
+				36DFEB492A149B0E004F0748 /* Supports */,
 				3606DE2A29F263290025F0FC /* Services */,
 				3606DC1829EF6BC40025F0FC /* Design */,
-				36BF9C4029ED4F3B0011677E /* Assets.xcassets */,
-				36BF9C6C29ED9AE50011677E /* Info.plist */,
-				362553D12A039BE200A2CD4A /* GoogleService-Info.plist */,
 				3606DC1929EF82A50025F0FC /* Components */,
 				36A2E3D529EE69360003F906 /* Pages */,
 				36BF9C4229ED4F3B0011677E /* fourtytwo.entitlements */,
-				360D52AF29F79FA800F67940 /* KeychainSwiftDistrib.swift */,
 				36BF9C4329ED4F3B0011677E /* Preview Content */,
 			);
 			path = fourtytwo;
@@ -525,6 +525,17 @@
 				36BF9C6E29EDA98A0011677E /* Roboto-Medium.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		36DFEB492A149B0E004F0748 /* Supports */ = {
+			isa = PBXGroup;
+			children = (
+				362553E22A08DA7E00A2CD4A /* AppDelegate.swift */,
+				362553E02A08D99F00A2CD4A /* SceneDelegate.swift */,
+				362553D12A039BE200A2CD4A /* GoogleService-Info.plist */,
+				360D52AF29F79FA800F67940 /* KeychainSwiftDistrib.swift */,
+			);
+			path = Supports;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -695,6 +706,7 @@
 				362553D72A03D73D00A2CD4A /* RefreshableModifier.swift in Sources */,
 				360D52D229FA153B00F67940 /* FeedService.swift in Sources */,
 				362553D92A043F3300A2CD4A /* WrappedMap.swift in Sources */,
+				36B8A2052A13BC8900F5E4A9 /* NicknameChangeView.swift in Sources */,
 				365B964429FDA47E00647950 /* PlaceView.swift in Sources */,
 				36680D2F29F6C9D1001EFD52 /* HomeView.swift in Sources */,
 				3606DC0829EE87910025F0FC /* FirstSectionView.swift in Sources */,
@@ -895,7 +907,7 @@
 				CODE_SIGN_ENTITLEMENTS = fourtytwo/fourtytwo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fourtytwo/Preview Content\"";
 				DEVELOPMENT_TEAM = U8PNX9PT5S;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -921,7 +933,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cider.fourtytwo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -943,7 +955,7 @@
 				CODE_SIGN_ENTITLEMENTS = fourtytwo/fourtytwo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fourtytwo/Preview Content\"";
 				DEVELOPMENT_TEAM = U8PNX9PT5S;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -969,7 +981,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cider.fourtytwo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
