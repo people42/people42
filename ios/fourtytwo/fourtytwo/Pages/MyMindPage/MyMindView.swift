@@ -27,8 +27,13 @@ struct MyMindView: View {
                             .padding(.bottom, 8)
                         }
                     } else {
-                        Text("생각을 추가해주세요")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        VStack {
+                            Spacer()
+                            Text("생각을 추가해주세요")
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            Spacer()
+                        }
+                        .frame(height: UIScreen.main.bounds.height * 0.7)
                     }
                 }
             }

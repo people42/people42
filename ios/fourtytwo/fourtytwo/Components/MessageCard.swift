@@ -57,32 +57,52 @@ struct MessageCard: View {
             }
             VStack(alignment: .leading) {
                 HStack(alignment: .bottom, spacing: 4) {
+                    
+                    HStack {
+                        HStack {
+                            Spacer()
+                                .frame(width: 48)
+
+                            Button(action: {
+                                showActionSheet.toggle()
+                            }) {
+                                Image(systemName: "ellipsis")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(Color("Text"))
+                            }
+
+                            
+                        }
+                        .environment(\.layoutDirection, .rightToLeft)
+                        
+                        Spacer()
+                        
+                        Group {
+                            Text(messageInfo.nickname)
+                                .font(.customOverline)
+                                .foregroundColor(Color("Text")) +
+                            Text("님과 \(messageInfo.stack)번 스쳤습니다.")
+                                .font(.customOverline)
+                                .foregroundColor(Color("Text"))
+                                .fontWeight(.bold)
+                        }
+                        .lineLimit(1)
+                        .padding(4)
+                        .padding(.leading, 8)
+                        .padding(.trailing, 16)
+                        .background(
+                            Capsule()
+                                .foregroundColor(Color("BgSecondary"))
+                                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 4, y: 4)
+                        )
+                        .offset(x: 20)
+                    }
+                    
                     GifImage(messageInfo.profileImage, isAnimated: false)
                         .frame(width: 40, height: 40)
                     
-                    HStack {
-                        Text(messageInfo.nickname)
-                            .font(.customOverline)
-                            .foregroundColor(Color("Text")) +
-                        Text("님과 \(messageInfo.stack)번 스쳤습니다.")
-                            .font(.customOverline)
-                            .foregroundColor(Color("Text"))
-                            .fontWeight(.bold)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            showActionSheet.toggle()
-                        }) {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(Color("Text"))
-                        }
-                        
-                        Spacer()
-                            .frame(width: 48)
-                    }
                 }
+                .environment(\.layoutDirection, .rightToLeft)
                 .padding(.top, -16)
                 .padding(.leading, -16)
                 .offset(x: 32)

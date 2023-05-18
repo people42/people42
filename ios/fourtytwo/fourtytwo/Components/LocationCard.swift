@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct LocationCardData {
+struct LocationCardData: Equatable {
     let time: String
     let nickname: String
     let userCnt: Int
