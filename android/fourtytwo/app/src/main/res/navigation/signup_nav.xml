@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nicknameFragment"
-        android:name="com.cider.fourtytwo.Signup.NicknameFragment"
+        android:name="com.cider.fourtytwo.signup.NicknameFragment"
         android:label="NicknameFragment" >
         <argument
             android:name="myNickname"
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/emojiFragment"
-        android:name="com.cider.fourtytwo.Signup.EmojiFragment"
+        android:name="com.cider.fourtytwo.signup.EmojiFragment"
         android:label="EmojiFragment" >
         <argument
             android:name="myNickname"
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.cider.fourtytwo.Signup.WelcomeFragment"
+        android:name="com.cider.fourtytwo.signup.WelcomeFragment"
         android:label="WelcomeFragment" >
         <action
             android:id="@+id/action_welcomeFragment_to_guideFragment"
@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/guideFragment"
-        android:name="com.cider.fourtytwo.Signup.GuideFragment"
+        android:name="com.cider.fourtytwo.signup.GuideFragment"
         android:label="fragment_guide"
         tools:layout="@layout/fragment_guide">
         <action

@@ -14,7 +14,7 @@
 
 1. 2023 04 10 (월) ~ 2023 05 19 (금)
 
-1. SSAFY 8기 2학기 자율프로젝트 - 42
+1. 자율프로젝트 - 사이
 
 ## :scroll: 개요
 
@@ -44,9 +44,8 @@
 - Spring Security
 - Redis
 - OAuth2
-- Swagger 3.0.0
 - MariaDB
-- Logger
+- 적어주세요
 ```
 
 **Front-end : 웹(React)**
@@ -126,7 +125,7 @@
 
 ---
 
-### **깃 구조(Git Lab)**
+### **깃 구조**
 
 ```
 GIT LAB
@@ -155,30 +154,19 @@ GIT HUB
   └── ingress-42.yaml
 ```
 
-
 ### **브랜치전략**
 
-![]()
+![](./assets/branch.png)
 <br><br>
 
 ### **파이프라인**
 
-![]()
-<br><br>
-
-### 유저 플로우
-
-![]()
-<br><br>
-
-### 메뉴 구조
-
-![]()
+![](./assets/pipeline.png)
 <br><br>
 
 ### Figma - 와이어프레임, 화면설계, 화면정의서
 
-[Figma Link]()
+[Figma Link](https://www.figma.com/file/L3CelmgNIWFyPxj8kOer0Z/Untitled?type=design&node-id=234%3A4145&t=Xta8lvodXhF1Ulea-1)
 <br><br>
 
 ### 기능명세서
@@ -190,17 +178,17 @@ GIT HUB
 
 ### 아키텍쳐 설계
 
-![]()
+![](./assets/architecture.png)
 <br><br>
 
 ### E-R Diagram
 
-![]()
+![](./assets/ERD.png)
 <br><br>
 
 ### API 명세서
 
-[API 명세서 LINK]()
+[API 명세서 LINK](https://stupendous-thyme-e20.notion.site/API-811a407d9fea4e1ab3b86bc83ee70c62)
 <br><br>
 
 ## 서비스 화면

@@ -3,24 +3,25 @@ package com.cider.fourtytwo
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.media.metrics.LogSessionId
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySettingsBinding
 import com.cider.fourtytwo.network.Api
+import com.cider.fourtytwo.network.Model.MessageResponse
+import com.cider.fourtytwo.network.Model.NotiCntResponse
 import com.cider.fourtytwo.network.Model.SignOutResponse
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.cider.fourtytwo.network.RetrofitInstance
+import com.cider.fourtytwo.setting.ChangeEmojiActivity
+import com.cider.fourtytwo.setting.ChangeNicknameActivity
+import com.cider.fourtytwo.setting.WebViewActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.HashMap
 
 class SettingsActivity : AppCompatActivity() {
     private val binding: ActivitySettingsBinding by lazy { ActivitySettingsBinding.inflate(layoutInflater) }
@@ -38,8 +40,13 @@ class SettingsActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Fourtytwo)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        userDataStore = UserDataStore(this)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+        supportActionBar?.title = "설정"
+        supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
+        supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
 
+        userDataStore = UserDataStore(this)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.web_client_id)
             .requestServerAuthCode(BuildConfig.web_client_id)
@@ -47,50 +54,19 @@ class SettingsActivity : AppCompatActivity() {
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayUseLogoEnabled(true)
-        supportActionBar?.title = "설정"
-        supportActionBar?.elevation = 0.0F  // 상자 그림자 삭제
-        supportActionBar?.setLogo(R.drawable.baseline_arrow_back_ios_new_24) // 뒤로가기이미지
-
+        binding.changeEmoji.setOnClickListener {
+            val intent = Intent(this, ChangeEmojiActivity::class.java)
+            startActivity(intent)
+        }
+        binding.changeNickname.setOnClickListener {
+            val intent = Intent(this, ChangeNicknameActivity::class.java)
+            startActivity(intent)
+        }
         binding.privacyPolicy.setOnClickListener {
             val intent = Intent(this, WebViewActivity::class.java)
             startActivity(intent)
-//            if(binding.privacyPolicyWebview.visibility == VISIBLE) {
-//                binding.privacyPolicyWebview.visibility = GONE
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(0f)
-////                }
-//            } else {
-//                binding.privacyPolicyWebview.visibility = VISIBLE
-//                binding.termsConditionsWebview.visibility = GONE
-//                binding.layoutBtn01.animate().apply {
-//                    duration = 300
-//                    rotation(180f)
-//                }
-//            }
         }
-//        binding.termsConditions.setOnClickListener {
-//            if (binding.termsConditionsWebview.visibility == View.VISIBLE) {
-//                binding.termsConditionsWebview.visibility = View.GONE
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(0f)
-////                }
-//            } else {
-//                binding.termsConditionsWebview.visibility = View.VISIBLE
-//                binding.privacyPolicyWebview.visibility = GONE
-//
-////                binding.layoutBtn01.animate().apply {
-////                    duration = 300
-////                    rotation(180f)
-////                }
-//            }
-//        }
         binding.signout.setOnClickListener{
-//            binding.privacyPolicyWebview.visibility = GONE
-//            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 signOut(userDataStore.get_access_token.first())
             }
@@ -101,8 +77,6 @@ class SettingsActivity : AppCompatActivity() {
                 })
         }
         binding.withdrawal.setOnClickListener{
-//            binding.privacyPolicyWebview.visibility = GONE
-//            binding.termsConditionsWebview.visibility = View.GONE
             lifecycleScope.launch {
                 withdrawal(userDataStore.get_access_token.first())
             }
@@ -153,6 +127,10 @@ class SettingsActivity : AppCompatActivity() {
         })
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            getNotiCnt(token, menu)
+        }
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
@@ -163,7 +141,11 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
-            else -> {}
+            R.id.action_notifications -> {
+                val intent = Intent(this, NotificationActivity::class.java)
+                startActivity(intent)
+                true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -202,5 +184,53 @@ class SettingsActivity : AppCompatActivity() {
                 withdrawal(token)
             }
         }
+    }
+    private fun getNotiCnt(header : String, menu:Menu){
+        api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
+            override fun onResponse(call: Call<NotiCntResponse>, response: Response<NotiCntResponse>) {
+                Log.d("getNoti 응답", response.toString())
+                if (response.code() == 200) {
+                    val notiCnt = response.body()!!.data.notificationCnt
+                    if (notiCnt > 0){
+                        val menuItem = menu.findItem(R.id.action_notifications)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
+                    }
+                } else if (response.code() == 401){
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
+                    lifecycleScope.launch {
+                        val refreshToken = userDataStore.get_refresh_token.first()
+                        api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                response.body()?.let {
+                                    if (it.status == 200) {
+                                        Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                        response.body()?.data?.let {
+                                                it1 -> {
+                                            lifecycleScope.launch {
+                                                userDataStore.setUserData(it1)
+                                                val token =
+                                                    userDataStore.get_access_token.first()
+                                                getNotiCnt(token, menu)
+                                            }
+                                        }
+                                        }
+                                    } else {
+                                        Log.i(ContentValues.TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                    }
+                                }
+                            }
+                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                Log.d("토큰 전송 on failure: ", t.message.toString())
+                            }
+                        })
+                    }
+                } else {
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
+                Log.d("gerRecentFeed_onFailure", t.message.toString())
+            }
+        })
     }
 }
