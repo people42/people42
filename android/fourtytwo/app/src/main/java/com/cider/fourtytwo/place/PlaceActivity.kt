@@ -10,24 +10,29 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.MainActivity
+import com.cider.fourtytwo.NotificationActivity
 import com.cider.fourtytwo.person.PersonActivity
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.SettingsActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
+import com.cider.fourtytwo.network.Model.NotiCntResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -43,16 +48,13 @@ class PlaceActivity : AppCompatActivity() {
     private lateinit var userDataStore: UserDataStore
     //피드
     private lateinit var placeAdapter: PlaceAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // 화면이 구성될 때, 스플래시 테마에서 메인 테마로 변경
         setTheme(R.style.Theme_Fourtytwo)
-
         // 넘겨받은 데이터
         val placeIdx : Int = intent.getIntExtra("placeIdx", 17)
         val time : String? = intent.getStringExtra("time")
         val placeName : String? = intent.getStringExtra("placeName")
-
         // 로고 장착
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayUseLogoEnabled(true)
@@ -70,6 +72,22 @@ class PlaceActivity : AppCompatActivity() {
                 getPlaceFeed(token, placeIdx, time)
             }
         }
+        val bottomSheet = findViewById<CardView>(R.id.place_bottom_sheet)
+        val cornerRadius = bottomSheet.radius
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                }
+            }
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                // slideOffset 접힘 -> 펼쳐짐: 0.0 ~ 1.0
+                if (slideOffset >= 0) {
+                    // 둥글기는 펼칠수록 줄어들도록
+                    bottomSheet.radius = cornerRadius - (cornerRadius * slideOffset)
+                }
+            }
+        })
     }
     private fun setReport(header:String, messageIdx:Int, id:Int){
         val params = HashMap<String, Any>()
@@ -126,7 +144,7 @@ class PlaceActivity : AppCompatActivity() {
                     placeAdapter = PlaceAdapter(this@PlaceActivity, feedList)
                     feed.adapter = placeAdapter
                     feed.layoutManager = LinearLayoutManager(this@PlaceActivity, LinearLayoutManager.VERTICAL, false)
-                    placeAdapter.setOnPlaceClickListener(object  : PlaceAdapter.OnPlaceClickListener{
+                    placeAdapter.setOnPlaceClickListener(object : PlaceAdapter.OnPlaceClickListener{
                         override fun onPlaceClick(
                             view: View,
                             position: Int,
@@ -174,6 +192,8 @@ class PlaceActivity : AppCompatActivity() {
                     val mapFragment = supportFragmentManager.findFragmentById(R.id.place_map) as SupportMapFragment
                     mapFragment.getMapAsync { googleMap ->
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(result.placeWithTimeAndGpsInfo.placeLatitude, result.placeWithTimeAndGpsInfo.placeLongitude), 15f))
+                        googleMap.uiSettings.isZoomGesturesEnabled = false // 줌막기
+                        googleMap.uiSettings.isScrollGesturesEnabled = false // 드래그 막기
                     }
                     // 마커 추가
                     val frameLayout = findViewById<FrameLayout>(R.id.place_frame)
@@ -185,7 +205,6 @@ class PlaceActivity : AppCompatActivity() {
                         layoutParams.topMargin = rand(300, 600)
                         frameLayout.addView(imageView, layoutParams)
                     }
-                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse feedList: $feedList")
                 } else if (response.code() == 401){
                     Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
                     getToken(placeIdx, time)
@@ -301,26 +320,80 @@ class PlaceActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            getNotiCnt(token, menu)
+        }
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            R.id.action_notifications -> {
-//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-//                true
-//            }
+            R.id.action_notifications -> {
+                val intent = Intent(this, NotificationActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
             }
             android.R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
+                onBackPressed()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private fun getNotiCnt(header : String, menu:Menu){
+        api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
+            override fun onResponse(call: Call<NotiCntResponse>, response: Response<NotiCntResponse>) {
+                Log.d("getNoti 응답", response.toString())
+                if (response.code() == 200) {
+                    val notiCnt = response.body()!!.data.notificationCnt
+                    if (notiCnt > 0){
+                        val menuItem = menu.findItem(R.id.action_notifications)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
+                    }
+                } else if (response.code() == 401){
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
+                    lifecycleScope.launch {
+                        val refreshToken = userDataStore.get_refresh_token.first()
+                        api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                response.body()?.let {
+                                    if (it.status == 200) {
+                                        Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                        response.body()?.data?.let {
+                                                it1 -> {
+                                            lifecycleScope.launch {
+                                                userDataStore.setUserData(it1)
+                                                val token =
+                                                    userDataStore.get_access_token.first()
+                                                getNotiCnt(token, menu)
+                                            }
+                                        }
+                                        }
+                                    } else {
+                                        Log.i(ContentValues.TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                    }
+                                }
+                            }
+                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                Log.d("토큰 전송 on failure: ", t.message.toString())
+                            }
+                        })
+                    }
+                } else {
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
+                Log.d("gerRecentFeed_onFailure", t.message.toString())
+            }
+        })
     }
 }

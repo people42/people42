@@ -1,5 +1,6 @@
 package com.cider.fourtytwo.myHistory
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
@@ -18,11 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.MainActivity
+import com.cider.fourtytwo.NotificationActivity
 import com.cider.fourtytwo.R
 import com.cider.fourtytwo.SettingsActivity
 import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
+import com.cider.fourtytwo.network.Model.NotiCntResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
@@ -32,6 +35,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class MyMessagesActivity : AppCompatActivity(){
@@ -117,7 +121,7 @@ class MyMessagesActivity : AppCompatActivity(){
         Glide.with(this).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${myEmoji}.gif").into(myEmojiView)
     }
     fun getHistory(header : String) {
-        val currentDate = LocalDate.now()
+        val currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"))
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = currentDate.format(formatter)
         api.getHistory(header, formattedDate).enqueue(object : Callback<HistoryResponse> {
@@ -128,10 +132,6 @@ class MyMessagesActivity : AppCompatActivity(){
                     Log.d(TAG, "getHistory onResponse: $result")
                     val history = findViewById<RecyclerView>(R.id.history_recyclerView)
                     val historyAdapter = MyMessagesAdapter(this@MyMessagesActivity, result)
-
-//                    val itemTouchHelper = ItemTouchHelper(SwipeController(historyAdapter))
-                    // itemTouchHelper에 RecyclerView 부착
-//                    itemTouchHelper.attachToRecyclerView(history)
 
                     history.adapter = historyAdapter
                     history.layoutManager = LinearLayoutManager(this@MyMessagesActivity, LinearLayoutManager.VERTICAL, false)
@@ -163,9 +163,6 @@ class MyMessagesActivity : AppCompatActivity(){
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                 if (response.code() == 200) {
                     Log.i(TAG, "onResponse: 메세지 삭제 성공")
-//                    lifecycleScope.launch {
-//                        getHistory(userDataStore.get_access_token.first())
-//                    }
                 } else if (response.code() == 401){
                     Log.i(TAG, "메세지 전송 401: 토큰 만료")
                     deleteToken(messageIdx)
@@ -241,15 +238,20 @@ class MyMessagesActivity : AppCompatActivity(){
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        lifecycleScope.launch {
+            val token = userDataStore.get_access_token.first()
+            getNotiCnt(token, menu)
+        }
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            R.id.action_notifications -> {
-//                Toast.makeText(applicationContext, "알림 준비 중..", Toast.LENGTH_SHORT).show()
-//                true
-//            }
+            R.id.action_notifications -> {
+                val intent = Intent(this, NotificationActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
@@ -262,5 +264,53 @@ class MyMessagesActivity : AppCompatActivity(){
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private fun getNotiCnt(header : String, menu:Menu){
+        api.getNotiCnt(header).enqueue(object : Callback<NotiCntResponse> {
+            override fun onResponse(call: Call<NotiCntResponse>, response: Response<NotiCntResponse>) {
+                Log.d("getNoti 응답", response.toString())
+                if (response.code() == 200) {
+                    val notiCnt = response.body()!!.data.notificationCnt
+                    if (notiCnt > 0){
+                        val menuItem = menu.findItem(R.id.action_notifications)
+                        menuItem.setIcon(R.drawable.baseline_notifications_true24)
+                    }
+                } else if (response.code() == 401){
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 401: 토큰 만료")
+                    lifecycleScope.launch {
+                        val refreshToken = userDataStore.get_refresh_token.first()
+                        api.setAccessToken(refreshToken).enqueue(object : Callback<UserResponse> {
+                            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                                response.body()?.let {
+                                    if (it.status == 200) {
+                                        Log.i(ContentValues.TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
+                                        response.body()?.data?.let {
+                                                it1 -> {
+                                            lifecycleScope.launch {
+                                                userDataStore.setUserData(it1)
+                                                val token =
+                                                    userDataStore.get_access_token.first()
+                                                getNotiCnt(token, menu)
+                                            }
+                                        }
+                                        }
+                                    } else {
+                                        Log.i(ContentValues.TAG, "토큰 전송 실패 코드: ${response.code()}")
+                                    }
+                                }
+                            }
+                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                Log.d("토큰 전송 on failure: ", t.message.toString())
+                            }
+                        })
+                    }
+                } else {
+                    Log.i(ContentValues.TAG, "getRecentFeed_onResponse 코드: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<NotiCntResponse>, t: Throwable) {
+                Log.d("gerRecentFeed_onFailure", t.message.toString())
+            }
+        })
     }
 }

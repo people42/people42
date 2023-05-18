@@ -17,9 +17,11 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cider.fourtytwo.R
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.typeOf
@@ -27,113 +29,44 @@ import kotlin.reflect.typeOf
 class FeedAdapter(private val context: Context, private val itemList : List<RecentFeedData>) :
     RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_feed, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_newfeed, parent, false)
         return FeedViewHolder(view)
     }
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val item = itemList[position]
-        Glide.with(context).load("https://peoplemoji.s3.ap-northeast-2.amazonaws.com/emoji/animate/${itemList.get(position).recentMessageInfo.emoji}.gif").into(holder.emoji)
-        holder.brushCnt.text = "${ item.recentMessageInfo.brushCnt.toString() }번 스친"
-        holder.nickname.text = item.recentMessageInfo.nickname
-        holder.content.text = item.recentMessageInfo.content
-        holder.place.text = item.placeWithTimeInfo.placeName
-        holder.time.text = timeEdit(item.placeWithTimeInfo.time)
-        val myColor = item.recentMessageInfo.color
-        ViewCompat.setBackgroundTintList(holder.feedMessage, ColorStateList.valueOf(Color.RED))
-        // 내 말풍선 색
-        holder.feedMessage.backgroundTintList = when (myColor) {
-            "red" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
-            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.orange))
-            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.yellow))
-            "green" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
-            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
-            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
-            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
-            else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
-        }
-        holder.shadow1.backgroundTintList = when (myColor) {
-            "red" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
-            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.orange))
-            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.yellow))
-            "green" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
-            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
-            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
-            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
-            else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
-        }
-        holder.shadow2.backgroundTintList = when (myColor) {
-            "red" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
-            "orange" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.orange))
-            "yellow" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.yellow))
-            "green" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
-            "sky" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sky))
-            "blue" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.blue))
-            "purple" -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple))
-            else -> ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_blue))
-        }
+        holder.place.text = "${item.placeWithTimeInfo.placeName} 근처"
+        holder.time.text = isTodayOrYesterday(item.placeWithTimeInfo.time)
+        holder.nickname.text = "${item.recentUsersInfo.nickname}님 등"
+        holder.brushCnt.text = "${ item.recentUsersInfo.userCnt }명과 스쳤습니다."
+
         holder.itemView.setOnClickListener {
             itemClickListener?.onClick(it, position)
         }
-// 눌러놨던 공감버튼 표시
-        if (item.recentMessageInfo.emotion != null) {
-            when (item.recentMessageInfo.emotion) {
-                "heart" -> holder.selectPlus.setImageResource(R.drawable.heart)
-                "tear" -> holder.selectPlus.setImageResource(R.drawable.tear)
-                "fire" -> holder.selectPlus.setImageResource(R.drawable.fire)
-                "thumbsUp" ->  holder.selectPlus.setImageResource(R.drawable.thumbsup)
-                else -> holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
-            }
+        val first = item.recentUsersInfo.firstTimeUserEmojis
+        val again = item.recentUsersInfo.repeatUserEmojis
+        if (first.isNotEmpty()){
+            holder.firstTimeUserEmojis.adapter = AgainEmojiAdapter(context, first)
+            holder.firstTimeUserEmojis.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            holder.first.text = "처음 만난 ${first.size}명"
+            holder.first.visibility = VISIBLE
+            holder.firstTimeUserEmojis.visibility = VISIBLE
+        } else {
+            holder.first.visibility = GONE
+            holder.firstTimeUserEmojis.visibility = GONE
         }
-// 공감버튼 누르면 선택창 나옴
-        val messageIdx = item.recentMessageInfo.messageIdx
-        holder.messageReation.setOnClickListener {
-            holder.messageReation.visibility = GONE
-            holder.messageReactionSelect.visibility = VISIBLE
+        if (again.isNotEmpty()) {
+            holder.repeatUserEmojis.adapter = AgainEmojiAdapter(context, again)
+            holder.repeatUserEmojis.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            holder.again.text = "다시 만난 ${again.size}명"
+            holder.again.visibility = VISIBLE
+            holder.repeatUserEmojis.visibility = VISIBLE
+        } else {
+            holder.again.visibility = GONE
+            holder.repeatUserEmojis.visibility = GONE
         }
-        holder.selectPlus.setOnClickListener {
-            holder.messageReation.visibility = GONE
-            holder.messageReactionSelect.visibility = VISIBLE
-        }
-        holder.selectHeart.setOnClickListener {
-            itemClickListener.onEmotionClick(it, position, "heart", messageIdx)
-            holder.selectPlus.setImageResource(R.drawable.heart)
-            holder.messageReation.visibility = VISIBLE
-            holder.messageReactionSelect.visibility = GONE
-        }
-        holder.selectFire.setOnClickListener {
-            itemClickListener.onEmotionClick(it, position, "fire", messageIdx)
-            holder.selectPlus.setImageResource(R.drawable.fire)
-            holder.messageReation.visibility = VISIBLE
-            holder.messageReactionSelect.visibility = GONE
-        }
-        holder.selectTear.setOnClickListener {
-            itemClickListener.onEmotionClick(it, position, "tear", messageIdx)
-            holder.selectPlus.setImageResource(R.drawable.tear)
-            holder.messageReation.visibility = VISIBLE
-            holder.messageReactionSelect.visibility = GONE
-        }
-        holder.selectThumbsup.setOnClickListener {
-            itemClickListener.onEmotionClick(it, position, "thumbsUp", messageIdx)
-            holder.selectPlus.setImageResource(R.drawable.thumbsup)
-            holder.messageReation.visibility = VISIBLE
-            holder.messageReactionSelect.visibility = GONE
-        }
-        holder.selectCancel.setOnClickListener {
-            itemClickListener.onEmotionClick(it, position, "delete", messageIdx)
-            holder.selectPlus.setImageResource(R.drawable.baseline_add_24)
-            holder.messageReation.visibility = VISIBLE
-            holder.messageReactionSelect.visibility = GONE
-        }
-//        holder.itemView.setOnTouchListener(object: OnSwipeTouchListener(context){
-//            override fun onSwipeLeft() {
-//                Toast.makeText(context,"왼쪽으로",Toast.LENGTH_SHORT).show()
-//            }
-//        })
-//        holder.reaction.text = itemList.get(position).recentMessageInfo.content
     }
     interface OnItemClickListener {
         fun onClick(v: View, position: Int)
-        fun onEmotionClick(v:View, position: Int, emotion : String, messageIdx : Int)
     }
     private lateinit var itemClickListener : OnItemClickListener
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {
@@ -143,30 +76,27 @@ class FeedAdapter(private val context: Context, private val itemList : List<Rece
         return itemList.size
     }
     inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var emoji = itemView.findViewById<ImageView>(R.id.feedEmoji)
-        var brushCnt = itemView.findViewById<TextView>(R.id.feedbrushCnt)
-        var nickname = itemView.findViewById<TextView>(R.id.feedNickname)
-        var content: TextView = itemView.findViewById(R.id.feedContent)
-        var place: TextView = itemView.findViewById(R.id.feedLocation)
-        var time: TextView = itemView.findViewById(R.id.feedTime)
-        var feedMessage = itemView.findViewById<RelativeLayout>(R.id.feed_message)
-        var shadow1 = itemView.findViewById<ImageView>(R.id.feed_message_shadow1)
-        var shadow2 = itemView.findViewById<ImageView>(R.id.feed_message_shadow2)
-        var messageReation = itemView.findViewById<LinearLayout>(R.id.message_reation)
-        var selectPlus = itemView.findViewById<ImageView>(R.id.select_plus)
-        var messageReactionSelect = itemView.findViewById<LinearLayout>(R.id.message_reaction_select)
-        var selectHeart = itemView.findViewById<ImageView>(R.id.select_heart)
-        var selectFire = itemView.findViewById<ImageView>(R.id.select_fire)
-        var selectTear = itemView.findViewById<ImageView>(R.id.select_tear)
-        var selectThumbsup = itemView.findViewById<ImageView>(R.id.select_thumbsup)
-        var selectCancel = itemView.findViewById<ImageView>(R.id.select_cancel)
+        var place = itemView.findViewById<TextView>(R.id.new_place)
+        var time = itemView.findViewById<TextView>(R.id.new_time)
+        var nickname = itemView.findViewById<TextView>(R.id.new_nickname)
+        var brushCnt = itemView.findViewById<TextView>(R.id.new_brushCnt)
+        var again = itemView.findViewById<TextView>(R.id.new_again)
+        var first = itemView.findViewById<TextView>(R.id.new_first)
+        val firstTimeUserEmojis = itemView.findViewById<RecyclerView>(R.id.new_recyclerFirst)
+        val repeatUserEmojis: RecyclerView = itemView.findViewById(R.id.new_recyclerAgain)
     }
-    fun timeEdit(inputDate : String): String? {
-        val timeString = inputDate.substring(0, 16)
-        val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
-        val dateTime = LocalDateTime.parse(timeString, formatterInput)
-        val formatterOutput = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")
-        val outputDate = formatterOutput.format(dateTime)
-        return outputDate // 2023년 05월 03일 00시 47분
+    fun isTodayOrYesterday(text: String): String {
+        val timeString = text.substring(0, 16)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        val dateTime = LocalDateTime.parse(timeString, formatter).toLocalDate()
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+        var returnString = text.substring(8, 13)
+        if (dateTime == today) {
+            returnString = "오늘 ${text.substring(11, 13)}시 쯤"
+        } else if (dateTime == yesterday) {
+            returnString = "어제 ${text.substring(11, 13)}시 쯤"
+        }
+        return returnString
     }
 }

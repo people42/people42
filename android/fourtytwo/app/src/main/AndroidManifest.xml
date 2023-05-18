@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cider.fourtytwo">
+
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 정확한 위치 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 대략적인 위치 -->
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -20,7 +21,15 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon"
         tools:targetApi="33">
-
+        <activity
+            android:name=".setting.ChangeEmojiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".setting.ChangeNicknameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NotificationActivity"
+            android:exported="false" />
         <activity
             android:name=".person.PersonActivity"
             android:exported="true" />
@@ -28,7 +37,7 @@
             android:name=".place.PlaceActivity"
             android:exported="true" />
         <activity
-            android:name=".WebViewActivity"
+            android:name=".setting.WebViewActivity"
             android:exported="false" />
         <activity
             android:name=".myHistory.MyMessagesActivity"
@@ -47,17 +56,37 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="path"
+                    android:scheme="fortytwo" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.people42.com"
+                    android:pathPattern="/mobile"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".Signup.SignupActivity"
+            android:name=".signup.SignupActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
+            android:windowSoftInputMode="adjustPan" />
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
@@ -65,20 +94,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!--
- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more.
-        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_stat_name" />
-        <!--
- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more.
-        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/main_blue" />
     </application>
-
 </manifest>
