@@ -101,6 +101,12 @@ public class GpsService {
                 Double placeLat = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lat");
                 Double placeLng = (Double) objectMapper.convertValue(objectMapper.convertValue(targetPlace.get("geometry"), typeRef).get("location"), typeRef).get("lng");
 
+                System.out.println("gps.lat: " + gps.getLatitude() + " / gps.lng: " + gps.getLongitude());
+                System.out.println("placeLat: " + placeLat + " / placeLng: " + placeLng);
+                System.out.println(gps.getLatitude() < placeLat - 0.005);
+                System.out.println(gps.getLatitude() > placeLat + 0.005);
+                System.out.println(gps.getLongitude() < placeLng - 0.005);
+                System.out.println(gps.getLongitude() > placeLng + 0.005);
                 if (gps.getLatitude() < placeLat - 0.005 || gps.getLatitude() > placeLat + 0.005 ||
                         gps.getLongitude() < placeLng - 0.005 || gps.getLongitude() > placeLng + 0.005) {
                     Place newPlace = new Place();
@@ -118,12 +124,12 @@ public class GpsService {
                 targetPlace = getRoadAddress(gps.getLatitude(), gps.getLongitude());
                 Place newPlace = new Place();
                 newPlace.setName((String) targetPlace.get("place_name"));
-                newPlace.setLatitude(Double.parseDouble((String) targetPlace.get("y")));
-                newPlace.setLongitude(Double.parseDouble((String) targetPlace.get("x")));
+                newPlace.setLatitude(gps.getLatitude());
+                newPlace.setLongitude(gps.getLongitude());
                 foundPlace = placeRepository.save(newPlace);
             }
         }
-        
+
         ZSetOperations<String, Long> gpsOperation = gpsTemplate.opsForZSet();
         SetOperations<String, Long> expireSetOperation = timeUserTemplate.opsForSet();
         ValueOperations<Long, Integer> userExpireOperation = userTimeTemplate.opsForValue();
@@ -300,7 +306,11 @@ public class GpsService {
         List<Map<String, Object>> documents = objectMapper.convertValue(responseMap.get("documents"), listTypeRef);
 
         if (!documents.isEmpty()) {
-            return (Map<String, Object>) documents.get(0).get("road_address");
+            if ((Map<String, Object>) documents.get(0).get("road_address") == null) {
+                return (Map<String, Object>) documents.get(0).get("address");
+            } else {
+                return (Map<String, Object>) documents.get(0).get("road_address");
+            }
         } else {
             throw new RuntimeException("No road address found for given coordinates");
         }
