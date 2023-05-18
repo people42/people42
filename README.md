@@ -1109,6 +1109,8 @@ GIT HUB
 
 ## 부하테스트
 
+- 변인 : 부하테스트를 진행하는 환경에서 vuser포트 생성 실패도 있음
+
 - 일반 API 테스트
   
   ![](./assets/loadtest/totalmessage-loadtest.png)
@@ -1121,7 +1123,7 @@ GIT HUB
   
   ![](./assets/loadtest/socket-loadtest.png)
 
-- 쿠버네티스 파드 1/3/9, 9-클러스터 직접접근 테스트
+- 쿠버네티스 파드 1/3/9, 1/3/9-클러스터 직접접근 테스트
   
   ![](./assets/loadtest/signin-loadtest.png)
   
@@ -1129,6 +1131,12 @@ GIT HUB
   
   2. 원인을 찾아보니 도메인과 SSL을 위한 리다이렉션 Nginx의 한계라고 생각
   
-  3. 실제로 Nginx를 거치지 않고 직접 클러스터의 포트로 접근해서 부하테스를 진행한 결과 유의미한 안정성을 확인할 수 있었음
+- 쿠버네티스 파드 1/9-클러스터 직접접근 테스트
 
-  4. 부하테스트는 컴퓨터 성능때문에 vuser를 20000이상 설정해서 확인할 수 없음
+  ![](./assets/loadtest/request-fail.png)
+
+  1. 직접 접근하여 테스트한 결과 확실하게 요청 실패율이 줄어듬
+
+  ![](./assets/loadtest/connecting-time.png)
+
+  1. 또한 요청 대기시간이 확실하게 줄어듬
