@@ -4,9 +4,9 @@ class CustomBottomSheetViewModel: ObservableObject {
     @Published var offsetY: CGFloat = 0
     @Published var translation: CGSize = .zero
     @Published var upperY: CGFloat = 48
-    @Published var lowerY: CGFloat = 240
+    @Published var lowerY: CGFloat = 52
     
-    var minOpacity: Double = 0.3
+    var minOpacity: Double = 0
 
     func setOffset(_ height: CGFloat) -> CGFloat {
         if offsetY + translation.height <= upperY {
@@ -18,20 +18,25 @@ class CustomBottomSheetViewModel: ObservableObject {
         }
     }
 
-    func getCurrentOpacity(_ height: CGFloat) -> Double {
+    func getCurrentOpacity(_ height: CGFloat, reverse: Bool = false) -> Double {
         let currentOffset = offsetY + translation.height
         let maxOffset = height - lowerY
 
+        var opacity: Double = 0
+
         if currentOffset <= upperY {
-            return 1
+            opacity = 1
         } else if currentOffset >= maxOffset {
-            return minOpacity
+            opacity = minOpacity
         } else {
             let opacityRange = 1 - minOpacity
             let offsetProgress = 1 - (currentOffset - upperY) / (maxOffset - upperY)
-            return minOpacity + (opacityRange * Double(offsetProgress))
+            opacity = minOpacity + (opacityRange * Double(offsetProgress))
         }
+
+        return reverse ? 1 - opacity : opacity
     }
+
 }
 
 
@@ -43,12 +48,11 @@ struct CustomBottomSheet: View {
             ZStack {
                 VStack {
                     Spacer()
-                         .frame(height: 53)
+                         .frame(height: 45)
                     
                     ZStack {
                         Color("BgPrimary")
-                        .opacity(viewModel.getCurrentOpacity(geometry.size.height))
-//                        TimelineView()
+//                        .opacity(viewModel.getCurrentOpacity(geometry.size.height))
                         PlaceTimelineView()
                     }
                     
@@ -56,17 +60,26 @@ struct CustomBottomSheet: View {
                 .offset(y: viewModel.setOffset(geometry.size.height))
 
                 VStack {
-                    HStack {
-                        Spacer()
-                        RoundedRectangle(cornerRadius: 3, style: .continuous)
-                            .frame(width: 40, height: 5)
-                            .padding(24)
-                        Spacer()
+                    VStack {
+                        HStack {
+                            Spacer()
+                            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                                .frame(width: 40, height: 5)
+                                .padding(.top, 16)
+                                .padding(.bottom, 8)
+                            Spacer()
+                        }
+                        VStack {
+                            Text("장소별 스침 확인하기")
+                                .padding(.bottom, 16)
+                                .font(.customOverline)
+                                .opacity(viewModel.getCurrentOpacity(geometry.size.height, reverse: true))
+                        }
+                        .frame(height: 16)
                     }
                     .background(Color("BgSecondary"))
                     .clipShape(CustomCorners(corners: [.topRight, .topLeft], radius: 32))
-                    .opacity(viewModel.getCurrentOpacity(geometry.size.height))
-
+//                    .opacity(viewModel.getCurrentOpacity(geometry.size.height))
                     Spacer()
                 }
                 .offset(y: viewModel.setOffset(geometry.size.height))

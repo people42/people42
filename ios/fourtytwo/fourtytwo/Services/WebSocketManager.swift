@@ -20,6 +20,9 @@ class WebSocketManager: NSObject, ObservableObject {
     // 추가: 웹소켓 연결 시도 횟수를 추적하는 속성
     private var reconnectAttempts = 0
     
+    // 근처 유저 목록
+    @Published var nearUsers: [Int: [String: Any]] = [:]
+    
     // 현재 유저 데이터
     func getCurrentUserData() -> [String: Any]? {
         guard let location = locationManager.currentLocation else {
@@ -91,6 +94,9 @@ class WebSocketManager: NSObject, ObservableObject {
     func disconnect() {
         selfClose = true
         task?.cancel(with: .goingAway, reason: nil)
+        DispatchQueue.main.async {
+            self.nearUsers = [:]
+        }
     }
     
     // 웹소켓을 통해 메시지를 보내는 메서드
@@ -150,10 +156,21 @@ class WebSocketManager: NSObject, ObservableObject {
     // MOVE 메시지 처리 메서드
     func handleMove(newLatitude: Double, newLongitude: Double) {
         guard var updatedUserData = getCurrentUserData() else { return }
+        
+        // 연결 상태에서만 전송
+        guard isConnected else { return }
+        
         updatedUserData["latitude"] = newLatitude
         updatedUserData["longitude"] = newLongitude
         sendMessage(method: "MOVE", data: updatedUserData)
     }
+    
+    // PONG 메시지 처리 메서드
+    func handlePong() {
+        print("Pong send")
+        sendMessage(method: "PING", data: [:])
+    }
+    
     
     // 웹소켓에서 메시지를 수신하는 메서드
     private func receiveMessage() {
@@ -163,29 +180,30 @@ class WebSocketManager: NSObject, ObservableObject {
             return
         }
         
-        print("소켓 리시버 장착")
+//        print("소켓 리시버 장착")
         task?.receive { [weak self] result in
             switch result {
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    print("Received text: \(text)")
+//                    print("Received text: \(text)")
                     self?.handleMessage(message: text)
+                    self?.receiveMessage() // 메시지를 성공적으로 수신했을 때만 재귀 호출
                 case .data(let data):
                     print("Received data: \(data)")
+                    self?.receiveMessage() // 메시지를 성공적으로 수신했을 때만 재귀 호출
                 @unknown default:
                     print("Unknown message received")
                 }
                 
             case .failure(let error):
                 print("Error receiving message: \(error.localizedDescription)")
+                // 에러 발생 시 재연결 시도
+                self?.reconnect()
             }
-            self?.receiveMessage()
         }
     }
-    
-    // 근처 유저 목록
-    var nearUsers: [Int: [String: Any]] = [:]
+
 
     // 응답 메시지 처리
     func handleMessage(message: String) {
@@ -207,6 +225,8 @@ class WebSocketManager: NSObject, ObservableObject {
             handleChangeStatusMessage(json)
         case "MESSAGE_CHANGED":
             handleMessageChangedMessage(json)
+        case "PING":
+            handlePingMessage()
         default:
             print("Unhandled method: \(method)")
         }
@@ -215,13 +235,12 @@ class WebSocketManager: NSObject, ObservableObject {
     // 메서드 Info 처리
     private func handleInfoMessage(_ json: [String: Any]) {
         guard let data = json["data"] as? [String: Any],
-              let nearUsers = data["nearUsers"] as? [[String: Any]] else {
+              let nearUsers = data["nearUsers"] as? [[String: Any]],
+              let farUsers = data["farUsers"] as? [[String: Any]] else {
             print("Invalid INFO message format")
             return
         }
         
-        // 유저 목록 초기화
-        self.nearUsers = [:]
 
         for user in nearUsers {
             guard let userIdx = user["userIdx"] as? Int,
@@ -232,6 +251,11 @@ class WebSocketManager: NSObject, ObservableObject {
 
             // 위치 비교를 위해 새로운 변수 생성
             var updatedUser = user
+
+            // 이미 존재하는 유저인 경우, 넘어감
+            if self.nearUsers[userIdx] != nil {
+                continue
+            }
 
             // latitude와 longitude 정보가 존재할 경우, 중앙과 겹치지 않도록 새로운 위치를 가져옴
             if let latitude = user["latitude"] as? Double,
@@ -245,10 +269,25 @@ class WebSocketManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 self.nearUsers[userIdx] = updatedUser
             }
-            
         }
-        print("!!!!!!!!!!!!!!!!!!!!!!!")
-        print(self.nearUsers) // 수정된 위치 정보 출력
+
+        
+
+        for user in farUsers {
+            guard let userIdx = user["userIdx"] as? Int,
+                  let type = user["type"] as? String,
+                  type != "guest" else {
+                continue // type이 "guest"인 경우 건너뜀
+            }
+
+            // 유저 제거
+            DispatchQueue.main.async {
+                self.nearUsers.removeValue(forKey: userIdx)
+            }
+
+        }
+
+
     }
 
 
@@ -284,7 +323,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers[userIdx] = updatedData
         }
         
-        print("User \(userIdx) updated or added")
+//        print("User \(userIdx) updated or added")
     }
 
 
@@ -301,7 +340,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers.removeValue(forKey: userIdx)
         }
         
-        print("User removed: \(userIdx)")
+//        print("User removed: \(userIdx)")
     }
     
     // 메서드 Change Status 처리
@@ -318,7 +357,7 @@ class WebSocketManager: NSObject, ObservableObject {
             self.nearUsers[userIdx]?["status"] = status
         }
         
-        print("User \(userIdx) status changed to \(status)")
+//        print("User \(userIdx) status changed to \(status)")
     }
 
     // 메서드 Message Changed 처리
@@ -336,6 +375,13 @@ class WebSocketManager: NSObject, ObservableObject {
         }
         
         print("User \(userIdx) message changed to \(message)")
+    }
+    
+    // 메서드 PING 처리
+    private func handlePingMessage() {
+        
+        print("Ping recived")
+        handlePong()
     }
 }
 

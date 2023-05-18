@@ -23,13 +23,16 @@ struct PlaceTimelineView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if locationCardsData.isEmpty {
-                        Spacer()
-                        HStack {
+                        VStack {
                             Spacer()
-                            Text("아직 인연이 없어요")
+                            HStack {
+                                Spacer()
+                                Text("아직 인연이 없어요")
+                                Spacer()
+                            }
                             Spacer()
                         }
-                        Spacer()
+                        .frame(height: UIScreen.main.bounds.height - 200)
                     } else {
                         ForEach(locationCardsData.indices, id: \.self) { index in
                             HStack(alignment: .center, spacing: 8) {
@@ -38,7 +41,7 @@ struct PlaceTimelineView: View {
                                 }
                                 LocationCard(locationCardData: locationCardsData[index])
                             }
-                            .padding(.bottom, index == locationCardsData.count - 1 ? 100 : 16)
+                            .padding(.bottom, index == locationCardsData.count - 1 ? 200 : 16)
                         }
                     }
                 }
@@ -46,6 +49,10 @@ struct PlaceTimelineView: View {
             }
             .onAppear {
                 getLocationCardsData()
+
+                Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+                    getLocationCardsData()
+                }
             }
             .onChange(of: scenePhase) { newScenePhase in
                 if newScenePhase == .active {

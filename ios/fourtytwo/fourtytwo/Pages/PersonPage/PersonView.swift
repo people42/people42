@@ -87,19 +87,19 @@ struct PersonView: View {
                         .font(.system(size: 18, weight: .regular))
                         .foregroundColor(Color("Text"))
                 }
+                .actionSheet(isPresented: $showActionSheet) {
+                    ActionSheet(title: Text("해당 유저를 차단하시겠습니까?\n차단된 유저와 서로의 게시물을 볼 수 없게 됩니다."),
+                                buttons: [
+                                    .destructive(Text("차단")) {
+                                        showBlockUserSheet = true
+                                    },
+                                    .cancel(Text("취소")) { }
+                                ])
+                }
             }
         }
         .onAppear {
             getPersonPlaces()
-        }
-        .actionSheet(isPresented: $showActionSheet) {
-            ActionSheet(title: Text("해당 유저를 차단하시겠습니까?\n차단된 유저와 서로의 게시물을 볼 수 없게 됩니다."),
-                        buttons: [
-                            .destructive(Text("차단")) {
-                                showBlockUserSheet = true
-                            },
-                            .cancel(Text("취소")) { }
-                        ])
         }
         .sheet(isPresented: $showBlockUserSheet) {
             if let nickname = personPlaces?.nickname, let userIdx = userIdx {
@@ -217,8 +217,8 @@ extension PersonView {
     
     // 지도의 축척 조정
     private func calculateMapSpan(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> MKCoordinateSpan {
-        let latDelta = maxLat - minLat + 0.05 // 0.05를 추가하여 마커 주변에 여유 공간을 확보합니다.
-        let lonDelta = maxLon - minLon + 0.05
+        let latDelta = maxLat - minLat + 0.01 // 0.05를 추가하여 마커 주변에 여유 공간을 확보합니다.
+        let lonDelta = maxLon - minLon + 0.01
 
         return MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
     }

@@ -91,6 +91,9 @@ struct GoogleSigninButton : View {
                             // 소켓 연결
 //                            WebSocketManager.shared.connect()
                             
+                            // FCMToken 전송
+                            sendFCMTokenToServer()
+                            
                             // 홈으로 이동
                             print("Navigate to the home screen")
                             appState.switchView(to: .home)

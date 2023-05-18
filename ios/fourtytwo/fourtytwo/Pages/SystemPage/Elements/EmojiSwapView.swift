@@ -27,7 +27,7 @@ struct EmojiSwapView: View {
             }
             Spacer()
             VStack {
-                GifUIkit(emojis[currentIndex % emojis.count])
+                GifImage(emojis[currentIndex % emojis.count])
                     .frame(width: 200, height: 200)
                     .padding(.bottom, 40)
                 

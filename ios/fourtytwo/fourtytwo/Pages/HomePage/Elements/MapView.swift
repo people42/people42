@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+@MainActor
 class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var region: MKCoordinateRegion
     @Published var currentLocation: CLLocation? // 위치
@@ -12,136 +13,197 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 36.355352726497806, longitude: 127.29817332461586),
-            latitudinalMeters: 1000, longitudinalMeters: 1000
-//        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01) // 배율
+            latitudinalMeters: 500, longitudinalMeters: 500
         )
         super.init()
         locationManager.delegate = self
-        // 위치
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-        // 헤딩
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.startUpdatingHeading()
+        locationManager.distanceFilter = 10 // 위치가 10미터 이상 변경되면 업데이트
+
+        Task {
+            
+            await MainActor.run {
+                // 위치
+                locationManager.requestWhenInUseAuthorization()
+                locationManager.startUpdatingLocation()
+                // 헤딩
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                locationManager.startUpdatingHeading()
+            }
+        }
     }
 
-    // 위치 업데이트
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    // 위치 업데이트 - nonisolated 붙히면 안됨
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.currentLocation = location
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
-                latitudinalMeters: 500, longitudinalMeters: 500
-            )
+
+        Task {
+            await MainActor.run {
+                print("위치 업데이트!")
+                self.currentLocation = location
+                self.region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
+                    latitudinalMeters: 500, longitudinalMeters: 500
+                )
+            }
         }
     }
 
-    // 헤딩 업데이트
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.heading = newHeading.trueHeading
+    // 해딩 업데이트 - nonisolated 붙히면 안됨
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        Task {
+            await MainActor.run {
+                self.heading = newHeading.trueHeading
+            }
         }
     }
+
 }
 
-struct MapView: View {
-    @Environment(\.colorScheme) var colorScheme
-    
-    @StateObject private var locationManager = MapManager()
-    
-    @ObservedObject var webSocketManager = WebSocketManager.shared
-    
-    // WebSocketManager의 isConnected와 바인딩된 @State 변수
-    @State private var isConnect: Bool = WebSocketManager.shared.isConnected
 
-    @State private var metersPerCircle: Double = 100
-    
+struct MapView: View {
+    @StateObject private var locationManager = MapManager()
+    @ObservedObject var webSocketManager = WebSocketManager.shared
+    @State private var showToast: Bool = false
+    @State private var toastMessage: String = ""
+    @State private var previousUserIds: Set<Int> = []
 
     var body: some View {
         ZStack {
-            OverView(region: $locationManager.region, currentLocation: $locationManager.currentLocation, nearUsers: $webSocketManager.nearUsers, heading: locationManager.heading)
-                .clipShape(Circle())
-                .frame(height: 480)
-                .overlay(
-                    RadialGradient(gradient: Gradient(colors: [
-                        Color.clear, Color("BgPrimary").opacity(0), Color("BgPrimary").opacity(1)]), center: .center, startRadius: 100, endRadius: 190)
-                        .clipShape(Circle())
-                        .frame(height: 480)
-                )
-                .scaleEffect(CGSize(width: 1.1, height: 1.1))
-                .overlay(northArrow.opacity(isConnect ? 0 : 1), alignment: .top)
-            
-            circles
-            
-            modeIndicator
-                .padding(.top, 40)
-                .padding(.trailing, 20)
-                .frame(height: 480)
-
-        }
-        .onTapGesture {
-            withAnimation(.easeInOut(duration: 1.2)) {
-                isConnect.toggle()
-                if isConnect {
-                    WebSocketManager.shared.connect()
-                } else {
-                    WebSocketManager.shared.disconnect()
+            Map(coordinateRegion: $locationManager.region, interactionModes: [.pan, .zoom], showsUserLocation: true, annotationItems: annotationData) { nearUser in
+                MapAnnotation(coordinate: nearUser.coordinate) {
+                    VStack {
+                        MessageView(status: nearUser.status, message: nearUser.message)
+                        
+                        GifImage(nearUser.emoji)
+                            .frame(width: 30, height: 30)
+                            .scaleEffect(self.showToast ? 0.5 : 1.0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5))
+                    }
+                    .frame(height: 60)
                 }
             }
-        }
-    }
-
-    private var northArrow: some View {
-        Text("N")
-            .font(.system(size: 24, weight: .bold))
-            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .red.opacity(0.8))
-            .offset(x: 0, y: 40) // 상단에 위치하도록 조정
-    }
-    
-    private var circles: some View {
-        let minOpacity: Double = 0.2
-        let maxOpacity: Double = 0.1
-        let numberOfCircles = 2
-
-        // swiftlint:disable:next
-        return ForEach(0..<numberOfCircles) { index in
-            Circle()
-                .stroke(Color.gray.opacity(minOpacity + (maxOpacity - minOpacity) * Double(index) / Double(numberOfCircles - 1)), lineWidth: 1)
-                .frame(width: CGFloat(metersPerCircle * Double(index + 1) * 2), height: CGFloat(metersPerCircle * Double(index + 1) * 2))
-                .scaledToFit()
-        }
-    }
-    
-    private var modeIndicator: some View {
-        VStack {
-            HStack {
+            if showToast {
+                Text(toastMessage)
+                    .font(.customCaption)
+                    .padding(4)
+                    .background(Color.black.opacity(0.3))
+                    .foregroundColor(Color("Text"))
+                    .cornerRadius(10)
+                    .transition(.slide)
+                    .onAppear(perform: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                showToast = false
+                            }
+                        }
+                    })
+                    .offset(y: -200)
+            }
+            
+            VStack {
                 Spacer()
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(isConnect ? Color.green : Color.gray, lineWidth: 2)
-                        .frame(width: 48, height: 30)
-
-                    Text(isConnect ? "ON" : "OFF")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(isConnect ? .green : .gray)
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        withAnimation {
+                            guard let location = locationManager.currentLocation else { return }
+                            locationManager.region = MKCoordinateRegion(
+                                center: CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude),
+                                latitudinalMeters: 500, longitudinalMeters: 500
+                            )
+                        }
+                    }) {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .padding()
+                    }
                 }
+                Spacer()
+                    .frame(height: 60)
             }
-            Spacer()
         }
+        .onChange(of: Set(webSocketManager.nearUsers.keys), perform: { newValue in
+            let oldUserSet = previousUserIds
+            let newUserSet = newValue
+//            if let removedUser = oldUserSet.subtracting(newUserSet).first,
+//               let nickname = webSocketManager.nearUsers[removedUser]?["nickname"] as? String {
+//                showToast = true
+//                toastMessage = "\(nickname) 님이 멀어졌어요."
+//            }
+            if let addedUser = newUserSet.subtracting(oldUserSet).first,
+               let nickname = webSocketManager.nearUsers[addedUser]?["nickname"] as? String {
+                showToast = true
+                toastMessage = "\(nickname) 님이 근처에 나타났어요."
+            }
+            previousUserIds = newValue
+        })
     }
     
+    private var annotationData: [CustomPointAnnotation] {
+        webSocketManager.nearUsers.compactMap { (id, data) in
+            guard let latitude = data["latitude"] as? CLLocationDegrees,
+                  let longitude = data["longitude"] as? CLLocationDegrees,
+                  let nickname = data["nickname"] as? String,
+                  let emoji = data["emoji"] as? String,
+                  let status = data["status"] as? String,
+                  let message = data["message"] as? String else {
+                return nil
+            }
+
+            return CustomPointAnnotation(
+                id: id,
+                coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                title: nickname,
+                emoji: emoji,
+                status: status,
+                message: message
+            )
+        }
+    }
 }
 
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mapManager = MapManager()
-        mapManager.region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 36.355352726497806, longitude: 127.29817332461586),
-            latitudinalMeters: 1000, longitudinalMeters: 1000
-        )
-        return MapView().environmentObject(mapManager)
-            .background(Color("BgPrimary"))
+
+struct CustomPointAnnotation: Identifiable {
+    var id: Int
+    var coordinate: CLLocationCoordinate2D
+    var title: String
+    var emoji: String
+    var status: String
+    var message: String
+}
+
+struct MessageView: View {
+    var status: String
+    var message: String
+    @State private var previousMessage: String = ""
+
+    var body: some View {
+        let displayMessage = message.count > 20 ? String(message.prefix(20)) + "..." : message
+
+        if status == "writing" {
+            Text("...")
+                .font(.system(size: 12))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
+        } else if message != previousMessage && message != "" {
+            Text(displayMessage)
+                .font(.system(size: 12))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(RoundedRectangle(cornerRadius: 32).foregroundColor(Color.black).opacity(0.3))
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        self.previousMessage = message
+                    }
+                }
+        } else {
+            Spacer()
+                .frame(height: 30)
+        }
     }
 }
 

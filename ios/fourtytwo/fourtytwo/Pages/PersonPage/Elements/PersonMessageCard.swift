@@ -52,9 +52,8 @@ struct PersonMessageCard: View {
                     Text(messageInfo.nickname)
                         .font(.customOverline)
                     
-                    if let hour = messageInfo.time {
-                        Text(getTimeStringFromISODate(hour))
-                        .font(.customOverline)                    }
+                    Text(getTimeStringFromISODate(messageInfo.time ))
+                    .font(.customOverline)
                     Spacer()
                     Text(messageInfo.contents)
                         .font(.customBody2)
