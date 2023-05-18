@@ -299,7 +299,10 @@ public class GpsService {
         List<Map<String, Object>> documents = objectMapper.convertValue(responseMap.get("documents"), listTypeRef);
 
         if (!documents.isEmpty()) {
-            if ((Map<String, Object>) documents.get(0).get("road_address") == null) {
+            System.out.println(documents.get(0).get("road_address"));
+            System.out.println(documents.get(0).get("road_address") == null);
+            System.out.println(documents.get(0).get("road_address").equals("null"));
+            if (documents.get(0).get("road_address") == null) {
                 return (Map<String, Object>) documents.get(0).get("address");
             } else {
                 return (Map<String, Object>) documents.get(0).get("road_address");
