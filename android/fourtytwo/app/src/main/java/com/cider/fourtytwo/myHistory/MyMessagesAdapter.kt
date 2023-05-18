@@ -17,6 +17,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class MyMessagesAdapter(private val context : Context, private val itemList : ArrayList<HistoryData>): RecyclerView.Adapter<MyMessagesAdapter.MessageViewHolder>(){
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
     interface OnHistoryClickListener {
         fun onHistoryClick(view: View, position: Int, messageIdx:Int)
     }
@@ -29,8 +32,8 @@ class MyMessagesAdapter(private val context : Context, private val itemList : Ar
         return MessageViewHolder(view)
     }
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.historyTime.text = timeEdit(itemList.get(position).createdAt)
-        holder.historyText.text = itemList.get(position).content
+        holder.historyTime.text = timeEdit(itemList[position].createdAt)
+        holder.historyText.text = itemList[position].content
         if (itemList[position].heart > 0){
             holder.history_reation_first.text = itemList[position].heart.toString()}
         if (itemList[position].tear > 0){
@@ -66,8 +69,9 @@ class MyMessagesAdapter(private val context : Context, private val itemList : Ar
             historyClickListener?.onHistoryClick(it, position, itemList[position].messageIdx)
             holder.deleteButton.visibility = GONE
             holder.itemView.clearAnimation()
-            itemList.removeAt(position);
-            notifyItemRemoved(position);
+            itemList.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, itemList.size)
         }
     }
     override fun getItemCount(): Int {

@@ -1,6 +1,7 @@
 package com.cider.fourtytwo
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.DialogInterface
@@ -21,6 +22,7 @@ import com.cider.fourtytwo.dataStore.UserDataStore
 import com.cider.fourtytwo.databinding.ActivitySigninBinding
 import com.cider.fourtytwo.network.Api
 import com.cider.fourtytwo.network.Model.MessageResponse
+import com.cider.fourtytwo.network.Model.SignOutResponse
 import com.cider.fourtytwo.network.RetrofitInstance
 import com.cider.fourtytwo.signIn.UserInfo
 import com.cider.fourtytwo.signIn.UserResponse
@@ -52,8 +54,8 @@ class SigninActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // 권한을 거절한 유저에게 필요성을 게시하고 권한 재요청 -> 0 : 설정창 열기, X : 그냥 지나감
         userDataStore = UserDataStore(this)
+        // 권한을 거절한 유저에게 필요성을 게시하고 권한 재요청 -> 0 : 설정창 열기, X : 그냥 지나감
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
             val builder = AlertDialog.Builder(this)
                 .setTitle("42는 위치 기반 서비스로 위치 권한을 필요로 합니다.")
@@ -82,18 +84,13 @@ class SigninActivity : AppCompatActivity() {
                     val token = userDataStore.get_access_token.first()
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                         if (!task.isSuccessful) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                             return@OnCompleteListener
                         }
-                        // Get new FCM registration token
                         val fcmtoken = task.result
-                        Log.d(TAG, "파이어베이스 $fcmtoken")
                         setFcmToken(token, fcmtoken)
+                        getToken(fcmtoken)
                     })
                 }
-                // 메인으로 이동
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
             }
         }
     }
@@ -123,22 +120,14 @@ class SigninActivity : AppCompatActivity() {
                             val token = userDataStore.get_access_token.first()
                             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                                 if (!task.isSuccessful) {
-                                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                                     return@OnCompleteListener
                                 }
-                                // Get new FCM registration token
                                 val fcmtoken = task.result
-                                Log.d(TAG, "파이어베이스 $fcmtoken")
                                 setFcmToken(token, fcmtoken)
+                                getToken(fcmtoken)
                             })
                         }
-                        // 메인으로 이동
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
                     }
-                } else {
-                    // 권한이 거부되었을 때 처리할 내용
-//                    exitProcess(0)
                 }
                 return
             }
@@ -198,10 +187,17 @@ class SigninActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     response.body()?.let {
                         if (it.status == 200) {
-                            Log.i(TAG, "토큰 전송 응답 바디 ${response.body()?.data?.accessToken}")
-                            response.body()?.data?.let {
-                                    it1 -> saveUserInfo(it1, fcmToken)
-                            }
+                            response.body()?.data?.let {it1 -> saveUserInfo(it1, fcmToken)}
+                            val intent = Intent(this@SigninActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        } else if (it.status == 401) {
+                            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(BuildConfig.web_client_id)
+                                .requestServerAuthCode(BuildConfig.web_client_id)
+                                .requestEmail()
+                                .build()
+                            val signIntent = GoogleSignIn.getClient(this@SigninActivity, gso)
+                            signIntent.signOut()
                         } else {
                             Log.i(TAG, "토큰 전송 실패 코드: ${response.code()}")
                         }
