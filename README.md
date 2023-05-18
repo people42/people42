@@ -9,7 +9,7 @@
   <a href="https://www.people42.com">
     <img src="./assets/People42.png" alt="Go to Website" width= "30%">
   </a>
-  <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&amp;itscg=30200">
+  <a href="https://apps.apple.com/kr/app/%EC%82%AC%EC%9D%B4/id6448700604?itsct=apps_box_badge&itscg=30200">
     <img src="./assets/AppStore.png" alt="Download on the App Store" width= "30%">
   </a>
   <a href='https://play.google.com/store/apps/details?id=com.cider.fourtytwo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
@@ -58,21 +58,21 @@
 <br/>
 
 - ### 위치 기반 서비스
-
+  
   - 내 주변에서 스쳤던 사람들의 생각을 조회할 수 있습니다.
-
+  
   - 어떤 사람과 어디서 몇 번 스쳤는지도 확인할 수 있습니다.
-
+  
   - 맘에 드는 메시지는 감정을 표현할 수 있으며, 상대방에게 알림을 줍니다.
 
 <br/>
 
 - ### 실시간 서비스
-
+  
   - 실시간으로 주변 유저의 활동을 확인할 수 있습니다.
-
+  
   - 메시지를 변경하면 변경한 메시지를 주변 유저들에게 알려줍니다.
-
+  
   - 내 글에 대한 반응을 알림으로 알 수 있습니다.
 
 <br/>
@@ -98,7 +98,7 @@
 
 **Front-end : 웹(React)**
 
-```Plain Text
+```Plain
 - Vite(React + Typescript)
 - Recoil
 - React-Router-Dom
@@ -725,14 +725,14 @@ fourtytwo
 
 <br/>
 
-| 성명                                    | 깃허브아이디 | 담당    | 기술스택                           |
-| --------------------------------------- | ------------ | ------- | ---------------------------------- |
-| [장운창](https://github.com/potato3641) | potato3641   | CI/CD   | Doker / Jenkins / Kubernetes / SQL |
-| [윤성운](https://github.com/ysu6691)    | ysu6691      | BE      | JAVA / SpringBoot                  |
-| [임희상](https://github.com/hslim9400)  | hslim9400    | BE      | JAVA / SpringBoot                  |
-| [정민우](https://github.com/minu-j)     | minu-j       | FE      | React / TypeScript                 |
-| [전동인](https://github.com/qorzi)      | qorzi        | iOS     | SwiftUI / Swift                    |
-| [김진희](https://github.com/robotdiary) | robotdiary   | Android | AndroidStudio / Kotlin             |
+| 성명                                   | 깃허브아이디     | 담당      | 기술스택                               |
+| ------------------------------------ | ---------- | ------- | ---------------------------------- |
+| [장운창](https://github.com/potato3641) | potato3641 | CI/CD   | Doker / Jenkins / Kubernetes / SQL |
+| [윤성운](https://github.com/ysu6691)    | ysu6691    | BE      | JAVA / SpringBoot                  |
+| [임희상](https://github.com/hslim9400)  | hslim9400  | BE      | JAVA / SpringBoot                  |
+| [정민우](https://github.com/minu-j)     | minu-j     | FE      | React / TypeScript                 |
+| [전동인](https://github.com/qorzi)      | qorzi      | iOS     | SwiftUI / Swift                    |
+| [김진희](https://github.com/robotdiary) | robotdiary | Android | AndroidStudio / Kotlin             |
 
 <br/>
 
@@ -1016,6 +1016,7 @@ GIT HUB
 - 약관 동의 후, 회원가입을 진행할 수 있습니다.
 
 <!-- ![signin](/uploads/c25bca2ec74c5497c7be53be20ece529/signin.gif) -->
+
 <p align="left">
 <img width="30%" src="./assets/android/android_nickname.gif"/>
 <img width="30%" src="./assets/android/android_emoji.gif"/>
@@ -1042,12 +1043,14 @@ GIT HUB
 - 마주친 장소와 유저를 간략하게 확인할 수 있습니다.
 - 해당 장소에 대한 스침을 확인할 수 있습니다.
 - 해당 사용자와 스쳤던 장소와 내용을 확인할 수 있습니다.
-<!-- ![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif) -->
-<p align="left">
-<img width="30%" src="./assets/android/android_feed.gif"/>
-<img width="30%" src="./assets/android/android_place.gif"/>
-<img width="30%" src="./assets/android/android_person.gif"/>
-</p>
+  
+  <!-- ![feed](/uploads/0797499c04f123ce5ee4a4e42cbab3da/feed.gif) -->
+  
+  <p align="left">
+  <img width="30%" src="./assets/android/android_feed.gif"/>
+  <img width="30%" src="./assets/android/android_place.gif"/>
+  <img width="30%" src="./assets/android/android_person.gif"/>
+  </p>
 
 <br/>
 
@@ -1066,36 +1069,66 @@ GIT HUB
 - 장소별 피드에서 메세지를 신고하거나 유저를 차단할 수 있습니다.
 - 사용자별 피드에서 메세지를 신고하거나 유저를 차단할 수 있습니다.
 - 차단된 유저와 서로 확인할 수 없게 됩니다.
-<p align="left">
-<img width="30%" src="./assets/android/android_block.gif"/>
-</p>
+  
+  <p align="left">
+  <img width="30%" src="./assets/android/android_block.gif"/>
+  </p>
 
 <br/>
 알림
 
 - 내 게시글에 달린 리액션을 알림으로 확인할 수 있습니다.
-<p align="left">
-<img width="30%" src="./assets/android/android_noti.gif"/>
-</p>
-<br/>
+  
+  <p align="left">
+  <img width="30%" src="./assets/android/android_noti.gif"/>
+  </p>
+  <br/>
 
 설정
 
 - 프로필 이미지와 닉네임을 변경할 수 있습니다.
 - 이용약관 및 개인정보처리방침을 확인할 수 있습니다.
 - 로그아웃, 회원탈퇴를 할 수 있습니다.
-<p align="left">
-<img width="30%" src="./assets/android/android_settings.gif"/>
-</p>
+  
+  <p align="left">
+  <img width="30%" src="./assets/android/android_settings.gif"/>
+  </p>
 
 <br/>
 
 유니버셜링크
 
 - 링크를 통해 바로 어플로 진입할 수 있습니다.
-<p align="left">
-<img width="30%" src="./assets/android/android_applink.gif"/>
-<img width="30%" src="./assets/android/android_universallink.gif"/>
-</p>
+  
+  <p align="left">
+  <img width="30%" src="./assets/android/android_applink.gif"/>
+  <img width="30%" src="./assets/android/android_universallink.gif"/>
+  </p>
 
 <br/>
+
+## 부하테스트
+
+- 일반 API 테스트
+  
+  ![](./assets/loadtest/totalmessage-loadtest.png)
+
+- GPS API 테스트
+  
+  ![](./assets/loadtest/background-loadtest.png)
+
+- 소켓 연결 테스트
+  
+  ![](./assets/loadtest/socket-loadtest.png)
+
+- 쿠버네티스 파드 1/3/9, 9-클러스터 직접접근 테스트
+  
+  ![](./assets/loadtest/signin-loadtest.png)
+  
+  1. 부하테스트 도중 파드 수와 관계없이 3000이후 정비례함을 확인
+  
+  2. 원인을 찾아보니 도메인과 SSL을 위한 리다이렉션 Nginx의 한계라고 생각
+  
+  3. 실제로 Nginx를 거치지 않고 직접 클러스터의 포트로 접근하니 15000까지 문제 없음
+  
+  4. Nginx도 부하 분산을 시키거나 NLB 사용하면 해결될 것으로 보임
