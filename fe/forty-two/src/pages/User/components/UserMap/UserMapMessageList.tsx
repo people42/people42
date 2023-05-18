@@ -43,7 +43,7 @@ export default UserMapMessageList;
 
 const StyledUserMapMessageList = styled.aside`
   animation: floatingLeft 0.3s;
-  padding: 24px;
+  padding: 16px;
   top: 0px;
   right: 0px;
   position: absolute;
@@ -63,7 +63,7 @@ const StyledUserMapMessageList = styled.aside`
     &::-webkit-scrollbar-track {
       background-color: none;
     }
-    padding: 24px;
+    padding: 16px;
 
     & h2 {
       ${({ theme }) => theme.text.header6}

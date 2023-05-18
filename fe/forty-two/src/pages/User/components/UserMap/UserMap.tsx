@@ -3,7 +3,6 @@ import { NaverDynamicMap } from "../../../../components";
 import { userLocationUpdateState } from "../../../../recoil/location/selectors";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../../utils";
 import UserMapMessageList from "./UserMapMessageList";
 import { useState, useEffect } from "react";
 import { Marker, useListener, useNavermaps } from "react-naver-maps";
@@ -44,7 +43,6 @@ function UserMap({ userData }: userMapProps) {
                 setMessagesInfo(res.data.data.messagesInfo);
               });
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });

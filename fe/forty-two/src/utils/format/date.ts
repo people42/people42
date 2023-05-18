@@ -8,12 +8,22 @@ export function formatMessageDate(dateString: string) {
   // 입력된 날짜와 현재 날짜의 차이 계산
   const diffTime = date.getTime() - today.getTime();
   const hour = date.getHours();
+
+  const diffMs = now.valueOf() - date.valueOf();
+  const diffHours = Math.floor(diffMs / 3600000);
+
+  console.log(date, diffMs, diffHours);
   if (diffTime >= 0) {
     // 오늘인 경우
     return `오늘 ${hour}시 쯤`;
-  } else {
-    // 그 외의 경우
+  } else if (diffHours < 24) {
+    // 어제인 경우
     return `어제 ${hour}시 쯤`;
+  } else {
+    const month = date.toLocaleString("default", { month: "long" });
+    const day = date.getDate();
+    const hour = date.getHours();
+    return `${month} ${day}일 ${hour}시 쯤`;
   }
 }
 

@@ -1,5 +1,4 @@
 import { instance } from "..";
-import { getSessionRefreshToken } from "../../utils";
 
 /**
  * [POST] "auth/check/google" Google 회원가입 여부 체크
@@ -40,7 +39,5 @@ export async function getNickname() {
  * [POST] "auth/token" access token 갱신
  */
 export async function getAccessToken() {
-  return instance({
-    "REFRESH-TOKEN": getSessionRefreshToken() ?? "",
-  }).post("auth/token");
+  return instance().post("auth/cookie");
 }

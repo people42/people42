@@ -1,7 +1,6 @@
 import { getAccessToken, postFeedEmotion } from "../../api";
 import { userState } from "../../recoil/user/atoms";
 import { userAccessTokenState } from "../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../utils";
 import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -37,7 +36,6 @@ function reactionButton({ props }: reactionButtonProps) {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
               postFeedEmotion(res.data.data.accessToken, {
                 emotion: emotion,
                 messageIdx: props?.recentMessageInfo.messageIdx,

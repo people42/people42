@@ -2,7 +2,6 @@ import appStoreBadge from "../../assets/images/badge/Download_on_the_App_Store_B
 import appIcon from "../../assets/images/badge/appIcon.png";
 import playStoreBadge from "../../assets/images/badge/google-play-badge.png";
 import { LogoBg } from "../../components";
-import Spinner from "../../components/Spinner/Spinner";
 import { useEffect, useState } from "react";
 import { isMobile, isAndroid } from "react-device-detect";
 import { useNavigate } from "react-router";
@@ -15,16 +14,20 @@ function DeepLink({}: deepLinkProps) {
   const APP_SCHEME = import.meta.env.VITE_APP_SCHEME;
   const ANDROID_URL = import.meta.env.VITE_ANDROID_URL;
   const IOS_URL = import.meta.env.VITE_IOS_URL;
+  const S3_URL = import.meta.env.VITE_S3_URL;
 
   const [isAppLoad, setIsAppLoad] = useState(true);
 
   useEffect(() => {
     if (isMobile) {
       if (isAndroid) {
+        exeDeepLink();
         setIsAppLoad(false);
+        // checkInstallApp();
       } else {
         exeDeepLink();
-        checkInstallApp();
+        setIsAppLoad(false);
+        // checkInstallApp();
       }
     } else {
       navigate("/");
@@ -55,8 +58,6 @@ function DeepLink({}: deepLinkProps) {
   }
 
   const redirectStore = () => {
-    const ua = navigator.userAgent.toLowerCase();
-
     if (
       window.confirm(
         isAndroid
@@ -84,13 +85,16 @@ function DeepLink({}: deepLinkProps) {
           {isAndroid ? (
             <>
               <img
+                onClick={() => {
+                  setIsAppLoad(true);
+                  exeDeepLink();
+                  checkInstallApp();
+                }}
                 className="deeplink-badge"
                 src={playStoreBadge}
-                style={{ filter: "opacity(0.2)" }}
               ></img>
-              <p className="deeplink-info">곧 출시 예정</p>
-              <a href={ANDROID_URL} className="deeplink-link">
-                APK로 설치하기
+              <a href={`${S3_URL}app/42.apk`} className="deeplink-link">
+                APK로 최신버전 먼저 설치하기
               </a>
             </>
           ) : (

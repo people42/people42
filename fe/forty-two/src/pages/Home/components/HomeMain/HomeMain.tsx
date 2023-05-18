@@ -1,12 +1,23 @@
 import { HomeMyMessage } from "..";
+import { homeInfoState } from "../../../../recoil/home/atoms";
 import { isLoginState } from "../../../../recoil/user/atoms";
+import HomeInfo from "../HomeInfo/HomeInfo";
 import HomeTimeline from "../HomeTimeline/HomeTimeline";
 import HomeMainPreview from "./HomeMainPreview";
-import { useRecoilValue } from "recoil";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 function HomeMain() {
   const isLogin = useRecoilValue(isLoginState);
+  const [showHomeInfo, setShowHomeInfo] =
+    useRecoilState<boolean>(homeInfoState);
+
+  useEffect(() => {
+    if (!localStorage.getItem("home-info")) {
+      setShowHomeInfo(true);
+    }
+  }, []);
 
   return (
     <StyledHomeMain>
@@ -16,6 +27,7 @@ function HomeMain() {
         <>
           <HomeTimeline></HomeTimeline>
           <div className="timeline-bar"></div>
+          {showHomeInfo ? <HomeInfo /> : null}
         </>
       )}
       <HomeMyMessage></HomeMyMessage>

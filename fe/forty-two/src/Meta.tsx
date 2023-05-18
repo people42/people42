@@ -6,7 +6,6 @@ type metaProps = {
 };
 
 function Meta(props: metaProps) {
-  const IOS_URL = import.meta.env.VITE_IOS_URL;
   return (
     <Helmet>
       {/* Primary Meta Tags */}

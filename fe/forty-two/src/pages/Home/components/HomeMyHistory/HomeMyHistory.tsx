@@ -1,7 +1,7 @@
 import { deleteMessage, getAccessToken, getMyHistory } from "../../../../api";
 import { userState } from "../../../../recoil/user/atoms";
 import { userAccessTokenState } from "../../../../recoil/user/selectors";
-import { getTodayDate, setSessionRefreshToken } from "../../../../utils";
+import { getTodayDate } from "../../../../utils";
 import MyHistoryCard from "./MyHistoryCard";
 import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -26,7 +26,6 @@ function HomeMyHistory({}: homeMyHistoryProps) {
                 (res) => setHistoryList(res.data.data)
               );
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
             });
           }
         });
@@ -44,7 +43,6 @@ function HomeMyHistory({}: homeMyHistoryProps) {
               setNeedHistoryRefresh(true)
             );
             setUserRefresh(res.data.data);
-            setSessionRefreshToken(res.data.data.refreshToken);
           });
         }
       });

@@ -95,3 +95,24 @@ export async function putEmoji(accessToken: string, emoji: string) {
     "ACCESS-TOKEN": accessToken,
   }).put("account/emoji", { emoji: emoji });
 }
+
+/**
+ * [POST] "account/block" 유저 차단
+ */
+export async function postBlock(accessToken: string, userIdx: number) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).post("account/block", { userIdx: userIdx });
+}
+
+/**
+ * [POST] "account/report" 메시지 신고
+ */
+export async function postReport(
+  accessToken: string,
+  body: TAccount["report"]
+) {
+  return instance({
+    "ACCESS-TOKEN": accessToken,
+  }).post("account/report", body);
+}

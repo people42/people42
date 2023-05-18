@@ -39,7 +39,6 @@ import {
   getUserLocation,
   handleClose,
   handleMove,
-  setSessionRefreshToken,
   socketInfoReceive,
   socketInit,
 } from "./utils";
@@ -172,7 +171,6 @@ function App() {
       getAccessToken()
         .then((res) => {
           setUserRefresh(res.data.data);
-          setSessionRefreshToken(res.data.data.refreshToken);
           setIsLogin(true);
         })
         .catch((e) => {
@@ -199,7 +197,6 @@ function App() {
           if (e.response.status == 401) {
             getAccessToken().then((res) => {
               setUserRefresh(res.data.data);
-              setSessionRefreshToken(res.data.data.refreshToken);
               postLocation(res.data.data.accessToken, userLocation).then(
                 (res) => setLocationInfo(res.data.data)
               );

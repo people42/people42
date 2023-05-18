@@ -57,6 +57,10 @@ type TAccount = {
   message: {
     message: string;
   };
+  report: {
+    messageIdx: number;
+    content: string;
+  };
 };
 
 type TLocation = {

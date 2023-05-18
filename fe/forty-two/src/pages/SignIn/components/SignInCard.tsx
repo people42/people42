@@ -4,7 +4,6 @@ import googleLogo from "../../../assets/images/logo/google.png";
 import { Card } from "../../../components/index";
 import { signUpUserState } from "../../../recoil/user/atoms";
 import { userLoginState } from "../../../recoil/user/selectors";
-import { setSessionRefreshToken } from "../../../utils";
 import SocialLoginBtn from "./SocialLoginBtn";
 import { useGoogleLogin } from "@react-oauth/google";
 import React from "react";
@@ -32,7 +31,6 @@ function SignInCard() {
             navigate("/signup");
           } else {
             userLogin(res.data.data);
-            setSessionRefreshToken(res.data.data.refreshToken);
             navigate("/");
           }
         })

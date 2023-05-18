@@ -102,6 +102,14 @@ const darkColor = {
   text: {
     primary: "#FFFFFF",
     secondary: "rgba(255, 255, 255, 0.5)",
+    red: "#FF0000",
+    orange: "#FFA300",
+    yellow: "#FFF500",
+    green: "#00FF75",
+    sky: "#00C2FF",
+    blue: "#0057FF",
+    purple: "#9E00FF",
+    pink: "#DE44A0",
   },
 };
 

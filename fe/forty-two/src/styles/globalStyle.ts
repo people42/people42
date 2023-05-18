@@ -3,6 +3,16 @@ import "../assets/fonts/pretendard/pretendard.css";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle<any>`
+    @keyframes focusZoom {
+      from {
+        filter: opacity(0);
+        transform: scale(150%, 150%);
+      }
+      to {
+        filter: opacity(1);
+        transform: scale(100%, 100%);
+      }
+    }
     @keyframes springOut {
       0% {
         filter: opacity(1);
