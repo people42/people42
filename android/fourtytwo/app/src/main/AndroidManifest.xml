@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 정확한 위치 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 대략적인 위치 -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -21,6 +22,10 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon"
         tools:targetApi="33">
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name=".setting.ChangeEmojiActivity"
             android:exported="false" />
