@@ -1,6 +1,7 @@
 package com.cider.fourtytwo
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -71,7 +72,7 @@ class SigninActivity : AppCompatActivity() {
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
         }
-        // 권한 있으면 자동 로그인
+        // 권한 있으면
         else {
             // 로그인 되어있는 유저인지 확인
             val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -79,6 +80,8 @@ class SigninActivity : AppCompatActivity() {
                 Log.e("onStart Google account", "로그인 안 되어있음")
             } else {
                 Log.e("onStart Google account", "로그인 완료된 상태")
+                // 백그라운드 위치 전송 시작
+                startLocationService()
                 // 토큰 보내고
                 lifecycleScope.launch {
                     val token = userDataStore.get_access_token.first()
@@ -115,6 +118,8 @@ class SigninActivity : AppCompatActivity() {
                         Log.e("onStart Google account", "로그인 안 되어있음")
                     } else {
                         Log.e("onStart Google account", "로그인 완료된 상태")
+                        // 백그라운드 위치 전송 시작
+                        startLocationService()
                         // 토큰 보내고
                         lifecycleScope.launch {
                             val token = userDataStore.get_access_token.first()
@@ -229,7 +234,6 @@ class SigninActivity : AppCompatActivity() {
                 }
             }
             // 회원인지 확인
-            Log.i(TAG, "handleSignInResult: 회원 체크하러 들어감")
             checkUser(googletokenAuth, this)
         } catch (e: ApiException) {
             // 취소 시 로그인 창으로
@@ -248,36 +252,33 @@ class SigninActivity : AppCompatActivity() {
         }
     }
     private fun checkUser(idToken: String, context : Context) {
-        Log.i(TAG, "handleSignInResult: 회원 체크하러 들어옴")
         val params = HashMap<String, String>()
         params["o_auth_token"] = idToken
-        Log.d(TAG, "checkUser: $idToken")
         api.getGoogleUser(params).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                Log.i(TAG, "onResponse: ${response}")
-                Log.i(TAG, "onResponse: ${response.body()}")
-                Log.i(TAG, "onResponse: ${response.body()?.data}")
                 response.body()?.data?.let {
-                    Log.i(TAG, "handleSignInResult: ${it.user_idx}")
                     if (it.user_idx > 0) {
                         saveUserInfo(it)
+                        // 백그라운드 위치 전송 시작
+                        if (ContextCompat.checkSelfPermission(this@SigninActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            startLocationService()}
+                        // 파이어베이스 메세지 토큰
                         lifecycleScope.launch {
                             val token = userDataStore.get_access_token.first()
-
                             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                                 if (!task.isSuccessful) {
-                                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                                     return@OnCompleteListener
                                 }
-                                // Get new FCM registration token
                                 val fcmtoken = task.result
-                                Log.d(TAG, "파이어베이스 $fcmtoken")
                                 setFcmToken(token, fcmtoken)
                             })
                         }
                         val intent = Intent(context, MainActivity::class.java)
                         startActivity(intent)
                     } else {
+                        // 백그라운드 위치 전송 시작
+                        if (ContextCompat.checkSelfPermission(this@SigninActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            startLocationService()}
                         val intent = Intent(context, SignupActivity::class.java)
                         startActivity(intent)
                     }
@@ -291,6 +292,38 @@ class SigninActivity : AppCompatActivity() {
     fun saveUserInfo(payload : UserInfo){
         lifecycleScope.launch {
             userDataStore.setUserData(payload)
+        }
+    }
+    private fun isLocationServiceRunning(): Boolean {
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        if (activityManager != null) {
+            for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
+                if (LocationService::class.java.name == service.service.className) {
+                    if (service.foreground) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        return false
+    }
+
+    private fun startLocationService() {
+        if (!isLocationServiceRunning()) {
+            val intent = Intent(applicationContext, LocationService::class.java)
+            intent.action = Constants.ACTION_START_LOCATION_SERVICE
+            startService(intent)
+            Toast.makeText(this, "Location service started", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun stopLocationService() {
+        if (isLocationServiceRunning()) {
+            val intent = Intent(applicationContext, LocationService::class.java)
+            intent.action = Constants.ACTION_STOP_LOCATION_SERVICE
+            startService(intent)
+            Toast.makeText(this, "Location service stopped", Toast.LENGTH_SHORT).show()
         }
     }
 }
