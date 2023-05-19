@@ -39,8 +39,9 @@ extension SystemView {
             withdrawalDefault()
         case .apple:
             print("애플탈퇴")
-            startSignInWithAppleFlow()
+            startWithdrawalWithAppleFlow()
         case .none:
+            print("로그인정보없음")
             break
         }
         
@@ -73,7 +74,7 @@ extension SystemView {
         
     }
     
-    private func startSignInWithAppleFlow() {
+    private func startWithdrawalWithAppleFlow() {
         
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]

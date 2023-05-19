@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 class PlaceTimelineViewModel: ObservableObject {
     @Published var locationCardsData: [LocationCardData] = []
@@ -36,7 +37,9 @@ class PlaceTimelineViewModel: ObservableObject {
 struct PlaceTimelineView: View {
     @StateObject private var viewModel = PlaceTimelineViewModel()
     @Environment(\.scenePhase) private var scenePhase
+    
     @State private var refreshing: Bool = false
+    @State private var timer: AnyCancellable? = nil
     
     var body: some View {
         ZStack {
@@ -80,14 +83,8 @@ struct PlaceTimelineView: View {
             .id(UUID())
             .onAppear {
                 viewModel.getLocationCardsData()
-                Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
-                    viewModel.getLocationCardsData()
-                }
-            }
-            .onChange(of: scenePhase) { newScenePhase in
-                if newScenePhase == .active {
-                    viewModel.getLocationCardsData()
-                }
+                startTimer()
+                registerAppLifeCycleNotifications()
             }
             .modifier(RefreshableModifier(isRefreshing: $refreshing, action: {
                 viewModel.getLocationCardsData()
@@ -95,6 +92,31 @@ struct PlaceTimelineView: View {
                     refreshing = false
                 }
             }))
+        }
+    }
+    
+    private func startTimer() {
+        stopTimer()
+        timer = Timer.publish(every: 10, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                viewModel.getLocationCardsData()
+            }
+    }
+    
+    private func stopTimer() {
+        timer?.cancel()
+        timer = nil
+    }
+
+    private func registerAppLifeCycleNotifications() {
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
+            self.viewModel.getLocationCardsData()
+            self.startTimer()
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { _ in
+            self.stopTimer()
         }
     }
 }
