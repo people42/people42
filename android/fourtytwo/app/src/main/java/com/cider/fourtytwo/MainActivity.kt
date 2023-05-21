@@ -2,7 +2,6 @@ package com.cider.fourtytwo
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -69,6 +68,7 @@ import retrofit2.Response
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.*
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val api: Api = RetrofitInstance.getInstance().create(Api::class.java)
@@ -250,14 +250,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                             put("status", "watching")
                                         }
                                         sendMessage(json.toString())
-                                    }
-                                }
-                            }
-                        }
-                }
+                                    }}}}}
                 handler.postDelayed(this, 60000)
-            }
-        }
+            }}
         handler.post(runnable)
 
 // 소켓
@@ -1145,5 +1140,15 @@ private var backButtonPressedTime: Long = 0
     fun hideKeyboard() {
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    }
+    fun madeBrushCnt(latitude:Double, longitude:Double){
+        // 1분에 한번씩 위치 전송
+        val backgrounduserDataStore = UserDataStore(this)
+        var mylocation = HashMap<String, Double>()
+        mylocation["latitude"] = latitude
+        mylocation["longitude"] = longitude
+        lifecycleScope.launch {
+            setLocation(backgrounduserDataStore.get_access_token.first(), mylocation)
+        }
     }
 }
