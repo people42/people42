@@ -102,7 +102,7 @@ struct EmojiSwapView: View {
                 CustomButton(style: .blue, buttonText: "완료", action: {
                     let selectedEmoji = emojis[currentIndex % emojis.count]
                     changeEmoji(selectedEmoji)
-                }, isDisabled: false)
+                })
             }
             Spacer()
                 .frame(maxHeight: 40)

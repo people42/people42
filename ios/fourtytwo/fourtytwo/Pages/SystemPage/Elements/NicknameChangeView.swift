@@ -62,7 +62,7 @@ struct NicknameChangeView: View {
             HStack {
                 CustomButton(style: isClicked ? .blue : .disabled, buttonText: "완료", action: {
                     changeNickname()
-                }, isDisabled: !isClicked)
+                })
             }
             Spacer()
                 .frame(maxHeight: 40)
