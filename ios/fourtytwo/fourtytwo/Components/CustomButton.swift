@@ -8,7 +8,6 @@ struct CustomButton: View {
     let style: Style
     let buttonText: String
     let action: () -> Void
-    let isDisabled: Bool
     
     var body: some View {
         Button(action: action) {
@@ -20,7 +19,7 @@ struct CustomButton: View {
                 .background(getButtonColor())
                 .cornerRadius(32)
         }
-        .disabled(isDisabled || style == .disabled)
+        .disabled(style == .disabled)
     }
     
     private func getButtonColor() -> Color {
@@ -42,6 +41,16 @@ struct CustomButton: View {
             return Color.monotoneTextTranslucent
         case .text:
             return Color.blue
+        }
+    }
+}
+
+struct CustomButton_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            CustomButton(style: .blue, buttonText: "버튼", action: {})
+            CustomButton(style: .disabled, buttonText: "버튼", action: {})
+            CustomButton(style: .text, buttonText: "버튼", action: {})
         }
     }
 }

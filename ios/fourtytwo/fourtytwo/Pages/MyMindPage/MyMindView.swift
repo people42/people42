@@ -18,13 +18,14 @@ struct MyMindView: View {
             ScrollView {
                 LazyVStack {
                     if let history = myHistoryData {
+                        Spacer()
+                            .frame(height: 16)
                         ForEach(history.indices, id: \.self) { index in
                             let data = history[index]
                             DragToDeleteView(content: MyMassageHistory(contents: data.contents, reactionCnt: data.reactionCnt, time: data.time), onDelete: {
                                 deleteMessage(at: index)
                             })
                             .padding(16)
-                            .padding(.bottom, 8)
                         }
                     } else {
                         VStack {
@@ -37,6 +38,7 @@ struct MyMindView: View {
                     }
                 }
             }
+            .padding(.top, 16)
         }
         .onTapGesture {
              // 키보드가 표시된 상태라면 키보드를 닫도록 함
