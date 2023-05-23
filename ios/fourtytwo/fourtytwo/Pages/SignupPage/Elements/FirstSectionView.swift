@@ -52,7 +52,7 @@ struct FirstSectionView: View {
             HStack {
                 CustomButton(style: isClicked ? .blue : .disabled, buttonText: "완료", action: {
                     progress += 1
-                }, isDisabled: !isClicked)
+                })
             }
             Spacer()
                 .frame(maxHeight: 40)
