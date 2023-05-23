@@ -48,7 +48,7 @@ struct ThirdSectionView: View {
             HStack {
                 CustomButton(style: isChecked ? .blue : .disabled, buttonText: "시작하기", action: {
                     signUp()
-                }, isDisabled: !isChecked)
+                })
             }
             Spacer()
                 .frame(maxHeight: 40)

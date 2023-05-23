@@ -89,7 +89,7 @@ struct SecondSectionView: View {
                 CustomButton(style: .blue, buttonText: "완료", action: {
                     signUpData.emoji = emojis[currentIndex % emojis.count]
                     progress += 1
-                }, isDisabled: false)
+                })
             }
             Spacer()
                 .frame(maxHeight: 40)

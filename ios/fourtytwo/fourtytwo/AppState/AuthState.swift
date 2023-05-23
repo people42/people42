@@ -1,16 +1,37 @@
 import SwiftUI
 
 class SignUpState: ObservableObject {
+    private let keychain = KeychainSwift()
     @Published var email: String = ""
     @Published var nickname: String = ""
     @Published var oAuthToken: String = ""
     @Published var emoji: String = ""
-    @Published var loginType: LoginType = .none
+    @Published var loginType: LoginType = .none {
+        didSet {
+            saveLoginType()
+        }
+    }
     
-    enum LoginType {
+    init() {
+        loadLoginType()
+    }
+    
+    enum LoginType: String {
         case google
         case apple
         case none
+    }
+
+    // Save the current loginType to keychain
+    private func saveLoginType() {
+        keychain.set(loginType.rawValue, forKey: "loginType")
+    }
+
+    // Load loginType from keychain
+    private func loadLoginType() {
+        if let storedLoginType = keychain.get("loginType"), let loginType = LoginType(rawValue: storedLoginType) {
+            self.loginType = loginType
+        }
     }
 }
 
